@@ -76,6 +76,9 @@ always write migrations for Room when schema changes.
 Use the DSL not the DAO.
 Always use `timestamp("name")` instead of `long("name")` for timestamp columns.
 
+# Using Git
+Commit messages start with upper-case verb like: Fix Add Implement
+
 ---
 
 Project "big picture" (what talks to what)
