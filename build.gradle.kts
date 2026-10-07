@@ -16,6 +16,7 @@ plugins {
   alias(libs.plugins.androidx.room) apply false
   alias(libs.plugins.kover)
   alias(libs.plugins.roborazzi) apply false
+  alias(libs.plugins.detekt)
 }
 
 dependencies {
@@ -37,4 +38,22 @@ kover {
 tasks.register<KtfmtFormatTask>("ktfmtPrecommit") {
   source = project.fileTree(rootDir)
   include("**/*.kt", "**/*.kts")
+}
+
+subprojects {
+  apply(plugin = "dev.detekt")
+
+  dependencies {
+    "detektPlugins"(rootProject.libs.detekt.composeRules)
+  }
+
+  extensions.configure<dev.detekt.gradle.extensions.DetektExtension> {
+    buildUponDefaultConfig = true
+    config.setFrom(rootProject.file("config/detekt/detekt.yml"))
+    source.setFrom(files("src"))
+  }
+
+  tasks.withType<dev.detekt.gradle.Detekt>().configureEach {
+    exclude { it.file.invariantSeparatorsPath.contains("/build/generated/") }
+  }
 }

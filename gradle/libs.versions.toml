@@ -39,6 +39,8 @@ sqlite = "2.7.1"
 kover = "0.9.9"
 roborazzi = "1.76.0"
 composablePreviewScanner = "0.9.3"
+detekt = "2.0.0-alpha.6"
+composeRules = "0.6.7"
 
 [libraries]
 compose-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
@@ -125,6 +127,7 @@ roborazzi-compose-desktop = { module = "io.github.takahirom.roborazzi:roborazzi-
 roborazzi-compose-desktopPreviewScannerSupport = { module = "io.github.takahirom.roborazzi:roborazzi-compose-desktop-preview-scanner-support", version.ref = "roborazzi" }
 roborazzi-annotations = { module = "io.github.takahirom.roborazzi:roborazzi-annotations", version.ref = "roborazzi" }
 composablePreviewScanner = { module = "io.github.sergio-sastre.ComposablePreviewScanner:android", version.ref = "composablePreviewScanner" }
+detekt-composeRules = { module = "io.nlopez.compose.rules:detekt", version.ref = "composeRules" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -141,3 +144,4 @@ ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmtPlugin" }
 androidx-room = { id = "androidx.room3", version.ref = "room3" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
