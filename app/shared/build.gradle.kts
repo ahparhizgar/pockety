@@ -1,0 +1,163 @@
+import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+  alias(libs.plugins.kotlinMultiplatform)
+  alias(libs.plugins.androidMultiplatformLibrary)
+  alias(libs.plugins.composeMultiplatform)
+  alias(libs.plugins.composeCompiler)
+  alias(libs.plugins.kotlinSerialization)
+  alias(libs.plugins.kotest)
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.ktfmt)
+  alias(libs.plugins.androidx.room)
+  alias(libs.plugins.kover)
+  alias(libs.plugins.roborazzi)
+}
+
+kover {
+  currentProject {
+    instrumentation {
+      disabledForTestTasks.addAll(
+          "testAndroid",
+          "testAndroidHostTest",
+      )
+    }
+  }
+}
+
+room3 { schemaDirectory("$projectDir/schemas") }
+
+@OptIn(ExperimentalRoborazziApi::class)
+roborazzi {
+  outputDir.set(rootProject.file(".screenshots"))
+  generateComposePreviewDesktopTests {
+    enable = false
+    roborazzi.generateComposePreviewDesktopTests.packages.add("com.opensplit")
+  }
+}
+
+kotlin {
+  listOf(
+          //        iosArm64(),
+          iosSimulatorArm64()
+      )
+      .forEach { iosTarget ->
+        iosTarget.binaries.framework {
+          baseName = "Shared"
+          isStatic = true
+        }
+      }
+
+  jvm()
+
+  @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
+
+  android {
+    namespace = "com.base.app.shared"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    minSdk = libs.versions.android.minSdk.get().toInt()
+
+    compilerOptions { jvmTarget = JvmTarget.JVM_11 }
+    androidResources { enable = true }
+    withHostTest { isIncludeAndroidResources = true }
+  }
+
+  sourceSets {
+    androidMain.dependencies {
+      implementation(libs.compose.uiToolingPreview)
+      implementation(libs.ktor.clientOkHttp)
+      implementation(libs.androidx.sqlite.bundled)
+      implementation(libs.koin.android)
+    }
+    commonMain.dependencies {
+      api(projects.core)
+      implementation(libs.compose.runtime)
+      implementation(libs.compose.foundation)
+      implementation(libs.compose.material3)
+      implementation(libs.compose.ui)
+      implementation(libs.compose.material.icons.extended)
+      implementation(libs.compose.components.resources)
+      implementation(libs.compose.uiToolingPreview)
+      implementation(libs.androidx.lifecycle.viewmodelCompose)
+      implementation(libs.androidx.lifecycle.runtimeCompose)
+      implementation(libs.compose.adaptive)
+      implementation(libs.compose.adaptive.layout)
+      implementation(libs.compose.adaptive.navigation)
+      implementation(libs.compose.adaptive.navigation.suite)
+      implementation(libs.compose.material3.windowSizeClass)
+
+      implementation(libs.ktor.clientCore)
+      implementation(libs.ktor.clientAuth)
+      implementation(libs.ktor.clientLogging)
+      implementation(libs.ktor.clientContentNegotiation)
+      implementation(libs.ktor.serializationKotlinxJson)
+      api(libs.decompose)
+      api(libs.lifecycle)
+      implementation(libs.decompose.compose)
+      implementation(libs.decompose.compose.experimental)
+      implementation(libs.katch)
+      implementation(libs.katch.ktor)
+      implementation(libs.koin.core)
+      implementation(libs.androidx.datastore.core)
+      implementation(libs.androidx.datastore.preferences.core)
+      implementation(libs.androidx.datastore.core.okio)
+      implementation(libs.androidx.room3.runtime)
+      implementation(libs.androidx.sqlite)
+      implementation(npm("sqlite-wasm-worker", layout.projectDirectory.dir("worker").asFile))
+    }
+    commonTest.dependencies {
+      implementation(libs.kotlin.test)
+      implementation(libs.compose.test)
+      implementation(libs.kotest.framework)
+      implementation(libs.kotest.assertion)
+      implementation(libs.koin.test)
+    }
+    jvmMain.dependencies {
+      implementation(compose.desktop.currentOs)
+      implementation(libs.kotlinx.coroutinesSwing)
+      implementation(libs.ktor.clientOkHttp)
+      implementation(libs.androidx.sqlite.bundled)
+    }
+    jvmTest.dependencies {
+      implementation(compose.desktop.currentOs)
+      implementation(libs.ktor.clientOkHttp)
+      implementation(projects.server)
+      implementation(libs.ktor.serverCore)
+      implementation(libs.ktor.serverNetty)
+      implementation(libs.ktor.serverTestHost)
+      implementation(libs.kotest.junit)
+      implementation(libs.junit)
+      implementation(libs.junit.vintage.engine)
+      implementation(libs.roborazzi.core)
+      implementation(libs.roborazzi.compose.desktop)
+      implementation(libs.roborazzi.compose.desktopPreviewScannerSupport)
+      implementation(libs.composablePreviewScanner)
+    }
+    wasmJsMain.dependencies {
+      implementation(libs.androidx.datastore.core.okio)
+      implementation(libs.androidx.sqlite.web)
+    }
+    val iosSimulatorArm64Main by getting {
+      dependencies { implementation(libs.androidx.sqlite.bundled) }
+    }
+    //        jsMain.dependencies {
+    //            implementation(libs.wrappers.browser)
+    //        }
+  }
+  compilerOptions {
+    // not needed anymore
+    //    freeCompilerArgs.add("-Xcontext-parameters")
+  }
+}
+
+tasks.withType<Test>().configureEach { useJUnitPlatform() }
+
+dependencies {
+  androidRuntimeClasspath(libs.compose.uiTooling)
+  add("kspAndroid", libs.androidx.room3.compiler)
+  add("kspJvm", libs.androidx.room3.compiler)
+  add("kspWasmJs", libs.androidx.room3.compiler)
+  add("kspIosSimulatorArm64", libs.androidx.room3.compiler)
+}
