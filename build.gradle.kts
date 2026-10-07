@@ -32,7 +32,7 @@ kover {
       xml { onCheck = true }
       html { onCheck = true }
     }
-    verify { rule { bound { minValue = 0 } } }
+    verify { rule { bound { minValue = 80 } } }
   }
 }
 
