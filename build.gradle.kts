@@ -1,4 +1,5 @@
 import com.ncorti.ktfmt.gradle.tasks.KtfmtFormatTask
+import dev.detekt.gradle.extensions.DetektExtension
 
 plugins {
   // this is necessary to avoid the plugins to be loaded multiple times
@@ -40,6 +41,20 @@ tasks.register<KtfmtFormatTask>("ktfmtPrecommit") {
   include("**/*.kt", "**/*.kts")
 }
 
+tasks.register("detektMain") {
+  group = "verification"
+  description = "Runs all detektMain, detektMainJvm, and detektMainAndroid tasks of each subproject"
+  dependsOn(
+      subprojects.map { subproject ->
+        subproject.tasks.matching { task ->
+          task.name == "detektMain" ||
+              task.name == "detektMainJvm" ||
+              task.name == "detektMainAndroid"
+        }
+      }
+  )
+}
+
 subprojects {
   apply(plugin = "dev.detekt")
 
@@ -47,7 +62,7 @@ subprojects {
     "detektPlugins"(rootProject.libs.detekt.composeRules)
   }
 
-  extensions.configure<dev.detekt.gradle.extensions.DetektExtension> {
+  extensions.configure<DetektExtension> {
     buildUponDefaultConfig = true
     config.setFrom(rootProject.file("config/detekt/detekt.yml"))
     source.setFrom(files("src"))
