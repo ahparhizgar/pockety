@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.base.feature.root.TopLevelDestinationConfig
 import com.base.ui.BaseTheme
-import com.base.ui.ScreenPreview
+import com.base.ui.ScreenPreviews
 
 @Composable
 fun SplashScreen(modifier: Modifier = Modifier) {
@@ -29,8 +29,9 @@ fun SplashScreen(modifier: Modifier = Modifier) {
 
 data object SplashDestination : TopLevelDestinationConfig
 
-@ScreenPreview
+@ScreenPreviews
 @Composable
-fun SplashScreenPreview() {
+@Suppress("UnusedPrivateFunction")
+private fun SplashScreenPreview() {
   BaseTheme { SplashScreen() }
 }

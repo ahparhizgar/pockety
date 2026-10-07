@@ -11,15 +11,15 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.w3c.dom.Worker
 
+actual fun platformModule(): Module = module {
+  single { WasmAppDatabaseBuilderFactory() }.bind<AppDatabaseBuilderFactory>()
+}
+
 class WasmAppDatabaseBuilderFactory : AppDatabaseBuilderFactory {
   override fun createBuilder(dataDir: DataDir): RoomDatabase.Builder<AppDatabase> {
     return Room.databaseBuilder<AppDatabase>(name = "opensplit.db")
         .setDriver(createSQLiteWasmWorker())
   }
-}
-
-actual fun platformModule(): Module = module {
-  single { WasmAppDatabaseBuilderFactory() }.bind<AppDatabaseBuilderFactory>()
 }
 
 fun createSQLiteWasmWorker() = WebWorkerSQLiteDriver(jsWorker())

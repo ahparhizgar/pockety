@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -47,7 +48,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.base.feature.auth.login.immediateFocusRequester
 import com.base.ui.BaseTheme
-import com.base.ui.ScreenPreview
+import com.base.ui.ScreenPreviews
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,95 +78,13 @@ fun SignUpScreen(component: SignUpComponent, modifier: Modifier = Modifier) {
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
     ) {
-      Spacer(modifier = Modifier.height(16.dp))
-
-      OutlinedTextField(
-          modifier = Modifier.fillMaxWidth().focusRequester(immediateFocusRequester()),
-          value = state.fullName,
-          onValueChange = component::onFullNameChanged,
-          label = { Text("Full name") },
-          singleLine = true,
-          isError = state.fieldErrors.containsKey("fullName"),
-          keyboardOptions =
-              KeyboardOptions(
-                  keyboardType = KeyboardType.Text,
-                  imeAction = ImeAction.Next,
-              ),
-          keyboardActions =
-              KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
-      )
-
-      Spacer(modifier = Modifier.height(16.dp))
-
-      OutlinedTextField(
-          modifier = Modifier.fillMaxWidth(),
-          value = state.email,
-          onValueChange = component::onEmailChanged,
-          label = { Text("Email address") },
-          singleLine = true,
-          isError = state.fieldErrors.containsKey("email"),
-          keyboardOptions =
-              KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-          keyboardActions =
-              KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
-      )
-
-      Spacer(modifier = Modifier.height(16.dp))
-
-      OutlinedTextField(
-          value = state.password,
-          onValueChange = component::onPasswordChanged,
-          label = { Text("Password") },
-          modifier = Modifier.fillMaxWidth(),
-          singleLine = true,
-          visualTransformation =
-              if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-          trailingIcon = {
-            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-              Icon(
-                  if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                  contentDescription = null,
-              )
-            }
-          },
-          isError = state.fieldErrors.containsKey("password"),
-          keyboardOptions =
-              KeyboardOptions(
-                  keyboardType = KeyboardType.Password,
-                  imeAction = ImeAction.Next,
-              ),
-          keyboardActions =
-              KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
-      )
-
-      Spacer(modifier = Modifier.height(16.dp))
-
-      Row(verticalAlignment = Alignment.CenterVertically) {
-        OutlinedTextField(
-            value = "", // TODO: Add state.code if needed
-            onValueChange = {},
-            label = { Text("Code") },
-            modifier = Modifier.width(100.dp),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            keyboardActions =
-                KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        OutlinedTextField(
-            value = state.phoneNumber,
-            onValueChange = component::onPhoneChanged,
-            label = { Text("Phone number") },
-            modifier = Modifier.weight(1f),
-            singleLine = true,
-            keyboardOptions =
-                KeyboardOptions(
-                    keyboardType = KeyboardType.Phone,
-                    imeAction = ImeAction.Done,
-                ),
-            keyboardActions = KeyboardActions(onDone = { component.onDoneClicked() }),
-        )
+      SignUpFormFields(component, state, focusManager, passwordVisible) {
+        passwordVisible = !passwordVisible
       }
+
+      Spacer(modifier = Modifier.height(16.dp))
+
+      SignUpPhoneRow(component, state, focusManager)
 
       Spacer(modifier = Modifier.weight(1f))
 
@@ -187,7 +106,110 @@ fun SignUpScreen(component: SignUpComponent, modifier: Modifier = Modifier) {
 }
 
 @Composable
-@ScreenPreview
-fun SignUpScreenPreview() {
+private fun SignUpFormFields(
+    component: SignUpComponent,
+    state: SignUpViewState,
+    focusManager: FocusManager,
+    passwordVisible: Boolean,
+    onTogglePasswordVisibility: () -> Unit,
+) {
+  Column {
+    Spacer(modifier = Modifier.height(16.dp))
+
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth().focusRequester(immediateFocusRequester()),
+        value = state.fullName,
+        onValueChange = component::onFullNameChanged,
+        label = { Text("Full name") },
+        singleLine = true,
+        isError = state.fieldErrors.containsKey("fullName"),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
+        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth(),
+        value = state.email,
+        onValueChange = component::onEmailChanged,
+        label = { Text("Email address") },
+        singleLine = true,
+        isError = state.fieldErrors.containsKey("email"),
+        keyboardOptions =
+            KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    OutlinedTextField(
+        value = state.password,
+        onValueChange = component::onPasswordChanged,
+        label = { Text("Password") },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        visualTransformation =
+            if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+          IconButton(onClick = onTogglePasswordVisibility) {
+            Icon(
+                if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                contentDescription = null,
+            )
+          }
+        },
+        isError = state.fieldErrors.containsKey("password"),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Next,
+            ),
+        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
+    )
+  }
+}
+
+@Composable
+private fun SignUpPhoneRow(
+    component: SignUpComponent,
+    state: SignUpViewState,
+    focusManager: FocusManager,
+) {
+  Row(verticalAlignment = Alignment.CenterVertically) {
+    OutlinedTextField(
+        value = "", // Verification code if needed
+        onValueChange = {},
+        label = { Text("Code") },
+        modifier = Modifier.width(100.dp),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) }),
+    )
+    Spacer(modifier = Modifier.width(16.dp))
+    OutlinedTextField(
+        value = state.phoneNumber,
+        onValueChange = component::onPhoneChanged,
+        label = { Text("Phone number") },
+        modifier = Modifier.weight(1f),
+        singleLine = true,
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Done,
+            ),
+        keyboardActions = KeyboardActions(onDone = { component.onDoneClicked() }),
+    )
+  }
+}
+
+@Composable
+@ScreenPreviews
+@Suppress("UnusedPrivateFunction")
+private fun SignUpScreenPreview() {
   BaseTheme { Surface { SignUpScreen(FakeSignUpComponent()) } }
 }

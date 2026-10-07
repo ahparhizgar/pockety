@@ -115,7 +115,7 @@ val localSystemThemeReflect: ProvidableCompositionLocal<Any>? by lazy {
     method.isAccessible = true
     @Suppress("UNCHECKED_CAST")
     method.invoke(null) as ProvidableCompositionLocal<Any>
-  } catch (e: Exception) {
+  } catch (_: Exception) {
     null
   }
 }
@@ -124,7 +124,7 @@ val systemThemeLightReflect: Any? by lazy {
   try {
     val clazz = Class.forName("org.jetbrains.skiko.SystemTheme")
     clazz.enumConstants.first { it.toString() == "LIGHT" || it.toString() == "Light" }
-  } catch (e: Exception) {
+  } catch (_: Exception) {
     null
   }
 }
@@ -133,7 +133,7 @@ val systemThemeDarkReflect: Any? by lazy {
   try {
     val clazz = Class.forName("org.jetbrains.skiko.SystemTheme")
     clazz.enumConstants.first { it.toString() == "DARK" || it.toString() == "Dark" }
-  } catch (e: Exception) {
+  } catch (_: Exception) {
     null
   }
 }

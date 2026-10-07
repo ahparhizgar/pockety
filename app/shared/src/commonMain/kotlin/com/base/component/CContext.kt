@@ -51,6 +51,7 @@ interface CContext : GenericComponentContext<CContext> {
   var windowSizeHolder: WindowSizeHolder
 }
 
+@Suppress("LongParameterList")
 class DefaultCContext(
     override val lifecycle: Lifecycle,
     override val stateKeeper: StateKeeper = StateKeeperDispatcher(),
@@ -137,7 +138,7 @@ class FakeStackNavigation<C : Any>(initial: C) : StackNavigation<C> {
   }
 }
 
-class NoopStackNavigation<C : Any>() : StackNavigation<C> {
+class NoopStackNavigation<C : Any> : StackNavigation<C> {
   private val _stack = mutableListOf<C>()
   val stack: List<C>
     get() = _stack

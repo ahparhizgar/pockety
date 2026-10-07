@@ -40,14 +40,14 @@ interface AuthComponent : TopLevelDestinationConfig {
 
   fun onBack() {}
 
-  sealed class Child {
-    class Welcome(val component: WelcomeComponent) : Child()
+  sealed interface Child {
+    class Welcome(val component: WelcomeComponent) : Child
 
-    class Login(val component: LoginComponent) : Child()
+    class Login(val component: LoginComponent) : Child
 
-    class SignUp(val component: SignUpComponent) : Child()
+    class SignUp(val component: SignUpComponent) : Child
 
-    class ResetPassword(val component: ResetPasswordComponent) : Child()
+    class ResetPassword(val component: ResetPasswordComponent) : Child
   }
 
   @Serializable data object Config : TopLevelDestinationConfig

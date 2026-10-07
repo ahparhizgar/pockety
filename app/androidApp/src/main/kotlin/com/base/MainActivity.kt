@@ -26,6 +26,6 @@ class MainActivity : ComponentActivity() {
 
 @Preview
 @Composable
-fun RootScreenAndroidPreview() {
+private fun RootScreenAndroidPreview() {
   RootScreen(FakeRootComponent())
 }

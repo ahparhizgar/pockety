@@ -69,7 +69,7 @@ internal fun <T> runOnUiThread(block: () -> T): T {
   SwingUtilities.invokeAndWait {
     try {
       result = block()
-    } catch (e: Throwable) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
       error = e
     }
   }

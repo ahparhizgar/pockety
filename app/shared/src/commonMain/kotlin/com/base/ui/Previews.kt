@@ -5,7 +5,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview(name = "Light", uiMode = AndroidUiModes.UI_MODE_NIGHT_NO)
 @Preview(name = "Dark", uiMode = AndroidUiModes.UI_MODE_NIGHT_YES)
-annotation class ComponentPreview
+annotation class ComponentPreviews
 
 @Preview(
     name = "Mobile Dark",
@@ -19,4 +19,4 @@ annotation class ComponentPreview
     widthDp = 1280,
     heightDp = 800,
 )
-annotation class ScreenPreview
+annotation class ScreenPreviews

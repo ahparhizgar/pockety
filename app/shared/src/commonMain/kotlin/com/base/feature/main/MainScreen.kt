@@ -9,10 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.base.ui.BaseTheme
-import com.base.ui.ScreenPreview
+import com.base.ui.ScreenPreviews
 
 @Composable
-fun MainScreen(component: MainComponent, modifier: Modifier = Modifier) {
+fun MainScreen(
+    @Suppress("UnusedParameter") component: MainComponent,
+    modifier: Modifier = Modifier,
+) {
   Surface(modifier = modifier) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -24,7 +27,8 @@ fun MainScreen(component: MainComponent, modifier: Modifier = Modifier) {
 }
 
 @Composable
-@ScreenPreview
-fun MainScreenPreview() {
+@ScreenPreviews
+@Suppress("UnusedPrivateFunction")
+private fun MainScreenPreview() {
   BaseTheme { MainScreen(FakeMainComponent()) }
 }

@@ -24,6 +24,7 @@ import androidx.window.core.layout.WindowSizeClass
     ExperimentalMaterial3AdaptiveApi::class,
     ExperimentalMaterial3ExpressiveApi::class,
 )
+@Suppress("LongParameterList")
 @Composable
 fun AdaptiveTopAppBar(
     title: @Composable () -> Unit,

@@ -51,7 +51,7 @@ data class SignUpViewState(
 )
 
 class DefaultSignUpComponent(
-    private val context: CContext,
+    context: CContext,
     private val navigation: StackNavigation<AuthConfig>,
     private val gateway: AuthApi,
     private val tokenStorage: TokenStorage,

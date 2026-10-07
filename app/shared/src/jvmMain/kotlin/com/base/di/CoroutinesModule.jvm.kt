@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
+@Suppress("InjectDispatcher")
 actual fun coroutinesModule() = module {
   factory<CoroutineDispatcher>(named("default")) { Dispatchers.Default }
   factory<CoroutineDispatcher>(named("io")) { Dispatchers.IO }

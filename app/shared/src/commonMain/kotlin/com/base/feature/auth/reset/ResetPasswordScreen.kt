@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.base.ui.BaseTheme
-import com.base.ui.ScreenPreview
+import com.base.ui.ScreenPreviews
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,46 +68,63 @@ fun ResetPasswordScreen(component: ResetPasswordComponent, modifier: Modifier = 
 
       Spacer(modifier = Modifier.height(24.dp))
 
-      TabRow(selectedTabIndex = if (state.selectedTab == ResetPasswordTab.Email) 0 else 1) {
-        Tab(
-            selected = state.selectedTab == ResetPasswordTab.Email,
-            onClick = { component.onTabChanged(ResetPasswordTab.Email) },
-        ) {
-          Text("Email", modifier = Modifier.padding(12.dp))
-        }
-        Tab(
-            selected = state.selectedTab == ResetPasswordTab.Phone,
-            onClick = { component.onTabChanged(ResetPasswordTab.Phone) },
-        ) {
-          Text("Phone number", modifier = Modifier.padding(12.dp))
-        }
-      }
-
+      ResetPasswordTabs(component, state)
       Spacer(modifier = Modifier.height(24.dp))
-
-      OutlinedTextField(
-          value = state.email,
-          onValueChange = component::onEmailChanged,
-          label = { Text("Your email address") },
-          modifier = Modifier.fillMaxWidth(),
-      )
-
-      Spacer(modifier = Modifier.height(32.dp))
-
-      Button(
-          onClick = component::onResetClicked,
-          modifier = Modifier.fillMaxWidth().height(56.dp),
-          shape = RoundedCornerShape(8.dp),
-      ) {
-        Text("Reset password", style = MaterialTheme.typography.titleMedium)
-      }
+      ResetPasswordForm(component, state)
     }
   }
 }
 
 @Composable
-@ScreenPreview
-fun ResetPasswordScreenPreview() {
+private fun ResetPasswordTabs(
+    component: ResetPasswordComponent,
+    state: ResetPasswordViewState,
+) {
+  TabRow(selectedTabIndex = if (state.selectedTab == ResetPasswordTab.Email) 0 else 1) {
+    Tab(
+        selected = state.selectedTab == ResetPasswordTab.Email,
+        onClick = { component.onTabChanged(ResetPasswordTab.Email) },
+    ) {
+      Text("Email", modifier = Modifier.padding(12.dp))
+    }
+    Tab(
+        selected = state.selectedTab == ResetPasswordTab.Phone,
+        onClick = { component.onTabChanged(ResetPasswordTab.Phone) },
+    ) {
+      Text("Phone number", modifier = Modifier.padding(12.dp))
+    }
+  }
+}
+
+@Composable
+private fun ResetPasswordForm(
+    component: ResetPasswordComponent,
+    state: ResetPasswordViewState,
+) {
+  Column {
+    OutlinedTextField(
+        value = state.email,
+        onValueChange = component::onEmailChanged,
+        label = { Text("Your email address") },
+        modifier = Modifier.fillMaxWidth(),
+    )
+
+    Spacer(modifier = Modifier.height(32.dp))
+
+    Button(
+        onClick = component::onResetClicked,
+        modifier = Modifier.fillMaxWidth().height(56.dp),
+        shape = RoundedCornerShape(8.dp),
+    ) {
+      Text("Reset password", style = MaterialTheme.typography.titleMedium)
+    }
+  }
+}
+
+@Composable
+@ScreenPreviews
+@Suppress("UnusedPrivateFunction")
+private fun ResetPasswordScreenPreview() {
   BaseTheme {
     Surface {
       ResetPasswordScreen(

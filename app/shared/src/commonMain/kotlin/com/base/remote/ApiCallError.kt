@@ -14,7 +14,7 @@ import com.ahparhizgar.katch.Unauthorized
 
 @Suppress("UNCHECKED_CAST")
 val ApiCallError.fieldErrors: Map<String, String>
-  get() = payload as? Map<String, String> ?: emptyMap()
+  get() = (payload as? Map<String, String>).orEmpty()
 
 val ApiCallError.userMessage: String
   get() {

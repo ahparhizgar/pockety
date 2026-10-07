@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
-import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -20,6 +19,10 @@ import com.base.usermessage.UserMessage.Tone.Success
 import com.base.usermessage.UserMessage.Tone.Warning
 import kotlin.math.roundToInt
 
+private const val SHAKE_REPEAT_COUNT = 3
+private const val SHAKE_OFFSET = 10f
+private const val SHAKE_DURATION_MILLIS = 80
+
 @Composable
 fun CustomSnackbar(
     snackbarData: SnackbarData,
@@ -31,29 +34,15 @@ fun CustomSnackbar(
 
   if (visuals.shouldShake) {
     LaunchedEffect(Unit) {
-      repeat(3) {
-        offsetX.animateTo(10f, tween(durationMillis = 80))
-        offsetX.animateTo(-10f, tween(durationMillis = 80))
+      repeat(SHAKE_REPEAT_COUNT) {
+        offsetX.animateTo(SHAKE_OFFSET, tween(durationMillis = SHAKE_DURATION_MILLIS))
+        offsetX.animateTo(-SHAKE_OFFSET, tween(durationMillis = SHAKE_DURATION_MILLIS))
       }
       offsetX.animateTo(0f)
     }
   }
 
   val colors = getColors(visuals.tone)
-  val actionLabel = visuals.actionLabel2?.content()
-  val data2 =
-      object : SnackbarData {
-        override val visuals: SnackbarVisuals
-          get() = visuals.copy(actionLabel = actionLabel)
-
-        override fun dismiss() {
-          snackbarData.dismiss()
-        }
-
-        override fun performAction() {
-          snackbarData.performAction()
-        }
-      }
   Snackbar(
       modifier = modifier.offset { IntOffset(offsetX.value.roundToInt(), 0) },
       snackbarData = snackbarData,

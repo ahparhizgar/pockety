@@ -10,12 +10,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
+actual fun platformModule(): Module = module {
+  single { IosAppDatabaseBuilderFactory() }.bind<AppDatabaseBuilderFactory>()
+}
+
 class IosAppDatabaseBuilderFactory : AppDatabaseBuilderFactory {
   override fun createBuilder(dataDir: DataDir): RoomDatabase.Builder<AppDatabase> {
     return Room.databaseBuilder<AppDatabase>(name = "opensplit.db").setDriver(BundledSQLiteDriver())
   }
-}
-
-actual fun platformModule(): Module = module {
-  single { IosAppDatabaseBuilderFactory() }.bind<AppDatabaseBuilderFactory>()
 }

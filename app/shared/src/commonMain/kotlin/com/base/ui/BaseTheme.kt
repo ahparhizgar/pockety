@@ -14,19 +14,6 @@ import com.base.ui.theme.extendedDark
 import com.base.ui.theme.extendedLight
 import com.base.ui.theme.lightScheme
 
-internal object ExtendedTheme {
-  val colors: ExtendedColorScheme
-    @Composable @ReadOnlyComposable get() = LocalExtendedTheme.current
-
-  val LocalExtendedTheme: ProvidableCompositionLocal<ExtendedColorScheme> =
-      staticCompositionLocalOf {
-        extendedLight
-      }
-}
-
-val MaterialTheme.colorSchemeExtended: ExtendedColorScheme
-  @Composable @ReadOnlyComposable get() = ExtendedTheme.colors
-
 @Composable
 fun BaseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -45,3 +32,16 @@ fun BaseTheme(
     )
   }
 }
+
+internal object ExtendedTheme {
+  val colors: ExtendedColorScheme
+    @Composable @ReadOnlyComposable get() = LocalExtendedTheme.current
+
+  val LocalExtendedTheme: ProvidableCompositionLocal<ExtendedColorScheme> =
+      staticCompositionLocalOf {
+        extendedLight
+      }
+}
+
+val MaterialTheme.colorSchemeExtended: ExtendedColorScheme
+  @Composable @ReadOnlyComposable get() = ExtendedTheme.colors

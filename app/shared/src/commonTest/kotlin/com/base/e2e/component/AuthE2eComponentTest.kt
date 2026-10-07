@@ -15,7 +15,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.types.shouldBeInstanceOf
 
-class E2EAuthTest : BehaviorSpec() {
+class AuthE2eComponentTest : BehaviorSpec() {
   init {
     extensions(MainDispatcherExtension())
     Given("app opens for first time") {

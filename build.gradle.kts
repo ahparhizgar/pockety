@@ -58,9 +58,7 @@ tasks.register("detektMain") {
 subprojects {
   apply(plugin = "dev.detekt")
 
-  dependencies {
-    "detektPlugins"(rootProject.libs.detekt.composeRules)
-  }
+  dependencies { "detektPlugins"(rootProject.libs.detekt.composeRules) }
 
   extensions.configure<DetektExtension> {
     buildUponDefaultConfig = true

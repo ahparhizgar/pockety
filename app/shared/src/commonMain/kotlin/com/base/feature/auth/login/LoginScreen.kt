@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
@@ -48,7 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.base.ui.BaseTheme
-import com.base.ui.ScreenPreview
+import com.base.ui.ScreenPreviews
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -80,57 +81,9 @@ fun LoginScreen(component: LoginComponent, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.Start,
     ) {
       Spacer(modifier = Modifier.height(32.dp))
-
-      OutlinedTextField(
-          modifier = Modifier.fillMaxWidth().focusRequester(immediateFocusRequester()),
-          value = state.email,
-          onValueChange = component::onEmailChanged,
-          label = { Text("Email address") },
-          singleLine = true,
-          isError = state.fieldErrors.containsKey("email"),
-          keyboardOptions =
-              KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-          keyboardActions =
-              KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-      )
-      state.fieldErrors["email"]?.let {
-        Text(
-            it,
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodySmall,
-        )
-      }
-
+      LoginEmailField(component, state, focusManager)
       Spacer(modifier = Modifier.height(16.dp))
-
-      OutlinedTextField(
-          value = state.password,
-          onValueChange = component::onPasswordChanged,
-          label = { Text("Password") },
-          modifier = Modifier.fillMaxWidth(),
-          singleLine = true,
-          visualTransformation =
-              if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-          trailingIcon = {
-            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-              Icon(
-                  if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                  contentDescription = null,
-              )
-            }
-          },
-          isError = state.fieldErrors.containsKey("password"),
-          keyboardOptions =
-              KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-          keyboardActions = KeyboardActions(onDone = { component.onLoginClicked() }),
-      )
-      state.fieldErrors["password"]?.let {
-        Text(
-            it,
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodySmall,
-        )
-      }
+      LoginPasswordField(component, state, passwordVisible) { passwordVisible = !passwordVisible }
 
       state.generalError?.let {
         Spacer(modifier = Modifier.height(8.dp))
@@ -156,8 +109,76 @@ fun LoginScreen(component: LoginComponent, modifier: Modifier = Modifier) {
 }
 
 @Composable
-@ScreenPreview
-fun LoginScreenPreview() {
+private fun LoginEmailField(
+    component: LoginComponent,
+    state: LoginViewState,
+    focusManager: FocusManager,
+) {
+  Column {
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth().focusRequester(immediateFocusRequester()),
+        value = state.email,
+        onValueChange = component::onEmailChanged,
+        label = { Text("Email address") },
+        singleLine = true,
+        isError = state.fieldErrors.containsKey("email"),
+        keyboardOptions =
+            KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+    )
+    state.fieldErrors["email"]?.let {
+      Text(
+          it,
+          color = MaterialTheme.colorScheme.error,
+          style = MaterialTheme.typography.bodySmall,
+      )
+    }
+  }
+}
+
+@Composable
+private fun LoginPasswordField(
+    component: LoginComponent,
+    state: LoginViewState,
+    passwordVisible: Boolean,
+    onTogglePasswordVisibility: () -> Unit,
+) {
+  Column {
+    OutlinedTextField(
+        value = state.password,
+        onValueChange = component::onPasswordChanged,
+        label = { Text("Password") },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        visualTransformation =
+            if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+          IconButton(onClick = onTogglePasswordVisibility) {
+            Icon(
+                if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                contentDescription = null,
+            )
+          }
+        },
+        isError = state.fieldErrors.containsKey("password"),
+        keyboardOptions =
+            KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { component.onLoginClicked() }),
+    )
+    state.fieldErrors["password"]?.let {
+      Text(
+          it,
+          color = MaterialTheme.colorScheme.error,
+          style = MaterialTheme.typography.bodySmall,
+      )
+    }
+  }
+}
+
+@Composable
+@ScreenPreviews
+@Suppress("UnusedPrivateFunction")
+private fun LoginScreenPreview() {
   BaseTheme {
     Surface {
       LoginScreen(

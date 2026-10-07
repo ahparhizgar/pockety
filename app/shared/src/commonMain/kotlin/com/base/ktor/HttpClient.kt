@@ -42,7 +42,7 @@ fun createHttpClient(tokenStorage: TokenStorage): HttpClient = HttpClient {
   install(Auth) {
     bearer {
       cacheTokens = false
-      loadTokens { BearerTokens(tokenStorage.getAccessToken() ?: "", "") }
+      loadTokens { BearerTokens(tokenStorage.getAccessToken().orEmpty(), "") }
     }
   }
 

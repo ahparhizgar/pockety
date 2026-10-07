@@ -11,6 +11,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
+actual fun platformModule(): Module = module {
+  single { JvmAppDatabaseBuilderFactory() }.bind<AppDatabaseBuilderFactory>()
+}
+
 class JvmAppDatabaseBuilderFactory : AppDatabaseBuilderFactory {
   override fun createBuilder(dataDir: DataDir): RoomDatabase.Builder<AppDatabase> {
     val builder =
@@ -21,8 +25,4 @@ class JvmAppDatabaseBuilderFactory : AppDatabaseBuilderFactory {
         }
     return builder.setDriver(BundledSQLiteDriver())
   }
-}
-
-actual fun platformModule(): Module = module {
-  single { JvmAppDatabaseBuilderFactory() }.bind<AppDatabaseBuilderFactory>()
 }

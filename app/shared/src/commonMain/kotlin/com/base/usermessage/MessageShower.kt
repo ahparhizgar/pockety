@@ -49,19 +49,21 @@ class MessageHolder : MessageShower {
                   log("waiting for message")
                   messages.receive()
                 }
+        val currentMessage =
+            checkNotNull(message) { "Message request is required before processing snackbar." }
         var a: Deferred<Unit>? = null
         val jobScope =
             CoroutineScope(
                 currentCoroutineContext() +
-                    if (message.job != null) message.job else EmptyCoroutineContext
+                    if (currentMessage.job != null) currentMessage.job else EmptyCoroutineContext
             )
         val worker =
             jobScope.launch(start = CoroutineStart.UNDISPATCHED) {
               try {
-                log("Showing message ${message!!.input.message}")
-                val result = block(message!!.input)
-                message!!.response.complete(result)
-                log("Message completed: ${message!!.input.message}")
+                log("Showing message ${currentMessage.input.message}")
+                val result = block(currentMessage.input)
+                currentMessage.response.complete(result)
+                log("Message completed: ${currentMessage.input.message}")
                 a?.cancel()
               } catch (e: CancellationException) {
                 a?.cancelAndJoin()
@@ -75,10 +77,10 @@ class MessageHolder : MessageShower {
         a =
             async(start = CoroutineStart.UNDISPATCHED) {
               val next = messages.receive()
-              if (next.input.message == message!!.input.message) {
+              if (next.input.message == currentMessage.input.message) {
                 log("cancelling previous message")
                 try {
-                  message!!.response.cancel(CancellationException("Cancelled by next message"))
+                  currentMessage.response.cancel(CancellationException("Cancelled by next message"))
                   worker.cancelAndJoin()
                 } finally {
                   log("messages becomes next")
@@ -100,6 +102,6 @@ data class Request(
     val job: Job?,
 )
 
-fun log(s: String) {
+fun log(@Suppress("UnusedParameter") s: String) {
   //  println("LOG: $s")
 }

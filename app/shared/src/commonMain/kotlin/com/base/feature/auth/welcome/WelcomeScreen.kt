@@ -26,90 +26,102 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.base.ui.BaseTheme
-import com.base.ui.ScreenPreview
+import com.base.ui.ScreenPreviews
 
 @Composable
 fun WelcomeScreen(component: WelcomeComponent, modifier: Modifier = Modifier) {
-  Surface {
+  Surface(modifier = modifier) {
     Column(
-        modifier = modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       Spacer(modifier = Modifier.weight(1f))
-
-      // Logo Placeholder
-      Box(contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-          Box(
-              modifier =
-                  Modifier.size(80.dp)
-                      .background(
-                          MaterialTheme.colorScheme.primary,
-                          RoundedCornerShape(12.dp),
-                      )
-          )
-          Spacer(modifier = Modifier.height(16.dp))
-          Text(
-              "OpenSplit",
-              fontWeight = FontWeight.Bold,
-              style = MaterialTheme.typography.headlineSmall,
-          )
-        }
-      }
-
+      WelcomeHeader()
       Spacer(modifier = Modifier.weight(1f))
-
-      Button(
-          modifier = Modifier.fillMaxWidth().height(56.dp),
-          onClick = component::onSignUpClicked,
-          shape = RoundedCornerShape(8.dp),
-      ) {
-        Text("Sign up", style = MaterialTheme.typography.titleMedium)
-      }
-
-      Spacer(modifier = Modifier.height(12.dp))
-
-      OutlinedButton(
-          modifier = Modifier.fillMaxWidth().height(56.dp).testTag("welcome-login-button"),
-          onClick = component::onLoginClicked,
-          shape = RoundedCornerShape(8.dp),
-      ) {
-        Text("Log in", style = MaterialTheme.typography.titleMedium)
-      }
-
+      WelcomeActions(component)
       Spacer(modifier = Modifier.height(48.dp))
-
-      Row(
-          modifier = Modifier.padding(bottom = 16.dp),
-          horizontalArrangement = Arrangement.Center,
-      ) {
-        Text(
-            modifier = Modifier.clickable {},
-            text = "Terms",
-            style = MaterialTheme.typography.bodySmall,
-            textDecoration = TextDecoration.Underline,
-        )
-        Text(" | ", style = MaterialTheme.typography.bodySmall)
-        Text(
-            modifier = Modifier.clickable {},
-            text = "Privacy Policy",
-            style = MaterialTheme.typography.bodySmall,
-            textDecoration = TextDecoration.Underline,
-        )
-        Text(" | ", style = MaterialTheme.typography.bodySmall)
-        Text(
-            modifier = Modifier.clickable {},
-            text = "Contact us",
-            style = MaterialTheme.typography.bodySmall,
-            textDecoration = TextDecoration.Underline,
-        )
-      }
+      WelcomeFooter()
     }
   }
 }
 
 @Composable
-@ScreenPreview
-fun WelcomeScreenPreview() {
+private fun WelcomeHeader() {
+  Box(contentAlignment = Alignment.Center) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+      Box(
+          modifier =
+              Modifier.size(80.dp)
+                  .background(
+                      MaterialTheme.colorScheme.primary,
+                      RoundedCornerShape(12.dp),
+                  )
+      )
+      Spacer(modifier = Modifier.height(16.dp))
+      Text(
+          "OpenSplit",
+          fontWeight = FontWeight.Bold,
+          style = MaterialTheme.typography.headlineSmall,
+      )
+    }
+  }
+}
+
+@Composable
+private fun WelcomeActions(component: WelcomeComponent) {
+  Column {
+    Button(
+        modifier = Modifier.fillMaxWidth().height(56.dp),
+        onClick = component::onSignUpClicked,
+        shape = RoundedCornerShape(8.dp),
+    ) {
+      Text("Sign up", style = MaterialTheme.typography.titleMedium)
+    }
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+    OutlinedButton(
+        modifier = Modifier.fillMaxWidth().height(56.dp).testTag("welcome-login-button"),
+        onClick = component::onLoginClicked,
+        shape = RoundedCornerShape(8.dp),
+    ) {
+      Text("Log in", style = MaterialTheme.typography.titleMedium)
+    }
+  }
+}
+
+@Composable
+private fun WelcomeFooter() {
+  Row(
+      modifier = Modifier.padding(bottom = 16.dp),
+      horizontalArrangement = Arrangement.Center,
+  ) {
+    Text(
+        modifier = Modifier.clickable {},
+        text = "Terms",
+        style = MaterialTheme.typography.bodySmall,
+        textDecoration = TextDecoration.Underline,
+    )
+    Text(" | ", style = MaterialTheme.typography.bodySmall)
+    Text(
+        modifier = Modifier.clickable {},
+        text = "Privacy Policy",
+        style = MaterialTheme.typography.bodySmall,
+        textDecoration = TextDecoration.Underline,
+    )
+    Text(" | ", style = MaterialTheme.typography.bodySmall)
+    Text(
+        modifier = Modifier.clickable {},
+        text = "Contact us",
+        style = MaterialTheme.typography.bodySmall,
+        textDecoration = TextDecoration.Underline,
+    )
+  }
+}
+
+@Composable
+@ScreenPreviews
+@Suppress("UnusedPrivateFunction")
+private fun WelcomeScreenPreview() {
   BaseTheme { Surface { WelcomeScreen(FakeWelcomeComponent()) } }
 }
