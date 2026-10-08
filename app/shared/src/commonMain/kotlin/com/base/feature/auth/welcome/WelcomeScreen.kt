@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 
 @Composable
@@ -123,5 +122,5 @@ private fun WelcomeFooter() {
 @ScreenPreviews
 @Suppress("UnusedPrivateFunction")
 private fun WelcomeScreenPreview() {
-  BaseTheme { Surface { WelcomeScreen(FakeWelcomeComponent()) } }
+  Surface { WelcomeScreen(FakeWelcomeComponent()) }
 }

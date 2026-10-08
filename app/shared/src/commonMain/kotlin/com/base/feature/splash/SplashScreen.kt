@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.base.feature.root.TopLevelDestinationConfig
-import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 
 @Composable
@@ -33,5 +32,5 @@ data object SplashDestination : TopLevelDestinationConfig
 @Composable
 @Suppress("UnusedPrivateFunction")
 private fun SplashScreenPreview() {
-  BaseTheme { SplashScreen() }
+  SplashScreen()
 }

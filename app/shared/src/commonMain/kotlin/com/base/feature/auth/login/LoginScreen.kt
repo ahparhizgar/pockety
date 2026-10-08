@@ -48,7 +48,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -179,12 +178,10 @@ private fun LoginPasswordField(
 @ScreenPreviews
 @Suppress("UnusedPrivateFunction")
 private fun LoginScreenPreview() {
-  BaseTheme {
-    Surface {
-      LoginScreen(
-          FakeLoginComponent(),
-      )
-    }
+  Surface {
+    LoginScreen(
+        FakeLoginComponent(),
+    )
   }
 }
 

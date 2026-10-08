@@ -47,7 +47,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.base.feature.auth.login.immediateFocusRequester
-import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -211,5 +210,5 @@ private fun SignUpPhoneRow(
 @ScreenPreviews
 @Suppress("UnusedPrivateFunction")
 private fun SignUpScreenPreview() {
-  BaseTheme { Surface { SignUpScreen(FakeSignUpComponent()) } }
+  Surface { SignUpScreen(FakeSignUpComponent()) }
 }

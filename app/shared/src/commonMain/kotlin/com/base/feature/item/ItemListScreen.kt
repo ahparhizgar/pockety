@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.dto.FakeItemDtoFactory
 import com.base.dto.ItemDto
-import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.AdaptiveTopAppBar
 
@@ -142,37 +141,31 @@ private fun ItemRow(item: ItemDto) {
 @ScreenPreviews
 @Suppress("UnusedPrivateFunction")
 private fun ItemListScreenPreview() {
-  BaseTheme {
-    ItemListScreen(
-        FakeItemListComponent(
-            initialState = ItemListState(items = FakeItemDtoFactory.createList(3)),
-        ),
-    )
-  }
+  ItemListScreen(
+      FakeItemListComponent(
+          initialState = ItemListState(items = FakeItemDtoFactory.createList(3)),
+      ),
+  )
 }
 
 @Composable
 @ScreenPreviews
 @Suppress("UnusedPrivateFunction")
 private fun ItemListScreenLoadingPreview() {
-  BaseTheme {
-    ItemListScreen(
-        FakeItemListComponent(
-            initialState = ItemListState(isLoading = true),
-        ),
-    )
-  }
+  ItemListScreen(
+      FakeItemListComponent(
+          initialState = ItemListState(isLoading = true),
+      ),
+  )
 }
 
 @Composable
 @ScreenPreviews
 @Suppress("UnusedPrivateFunction")
 private fun ItemListScreenEmptyPreview() {
-  BaseTheme {
-    ItemListScreen(
-        FakeItemListComponent(
-            initialState = ItemListState(items = emptyList()),
-        ),
-    )
-  }
+  ItemListScreen(
+      FakeItemListComponent(
+          initialState = ItemListState(items = emptyList()),
+      ),
+  )
 }
