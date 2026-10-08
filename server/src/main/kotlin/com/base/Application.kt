@@ -2,6 +2,7 @@ package com.base
 
 import com.base.database.DatabaseInitializer
 import com.base.feature.auth.authModule
+import com.base.feature.item.itemRoutes
 import com.base.plugins.configureDependencies
 import com.base.plugins.configureHTTP
 import com.base.plugins.configureSecurity
@@ -26,4 +27,5 @@ fun Application.openSplit(isTest: Boolean = false) {
   initializer.init()
 
   authModule()
+  itemRoutes()
 }

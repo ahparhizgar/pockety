@@ -1,5 +1,6 @@
 package com.base.util
 
+import com.base.database.Items
 import com.base.database.Users
 import com.base.openSplit
 import io.kotest.core.spec.style.BehaviorSpec
@@ -60,5 +61,8 @@ abstract class KtorBehaviorSpec(body: KtorBehaviorSpec.() -> Unit = {}) :
 }
 
 fun resetDatabase() {
-  transaction { Users.deleteAll() }
+  transaction {
+    Users.deleteAll()
+    Items.deleteAll()
+  }
 }

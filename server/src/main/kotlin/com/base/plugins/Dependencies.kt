@@ -7,6 +7,7 @@ import com.base.database.connectDatabase
 import com.base.database.createHikariDataSource
 import com.base.feature.auth.authKoinModule
 import com.base.feature.auth.testAuthKoinModule
+import com.base.feature.item.itemKoinModule
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import org.koin.dsl.module
@@ -35,6 +36,7 @@ fun Application.configureDependencies(isTest: Boolean) {
           single { DatabaseInitializer(get()) }
         },
         authKoinModule(),
+        itemKoinModule(),
     )
     if (isTest) {
       modules(testAuthKoinModule())

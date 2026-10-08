@@ -43,9 +43,9 @@ class DelegatingPreview(
     }
   }
 
-    override fun toString(): String {
-        return delegate.methodName
-    }
+  override fun toString(): String {
+    return delegate.methodName
+  }
 }
 
 @RunWith(Parameterized::class)

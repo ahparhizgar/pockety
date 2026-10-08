@@ -10,6 +10,7 @@ class DatabaseInitializer(private val database: Database) {
       val statements =
           MigrationUtils.statementsRequiredForDatabaseMigration(
               Users,
+              Items,
               withLogs = true,
           )
 

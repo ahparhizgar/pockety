@@ -50,6 +50,7 @@ fun integrationTestModule() = module {
   }
   single { FakeAuthApi() }.bind<AuthApi>()
   single { FakeTokenStorage() }.bind<TokenStorage>()
+  single { com.base.feature.item.FakeItemApi() }.bind<com.base.feature.item.ItemApi>()
 
   // Everything is overridden to Main. Main should be set to StandardTestDispatcher.
   factory<CoroutineDispatcher>(named("default")) { Dispatchers.Main }

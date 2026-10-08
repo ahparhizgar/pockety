@@ -6,6 +6,8 @@ import com.base.db.AppDatabaseBuilderFactory
 import com.base.db.getRoomDatabase
 import com.base.feature.auth.AuthApi
 import com.base.feature.auth.KtorAuthApi
+import com.base.feature.item.ItemApi
+import com.base.feature.item.KtorItemApi
 import com.base.ktor.createHttpClient
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +26,7 @@ fun othersModule() = module {
   factoryOf(::createHttpClient)
   singleOf(::createDataStore)
   factoryOf(::KtorAuthApi).bind<AuthApi>()
+  factoryOf(::KtorItemApi).bind<ItemApi>()
   single { CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>(named("default"))) }
 
   single {

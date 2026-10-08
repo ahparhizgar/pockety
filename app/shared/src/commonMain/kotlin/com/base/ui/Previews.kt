@@ -14,8 +14,12 @@ annotation class ComponentPreviews
     heightDp = 844,
 )
 @Preview(
-    name = "Desktop Light",
-    uiMode = AndroidUiModes.UI_MODE_NIGHT_NO,
+    name = "Mobile Landscape",
+    widthDp = 844,
+    heightDp = 390,
+)
+@Preview(
+    name = "Desktop",
     widthDp = 1280,
     heightDp = 800,
 )
