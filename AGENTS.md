@@ -79,8 +79,6 @@ Always use `timestamp("name")` instead of `long("name")` for timestamp columns.
 # Using Git
 Commit messages start with upper-case verb like: Fix Add Implement
 
----
-
 Project "big picture" (what talks to what)
 - Modules:
   - `server` — Ktor backend (main class `ApplicationKt`) configured in `server/build.gradle.kts`. Uses Exposed + Hikari + PostgreSQL (or H2 for tests).
@@ -90,5 +88,5 @@ Project "big picture" (what talks to what)
 
 Run verification gate after finishing a task:
 ```bash
-unset ANDROID_PREFS_ROOT; ./gradlew jvmTest test ktfmtFormat --offline --continue 2>&1 | grep -E "e: |FAILED"
+unset ANDROID_PREFS_ROOT; ./gradlew jvmTest test ktfmtFormat -Proborazzi.test.compare=true --offline --continue 2>&1 | grep -E "e: |FAILED"
 ```
