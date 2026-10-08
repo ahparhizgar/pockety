@@ -4,8 +4,6 @@ import com.base.feature.auth.AuthComponentFactory
 import com.base.feature.auth.DefaultAuthComponentFactory
 import com.base.feature.auth.login.DefaultLoginComponentFactory
 import com.base.feature.auth.login.LoginComponentFactory
-import com.base.feature.auth.reset.DefaultResetPasswordComponentFactory
-import com.base.feature.auth.reset.ResetPasswordComponentFactory
 import com.base.feature.auth.signup.DefaultSignUpComponentFactory
 import com.base.feature.auth.signup.SignUpComponentFactory
 import com.base.feature.auth.welcome.DefaultWelcomeComponentFactory
@@ -29,7 +27,6 @@ fun decomposeModule() = module {
   factoryOf(::DefaultWelcomeComponentFactory).bind<WelcomeComponentFactory>()
   factoryOf(::DefaultLoginComponentFactory).bind<LoginComponentFactory>()
   factoryOf(::DefaultSignUpComponentFactory).bind<SignUpComponentFactory>()
-  factoryOf(::DefaultResetPasswordComponentFactory).bind<ResetPasswordComponentFactory>()
   factoryOf(::DefaultMainComponentFactory).bind<MainComponentFactory>()
   factoryOf(::DefaultItemListComponentFactory).bind<ItemListComponentFactory>()
 }

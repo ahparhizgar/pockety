@@ -16,9 +16,6 @@ fun AuthComponent.assertSignUp() =
 fun AuthComponent.assertLogin() =
     activeInstance().shouldBeInstanceOf<AuthComponent.Child.Login>().component
 
-fun AuthComponent.assertResetPassword() =
-    activeInstance().shouldBeInstanceOf<AuthComponent.Child.ResetPassword>().component
-
 private fun RootComponent.activeInstance(): Any = childStack.value.active.instance
 
 fun RootComponent.assertSplash() = activeInstance().shouldBeInstanceOf<SplashDestination>()

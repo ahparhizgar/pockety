@@ -12,8 +12,6 @@ import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.component.CContext
 import com.base.feature.auth.login.LoginComponent
 import com.base.feature.auth.login.LoginComponentFactory
-import com.base.feature.auth.reset.ResetPasswordComponent
-import com.base.feature.auth.reset.ResetPasswordComponentFactory
 import com.base.feature.auth.signup.SignUpComponent
 import com.base.feature.auth.signup.SignUpComponentFactory
 import com.base.feature.auth.welcome.FakeWelcomeComponent
@@ -30,8 +28,6 @@ sealed interface AuthConfig {
   @Serializable data object Login : AuthConfig
 
   @Serializable data object SignUp : AuthConfig
-
-  @Serializable data object ResetPassword : AuthConfig
 }
 
 interface AuthComponent : TopLevelDestinationConfig {
@@ -46,8 +42,6 @@ interface AuthComponent : TopLevelDestinationConfig {
     class Login(val component: LoginComponent) : Child
 
     class SignUp(val component: SignUpComponent) : Child
-
-    class ResetPassword(val component: ResetPasswordComponent) : Child
   }
 
   @Serializable data object Config : TopLevelDestinationConfig
@@ -62,7 +56,6 @@ class DefaultAuthComponent(
     private val welcomeFactory: WelcomeComponentFactory,
     private val loginFactory: LoginComponentFactory,
     private val signUpFactory: SignUpComponentFactory,
-    private val resetPasswordFactory: ResetPasswordComponentFactory,
 ) : AuthComponent, CContext by context {
 
   private val authNavigation = StackNavigation<AuthConfig>()
@@ -88,8 +81,6 @@ class DefaultAuthComponent(
           AuthComponent.Child.Login(loginFactory.create(context, authNavigation, ::onAuthenticated))
       AuthConfig.SignUp ->
           AuthComponent.Child.SignUp(signUpFactory.create(context, ::onAuthenticated, ::onBack))
-      AuthConfig.ResetPassword ->
-          AuthComponent.Child.ResetPassword(resetPasswordFactory.create(authNavigation))
     }
   }
 
@@ -102,7 +93,6 @@ class DefaultAuthComponentFactory(
     private val welcomeFactory: WelcomeComponentFactory,
     private val loginFactory: LoginComponentFactory,
     private val signUpFactory: SignUpComponentFactory,
-    private val resetPasswordFactory: ResetPasswordComponentFactory,
 ) : AuthComponentFactory {
   override fun create(cContext: CContext): AuthComponent =
       DefaultAuthComponent(
@@ -110,7 +100,6 @@ class DefaultAuthComponentFactory(
           welcomeFactory,
           loginFactory,
           signUpFactory,
-          resetPasswordFactory,
       )
 }
 

@@ -11,7 +11,6 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.base.feature.auth.login.LoginScreen
-import com.base.feature.auth.reset.ResetPasswordScreen
 import com.base.feature.auth.signup.SignUpScreen
 import com.base.feature.auth.welcome.WelcomeScreen
 
@@ -41,11 +40,6 @@ fun AuthRootScreen(
           LoginScreen(component = child.component, modifier = Modifier.testTag("login-screen"))
       is AuthComponent.Child.SignUp ->
           SignUpScreen(component = child.component, modifier = Modifier.testTag("sign-up-screen"))
-      is AuthComponent.Child.ResetPassword ->
-          ResetPasswordScreen(
-              component = child.component,
-              modifier = Modifier.testTag("reset-password-screen"),
-          )
     }
   }
 }

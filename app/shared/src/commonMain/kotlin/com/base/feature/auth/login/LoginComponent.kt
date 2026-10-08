@@ -3,7 +3,6 @@ package com.base.feature.auth.login
 import com.ahparhizgar.katch.ClientError
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.pushNew
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.feature.auth.AuthApi
@@ -24,8 +23,6 @@ interface LoginComponent {
   fun onPasswordChanged(password: String)
 
   fun onLoginClicked()
-
-  fun onForgotPasswordClicked()
 
   fun onBackClicked()
 }
@@ -94,10 +91,6 @@ class DefaultLoginComponent(
     }
   }
 
-  override fun onForgotPasswordClicked() {
-    navigation.pushNew(AuthConfig.ResetPassword)
-  }
-
   override fun onBackClicked() {
     navigation.pop()
   }
@@ -129,8 +122,6 @@ class FakeLoginComponent(state: LoginViewState = LoginViewState()) : LoginCompon
   override fun onPasswordChanged(password: String) {}
 
   override fun onLoginClicked() {}
-
-  override fun onForgotPasswordClicked() {}
 
   override fun onBackClicked() {}
 }
