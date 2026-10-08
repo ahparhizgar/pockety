@@ -120,7 +120,6 @@ private fun WelcomeFooter() {
 
 @Composable
 @ScreenPreviews
-@Suppress("UnusedPrivateFunction")
 private fun WelcomeScreenPreview() {
   Surface { WelcomeScreen(FakeWelcomeComponent()) }
 }

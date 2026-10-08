@@ -18,7 +18,6 @@ fun MainScreen(
 
 @Composable
 @ScreenPreviews
-@Suppress("UnusedPrivateFunction")
 private fun MainScreenPreview() {
   MainScreen(FakeMainComponent())
 }

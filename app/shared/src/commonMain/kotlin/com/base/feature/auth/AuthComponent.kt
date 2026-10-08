@@ -1,5 +1,6 @@
 package com.base.feature.auth
 
+import com.arkivanov.decompose.Child
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
@@ -108,7 +109,7 @@ class FakeAuthComponent(
         MutableValue(
             ChildStack(
                 active =
-                    com.arkivanov.decompose.Child.Created(
+                    Child.Created(
                         AuthConfig.Welcome,
                         AuthComponent.Child.Welcome(FakeWelcomeComponent()),
                     ),

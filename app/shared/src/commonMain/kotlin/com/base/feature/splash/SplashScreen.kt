@@ -30,7 +30,6 @@ data object SplashDestination : TopLevelDestinationConfig
 
 @ScreenPreviews
 @Composable
-@Suppress("UnusedPrivateFunction")
 private fun SplashScreenPreview() {
   SplashScreen()
 }

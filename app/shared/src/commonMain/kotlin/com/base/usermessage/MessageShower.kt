@@ -1,6 +1,5 @@
 package com.base.usermessage
 
-import androidx.compose.material3.SnackbarResult
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
@@ -43,11 +42,7 @@ class MessageHolder : MessageShower {
     coroutineScope {
       var message: Request? = null
       while (true) {
-        message =
-            message
-                ?: run {
-                  messages.receive()
-                }
+        message = message ?: run { messages.receive() }
         val currentMessage =
             checkNotNull(message) { "Message request is required before processing snackbar." }
         var a: Deferred<Unit>? = null
@@ -73,7 +68,7 @@ class MessageHolder : MessageShower {
         a =
             async(start = CoroutineStart.UNDISPATCHED) {
               val next = messages.receive()
-              if (next.input.message == currentMessage.input.message) {
+              if (next.input.content == currentMessage.input.content) {
                 try {
                   currentMessage.response.cancel(CancellationException("Cancelled by next message"))
                   worker.cancelAndJoin()

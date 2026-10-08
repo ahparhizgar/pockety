@@ -176,7 +176,6 @@ private fun LoginPasswordField(
 
 @Composable
 @ScreenPreviews
-@Suppress("UnusedPrivateFunction")
 private fun LoginScreenPreview() {
   Surface {
     LoginScreen(
@@ -185,6 +184,7 @@ private fun LoginScreenPreview() {
   }
 }
 
+@Suppress("UnnecessaryLaunchedEffect")
 @Composable
 fun immediateFocusRequester(): FocusRequester {
   val r = remember { FocusRequester() }

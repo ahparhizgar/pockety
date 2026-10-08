@@ -2,8 +2,6 @@ package com.base
 
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +27,8 @@ import com.base.feature.splash.SplashScreen
 import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 import com.base.usermessage.CustomSnackbar
+import com.base.usermessage.SnackbarHost
+import com.base.usermessage.SnackbarHostState
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
@@ -86,7 +86,6 @@ fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
 
 @ScreenPreviews
 @Composable
-@Suppress("UnusedPrivateFunction")
 private fun Preview() {
   RootScreen(FakeRootComponent())
 }

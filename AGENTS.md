@@ -164,9 +164,33 @@ fun loadItems() = scope.launch {
 
 Run verification gate after finishing a task:
 
+## Level 1: compilation
+
 ```bash
-unset ANDROID_PREFS_ROOT; ./gradlew jvmTest test ktfmtFormat -Proborazzi.test.compare=true --offline --continue 2>&1 | grep -E "e: |FAILED"
+unset ANDROID_PREFS_ROOT; ./gradlew compileKotlinJvm compileKotlin --offline --continue 2>&1 | grep -E "e: |FAILED"
 ```
+
+## Level 2: tests
+
+Run often.
+
+```bash
+unset ANDROID_PREFS_ROOT; ./gradlew jvmTest test --offline --continue 2>&1 | grep -E "e: |FAILED"
+```
+
+## Level 3: Detekt:
+
+`./gradlew :detektMain`
+
+## Level 4: Ktfmt:
+
+Run after all code changes are done.  
+`./gradlew ktfmtFormat`
+
+## Level 5: Screenshot testing
+
+Run only if you touched UI.  
+`./gradlew jvmTest -Proborazzi.test.compare=true`
 
 GEMINI: use `run_shell_command` tool ./gradlew instead of `gradle_build` tool call. this prevents
 blocking by an already running Gradle task in the IDE. So always use run_shell_command tool.

@@ -673,6 +673,7 @@ style:
     maxJumpCount: 1
   MagicNumber:
     active: true
+    ignoreAnnotated: ['Preview', 'ComponentPreviews', 'ScreenPreviews', 'FakeFactory', 'Fake']
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**', '**/*.kts']
     ignoreNumbers:
       - '-1'
@@ -783,7 +784,7 @@ style:
   UnnecessaryFilter:
     active: true
   UnnecessaryFullyQualifiedName:
-    active: false
+    active: true
     ignoredFullyQualifiedNames: []
   UnnecessaryInheritance:
     active: true

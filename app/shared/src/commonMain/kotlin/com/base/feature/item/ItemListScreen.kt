@@ -37,8 +37,6 @@ fun ItemListScreen(
     component: ItemListComponent,
     modifier: Modifier = Modifier,
 ) {
-  val state by component.state.subscribeAsState()
-
   Scaffold(
       modifier = modifier,
       topBar = {
@@ -59,62 +57,74 @@ fun ItemListScreen(
             modifier = Modifier.fillMaxSize().widthIn(max = 840.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-          when {
-            state.isLoading -> {
-              Box(
-                  modifier = Modifier.fillMaxSize(),
-                  contentAlignment = Alignment.Center,
-              ) {
-                CircularProgressIndicator(modifier = Modifier.testTag("loading-indicator"))
-              }
-            }
+          ItemListContent(component = component)
+        }
+      }
+    }
+  }
+}
 
-            state.errorMessage != null -> {
-              Column(
-                  modifier = Modifier.fillMaxSize().padding(16.dp),
-                  horizontalAlignment = Alignment.CenterHorizontally,
-                  verticalArrangement = Arrangement.Center,
-              ) {
-                Text(
-                    text = state.errorMessage?.content() ?: "",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = { component.loadItems() },
-                    modifier = Modifier.testTag("retry-button"),
-                ) {
-                  Text("Retry")
-                }
-              }
-            }
+@Composable
+private fun ItemListContent(
+    component: ItemListComponent,
+    modifier: Modifier = Modifier,
+) {
+  val state by component.state.subscribeAsState()
 
-            state.items.isEmpty() -> {
-              Box(
-                  modifier = Modifier.fillMaxSize(),
-                  contentAlignment = Alignment.Center,
-              ) {
-                Text(
-                    text = "No items available",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-              }
-            }
+  Box(modifier = modifier.fillMaxSize()) {
+    when {
+      state.isLoading -> {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+          CircularProgressIndicator(modifier = Modifier.testTag("loading-indicator"))
+        }
+      }
 
-            else -> {
-              LazyVerticalGrid(
-                  columns = GridCells.Adaptive(minSize = 240.dp),
-                  modifier = Modifier.fillMaxSize().testTag("item-list"),
-                  contentPadding = PaddingValues(16.dp),
-                  horizontalArrangement = Arrangement.spacedBy(8.dp),
-                  verticalArrangement = Arrangement.spacedBy(8.dp),
-              ) {
-                items(state.items, key = { it.id }) { item -> ItemRow(item = item) }
-              }
-            }
+      state.errorMessage != null -> {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+          Text(
+              text = state.errorMessage?.content().orEmpty(),
+              color = MaterialTheme.colorScheme.error,
+              style = MaterialTheme.typography.bodyLarge,
+          )
+          Spacer(modifier = Modifier.height(16.dp))
+          Button(
+              onClick = { component.loadItems() },
+              modifier = Modifier.testTag("retry-button"),
+          ) {
+            Text("Retry")
           }
+        }
+      }
+
+      state.items.isEmpty() -> {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+          Text(
+              text = "No items available",
+              style = MaterialTheme.typography.bodyLarge,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+      }
+
+      else -> {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 240.dp),
+            modifier = Modifier.fillMaxSize().testTag("item-list"),
+            contentPadding = PaddingValues(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+          items(state.items, key = { it.id }) { item -> ItemRow(item = item) }
         }
       }
     }
@@ -139,7 +149,6 @@ private fun ItemRow(item: ItemDto) {
 
 @Composable
 @ScreenPreviews
-@Suppress("UnusedPrivateFunction")
 private fun ItemListScreenPreview() {
   ItemListScreen(
       FakeItemListComponent(
@@ -150,7 +159,6 @@ private fun ItemListScreenPreview() {
 
 @Composable
 @ScreenPreviews
-@Suppress("UnusedPrivateFunction")
 private fun ItemListScreenLoadingPreview() {
   ItemListScreen(
       FakeItemListComponent(
@@ -161,7 +169,6 @@ private fun ItemListScreenLoadingPreview() {
 
 @Composable
 @ScreenPreviews
-@Suppress("UnusedPrivateFunction")
 private fun ItemListScreenEmptyPreview() {
   ItemListScreen(
       FakeItemListComponent(

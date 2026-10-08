@@ -15,6 +15,8 @@ sealed interface UiString {
       val value: String,
   ) : UiString {
     @Composable override fun content() = value
+
+    override fun toString(): String = value
   }
 
   data class StringRes(

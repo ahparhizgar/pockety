@@ -1,42 +1,34 @@
 package com.base.usermessage
 
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarVisuals
 import com.base.usermessage.UserMessage.DismissMode
 import com.base.usermessage.UserMessage.DismissMode.AutoAndManual
 import com.base.usermessage.UserMessage.DismissMode.AutoOnly
 import com.base.usermessage.UserMessage.DismissMode.Manual
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 data class SnackbarMessage(
-    val content: String,
+    val content: UiString,
     val tone: UserMessage.Tone = UserMessage.Tone.Info,
     val dismissMode: DismissMode = AutoAndManual(),
-    val actionLabel2: UiString? = null,
+    val actionLabel: UiString? = null,
     var shouldShake: Boolean = false,
-    override var actionLabel: String? = null,
-    val uiContent: UiString = UiString(content),
-) : SnackbarVisuals {
+) {
   constructor(
-      content: UiString,
+      content: String,
       tone: UserMessage.Tone = UserMessage.Tone.Info,
       dismissMode: DismissMode = AutoAndManual(),
-      actionLabel2: UiString? = null,
+      actionLabel: UiString? = null,
       shouldShake: Boolean = false,
-      actionLabel: String? = null,
   ) : this(
-      content = (content as? UiString.StringLiteral)?.value ?: "",
+      content = UiString(content),
       tone = tone,
       dismissMode = dismissMode,
-      actionLabel2 = actionLabel2,
-      shouldShake = shouldShake,
       actionLabel = actionLabel,
-      uiContent = content,
+      shouldShake = shouldShake,
   )
 
-  override val message: String
-    get() = content
-
-  override val withDismissAction: Boolean
+  val withDismissAction: Boolean
     get() =
         when (dismissMode) {
           is Manual -> true
@@ -44,17 +36,17 @@ data class SnackbarMessage(
           is AutoOnly -> false
         }
 
-  override val duration: SnackbarDuration
+  val duration: Duration?
     get() =
         when (dismissMode) {
-          is Manual -> SnackbarDuration.Indefinite
-          is AutoAndManual -> dismissMode.duration.toSnackbarDuration()
-          is AutoOnly -> dismissMode.duration.toSnackbarDuration()
+          is Manual -> null
+          is AutoAndManual -> dismissMode.duration.toDuration()
+          is AutoOnly -> dismissMode.duration.toDuration()
         }
 }
 
-private fun UserMessage.Duration.toSnackbarDuration(): SnackbarDuration =
+private fun UserMessage.Duration.toDuration(): Duration =
     when (this) {
-      UserMessage.Duration.Short -> SnackbarDuration.Short
-      UserMessage.Duration.Long -> SnackbarDuration.Long
+      UserMessage.Duration.Short -> 4.seconds
+      UserMessage.Duration.Long -> 10.seconds
     }

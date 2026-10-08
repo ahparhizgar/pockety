@@ -4,6 +4,7 @@ import com.ahparhizgar.katch.ApiCallError
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
+import com.base.Fake
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.dto.FakeItemDtoFactory
@@ -68,6 +69,7 @@ class DefaultItemListComponentFactory(
       DefaultItemListComponent(cContext, itemApi)
 }
 
+@Fake
 class FakeItemListComponent(
     initialState: ItemListState = ItemListState(items = FakeItemDtoFactory.createList(3)),
 ) : ItemListComponent {
@@ -77,6 +79,7 @@ class FakeItemListComponent(
   override fun loadItems(): Job = Job().apply { complete() }
 }
 
+@Fake
 class FakeItemListComponentFactory : ItemListComponentFactory {
   override fun create(cContext: CContext): ItemListComponent = FakeItemListComponent()
 }

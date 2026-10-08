@@ -19,7 +19,7 @@ interface MainComponentFactory {
 
 class DefaultMainComponent(
     context: CContext,
-    private val itemListComponentFactory: ItemListComponentFactory,
+    itemListComponentFactory: ItemListComponentFactory,
 ) : MainComponent, CContext by context {
   override val itemListComponent: ItemListComponent = itemListComponentFactory.create(context)
 }

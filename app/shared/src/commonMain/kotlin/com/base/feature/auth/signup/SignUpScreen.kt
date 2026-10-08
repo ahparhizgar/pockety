@@ -208,7 +208,6 @@ private fun SignUpPhoneRow(
 
 @Composable
 @ScreenPreviews
-@Suppress("UnusedPrivateFunction")
 private fun SignUpScreenPreview() {
   Surface { SignUpScreen(FakeSignUpComponent()) }
 }

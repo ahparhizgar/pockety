@@ -3,6 +3,7 @@ package com.base.di
 import android.content.Context
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.base.DataDir
 import com.base.db.AppDatabase
 import com.base.db.AppDatabaseBuilderFactory
@@ -23,6 +24,6 @@ class AndroidAppDatabaseBuilderFactory(private val context: Context) : AppDataba
             context = context.applicationContext,
             name = dbFile.absolutePath,
         )
-        .setDriver(androidx.sqlite.driver.bundled.BundledSQLiteDriver())
+        .setDriver(BundledSQLiteDriver())
   }
 }
