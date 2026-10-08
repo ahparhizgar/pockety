@@ -87,9 +87,7 @@ class DefaultAuthComponent(
       AuthConfig.Login ->
           AuthComponent.Child.Login(loginFactory.create(context, authNavigation, ::onAuthenticated))
       AuthConfig.SignUp ->
-          AuthComponent.Child.SignUp(
-              signUpFactory.create(context, authNavigation, ::onAuthenticated)
-          )
+          AuthComponent.Child.SignUp(signUpFactory.create(context, ::onAuthenticated, ::onBack))
       AuthConfig.ResetPassword ->
           AuthComponent.Child.ResetPassword(resetPasswordFactory.create(authNavigation))
     }

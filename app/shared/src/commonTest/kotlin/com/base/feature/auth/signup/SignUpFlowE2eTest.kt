@@ -1,13 +1,14 @@
-package com.base.e2e.component
+package com.base.feature.auth.signup
 
 import com.base.component.TestCContext
 import com.base.feature.auth.TokenStorage
-import com.base.feature.component.assertSignUp
-import com.base.feature.component.assertWelcome
+import com.base.feature.auth.assertAuth
+import com.base.feature.auth.assertSignUp
+import com.base.feature.auth.assertWelcome
 import com.base.feature.root.RootComponentFactory
+import com.base.testValue
 import com.base.util.MainDispatcherExtension
 import com.base.util.integrationKoin
-import com.base.util.testValue
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.nulls.shouldNotBeNull

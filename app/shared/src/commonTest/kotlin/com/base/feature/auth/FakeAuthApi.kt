@@ -1,8 +1,6 @@
-package com.base.fake
+package com.base.feature.auth
 
 import com.base.dto.AuthResult
-import com.base.feature.auth.AuthApi
-import com.base.feature.auth.AuthSubmissionResult
 import com.base.util.FakeService
 
 class FakeAuthApi : AuthApi, FakeService {

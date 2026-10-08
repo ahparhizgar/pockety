@@ -1,16 +1,19 @@
-package com.base.e2e.component
+package com.base.feature.auth.signup
 
 import com.base.component.TestCContext
 import com.base.feature.auth.AuthComponent
-import com.base.feature.component.assertLogin
-import com.base.feature.component.assertWelcome
+import com.base.feature.auth.assertAuth
+import com.base.feature.auth.assertLogin
+import com.base.feature.auth.assertMain
+import com.base.feature.auth.assertSplash
+import com.base.feature.auth.assertWelcome
 import com.base.feature.main.MainComponent
 import com.base.feature.root.RootComponent
 import com.base.feature.root.RootComponentFactory
 import com.base.feature.splash.SplashDestination
 import com.base.util.MainDispatcherExtension
 import com.base.util.integrationKoin
-import com.base.util.testValue
+import com.base.testValue
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -45,11 +48,3 @@ class AuthE2eComponentTest : BehaviorSpec() {
     }
   }
 }
-
-private fun RootComponent.activeInstance(): Any = childStack.value.active.instance
-
-fun RootComponent.assertSplash() = activeInstance().shouldBeInstanceOf<SplashDestination>()
-
-fun RootComponent.assertAuth() = activeInstance().shouldBeInstanceOf<AuthComponent>()
-
-fun RootComponent.assertMain() = activeInstance().shouldBeInstanceOf<MainComponent>()

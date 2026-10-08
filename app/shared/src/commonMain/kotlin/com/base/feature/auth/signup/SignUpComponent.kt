@@ -1,12 +1,9 @@
 package com.base.feature.auth.signup
 
 import com.ahparhizgar.katch.ApiCallError
-import com.arkivanov.decompose.router.stack.StackNavigation
-import com.arkivanov.decompose.router.stack.pop
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.feature.auth.AuthApi
-import com.base.feature.auth.AuthConfig
 import com.base.feature.auth.TokenStorage
 import com.base.remote.fieldErrors
 import com.base.remote.userMessage
@@ -35,8 +32,8 @@ interface SignUpComponent {
 interface SignUpComponentFactory {
   fun create(
       context: CContext,
-      navigation: StackNavigation<AuthConfig>,
       onAuthenticated: () -> Unit,
+      onBack: () -> Unit,
   ): SignUpComponent
 }
 
@@ -52,10 +49,10 @@ data class SignUpViewState(
 
 class DefaultSignUpComponent(
     context: CContext,
-    private val navigation: StackNavigation<AuthConfig>,
     private val gateway: AuthApi,
     private val tokenStorage: TokenStorage,
     private val onAuthenticated: () -> Unit,
+    private val onBack: () -> Unit,
 ) : SignUpComponent {
   private val scope = context.componentScope()
   private val _state = MutableStateFlow(SignUpViewState())
@@ -78,7 +75,7 @@ class DefaultSignUpComponent(
   }
 
   override fun onBackClicked() {
-    navigation.pop()
+    onBack.invoke()
   }
 
   override fun onDoneClicked() {
@@ -121,15 +118,15 @@ class DefaultSignUpComponentFactory(
 ) : SignUpComponentFactory {
   override fun create(
       context: CContext,
-      navigation: StackNavigation<AuthConfig>,
       onAuthenticated: () -> Unit,
+      onBack: () -> Unit,
   ): SignUpComponent =
       DefaultSignUpComponent(
           context,
-          navigation,
           gateway,
           tokenStorage,
           onAuthenticated,
+          onBack = {},
       )
 }
 
@@ -152,7 +149,7 @@ class FakeSignUpComponent(state: SignUpViewState = SignUpViewState()) : SignUpCo
 class FakeSignUpComponentFactory : SignUpComponentFactory {
   override fun create(
       context: CContext,
-      navigation: StackNavigation<AuthConfig>,
       onAuthenticated: () -> Unit,
+      onBack: () -> Unit,
   ): SignUpComponent = FakeSignUpComponent()
 }

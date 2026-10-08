@@ -4,10 +4,11 @@ import com.base.DataDir
 import com.base.db.AppDatabaseBuilderFactory
 import com.base.db.getRoomDatabase
 import com.base.di.appModule
-import com.base.fake.FakeAuthApi
 import com.base.feature.auth.AuthApi
+import com.base.feature.auth.FakeAuthApi
 import com.base.feature.auth.FakeTokenStorage
 import com.base.feature.auth.TokenStorage
+import com.base.testValue
 import io.kotest.core.spec.Spec
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

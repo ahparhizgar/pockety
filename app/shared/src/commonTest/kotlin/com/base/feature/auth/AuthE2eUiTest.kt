@@ -1,4 +1,4 @@
-package com.base.e2e.ui
+package com.base.feature.auth
 
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi

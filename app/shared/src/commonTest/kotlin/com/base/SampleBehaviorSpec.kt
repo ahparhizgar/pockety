@@ -1,4 +1,4 @@
-package com.base.util
+package com.base
 
 import io.kotest.core.spec.Spec
 import io.kotest.core.spec.style.BehaviorSpec
@@ -8,49 +8,45 @@ import io.kotest.matchers.shouldBe
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-var logs = ""
-
-class SampleTest :
-    BehaviorSpec({
-      Given("my var") {
-        var myVar by testValue { 1 }
-        When("set it to 2") {
-          beforeEach { myVar = 2 }
-          Then("should be 2") { myVar shouldBe 2 }
-          And("adding 3 more") {
-            beforeEach { myVar += 3 }
-            Then("should be 3") { myVar shouldBe 5 }
-          }
-        }
-
-        When("adding one") {
-          beforeEach { myVar += 1 }
-          Then("should be 2") {
-            myVar shouldBe 2
-            println(logs)
-          }
+class SampleTest : BehaviorSpec() {
+  init {
+    Given("my var") {
+      var myVar by testValue { 1 }
+      When("set it to 2") {
+        beforeEach { myVar = 2 }
+        Then("should be 2") { myVar shouldBe 2 }
+        And("adding 3 more") {
+          beforeEach { myVar += 3 }
+          Then("should be 3") { myVar shouldBe 5 }
         }
       }
-    })
 
-class SampleTestWrong :
-    BehaviorSpec({
-      Given("a view model") {
-        var myVar = 1
-        When("first when") {
-          myVar = 2
-          Then("first then 2") { myVar shouldBe 2 }
-        }
+      When("adding one") {
+        beforeEach { myVar += 1 }
+        Then("should be 2") { myVar shouldBe 2 }
+      }
+    }
+  }
+}
 
-        When("second when") {
-          myVar += 1
-          Then("second then") {
-            myVar shouldBe 3 // not 2
-            println(logs)
-          }
+class SampleTestWrong : BehaviorSpec() {
+  init {
+    Given("a view model") {
+      var myVar = 1
+      When("first when") {
+        myVar = 2
+        Then("first then 2") { myVar shouldBe 2 }
+      }
+
+      When("second when") {
+        myVar += 1
+        Then("second then") {
+          myVar shouldBe 3 // not 2
         }
       }
-    })
+    }
+  }
+}
 
 fun <T> Spec.testValue(initializer: suspend () -> T): ReadWriteProperty<Any?, T> =
     registerTestValue({ beforeEach { it() } }, { afterEach { it() } }, initializer)
@@ -102,8 +98,4 @@ private fun <T> registerTestValue(
       backingValue = value
     }
   }
-}
-
-fun print(s: String) {
-  logs += (s + "\n")
 }

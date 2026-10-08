@@ -1,9 +1,9 @@
-package com.base.unit
+package com.base.feature.messageholder
 
 import androidx.compose.material3.SnackbarResult
+import com.base.testValue
 import com.base.usermessage.MessageHolder
 import com.base.usermessage.SnackbarMessage
-import com.base.util.testValue
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.spec.style.scopes.BehaviorSpecGivenContainerScope
