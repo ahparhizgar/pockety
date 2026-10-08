@@ -76,7 +76,7 @@ fun ItemListScreen(
                   verticalArrangement = Arrangement.Center,
               ) {
                 Text(
-                    text = state.errorMessage ?: "Unknown error",
+                    text = state.errorMessage?.content() ?: "",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyLarge,
                 )

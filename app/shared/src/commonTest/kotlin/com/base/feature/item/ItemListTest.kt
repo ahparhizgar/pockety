@@ -42,6 +42,18 @@ class ItemListTest : BehaviorSpec() {
           component.state.value.errorMessage shouldBe null
         }
       }
+
+      When("network is disconnected") {
+        beforeEach { itemApi.disconnect() }
+        var component by testValue { koin.get<ItemListComponentFactory>().create(cContext) }
+        beforeEach { testCoroutineScheduler.advanceUntilIdle() }
+
+        Then("state contains error message and not loading") {
+          component.state.value.isLoading shouldBe false
+          component.state.value.errorMessage shouldBe
+              com.base.remote.errorNetworkDisconnectedUiString
+        }
+      }
     }
   }
 }

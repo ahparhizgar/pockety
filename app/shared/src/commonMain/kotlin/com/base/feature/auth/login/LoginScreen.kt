@@ -87,7 +87,7 @@ fun LoginScreen(component: LoginComponent, modifier: Modifier = Modifier) {
       state.generalError?.let {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            it,
+            it.content(),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodyMedium,
         )

@@ -10,6 +10,7 @@ import com.base.dto.FakeItemDtoFactory
 import com.base.dto.ItemDto
 import com.base.feature.root.TopLevelDestinationConfig
 import com.base.remote.userMessage
+import com.base.usermessage.UiString
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -29,7 +30,7 @@ interface ItemListComponentFactory {
 data class ItemListState(
     val items: List<ItemDto> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
+    val errorMessage: UiString? = null,
 )
 
 class DefaultItemListComponent(

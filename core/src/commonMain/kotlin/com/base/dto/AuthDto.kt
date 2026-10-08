@@ -39,26 +39,6 @@ object FakeAuthResultFactory {
 }
 
 @Serializable
-data class UserProfile(
-    val id: String,
-    val name: String?,
-    val email: String,
-)
-
-object FakeUserProfileFactory {
-  fun create(
-      id: String = "user-1",
-      name: String? = "Amir Hossein Parhizgar",
-      email: String = "amir@example.com",
-  ) =
-      UserProfile(
-          id = id,
-          name = name,
-          email = email,
-      )
-}
-
-@Serializable
 data class ErrorResponse(
     val generalError: String,
     val errors: Map<String, String> = emptyMap(),

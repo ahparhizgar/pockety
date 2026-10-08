@@ -28,6 +28,14 @@ dependencies {
 
 kover {
   reports {
+    filters {
+      excludes {
+        classes(
+            "*.*_Impl*",
+            "base.app.shared.generated.resources.*",
+        )
+      }
+    }
     total {
       xml { onCheck = true }
       html { onCheck = true }

@@ -14,9 +14,3 @@ class KtorItemApi(
 ) : ItemApi {
   override suspend fun getItems(): List<ItemDto> = client.get("/items").body()
 }
-
-class FakeItemApi : ItemApi {
-  var items = mutableListOf<ItemDto>()
-
-  override suspend fun getItems(): List<ItemDto> = items.toList()
-}

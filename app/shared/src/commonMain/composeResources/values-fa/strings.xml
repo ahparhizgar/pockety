@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_invalid_request">درخواست نامعتبر است</string>
+    <string name="error_unauthorized">دسترسی غیرمجاز</string>
+    <string name="error_forbidden">دسترسی امکان‌پذیر نیست</string>
+    <string name="error_not_found">محتوا یافت نشد</string>
+    <string name="error_rate_limit">تعداد درخواست‌ها بیش از حد مجاز است</string>
+    <string name="error_client_generic">خطایی در سمت کاربر رخ داد</string>
+    <string name="error_network_disconnected">اتصال اینترنت برقرار نیست</string>
+    <string name="error_server_generic">خطایی در سمت سرور رخ داد</string>
+    <string name="error_invalid_data">خطا در پردازش اطلاعات</string>
+    <string name="error_unknown">خطای ناشناخته رخ داد</string>
+</resources>

@@ -6,7 +6,9 @@ import com.base.util.FakeCallback
 import com.base.util.MainDispatcherExtension
 import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.engine.coroutines.testScheduler
 import io.kotest.matchers.maps.shouldHaveKey
+import io.kotest.matchers.shouldBe
 
 class SignupTest : BehaviorSpec() {
   init {
@@ -39,6 +41,21 @@ class SignupTest : BehaviorSpec() {
           }
         }
         Then("should not call onAuthenticated") { onAuthenticated.shouldNotBeCalled() }
+      }
+
+      When("using valid email and password") {
+        beforeEach {
+          with(component) {
+            onEmailChanged("valid@example.com")
+            onPasswordChanged("password123")
+            onDoneClicked()
+          }
+          testScheduler.advanceUntilIdle()
+        }
+        Then("should call onAuthenticated") { onAuthenticated.shouldBeCalled() }
+        Then("submitting state should be false") {
+          component.state.value.isSubmitting shouldBe false
+        }
       }
     }
   }

@@ -1,6 +1,6 @@
 package com.base.feature.auth.login
 
-import com.ahparhizgar.katch.ClientError
+import com.ahparhizgar.katch.ApiCallError
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.base.component.CContext
@@ -9,6 +9,8 @@ import com.base.feature.auth.AuthApi
 import com.base.feature.auth.AuthConfig
 import com.base.feature.auth.TokenStorage
 import com.base.remote.fieldErrors
+import com.base.remote.userMessage
+import com.base.usermessage.UiString
 import com.base.validation.AuthValidation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,7 +42,7 @@ data class LoginViewState(
     val password: String = "",
     val isSubmitting: Boolean = false,
     val fieldErrors: Map<String, String> = emptyMap(),
-    val generalError: String? = null,
+    val generalError: UiString? = null,
 )
 
 class DefaultLoginComponent(
@@ -81,7 +83,7 @@ class DefaultLoginComponent(
         val result = gateway.signIn(current.email, current.password)
         tokenStorage.saveAccessToken(result.session.accessToken)
         onAuthenticated()
-      } catch (e: ClientError) {
+      } catch (e: ApiCallError) {
         _state.update {
           it.copy(fieldErrors = e.fieldErrors, generalError = e.userMessage, isSubmitting = false)
         }

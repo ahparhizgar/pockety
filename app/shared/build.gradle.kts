@@ -25,6 +25,16 @@ kover {
       )
     }
   }
+  reports {
+    filters {
+      excludes {
+        classes(
+            "*.*_Impl*",
+            "base.app.shared.generated.resources.*",
+        )
+      }
+    }
+  }
 }
 
 room3 { schemaDirectory("$projectDir/schemas") }

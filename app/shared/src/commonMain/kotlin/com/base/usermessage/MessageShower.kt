@@ -46,7 +46,6 @@ class MessageHolder : MessageShower {
         message =
             message
                 ?: run {
-                  log("waiting for message")
                   messages.receive()
                 }
         val currentMessage =
@@ -60,16 +59,13 @@ class MessageHolder : MessageShower {
         val worker =
             jobScope.launch(start = CoroutineStart.UNDISPATCHED) {
               try {
-                log("Showing message ${currentMessage.input.message}")
                 val result = block(currentMessage.input)
                 currentMessage.response.complete(result)
-                log("Message completed: ${currentMessage.input.message}")
                 a?.cancel()
               } catch (e: CancellationException) {
                 a?.cancelAndJoin()
                 throw e
               } finally {
-                log("message becomes null")
                 message = null
               }
             }
@@ -78,12 +74,10 @@ class MessageHolder : MessageShower {
             async(start = CoroutineStart.UNDISPATCHED) {
               val next = messages.receive()
               if (next.input.message == currentMessage.input.message) {
-                log("cancelling previous message")
                 try {
                   currentMessage.response.cancel(CancellationException("Cancelled by next message"))
                   worker.cancelAndJoin()
                 } finally {
-                  log("messages becomes next")
                   message = next.apply { input.shouldShake = true }
                 }
               }
@@ -101,7 +95,3 @@ data class Request(
     val response: CompletableDeferred<SnackbarResult>,
     val job: Job?,
 )
-
-fun log(@Suppress("UnusedParameter") s: String) {
-  //  println("LOG: $s")
-}

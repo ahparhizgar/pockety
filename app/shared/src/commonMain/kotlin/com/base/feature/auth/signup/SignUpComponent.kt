@@ -7,6 +7,7 @@ import com.base.feature.auth.AuthApi
 import com.base.feature.auth.TokenStorage
 import com.base.remote.fieldErrors
 import com.base.remote.userMessage
+import com.base.usermessage.UiString
 import com.base.validation.AuthValidation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,7 +45,7 @@ data class SignUpViewState(
     val phoneNumber: String = "",
     val isSubmitting: Boolean = false,
     val fieldErrors: Map<String, String> = emptyMap(),
-    val generalError: String? = null,
+    val generalError: UiString? = null,
 )
 
 class DefaultSignUpComponent(
@@ -107,6 +108,8 @@ class DefaultSignUpComponent(
               isSubmitting = false,
           )
         }
+      } finally {
+        _state.update { it.copy(isSubmitting = false) }
       }
     }
   }

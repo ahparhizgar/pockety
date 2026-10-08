@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="test">test</string>
+    <string name="error_invalid_request">Invalid request</string>
+    <string name="error_unauthorized">Unauthorized access</string>
+    <string name="error_forbidden">Access denied</string>
+    <string name="error_not_found">Content not found</string>
+    <string name="error_rate_limit">Too many requests</string>
+    <string name="error_client_generic">A client error occurred</string>
+    <string name="error_network_disconnected">Internet is disconnected</string>
+    <string name="error_server_generic">An error occurred on our side</string>
+    <string name="error_invalid_data">An error occurred during processing of data</string>
+    <string name="error_unknown">An unknown error occurred</string>
 </resources>

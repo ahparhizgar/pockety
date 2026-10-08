@@ -15,22 +15,6 @@ interface TokenStorage {
   suspend fun clearAccessToken()
 }
 
-/** No-op implementation used on platforms where persistence isn't configured. */
-class NoOpTokenStorage : TokenStorage {
-  override suspend fun saveAccessToken(token: String) {
-    delay(1.milliseconds)
-  }
-
-  override suspend fun getAccessToken(): String? {
-    delay(1.milliseconds)
-    return null
-  }
-
-  override suspend fun clearAccessToken() {
-    delay(1.milliseconds)
-  }
-}
-
 class FakeTokenStorage(private var token: String? = null) : TokenStorage {
   override suspend fun saveAccessToken(token: String) {
     delay(1.milliseconds)

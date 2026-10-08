@@ -5,7 +5,8 @@ Use TextButton instead of `clickable` modifier on a Text most of the time.
 Use IconButton instead of `clickable` modifier on an Icon most of the time.  
 Always write previews for screens or public composable components.  
 Write multiple previews for different important states of the component/screen.  
-Wrap the preview in OpenSplitTheme.
+Wrap the preview in OpenSplitTheme.  
+Use string resources instead of hard-coded strings.
 
 ## Large screens
 
@@ -37,12 +38,13 @@ component for them. In this way, removing the whole flow form the root navigatio
 
 # Using kotlin
 
-Always use Clock.System.now () for time, don't use System.currentTimeMillis () or Instant.now ().  
-Don't Use Instant.now (), it's deprecated.  
-If you need millis use Clock.System.now ().toEpochMilliseconds ().  
+Always use Clock.System.now () for time, don't use `System.currentTimeMillis()` or
+`Instant.now()`.  
+Don't Use `Instant.now()`, it's deprecated.  
+If you need millis use `Clock.System.now().toEpochMilliseconds()`.  
 Don't use fully qualified name. Write simple name, and let the compiler give error to you.  
 Prefer enums over strings. Use enums in DTOs and DAOs and domain layer where possible.  
-when using delay use the overload delay (10.milliseconds) not the one with Long parameter
+when using delay use the overload delay (`10.milliseconds`) not the one with Long parameter
 (deprecated).
 
 # Using KOIN
@@ -82,7 +84,9 @@ In repository file, you can place enums that are used by the repository function
 Create meaningful factory functions.  
 Almost always should be a general create ().  
 Write createList () in fake factories if appropriate.  
-Always use fake factories in tests.  
+Always use fake factories in tests and `Fake*Api`s. Never call constructor of data classes in tests.
+Instead, use `Fake*Factory.create()` with minimal parameters. pass a parameter value only if it's
+important to the test.  
 Fake factories should use each other. so FakeGroupFactory should use FakeParticipantFactory to
 create participants. Don't create participants in FakeGroupFactory.
 

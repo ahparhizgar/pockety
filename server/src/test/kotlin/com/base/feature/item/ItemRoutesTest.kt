@@ -1,6 +1,6 @@
 package com.base.feature.item
 
-import com.base.dto.CreateItemRequest
+import com.base.dto.FakeCreateItemRequestFactory
 import com.base.dto.ItemDto
 import com.base.util.KtorBehaviorSpec
 import com.base.util.testValue
@@ -27,10 +27,14 @@ class ItemRoutesTest : KtorBehaviorSpec() {
 
       When("items are created via POST") {
         beforeEach {
-          val createFirst = client.post("/items") { setBody(CreateItemRequest(name = "Coffee")) }
+          val createFirst =
+              client.post("/items") {
+                setBody(FakeCreateItemRequestFactory.create(name = "Coffee"))
+              }
           createFirst.status shouldBe HttpStatusCode.Created
 
-          val createSecond = client.post("/items") { setBody(CreateItemRequest(name = "Tea")) }
+          val createSecond =
+              client.post("/items") { setBody(FakeCreateItemRequestFactory.create(name = "Tea")) }
           createSecond.status shouldBe HttpStatusCode.Created
         }
         val response by testValue { client.get("/items") }

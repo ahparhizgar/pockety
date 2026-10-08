@@ -14,7 +14,25 @@ data class SnackbarMessage(
     val actionLabel2: UiString? = null,
     var shouldShake: Boolean = false,
     override var actionLabel: String? = null,
+    val uiContent: UiString = UiString(content),
 ) : SnackbarVisuals {
+  constructor(
+      content: UiString,
+      tone: UserMessage.Tone = UserMessage.Tone.Info,
+      dismissMode: DismissMode = AutoAndManual(),
+      actionLabel2: UiString? = null,
+      shouldShake: Boolean = false,
+      actionLabel: String? = null,
+  ) : this(
+      content = (content as? UiString.StringLiteral)?.value ?: "",
+      tone = tone,
+      dismissMode = dismissMode,
+      actionLabel2 = actionLabel2,
+      shouldShake = shouldShake,
+      actionLabel = actionLabel,
+      uiContent = content,
+  )
+
   override val message: String
     get() = content
 

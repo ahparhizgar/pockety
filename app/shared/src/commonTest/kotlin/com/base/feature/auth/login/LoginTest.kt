@@ -2,7 +2,10 @@ package com.base.feature.auth.login
 
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.base.component.TestCContext
+import com.base.feature.auth.AuthApi
 import com.base.feature.auth.AuthConfig
+import com.base.feature.auth.FakeAuthApi
+import com.base.remote.errorNetworkDisconnectedUiString
 import com.base.testValue
 import com.base.util.FakeCallback
 import com.base.util.MainDispatcherExtension
@@ -57,6 +60,26 @@ class LoginTest : BehaviorSpec() {
           testCoroutineScheduler.advanceUntilIdle()
         }
         Then("should call onAuthenticated") { onAuthenticated.shouldBeCalled() }
+        Then("submitting state should be false") {
+          component.state.value.isSubmitting shouldBe false
+        }
+      }
+
+      When("network is disconnected") {
+        beforeEach {
+          val fakeAuthApi = koin.get<AuthApi>() as FakeAuthApi
+          fakeAuthApi.disconnect()
+          with(component) {
+            onEmailChanged("valid@example.com")
+            onPasswordChanged("password123")
+            onLoginClicked()
+          }
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+        Then("generalError should be network error") {
+          component.state.value.generalError shouldBe errorNetworkDisconnectedUiString
+        }
+        Then("should not call onAuthenticated") { onAuthenticated.shouldNotBeCalled() }
         Then("submitting state should be false") {
           component.state.value.isSubmitting shouldBe false
         }

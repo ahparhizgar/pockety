@@ -71,4 +71,34 @@ class ItemListUiTest {
     onNode(hasTestTag("main-screen")).waitForExistence().assertExists()
     onNode(hasText("No items available")).waitForExistence().assertExists()
   }
+
+  @Test
+  fun testItemListDisplaysErrorAndRetries() = runComposeUiTest {
+    val context = TestCContext()
+    val koin = uiKoin()
+    val itemApi = koin.get<ItemApi>() as FakeItemApi
+    itemApi.disconnect()
+
+    val root = koin.injectUiRoot(context)
+    setContent { RootScreen(root) }
+
+    onNode(hasTestTag("welcome-screen")).waitForExistence().assertExists()
+    onNode(hasText("Log in", ignoreCase = true)).performClick()
+    onNode(hasTestTag("login-screen")).assertExists()
+
+    onNode(isFocused()).performTextInput("user1@example.com")
+    onNode(isRoot()).performKeyInput { pressKey(Key.Tab) }
+    onNode(isFocused()).performTextInput("password1234")
+    onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
+
+    onNode(hasTestTag("main-screen")).waitForExistence().assertExists()
+    onNode(hasTestTag("retry-button")).waitForExistence().assertExists()
+
+    itemApi.connect()
+    itemApi.items = FakeItemDtoFactory.createList(1).toMutableList()
+    onNode(hasTestTag("retry-button")).performClick()
+
+    onNode(hasTestTag("item-list")).waitForExistence().assertExists()
+    onNode(hasText("Test Item 1")).assertExists()
+  }
 }
