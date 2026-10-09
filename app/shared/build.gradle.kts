@@ -149,17 +149,12 @@ kotlin {
       implementation(libs.androidx.datastore.core.okio)
       implementation(libs.androidx.sqlite.web)
     }
-    val iosSimulatorArm64Main by getting {
-      dependencies { implementation(libs.androidx.sqlite.bundled) }
-    }
+    iosSimulatorArm64Main.dependencies { implementation(libs.androidx.sqlite.bundled) }
     //        jsMain.dependencies {
     //            implementation(libs.wrappers.browser)
     //        }
   }
-  compilerOptions {
-    // not needed anymore
-    //    freeCompilerArgs.add("-Xcontext-parameters")
-  }
+  compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
 }
 
 tasks.withType<Test>().configureEach { useJUnitPlatform() }
