@@ -170,13 +170,19 @@ Run verification gate after finishing a task:
 unset ANDROID_PREFS_ROOT; ./gradlew compileKotlinJvm compileKotlin --offline --continue 2>&1 | grep -E "e: |FAILED"
 ```
 
-## Level 2: tests
+## Level 2: tests & coverage:
 
 Run often.
 
 ```bash
 unset ANDROID_PREFS_ROOT; ./gradlew jvmTest test --offline --continue 2>&1 | grep -E "e: |FAILED"
 ```
+
+Being covered after implementing a vertical slice is very important.
+
+```bash
+./gradlew koverVerify --offline
+``` 
 
 ## Level 3: Detekt:
 
