@@ -17,7 +17,7 @@ actual fun platformModule(): Module = module {
 
 class WasmAppDatabaseBuilderFactory : AppDatabaseBuilderFactory {
   override fun createBuilder(dataDir: DataDir): RoomDatabase.Builder<AppDatabase> {
-    return Room.databaseBuilder<AppDatabase>(name = "opensplit.db")
+    return Room.databaseBuilder<AppDatabase>(name = "database.db")
         .setDriver(createSQLiteWasmWorker())
   }
 }

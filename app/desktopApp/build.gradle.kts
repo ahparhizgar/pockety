@@ -19,15 +19,15 @@ dependencies {
 
 compose.desktop {
   application {
-    mainClass = "com.opensplit.MainKt"
+    mainClass = "com.base.MainKt"
 
     nativeDistributions {
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-      packageName = "OpenSplit"
+      packageName = "Base App"
       packageVersion = "1.0.0"
 
       macOS {
-        bundleID = "com.opensplit.app"
+        bundleID = "com.base.app"
         infoPlist {
           extraKeysRawXml =
               """
@@ -35,10 +35,10 @@ compose.desktop {
               <array>
                   <dict>
                       <key>CFBundleURLName</key>
-                      <string>OpenSplit</string>
+                      <string>Base App</string>
                       <key>CFBundleURLSchemes</key>
                       <array>
-                          <string>opensplit</string>
+                          <string>baseapp</string>
                       </array>
                   </dict>
               </array>

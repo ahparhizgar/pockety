@@ -16,6 +16,6 @@ actual fun platformModule(): Module = module {
 
 class IosAppDatabaseBuilderFactory : AppDatabaseBuilderFactory {
   override fun createBuilder(dataDir: DataDir): RoomDatabase.Builder<AppDatabase> {
-    return Room.databaseBuilder<AppDatabase>(name = "opensplit.db").setDriver(BundledSQLiteDriver())
+    return Room.databaseBuilder<AppDatabase>(name = "database.db").setDriver(BundledSQLiteDriver())
   }
 }

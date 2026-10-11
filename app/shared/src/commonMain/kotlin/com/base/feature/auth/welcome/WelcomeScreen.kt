@@ -58,7 +58,7 @@ private fun WelcomeHeader() {
       )
       Spacer(modifier = Modifier.height(16.dp))
       Text(
-          "OpenSplit",
+          "Base App",
           fontWeight = FontWeight.Bold,
           style = MaterialTheme.typography.headlineSmall,
       )

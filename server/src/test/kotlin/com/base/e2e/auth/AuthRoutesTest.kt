@@ -4,7 +4,7 @@ import com.base.dto.AuthResult
 import com.base.dto.ErrorResponse
 import com.base.dto.SignInRequest
 import com.base.dto.SignUpRequest
-import com.base.util.testOpenSplit
+import com.base.util.testBaseApp
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 
 class AuthRoutesTest {
   @Test
-  fun signInRejectsInvalidData() = testOpenSplit {
+  fun signInRejectsInvalidData() = testBaseApp {
     val response = client.post("/tokens") { setBody(SignInRequest("bad", "short")) }
 
     assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -25,7 +25,7 @@ class AuthRoutesTest {
   }
 
   @Test
-  fun cannotSignUpUsingTheSameEmail() = testOpenSplit {
+  fun cannotSignUpUsingTheSameEmail() = testBaseApp {
     val signUp =
         client.post("/users") { setBody(SignUpRequest("new@example.com", "password123", "Amir")) }
 
@@ -40,7 +40,7 @@ class AuthRoutesTest {
   }
 
   @Test
-  fun cannotSignInUsingWrongPassword() = testOpenSplit {
+  fun cannotSignInUsingWrongPassword() = testBaseApp {
     val signUp =
         client.post("/users") {
           setBody(SignUpRequest("wrong-pass@example.com", "password123", "Amir"))
@@ -57,7 +57,7 @@ class AuthRoutesTest {
   }
 
   @Test
-  fun canSignInAfterSignUp() = testOpenSplit {
+  fun canSignInAfterSignUp() = testBaseApp {
     val email = "fresh@example.com"
     val password = "password123"
     val name = "Amir"

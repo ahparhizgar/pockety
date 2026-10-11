@@ -19,7 +19,7 @@ actual fun platformModule(): Module = module {
 
 class AndroidAppDatabaseBuilderFactory(private val context: Context) : AppDatabaseBuilderFactory {
   override fun createBuilder(dataDir: DataDir): RoomDatabase.Builder<AppDatabase> {
-    val dbFile = File(dataDir.dir, "opensplit.db")
+    val dbFile = File(dataDir.dir, "database.db")
     return Room.databaseBuilder<AppDatabase>(
             context = context.applicationContext,
             name = dbFile.absolutePath,

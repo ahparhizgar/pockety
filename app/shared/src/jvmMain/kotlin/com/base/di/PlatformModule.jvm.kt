@@ -21,7 +21,7 @@ class JvmAppDatabaseBuilderFactory : AppDatabaseBuilderFactory {
         if (dataDir == DataDir.MEMORY) {
           Room.inMemoryDatabaseBuilder<AppDatabase>()
         } else {
-          Room.databaseBuilder<AppDatabase>(name = File(dataDir.dir, "opensplit.db").absolutePath)
+          Room.databaseBuilder<AppDatabase>(name = File(dataDir.dir, "database.db").absolutePath)
         }
     return builder.setDriver(BundledSQLiteDriver())
   }

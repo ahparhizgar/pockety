@@ -10,12 +10,12 @@ plugins {
   alias(libs.plugins.kotest)
 }
 
-group = "com.opensplit"
+group = "com.base"
 
 version = "1.0.0"
 
 application {
-  mainClass.set("com.opensplit.ApplicationKt")
+  mainClass.set("com.base.ApplicationKt")
 
   val isDevelopment: Boolean = project.findProperty("development")?.toString()?.toBoolean() == true
   applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")

@@ -18,12 +18,18 @@ import com.base.di.appModule
 import com.base.feature.root.RootComponentFactory
 import javax.swing.SwingUtilities
 import org.koin.core.context.GlobalContext.startKoin
+import org.koin.dsl.module
 
 fun main(vararg args: String) {
   val lifecycle = LifecycleRegistry()
   println(args.joinToString())
   val koin = startKoin {
     modules(appModule())
+    modules(
+        module {
+          single { DataDir(".") }
+        }
+    )
   }
       .koin
 
@@ -37,7 +43,7 @@ fun main(vararg args: String) {
     LifecycleController(lifecycle, windowState)
     Window(
         onCloseRequest = ::exitApplication,
-        title = "OpenSplit",
+        title = "Base App",
         onKeyEvent = {
           if (it.key in setOf(Key.Escape, Key.Back) && it.type == KeyEventType.KeyDown) {
             backDispatcher.back()

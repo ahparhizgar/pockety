@@ -3,7 +3,7 @@ package com.base.util
 import com.base.dto.AuthResult
 import com.base.dto.SignUpRequest
 import com.base.feature.auth.AuthService
-import com.base.openSplit
+import com.base.baseApp
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest
@@ -21,10 +21,10 @@ import io.ktor.server.testing.ClientProvider
 import io.ktor.server.testing.testApplication
 import org.koin.ktor.ext.inject
 
-fun testOpenSplit(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
+fun testBaseApp(block: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
   var token = ""
   application {
-    openSplit(isTest = true)
+    baseApp(isTest = true)
 
     resetDatabase()
 

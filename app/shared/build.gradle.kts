@@ -30,7 +30,7 @@ kover {
       excludes {
         classes(
             "*.*_Impl*",
-            "base.app.shared.generated.resources.*",
+            "com.base.app.shared.generated.resources.*",
         )
       }
     }
@@ -44,7 +44,7 @@ roborazzi {
   outputDir.set(rootProject.file(".screenshots"))
   generateComposePreviewDesktopTests {
     enable = false
-    roborazzi.generateComposePreviewDesktopTests.packages.add("com.opensplit")
+    roborazzi.generateComposePreviewDesktopTests.packages.add("com.base")
   }
 }
 
