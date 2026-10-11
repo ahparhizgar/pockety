@@ -5,8 +5,8 @@ Use TextButton instead of `clickable` modifier on a Text most of the time.
 Use IconButton instead of `clickable` modifier on an Icon most of the time.  
 Always write previews for screens or public composable components.  
 Write multiple previews for different important states of the component/screen.  
-Wrap the preview in OpenSplitTheme.  
-Use string resources instead of hard-coded strings.
+Use string resources instead of hard-coded strings.  
+Use one of `@ScreenPreviews` or `@ComponentPreviews`. Don't use `@Preview` directly.
 
 ## Large screens
 
