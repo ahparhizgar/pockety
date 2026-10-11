@@ -1,6 +1,7 @@
 package com.base.ui
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -19,14 +20,15 @@ fun BaseTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-  val colorScheme = if (darkTheme) darkScheme else lightScheme
+  val defaultColorScheme = if (darkTheme) darkScheme else lightScheme
+  val targetColorScheme = dynamicColorScheme(darkTheme) ?: defaultColorScheme
   val extendedColorScheme = if (darkTheme) extendedDark else extendedLight
 
   CompositionLocalProvider(
       ExtendedTheme.LocalExtendedTheme provides extendedColorScheme,
   ) {
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = targetColorScheme,
         typography = AppTypography,
         content = content,
     )
