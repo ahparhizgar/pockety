@@ -1,5 +1,6 @@
 package com.base.util
 
+import com.base.DataDir
 import com.base.db.AppDatabaseBuilderFactory
 import com.base.db.getRoomDatabase
 import com.base.di.appModule
