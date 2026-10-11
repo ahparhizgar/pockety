@@ -32,7 +32,7 @@ kover {
       excludes {
         classes(
             "*.*_Impl*",
-            "base.app.shared.generated.resources.*",
+            "pockety.app.shared.generated.resources.*",
         )
       }
     }

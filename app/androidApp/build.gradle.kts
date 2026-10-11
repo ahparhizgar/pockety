@@ -22,11 +22,11 @@ dependencies {
 }
 
 android {
-  namespace = "org.example.project"
+  namespace = "ir.ahparhizgar.pockety"
   compileSdk = libs.versions.android.compileSdk.get().toInt()
 
   defaultConfig {
-    applicationId = "org.example.project"
+    applicationId = "ir.ahparhizgar.pockety"
     minSdk = libs.versions.android.minSdk.get().toInt()
     targetSdk = libs.versions.android.targetSdk.get().toInt()
     versionCode = 1

@@ -23,11 +23,11 @@ compose.desktop {
 
     nativeDistributions {
       targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-      packageName = "Base App"
+      packageName = "Pockety"
       packageVersion = "1.0.0"
 
       macOS {
-        bundleID = "com.base.app"
+        bundleID = "ir.ahparhizgar.pockety"
         infoPlist {
           extraKeysRawXml =
               """
@@ -35,10 +35,10 @@ compose.desktop {
               <array>
                   <dict>
                       <key>CFBundleURLName</key>
-                      <string>Base App</string>
+                      <string>Pockety</string>
                       <key>CFBundleURLSchemes</key>
                       <array>
-                          <string>baseapp</string>
+                          <string>pockety</string>
                       </array>
                   </dict>
               </array>

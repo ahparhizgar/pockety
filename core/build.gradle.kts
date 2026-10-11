@@ -19,14 +19,12 @@ kover {
 }
 
 kotlin {
-  iosArm64()
-  iosSimulatorArm64()
+//  iosArm64()
+//  iosSimulatorArm64()
 
   jvm()
 
-  js { browser() }
 
-  @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
 
   android {
     namespace = "com.base.core"

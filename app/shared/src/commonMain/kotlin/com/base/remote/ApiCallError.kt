@@ -1,16 +1,16 @@
 package com.base.remote
 
-import base.app.shared.generated.resources.Res
-import base.app.shared.generated.resources.error_client_generic
-import base.app.shared.generated.resources.error_forbidden
-import base.app.shared.generated.resources.error_invalid_data
-import base.app.shared.generated.resources.error_invalid_request
-import base.app.shared.generated.resources.error_network_disconnected
-import base.app.shared.generated.resources.error_not_found
-import base.app.shared.generated.resources.error_rate_limit
-import base.app.shared.generated.resources.error_server_generic
-import base.app.shared.generated.resources.error_unauthorized
-import base.app.shared.generated.resources.error_unknown
+import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.error_client_generic
+import pockety.app.shared.generated.resources.error_forbidden
+import pockety.app.shared.generated.resources.error_invalid_data
+import pockety.app.shared.generated.resources.error_invalid_request
+import pockety.app.shared.generated.resources.error_network_disconnected
+import pockety.app.shared.generated.resources.error_not_found
+import pockety.app.shared.generated.resources.error_rate_limit
+import pockety.app.shared.generated.resources.error_server_generic
+import pockety.app.shared.generated.resources.error_unauthorized
+import pockety.app.shared.generated.resources.error_unknown
 import com.ahparhizgar.katch.ApiCallError
 import com.ahparhizgar.katch.BadRequest
 import com.ahparhizgar.katch.ClientError

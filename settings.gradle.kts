@@ -1,4 +1,4 @@
-rootProject.name = "Base"
+rootProject.name = "Pockety"
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
@@ -49,7 +49,7 @@ include(":app:desktopApp")
 
 include(":app:shared")
 
-include(":app:webApp")
+
 
 include(":core")
 

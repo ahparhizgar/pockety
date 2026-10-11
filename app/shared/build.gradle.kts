@@ -49,20 +49,19 @@ roborazzi {
 }
 
 kotlin {
-  listOf(
-          //        iosArm64(),
-          iosSimulatorArm64()
-      )
-      .forEach { iosTarget ->
-        iosTarget.binaries.framework {
-          baseName = "Shared"
-          isStatic = true
-        }
-      }
+//  listOf(
+//          //        iosArm64(),
+//          iosSimulatorArm64()
+//      )
+//      .forEach { iosTarget ->
+//        iosTarget.binaries.framework {
+//          baseName = "Shared"
+//          isStatic = true
+//        }
+//      }
 
   jvm()
 
-  @OptIn(ExperimentalWasmDsl::class) wasmJs { browser() }
 
   android {
     namespace = "com.base.app.shared"
@@ -145,11 +144,7 @@ kotlin {
       implementation(libs.roborazzi.compose.desktopPreviewScannerSupport)
       implementation(libs.composablePreviewScanner)
     }
-    wasmJsMain.dependencies {
-      implementation(libs.androidx.datastore.core.okio)
-      implementation(libs.androidx.sqlite.web)
-    }
-    iosSimulatorArm64Main.dependencies { implementation(libs.androidx.sqlite.bundled) }
+//    iosSimulatorArm64Main.dependencies { implementation(libs.androidx.sqlite.bundled) }
     //        jsMain.dependencies {
     //            implementation(libs.wrappers.browser)
     //        }
@@ -163,6 +158,5 @@ dependencies {
   androidRuntimeClasspath(libs.compose.uiTooling)
   add("kspAndroid", libs.androidx.room3.compiler)
   add("kspJvm", libs.androidx.room3.compiler)
-  add("kspWasmJs", libs.androidx.room3.compiler)
-  add("kspIosSimulatorArm64", libs.androidx.room3.compiler)
+//  add("kspIosSimulatorArm64", libs.androidx.room3.compiler)
 }
