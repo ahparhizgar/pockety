@@ -204,3 +204,10 @@ Run only if you touched UI.
 
 GEMINI: use `run_shell_command` tool ./gradlew instead of `gradle_build` tool call. this prevents
 blocking by an already running Gradle task in the IDE. So always use run_shell_command tool.
+
+--- 
+
+# Using Stitch MCP
+
+Designs of this app are in stitch accessible via MCP.  
+Resources (HTMLs and images) are pre-downloaded in ./design-stich folder.
