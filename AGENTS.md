@@ -160,6 +160,10 @@ fun loadItems() = scope.launch {
       `app/shared/src/commonMain`.
     - `app/androidApp`, `app/desktopApp`, `app/webApp` — platform entry points.
 
+# Be Agile
+
+We implement vertical slices. So when implementing UI, implement the minimum needed for that slice.
+
 # Verification
 
 Run verification gate after finishing a task:
