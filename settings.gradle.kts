@@ -49,8 +49,8 @@ include(":app:desktopApp")
 
 include(":app:shared")
 
-
-
 include(":core")
+
+include(":design")
 
 include(":server")
