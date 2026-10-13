@@ -55,18 +55,19 @@ changes, no need to change the binding.
 
 # Testing
 
-Write UI tests using keyboard actions so keyboard accessibility is verified.  
-Use default value of fake factories if it doesn't matter.
+Use fake factories instead of constructing models.  
+Use default value of fake factories if it doesn't matter.  
+Don't structure tests based on screens/components.  
+Instead, structure tests into files based on the requirements. so logging in is a requirement. Being
+able to save a transaction is a requirement. Editing a transaction is a requirement. but transaction
+itself is a component. So we make AddTransactionTest.kt EditTransactionTest.kt not
+TransactionComponentTest.
 
 ## Testing UI
 
-## Testing integration of Decompose components
-
-## Unit testing
+Write UI tests using keyboard actions so keyboard accessibility is verified.
 
 ## Testing on backend
-
-## Testing multi-user on backend
 
 # How to structure classes into files
 
