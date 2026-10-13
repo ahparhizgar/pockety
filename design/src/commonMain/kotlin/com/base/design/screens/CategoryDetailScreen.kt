@@ -91,9 +91,6 @@ fun CategoryDetailScreen(
                 )
               }
             },
-            showSearch = false,
-            showNotifications = false,
-            onProfileClick = onProfileClick,
         )
       },
   ) { innerPadding ->

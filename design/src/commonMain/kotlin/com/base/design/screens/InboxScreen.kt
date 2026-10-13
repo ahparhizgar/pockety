@@ -76,7 +76,6 @@ fun InboxScreen(
         PocketyTopBar(
             title = "Inbox",
             subtitle = "Pockety",
-            notificationCount = notificationCount,
             navigationIcon = {
               Surface(
                   shape = CircleShape,
@@ -93,9 +92,6 @@ fun InboxScreen(
                 }
               }
             },
-            onSearchClick = onSearchClick,
-            onNotificationsClick = onNotificationsClick,
-            onProfileClick = onProfileClick,
         )
       },
       bottomBar = {

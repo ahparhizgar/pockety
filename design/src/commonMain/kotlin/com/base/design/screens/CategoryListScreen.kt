@@ -70,8 +70,6 @@ fun CategoryListScreen(
       topBar = {
         PocketyTopBar(
             title = "Categories",
-            showSearch = false,
-            showNotifications = false,
             navigationIcon = {
               IconButton(onClick = onBackClick) {
                 Icon(
@@ -81,7 +79,6 @@ fun CategoryListScreen(
                 )
               }
             },
-            onProfileClick = onProfileClick,
         )
       },
       floatingActionButton = {

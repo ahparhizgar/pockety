@@ -83,5 +83,7 @@ private fun CanvasToolbarPreview() {
       onToolSelect = {},
       scale = 1.0f,
       onResetZoom = {},
+      isDarkTheme = false,
+      onToggleTheme = {},
   )
 }

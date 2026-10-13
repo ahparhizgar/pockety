@@ -70,9 +70,6 @@ fun MonthDetailScreen(
         PocketyTopBar(
             title = "Expenses",
             subtitle = "Pockety",
-            onSearchClick = onSearchClick,
-            onNotificationsClick = onNotificationsClick,
-            onProfileClick = onProfileClick,
         )
       },
       bottomBar = {

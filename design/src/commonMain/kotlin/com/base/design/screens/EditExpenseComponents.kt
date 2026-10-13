@@ -48,14 +48,12 @@ import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.ShoppingBasket
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,8 +62,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,6 +77,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.base.design.components.PocketyTopBar
 import com.base.design.ui.ComponentPreviews
 
 data class CategoryQuickChip(
@@ -666,7 +663,6 @@ fun SourceSmsCard(
   }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditExpenseTopBar(
     modifier: Modifier = Modifier,
@@ -674,16 +670,9 @@ fun EditExpenseTopBar(
     onBackClick: () -> Unit = {},
     onCloseClick: () -> Unit = {},
 ) {
-  TopAppBar(
+  PocketyTopBar(
       modifier = modifier,
-      title = {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-      },
+      title = title,
       navigationIcon = {
         IconButton(onClick = onBackClick) {
           Icon(
@@ -701,28 +690,7 @@ fun EditExpenseTopBar(
               tint = MaterialTheme.colorScheme.onSurfaceVariant,
           )
         }
-        Spacer(modifier = Modifier.width(4.dp))
-        Surface(
-            modifier = Modifier.size(32.dp),
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primary,
-        ) {
-          Box(contentAlignment = Alignment.Center) {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Profile",
-                tint = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.size(18.dp),
-            )
-          }
-        }
-        Spacer(modifier = Modifier.width(12.dp))
       },
-      colors =
-          TopAppBarDefaults.topAppBarColors(
-              containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-              titleContentColor = MaterialTheme.colorScheme.onSurface,
-          ),
   )
 }
 

@@ -133,8 +133,6 @@ fun PocketSettingsScreenContent(
       topBar = {
         PocketyTopBar(
             title = "Pocket Settings",
-            showSearch = false,
-            showNotifications = false,
             navigationIcon = {
               IconButton(onClick = onBackClick) {
                 Icon(
@@ -143,7 +141,6 @@ fun PocketSettingsScreenContent(
                 )
               }
             },
-            onProfileClick = onProfileClick,
         )
       },
       bottomBar = {

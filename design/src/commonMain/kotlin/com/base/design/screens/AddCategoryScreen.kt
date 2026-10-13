@@ -100,9 +100,6 @@ fun AddCategoryScreen(
                 )
               }
             },
-            showSearch = false,
-            showNotifications = false,
-            onProfileClick = onProfileClick,
         )
       },
       snackbarHost = { SnackbarHost(hostState = snackbarHostState) },

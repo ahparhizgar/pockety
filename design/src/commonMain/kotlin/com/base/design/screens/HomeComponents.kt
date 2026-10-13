@@ -79,7 +79,7 @@ fun UndecidedExpensesBanner(
   Surface(
       onClick = onClick,
       shape = RoundedCornerShape(24.dp),
-      color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
+      color = MaterialTheme.colorScheme.secondaryContainer,
       shadowElevation = 1.dp,
       modifier = modifier.fillMaxWidth(),
   ) {
@@ -191,6 +191,7 @@ fun SegmentedProgressBar(
                         topEnd = 0.dp,
                         bottomEnd = 0.dp,
                     )
+
                 index == segments.lastIndex ->
                     RoundedCornerShape(
                         topStart = 0.dp,
@@ -198,6 +199,7 @@ fun SegmentedProgressBar(
                         topEnd = 6.dp,
                         bottomEnd = 6.dp,
                     )
+
                 else -> RectangleShape
               }
 

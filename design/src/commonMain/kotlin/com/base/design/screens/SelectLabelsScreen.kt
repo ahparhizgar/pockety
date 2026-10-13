@@ -150,8 +150,6 @@ fun SelectLabelsContent(
                 )
               }
             },
-            showSearch = false,
-            showNotifications = false,
             actions = {
               Button(
                   onClick = onDone,
@@ -171,7 +169,6 @@ fun SelectLabelsContent(
                 )
               }
             },
-            onProfileClick = onProfileClick,
         )
       },
       containerColor = MaterialTheme.colorScheme.surface,

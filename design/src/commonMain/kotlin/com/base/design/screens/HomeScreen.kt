@@ -139,7 +139,6 @@ fun HomeScreen(
         PocketyTopBar(
             title = state.title,
             subtitle = state.appName,
-            notificationCount = state.notificationCount,
             navigationIcon = {
               Surface(
                   shape = CircleShape,
@@ -156,9 +155,6 @@ fun HomeScreen(
                 }
               }
             },
-            onSearchClick = onSearchClick,
-            onNotificationsClick = onNotificationsClick,
-            onProfileClick = onProfileClick,
         )
       },
       bottomBar = {

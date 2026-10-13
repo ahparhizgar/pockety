@@ -73,9 +73,6 @@ fun SettingsScreen(
         PocketyTopBar(
             title = "Settings",
             subtitle = "Pockety",
-            showSearch = false,
-            onNotificationsClick = onNotificationsClick,
-            onProfileClick = onProfileClick,
         )
       },
       bottomBar = {

@@ -80,7 +80,13 @@ In a single file, order like this: 1. the main class/interface, 2. extension fun
 related classes, 4. fake factories (in the same order as classes).  
 In repository file, you can place enums that are used by the repository functions.
 
-# Fake factories
+When adding a new client feature:
+
+1. Start with integration: from root component navigate through feature and validate the state.
+2. For form validations and error/loading state handling, use that component directly using real
+   data layer with fake services.
+3. For logic heavy classes (e.g. pattern matching), use that class directly, mock everything else.
+
 
 Create meaningful factory functions.  
 Almost always should be a general create ().  

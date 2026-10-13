@@ -68,9 +68,6 @@ fun PocketsScreen(
         PocketyTopBar(
             title = "Pockets",
             subtitle = "Pockety",
-            onSearchClick = onSearchClick,
-            onNotificationsClick = onNotificationsClick,
-            onProfileClick = onProfileClick,
         )
       },
       bottomBar = {

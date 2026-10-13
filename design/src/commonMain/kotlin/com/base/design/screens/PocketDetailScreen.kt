@@ -68,7 +68,6 @@ fun PocketDetailScreen(
             onBackClick = onBackClick,
             onSettingsClick = onSettingsClick,
             onMoreOptionsClick = onMoreOptionsClick,
-            onProfileClick = onProfileClick,
         )
       },
   ) { innerPadding ->

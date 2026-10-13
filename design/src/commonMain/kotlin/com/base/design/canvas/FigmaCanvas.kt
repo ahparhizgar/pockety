@@ -1,6 +1,7 @@
 package com.base.design.canvas
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.calculateCentroid
 import androidx.compose.foundation.gestures.calculatePan
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.NearMe
 import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.material3.Icon
@@ -52,11 +55,12 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.base.design.ui.theme.PocketyTheme
 import kotlin.math.exp
 import kotlin.math.roundToInt
 
-private const val SCROLL_MULTIPLIER = 12f
-private const val ZOOM_FACTOR_PER_TICK = 0.05f
+private const val SCROLL_MULTIPLIER = 24f
+private const val ZOOM_FACTOR_PER_TICK = 0.1f
 
 enum class CanvasTool {
   Select,
@@ -67,13 +71,19 @@ enum class CanvasTool {
 class FigmaCanvasState(
     initialScale: Float = 1f,
     initialOffset: Offset = Offset.Zero,
+    initialDarkTheme: Boolean = false,
     val minScale: Float = 0.05f,
     val maxScale: Float = 30f,
 ) {
   var scale by mutableFloatStateOf(initialScale)
   var offset by mutableStateOf(initialOffset)
   var activeTool by mutableStateOf(CanvasTool.Select)
+  var isDarkTheme by mutableStateOf(initialDarkTheme)
   internal var isInitialFitDone = false
+
+  fun toggleTheme() {
+    isDarkTheme = !isDarkTheme
+  }
 
   fun panBy(delta: Offset) {
     offset += delta
@@ -101,7 +111,14 @@ class FigmaCanvasState(
 fun rememberFigmaCanvasState(
     initialScale: Float = 1f,
     initialOffset: Offset = Offset.Zero,
-): FigmaCanvasState = remember { FigmaCanvasState(initialScale, initialOffset) }
+    initialDarkTheme: Boolean = false,
+): FigmaCanvasState = remember {
+  FigmaCanvasState(
+      initialScale = initialScale,
+      initialOffset = initialOffset,
+      initialDarkTheme = initialDarkTheme,
+  )
+}
 
 /**
  * A general composable container that can contain [com.base.design.FigmaDeviceArtboard] or any
@@ -120,16 +137,20 @@ fun FigmaCanvas(
     showToolbar: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-  Box(modifier = modifier.fillMaxSize()) {
-    CanvasContentBox(state = state, content = content)
-    if (showToolbar) {
-      CanvasToolbar(
-          activeTool = state.activeTool,
-          onToolSelect = { state.activeTool = it },
-          scale = state.scale,
-          onResetZoom = { state.reset() },
-          modifier = Modifier.align(Alignment.BottomCenter),
-      )
+  PocketyTheme(darkTheme = state.isDarkTheme) {
+    Box(modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+      CanvasContentBox(state = state, content = content)
+      if (showToolbar) {
+        CanvasToolbar(
+            activeTool = state.activeTool,
+            onToolSelect = { state.activeTool = it },
+            scale = state.scale,
+            onResetZoom = { state.reset() },
+            isDarkTheme = state.isDarkTheme,
+            onToggleTheme = { state.toggleTheme() },
+            modifier = Modifier.align(Alignment.BottomCenter),
+        )
+      }
     }
   }
 }
@@ -252,6 +273,8 @@ fun CanvasToolbar(
     onToolSelect: (CanvasTool) -> Unit,
     scale: Float,
     onResetZoom: () -> Unit,
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
   Surface(
@@ -282,6 +305,16 @@ fun CanvasToolbar(
           description = "Pan Tool (Hand)",
           isSelected = activeTool == CanvasTool.Pan,
           onClick = { onToolSelect(CanvasTool.Pan) },
+      )
+      VerticalDivider(
+          modifier = Modifier.height(24.dp),
+          color = MaterialTheme.colorScheme.outlineVariant,
+      )
+      ToolIconButton(
+          icon = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+          description = if (isDarkTheme) "Switch to Light Theme" else "Switch to Dark Theme",
+          isSelected = false,
+          onClick = onToggleTheme,
       )
       VerticalDivider(
           modifier = Modifier.height(24.dp),
