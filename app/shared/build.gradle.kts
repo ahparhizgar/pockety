@@ -1,5 +1,4 @@
 import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -49,19 +48,18 @@ roborazzi {
 }
 
 kotlin {
-//  listOf(
-//          //        iosArm64(),
-//          iosSimulatorArm64()
-//      )
-//      .forEach { iosTarget ->
-//        iosTarget.binaries.framework {
-//          baseName = "Shared"
-//          isStatic = true
-//        }
-//      }
+  //  listOf(
+  //          //        iosArm64(),
+  //          iosSimulatorArm64()
+  //      )
+  //      .forEach { iosTarget ->
+  //        iosTarget.binaries.framework {
+  //          baseName = "Shared"
+  //          isStatic = true
+  //        }
+  //      }
 
   jvm()
-
 
   android {
     namespace = "com.base.app.shared"
@@ -144,7 +142,7 @@ kotlin {
       implementation(libs.roborazzi.compose.desktopPreviewScannerSupport)
       implementation(libs.composablePreviewScanner)
     }
-//    iosSimulatorArm64Main.dependencies { implementation(libs.androidx.sqlite.bundled) }
+    //    iosSimulatorArm64Main.dependencies { implementation(libs.androidx.sqlite.bundled) }
     //        jsMain.dependencies {
     //            implementation(libs.wrappers.browser)
     //        }
@@ -158,5 +156,5 @@ dependencies {
   androidRuntimeClasspath(libs.compose.uiTooling)
   add("kspAndroid", libs.androidx.room3.compiler)
   add("kspJvm", libs.androidx.room3.compiler)
-//  add("kspIosSimulatorArm64", libs.androidx.room3.compiler)
+  //  add("kspIosSimulatorArm64", libs.androidx.room3.compiler)
 }

@@ -1,16 +1,5 @@
 package com.base.remote
 
-import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.error_client_generic
-import pockety.app.shared.generated.resources.error_forbidden
-import pockety.app.shared.generated.resources.error_invalid_data
-import pockety.app.shared.generated.resources.error_invalid_request
-import pockety.app.shared.generated.resources.error_network_disconnected
-import pockety.app.shared.generated.resources.error_not_found
-import pockety.app.shared.generated.resources.error_rate_limit
-import pockety.app.shared.generated.resources.error_server_generic
-import pockety.app.shared.generated.resources.error_unauthorized
-import pockety.app.shared.generated.resources.error_unknown
 import com.ahparhizgar.katch.ApiCallError
 import com.ahparhizgar.katch.BadRequest
 import com.ahparhizgar.katch.ClientError
@@ -22,6 +11,17 @@ import com.ahparhizgar.katch.RateLimitReached
 import com.ahparhizgar.katch.ServerError
 import com.ahparhizgar.katch.Unauthorized
 import com.base.usermessage.UiString
+import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.error_client_generic
+import pockety.app.shared.generated.resources.error_forbidden
+import pockety.app.shared.generated.resources.error_invalid_data
+import pockety.app.shared.generated.resources.error_invalid_request
+import pockety.app.shared.generated.resources.error_network_disconnected
+import pockety.app.shared.generated.resources.error_not_found
+import pockety.app.shared.generated.resources.error_rate_limit
+import pockety.app.shared.generated.resources.error_server_generic
+import pockety.app.shared.generated.resources.error_unauthorized
+import pockety.app.shared.generated.resources.error_unknown
 
 @Suppress("UNCHECKED_CAST")
 val ApiCallError.fieldErrors: Map<String, String>

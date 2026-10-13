@@ -172,7 +172,7 @@ private fun CanvasContentBox(
               }
               .layout { measurable, constraints ->
                 val placeable = measurable.measure(Constraints())
-                
+
                 if (!state.isInitialFitDone && constraints.maxWidth > 0 && placeable.width > 0) {
                   state.isInitialFitDone = true
                   val paddingPx = with(density) { 50.dp.toPx() }
@@ -197,9 +197,7 @@ private fun CanvasContentBox(
                 }
               },
   ) {
-    Box {
-      content()
-    }
+    Box { content() }
   }
 }
 
@@ -228,7 +226,7 @@ private fun handleScrollEvent(event: PointerEvent, state: FigmaCanvasState) {
 
 private fun handleDragOrPinchEvent(event: PointerEvent, state: FigmaCanvasState) {
   if (event.changes.any { it.isConsumed }) return
-  
+
   val isMiddleClick = event.buttons.isTertiaryPressed
   val isPanTool = state.activeTool == CanvasTool.Pan
 

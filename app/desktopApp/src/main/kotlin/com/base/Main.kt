@@ -25,11 +25,7 @@ fun main(vararg args: String) {
   println(args.joinToString())
   val koin = startKoin {
     modules(appModule())
-    modules(
-        module {
-          single { DataDir(".") }
-        }
-    )
+    modules(module { single { DataDir(".") } })
   }
       .koin
 

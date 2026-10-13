@@ -241,7 +241,13 @@ val defaultIcons: List<IconItem> =
         IconItem("payments", "Cash", "Cash", Icons.Default.Payments, IconCategory.Finance),
         IconItem("savings", "Savings", "Savings", Icons.Default.Savings, IconCategory.Finance),
         IconItem("credit_card", "Card", "Card", Icons.Default.CreditCard, IconCategory.Finance),
-        IconItem("receipt_long", "Bills", "Bills", Icons.AutoMirrored.Default.ReceiptLong, IconCategory.Finance),
+        IconItem(
+            "receipt_long",
+            "Bills",
+            "Bills",
+            Icons.AutoMirrored.Default.ReceiptLong,
+            IconCategory.Finance,
+        ),
         IconItem(
             "account_balance",
             "Bank",

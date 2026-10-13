@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -19,12 +18,10 @@ kover {
 }
 
 kotlin {
-//  iosArm64()
-//  iosSimulatorArm64()
+  //  iosArm64()
+  //  iosSimulatorArm64()
 
   jvm()
-
-
 
   android {
     namespace = "com.base.core"
