@@ -14,25 +14,18 @@
     "UnstableCollections",
 )
 
-package com.base.design.screens
+package com.base.design
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewQuilt
 import androidx.compose.material.icons.filled.AutoAwesome
@@ -45,129 +38,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.base.design.screens.AddCategoryScreen
+import com.base.design.screens.CategoryDetailScreen
+import com.base.design.screens.CategoryListScreen
+import com.base.design.screens.EditExpenseScreen
+import com.base.design.screens.HomeScreen
+import com.base.design.screens.InboxScreen
+import com.base.design.screens.MonthDetailScreen
+import com.base.design.screens.PocketDetailScreen
+import com.base.design.screens.PocketSettingsScreen
+import com.base.design.screens.PocketsScreen
+import com.base.design.screens.SelectCategoryScreen
+import com.base.design.screens.SelectIconScreen
+import com.base.design.screens.SelectLabelsScreen
+import com.base.design.screens.SettingsScreen
 import com.base.design.ui.FigmaBoardPreviews
-
-/**
- * A device frame container that renders a screen within a standardized 390x844dp phone mockup with
- * an artboard title, step badge, and flow tag like in Figma.
- */
-@Composable()
-fun FigmaDeviceArtboard(
-    number: String,
-    title: String,
-    tag: String,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-) {
-  Column(
-      modifier = modifier,
-      verticalArrangement = Arrangement.spacedBy(10.dp),
-  ) {
-    // Artboard Header
-    Row(
-        modifier = Modifier.width(390.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Row(
-          horizontalArrangement = Arrangement.spacedBy(8.dp),
-          verticalAlignment = Alignment.CenterVertically,
-      ) {
-        Surface(
-            color = MaterialTheme.colorScheme.primary,
-            shape = RoundedCornerShape(8.dp),
-        ) {
-          Text(
-              text = number,
-              style = MaterialTheme.typography.labelSmall,
-              color = MaterialTheme.colorScheme.onPrimary,
-              modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-          )
-        }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-      }
-
-      Surface(
-          color = MaterialTheme.colorScheme.secondaryContainer,
-          shape = CircleShape,
-      ) {
-        Text(
-            text = tag,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-        )
-      }
-    }
-
-    // Phone Frame Mockup
-    Surface(
-        modifier = Modifier.width(390.dp).height(844.dp),
-        shape = RoundedCornerShape(32.dp),
-        color = MaterialTheme.colorScheme.surface,
-        border =
-            BorderStroke(
-                1.5.dp,
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
-            ),
-        shadowElevation = 8.dp,
-    ) {
-      Box(
-          modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(32.dp)),
-      ) {
-        content()
-      }
-    }
-  }
-}
-
-@Composable
-private fun FigmaSectionHeader(
-    title: String,
-    subtitle: String,
-    icon: ImageVector,
-    modifier: Modifier = Modifier,
-) {
-  Row(
-      modifier = modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.spacedBy(12.dp),
-      verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Surface(
-        modifier = Modifier.size(44.dp),
-        shape = CircleShape,
-        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
-    ) {
-      Box(contentAlignment = Alignment.Center) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(22.dp),
-        )
-      }
-    }
-    Column {
-      Text(
-          text = title,
-          style = MaterialTheme.typography.headlineSmall,
-          color = MaterialTheme.colorScheme.onSurface,
-      )
-      Text(
-          text = subtitle,
-          style = MaterialTheme.typography.bodySmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-      )
-    }
-  }
-}
 
 /**
  * Aggregated Figma canvas board displaying all 14 screens of the Pockety application.
@@ -182,19 +68,12 @@ private fun FigmaSectionHeader(
 fun AllScreensFigmaBoard(
     modifier: Modifier = Modifier,
 ) {
-  val horizontalScrollState = rememberScrollState()
-  val verticalScrollState = rememberScrollState()
-
   Surface(
-      modifier = modifier.fillMaxSize(),
+      modifier = modifier,
       color = MaterialTheme.colorScheme.surfaceContainerLowest,
   ) {
     Column(
-        modifier =
-            Modifier.fillMaxSize()
-                .verticalScroll(verticalScrollState)
-                .horizontalScroll(horizontalScrollState)
-                .padding(40.dp),
+        modifier = Modifier.padding(40.dp),
         verticalArrangement = Arrangement.spacedBy(48.dp),
     ) {
       // Board Canvas Header
@@ -482,92 +361,4 @@ fun AllScreensFigmaBoard(
 @Composable
 private fun AllScreensFigmaBoardPreview() {
   AllScreensFigmaBoard()
-}
-
-@FigmaBoardPreviews
-@Composable
-private fun PrimaryTabsOverviewPreview() {
-  Surface(color = MaterialTheme.colorScheme.surfaceContainerLowest) {
-    Row(
-        modifier = Modifier.padding(24.dp).horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-      FigmaDeviceArtboard(number = "01", title = "Home", tag = "Main Tab") { HomeScreen() }
-      FigmaDeviceArtboard(number = "02", title = "Inbox", tag = "Smart Extraction") {
-        InboxScreen()
-      }
-      FigmaDeviceArtboard(number = "04", title = "Pockets", tag = "Budget Overview") {
-        PocketsScreen()
-      }
-      FigmaDeviceArtboard(number = "05", title = "Month Detail", tag = "Analytics Tab") {
-        MonthDetailScreen()
-      }
-    }
-  }
-}
-
-@FigmaBoardPreviews
-@Composable
-private fun PocketFlowOverviewPreview() {
-  Surface(color = MaterialTheme.colorScheme.surfaceContainerLowest) {
-    Row(
-        modifier = Modifier.padding(24.dp).horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-      FigmaDeviceArtboard(number = "07", title = "Pocket Detail", tag = "Ledger View") {
-        PocketDetailScreen()
-      }
-      FigmaDeviceArtboard(number = "08", title = "Pocket Settings", tag = "Configuration") {
-        PocketSettingsScreen()
-      }
-      FigmaDeviceArtboard(number = "06", title = "App Settings", tag = "Preferences") {
-        SettingsScreen()
-      }
-    }
-  }
-}
-
-@FigmaBoardPreviews
-@Composable
-private fun ExpenseFlowOverviewPreview() {
-  Surface(color = MaterialTheme.colorScheme.surfaceContainerLowest) {
-    Row(
-        modifier = Modifier.padding(24.dp).horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-      FigmaDeviceArtboard(number = "03", title = "Edit Expense", tag = "Transaction Editor") {
-        EditExpenseScreen()
-      }
-      FigmaDeviceArtboard(number = "09", title = "Select Category", tag = "Bottom Sheet") {
-        SelectCategoryScreen()
-      }
-      FigmaDeviceArtboard(number = "14", title = "Select Labels", tag = "Tag Checklist") {
-        SelectLabelsScreen()
-      }
-    }
-  }
-}
-
-@FigmaBoardPreviews
-@Composable
-private fun TaxonomyFlowOverviewPreview() {
-  Surface(color = MaterialTheme.colorScheme.surfaceContainerLowest) {
-    Row(
-        modifier = Modifier.padding(24.dp).horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-      FigmaDeviceArtboard(number = "10", title = "Category List", tag = "Taxonomy") {
-        CategoryListScreen()
-      }
-      FigmaDeviceArtboard(number = "11", title = "Category Detail", tag = "Spend History") {
-        CategoryDetailScreen()
-      }
-      FigmaDeviceArtboard(number = "13", title = "Add Category", tag = "Creation Form") {
-        AddCategoryScreen()
-      }
-      FigmaDeviceArtboard(number = "12", title = "Select Icon", tag = "Icon Studio") {
-        SelectIconScreen()
-      }
-    }
-  }
 }

@@ -33,6 +33,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.BakeryDining
@@ -240,7 +241,7 @@ val defaultIcons: List<IconItem> =
         IconItem("payments", "Cash", "Cash", Icons.Default.Payments, IconCategory.Finance),
         IconItem("savings", "Savings", "Savings", Icons.Default.Savings, IconCategory.Finance),
         IconItem("credit_card", "Card", "Card", Icons.Default.CreditCard, IconCategory.Finance),
-        IconItem("receipt_long", "Bills", "Bills", Icons.Default.ReceiptLong, IconCategory.Finance),
+        IconItem("receipt_long", "Bills", "Bills", Icons.AutoMirrored.Default.ReceiptLong, IconCategory.Finance),
         IconItem(
             "account_balance",
             "Bank",
