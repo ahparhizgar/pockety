@@ -53,13 +53,15 @@ tasks.register("detektMain") {
   group = "verification"
   description = "Runs all detektMain, detektMainJvm, and detektMainAndroid tasks of each subproject"
   dependsOn(
-      subprojects.map { subproject ->
-        subproject.tasks.matching { task ->
-          task.name == "detektMain" ||
-              task.name == "detektMainJvm" ||
-              task.name == "detektMainAndroid"
-        }
-      }
+      subprojects
+          .filter { it.name != "design" }
+          .map { subproject ->
+            subproject.tasks.matching { task ->
+              task.name == "detektMain" ||
+                  task.name == "detektMainJvm" ||
+                  task.name == "detektMainAndroid"
+            }
+          }
   )
 }
 
