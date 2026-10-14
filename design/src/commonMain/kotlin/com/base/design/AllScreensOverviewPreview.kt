@@ -1,19 +1,3 @@
-@file:Suppress(
-    "LongMethod",
-    "LongParameterList",
-    "TooManyFunctions",
-    "MagicNumber",
-    "MatchingDeclarationName",
-    "SpreadOperator",
-    "MaxLineLength",
-    "UnusedPrivateFunction",
-    "ComposableParamOrder",
-    "PreviewNaming",
-    "PreviewPublic",
-    "ParameterNaming",
-    "UnstableCollections",
-)
-
 package com.base.design
 
 import androidx.compose.foundation.layout.Arrangement
@@ -36,8 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.base.design.features.addcategory.AddCategoryScreen
 import com.base.design.features.categorydetail.CategoryDetailScreen
@@ -47,8 +33,8 @@ import com.base.design.features.home.HomeScreen
 import com.base.design.features.inbox.InboxScreen
 import com.base.design.features.monthdetail.MonthDetailScreen
 import com.base.design.features.pocketdetail.PocketDetailScreen
-import com.base.design.features.pocketsettings.PocketSettingsScreen
 import com.base.design.features.pockets.PocketsScreen
+import com.base.design.features.pocketsettings.PocketSettingsScreen
 import com.base.design.features.selectcategory.SelectCategoryScreen
 import com.base.design.features.selecticon.SelectIconScreen
 import com.base.design.features.selectlabels.SelectLabelsScreen
@@ -64,10 +50,133 @@ import com.base.design.ui.FigmaBoardPreviews
  * 3. Expense & Tagging Flows (Edit Expense, Select Category, Select Labels)
  * 4. Taxonomy & Setup Flows (Category List, Category Detail, Add Category, Select Icon)
  */
+enum class FigmaDesignPage(val label: String) {
+  All("All Features"),
+  PrimaryNav("01. Primary Navigation"),
+  PocketSettings("02. Pockets & Settings"),
+  ExpenseFlow("03. Expense & Tags"),
+  Categories("04. Categories & Icons"),
+}
+
+data class FigmaScreenItem(
+    val number: String,
+    val title: String,
+    val tag: String,
+    val content: @Composable () -> Unit,
+)
+
+data class FigmaDesignSection(
+    val title: String,
+    val subtitle: String,
+    val icon: ImageVector,
+    val screens: List<FigmaScreenItem>,
+)
+
+val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
+    mapOf(
+        FigmaDesignPage.PrimaryNav to
+            listOf(
+                FigmaDesignSection(
+                    title = "01. Primary Navigation Hub",
+                    subtitle =
+                        "Main bottom navigation destinations with overview analytics and incoming SMS feed",
+                    icon = Icons.AutoMirrored.Filled.ViewQuilt,
+                    screens =
+                        listOf(
+                            FigmaScreenItem("01", "Home", "Main Tab") { HomeScreen() },
+                            FigmaScreenItem("02", "Inbox (SMS Extraction)", "Smart Extraction") {
+                              InboxScreen()
+                            },
+                            FigmaScreenItem("04", "Pockets", "Budget Overview") { PocketsScreen() },
+                            FigmaScreenItem("05", "Month Detail (Expenses)", "Analytics Tab") {
+                              MonthDetailScreen()
+                            },
+                        ),
+                ),
+            ),
+        FigmaDesignPage.PocketSettings to
+            listOf(
+                FigmaDesignSection(
+                    title = "02. Pocket Management & App Settings",
+                    subtitle =
+                        "Granular balance ledger, monthly top-up auto refill configuration, and preferences",
+                    icon = Icons.Default.AutoAwesome,
+                    screens =
+                        listOf(
+                            FigmaScreenItem("07", "Pocket Detail", "Ledger View") {
+                              PocketDetailScreen()
+                            },
+                            FigmaScreenItem("08", "Pocket Settings", "Configuration") {
+                              PocketSettingsScreen()
+                            },
+                            FigmaScreenItem("06", "App Settings", "Preferences") {
+                              SettingsScreen()
+                            },
+                        ),
+                ),
+            ),
+        FigmaDesignPage.ExpenseFlow to
+            listOf(
+                FigmaDesignSection(
+                    title = "03. Expense Creation & Taxonomy Selection",
+                    subtitle =
+                        "Add / Edit transaction modal with category bottom sheet and custom label checklist",
+                    icon = Icons.Default.Palette,
+                    screens =
+                        listOf(
+                            FigmaScreenItem("03", "Add / Edit Expense", "Transaction Editor") {
+                              EditExpenseScreen()
+                            },
+                            FigmaScreenItem("09", "Select Category", "Bottom Sheet") {
+                              SelectCategoryScreen()
+                            },
+                            FigmaScreenItem("14", "Select Labels", "Tag Checklist") {
+                              SelectLabelsScreen()
+                            },
+                        ),
+                ),
+            ),
+        FigmaDesignPage.Categories to
+            listOf(
+                FigmaDesignSection(
+                    title = "04. Category Management & Icon Selection",
+                    subtitle =
+                        "Custom category list, spending allocation breakdown, new category wizard, and icon picker",
+                    icon = Icons.AutoMirrored.Filled.ViewQuilt,
+                    screens =
+                        listOf(
+                            FigmaScreenItem("10", "Category List", "Taxonomy") {
+                              CategoryListScreen()
+                            },
+                            FigmaScreenItem("11", "Category Detail", "Spend History") {
+                              CategoryDetailScreen()
+                            },
+                            FigmaScreenItem("13", "Add Category", "Creation Form") {
+                              AddCategoryScreen()
+                            },
+                            FigmaScreenItem("12", "Select Icon", "Icon Studio") {
+                              SelectIconScreen()
+                            },
+                        ),
+                ),
+            ),
+    )
+
 @Composable
 fun AllScreensFigmaBoard(
     modifier: Modifier = Modifier,
+    deviceMode: FigmaDeviceMode = FigmaDeviceMode.Portrait,
+    selectedPage: FigmaDesignPage = FigmaDesignPage.All,
 ) {
+  val visibleSections =
+      remember(selectedPage) {
+        if (selectedPage == FigmaDesignPage.All) {
+          figmaPageSections.values.flatten()
+        } else {
+          figmaPageSections[selectedPage] ?: emptyList()
+        }
+      }
+
   Surface(
       modifier = modifier,
       color = MaterialTheme.colorScheme.surfaceContainerLowest,
@@ -188,162 +297,26 @@ fun AllScreensFigmaBoard(
         }
       }
 
-      // SECTION 1: Main Application Hub
-      Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        FigmaSectionHeader(
-            title = "01. Primary Navigation Hub",
-            subtitle =
-                "Main bottom navigation destinations with overview analytics and incoming SMS feed",
-            icon = Icons.AutoMirrored.Filled.ViewQuilt,
-        )
+      // Render dynamically from map
+      visibleSections.forEach { section ->
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+          FigmaSectionHeader(
+              title = section.title,
+              subtitle = section.subtitle,
+              icon = section.icon,
+          )
 
-        Row(horizontalArrangement = Arrangement.spacedBy(36.dp)) {
-          FigmaDeviceArtboard(
-              number = "01",
-              title = "Home",
-              tag = "Main Tab",
-          ) {
-            HomeScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "02",
-              title = "Inbox (SMS Extraction)",
-              tag = "Smart Extraction",
-          ) {
-            InboxScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "04",
-              title = "Pockets",
-              tag = "Budget Overview",
-          ) {
-            PocketsScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "05",
-              title = "Month Detail (Expenses)",
-              tag = "Analytics Tab",
-          ) {
-            MonthDetailScreen()
-          }
-        }
-      }
-
-      // SECTION 2: Pocket & Settings Flows
-      Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        FigmaSectionHeader(
-            title = "02. Pocket Management & App Settings",
-            subtitle =
-                "Granular balance ledger, monthly top-up auto refill configuration, and preferences",
-            icon = Icons.Default.AutoAwesome,
-        )
-
-        Row(horizontalArrangement = Arrangement.spacedBy(36.dp)) {
-          FigmaDeviceArtboard(
-              number = "07",
-              title = "Pocket Detail",
-              tag = "Ledger View",
-          ) {
-            PocketDetailScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "08",
-              title = "Pocket Settings",
-              tag = "Configuration",
-          ) {
-            PocketSettingsScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "06",
-              title = "App Settings",
-              tag = "Preferences",
-          ) {
-            SettingsScreen()
-          }
-        }
-      }
-
-      // SECTION 3: Expense Logging & Tagging Flow
-      Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        FigmaSectionHeader(
-            title = "03. Expense Creation & Taxonomy Selection",
-            subtitle =
-                "Add / Edit transaction modal with category bottom sheet and custom label checklist",
-            icon = Icons.Default.Palette,
-        )
-
-        Row(horizontalArrangement = Arrangement.spacedBy(36.dp)) {
-          FigmaDeviceArtboard(
-              number = "03",
-              title = "Add / Edit Expense",
-              tag = "Transaction Editor",
-          ) {
-            EditExpenseScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "09",
-              title = "Select Category",
-              tag = "Bottom Sheet",
-          ) {
-            SelectCategoryScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "14",
-              title = "Select Labels",
-              tag = "Tag Checklist",
-          ) {
-            SelectLabelsScreen()
-          }
-        }
-      }
-
-      // SECTION 4: Category Management & Icon Studio
-      Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        FigmaSectionHeader(
-            title = "04. Category Management & Icon Selection",
-            subtitle =
-                "Custom category list, spending allocation breakdown, new category wizard, and icon picker",
-            icon = Icons.AutoMirrored.Filled.ViewQuilt,
-        )
-
-        Row(horizontalArrangement = Arrangement.spacedBy(36.dp)) {
-          FigmaDeviceArtboard(
-              number = "10",
-              title = "Category List",
-              tag = "Taxonomy",
-          ) {
-            CategoryListScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "11",
-              title = "Category Detail",
-              tag = "Spend History",
-          ) {
-            CategoryDetailScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "13",
-              title = "Add Category",
-              tag = "Creation Form",
-          ) {
-            AddCategoryScreen()
-          }
-
-          FigmaDeviceArtboard(
-              number = "12",
-              title = "Select Icon",
-              tag = "Icon Studio",
-          ) {
-            SelectIconScreen()
+          Row(horizontalArrangement = Arrangement.spacedBy(36.dp)) {
+            section.screens.forEach { screen ->
+              FigmaDeviceArtboard(
+                  number = screen.number,
+                  title = screen.title,
+                  tag = screen.tag,
+                  deviceMode = deviceMode,
+              ) {
+                screen.content()
+              }
+            }
           }
         }
       }

@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.NearMe
 import androidx.compose.material.icons.filled.PanTool
+import androidx.compose.material.icons.filled.StayCurrentLandscape
+import androidx.compose.material.icons.filled.StayCurrentPortrait
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -56,6 +58,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.base.design.FigmaDeviceArtboard
+import com.base.design.FigmaDeviceMode
 import com.base.design.ui.ComponentPreviews
 import com.base.design.ui.FigmaBoardPreviews
 import com.base.design.ui.theme.PocketyTheme
@@ -75,6 +78,7 @@ class FigmaCanvasState(
     initialScale: Float = 1f,
     initialOffset: Offset = Offset.Zero,
     initialDarkTheme: Boolean = false,
+    initialDeviceMode: FigmaDeviceMode = FigmaDeviceMode.Portrait,
     val minScale: Float = 0.05f,
     val maxScale: Float = 30f,
 ) {
@@ -82,10 +86,15 @@ class FigmaCanvasState(
   var offset by mutableStateOf(initialOffset)
   var activeTool by mutableStateOf(CanvasTool.Select)
   var isDarkTheme by mutableStateOf(initialDarkTheme)
+  var deviceMode by mutableStateOf(initialDeviceMode)
   internal var isInitialFitDone = false
 
   fun toggleTheme() {
     isDarkTheme = !isDarkTheme
+  }
+
+  fun switchDeviceMode() {
+    deviceMode = deviceMode.next()
   }
 
   fun panBy(delta: Offset) {
@@ -115,11 +124,13 @@ fun rememberFigmaCanvasState(
     initialScale: Float = 1f,
     initialOffset: Offset = Offset.Zero,
     initialDarkTheme: Boolean = false,
+    initialDeviceMode: FigmaDeviceMode = FigmaDeviceMode.Portrait,
 ): FigmaCanvasState = remember {
   FigmaCanvasState(
       initialScale = initialScale,
       initialOffset = initialOffset,
       initialDarkTheme = initialDarkTheme,
+      initialDeviceMode = initialDeviceMode,
   )
 }
 
@@ -138,11 +149,15 @@ fun FigmaCanvas(
     modifier: Modifier = Modifier,
     state: FigmaCanvasState = rememberFigmaCanvasState(),
     showToolbar: Boolean = true,
-    content: @Composable () -> Unit,
+    overlay: (@Composable () -> Unit)? = null,
+    content: @Composable (deviceMode: FigmaDeviceMode) -> Unit,
 ) {
   PocketyTheme(darkTheme = state.isDarkTheme) {
     Box(modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-      CanvasContentBox(state = state, content = content)
+      CanvasContentBox(state = state) { content(state.deviceMode) }
+      if (overlay != null) {
+        overlay()
+      }
       if (showToolbar) {
         CanvasToolbar(
             activeTool = state.activeTool,
@@ -151,6 +166,8 @@ fun FigmaCanvas(
             onResetZoom = { state.reset() },
             isDarkTheme = state.isDarkTheme,
             onToggleTheme = { state.toggleTheme() },
+            deviceMode = state.deviceMode,
+            onSwitchDeviceMode = { state.switchDeviceMode() },
             modifier = Modifier.align(Alignment.BottomCenter).offset(y = (-20).dp),
         )
       }
@@ -278,6 +295,8 @@ fun CanvasToolbar(
     onResetZoom: () -> Unit,
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
+    deviceMode: FigmaDeviceMode = FigmaDeviceMode.Portrait,
+    onSwitchDeviceMode: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
   Surface(
@@ -318,6 +337,14 @@ fun CanvasToolbar(
           description = if (isDarkTheme) "Switch to Light Theme" else "Switch to Dark Theme",
           isSelected = false,
           onClick = onToggleTheme,
+      )
+      ToolIconButton(
+          icon =
+              if (deviceMode == FigmaDeviceMode.Landscape) Icons.Default.StayCurrentLandscape
+              else Icons.Default.StayCurrentPortrait,
+          description = "Device view: ${deviceMode.title} (Click to toggle)",
+          isSelected = deviceMode == FigmaDeviceMode.Landscape,
+          onClick = onSwitchDeviceMode,
       )
       VerticalDivider(
           modifier = Modifier.height(24.dp),
@@ -366,7 +393,7 @@ fun FigmaCanvasSample(
 ) {
   FigmaCanvas(
       modifier = modifier,
-  ) {
+  ) { deviceMode ->
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainerLowest,
     ) {
@@ -378,6 +405,7 @@ fun FigmaCanvasSample(
             number = "01",
             title = "Home",
             tag = "Main Tab",
+            deviceMode = deviceMode,
         ) {
           Text("Home Screen")
         }
@@ -386,6 +414,7 @@ fun FigmaCanvasSample(
             number = "02",
             title = "Inbox",
             tag = "Smart Extraction",
+            deviceMode = deviceMode,
         ) {
           Text("Inbox Screen")
         }
@@ -394,6 +423,7 @@ fun FigmaCanvasSample(
             number = "03",
             title = "Pockets",
             tag = "Budget Overview",
+            deviceMode = deviceMode,
         ) {
           Text("Pockets Screen")
         }
@@ -418,5 +448,7 @@ private fun CanvasToolbarPreview() {
       onResetZoom = {},
       isDarkTheme = false,
       onToggleTheme = {},
+      deviceMode = FigmaDeviceMode.Portrait,
+      onSwitchDeviceMode = {},
   )
 }

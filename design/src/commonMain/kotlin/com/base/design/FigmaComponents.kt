@@ -23,11 +23,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+enum class FigmaDeviceMode(
+    val title: String,
+    val width: Dp,
+    val height: Dp,
+) {
+  Portrait("Portrait", 390.dp, 844.dp),
+  Landscape("Landscape", 844.dp, 390.dp),
+  ;
+
+  fun next(): FigmaDeviceMode {
+    val values = entries
+    val nextIndex = (ordinal + 1) % values.size
+    return values[nextIndex]
+  }
+}
+
 /**
- * A device frame container that renders a screen within a standardized 390x844dp phone mockup with
- * an artboard title, step badge, and flow tag like in Figma.
+ * A device frame container that renders a screen within a standardized phone mockup with an
+ * artboard title, step badge, and flow tag like in Figma.
  */
 @Composable()
 fun FigmaDeviceArtboard(
@@ -35,17 +52,21 @@ fun FigmaDeviceArtboard(
     title: String,
     tag: String,
     modifier: Modifier = Modifier,
+    deviceMode: FigmaDeviceMode = FigmaDeviceMode.Portrait,
     content: @Composable () -> Unit,
 ) {
+  val frameWidth = deviceMode.width
+  val frameHeight = deviceMode.height
+
   Column(
       modifier = modifier,
       verticalArrangement = Arrangement.spacedBy(10.dp),
   ) {
-    ArtboardHeader(number = number, title = title, tag = tag)
+    ArtboardHeader(number = number, title = title, tag = tag, width = frameWidth)
 
     // Phone Frame Mockup
     Surface(
-        modifier = Modifier.width(390.dp).height(844.dp),
+        modifier = Modifier.width(frameWidth).height(frameHeight),
         shape = RoundedCornerShape(32.dp),
         color = Color.Transparent,
         border =
@@ -109,9 +130,10 @@ private fun ArtboardHeader(
     number: String,
     title: String,
     tag: String,
+    width: Dp = 390.dp,
 ) {
   Row(
-      modifier = Modifier.width(390.dp),
+      modifier = Modifier.width(width),
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically,
   ) {

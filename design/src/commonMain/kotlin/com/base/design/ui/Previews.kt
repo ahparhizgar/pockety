@@ -20,11 +20,11 @@ annotation class ComponentPreviews
     widthDp = 844,
     heightDp = 390,
 )
-//@Preview(
+// @Preview(
 //    name = "Desktop",
 //    widthDp = 1280,
 //    heightDp = 800,
-//)
+// )
 @PreviewWrapper(PocketyThemeWrapper::class)
 annotation class ScreenPreviews
 
