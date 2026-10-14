@@ -1,4 +1,4 @@
-package com.base.design.canvas
+package com.base.design.figma
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -57,8 +57,6 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import com.base.design.FigmaDeviceArtboard
-import com.base.design.FigmaDeviceMode
 import com.base.design.ui.ComponentPreviews
 import com.base.design.ui.FigmaBoardPreviews
 import com.base.design.ui.theme.PocketyTheme
@@ -135,7 +133,7 @@ fun rememberFigmaCanvasState(
 }
 
 /**
- * A general composable container that can contain [com.base.design.FigmaDeviceArtboard] or any
+ * A general composable container that can contain [FigmaDeviceArtboard] or any
  * other screens/elements, allowing Figma-like canvas pan & zoom interactions:
  * - Mouse wheel vertical scroll: pans vertically
  * - Shift + mouse wheel scroll: pans horizontally

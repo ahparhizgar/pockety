@@ -1,0 +1,141 @@
+package com.base.design.figma
+
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ViewQuilt
+import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.LocalOffer
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.base.design.features.addcategory.AddCategoryScreen
+import com.base.design.features.categorydetail.CategoryDetailScreen
+import com.base.design.features.categorylist.CategoryListScreen
+import com.base.design.features.editexpense.EditExpenseScreen
+import com.base.design.features.home.HomeScreen
+import com.base.design.features.inbox.InboxScreen
+import com.base.design.features.monthdetail.MonthDetailScreen
+import com.base.design.features.pocketdetail.PocketDetailScreen
+import com.base.design.features.pockets.PocketsScreen
+import com.base.design.features.pocketsettings.PocketSettingsScreen
+import com.base.design.features.selectcategory.SelectCategoryScreen
+import com.base.design.features.selecticon.SelectIconScreen
+import com.base.design.features.selectlabels.SelectLabelsScreen
+import com.base.design.features.settings.SettingsScreen
+import com.base.design.ui.FigmaBoardPreviews
+
+/**
+ * Aggregated Figma canvas board displaying all 14 screens of the Pockety application.
+ *
+ * Organized by flows:
+ * 1. Primary Navigation Screens (Home, Inbox, Pockets, Month Detail)
+ * 2. Pocket Management Flows (Pocket Detail, Pocket Settings, Settings)
+ * 3. Expense & Tagging Flows (Edit Expense, Select Category, Select Labels)
+ * 4. Taxonomy & Setup Flows (Category List, Category Detail, Add Category, Select Icon)
+ */
+enum class FigmaDesignPage(val label: String, val icon: ImageVector) {
+  All("All Features", Icons.Default.Layers),
+  PrimaryNav("01. Primary Navigation", Icons.Default.Dashboard),
+  PocketSettings("02. Pockets & Settings", Icons.Default.Tune),
+  ExpenseFlow("03. Expense & Tags", Icons.Default.LocalOffer),
+  Categories("04. Categories & Icons", Icons.Default.Category),
+}
+
+val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
+    mapOf(
+        FigmaDesignPage.PrimaryNav to
+            listOf(
+                FigmaDesignSection(
+                    title = "01. Primary Navigation Hub",
+                    subtitle =
+                        "Main bottom navigation destinations with overview analytics and incoming SMS feed",
+                    icon = Icons.AutoMirrored.Filled.ViewQuilt,
+                    screens =
+                        listOf(
+                            FigmaScreenItem("01", "Home", "Main Tab") { HomeScreen() },
+                            FigmaScreenItem("02", "Inbox (SMS Extraction)", "Smart Extraction") {
+                              InboxScreen()
+                            },
+                            FigmaScreenItem("04", "Pockets", "Budget Overview") { PocketsScreen() },
+                            FigmaScreenItem("05", "Month Detail (Expenses)", "Analytics Tab") {
+                              MonthDetailScreen()
+                            },
+                        ),
+                ),
+            ),
+        FigmaDesignPage.PocketSettings to
+            listOf(
+                FigmaDesignSection(
+                    title = "02. Pocket Management & App Settings",
+                    subtitle =
+                        "Granular balance ledger, monthly top-up auto refill configuration, and preferences",
+                    icon = Icons.Default.AutoAwesome,
+                    screens =
+                        listOf(
+                            FigmaScreenItem("07", "Pocket Detail", "Ledger View") {
+                              PocketDetailScreen()
+                            },
+                            FigmaScreenItem("08", "Pocket Settings", "Configuration") {
+                              PocketSettingsScreen()
+                            },
+                            FigmaScreenItem("06", "App Settings", "Preferences") {
+                              SettingsScreen()
+                            },
+                        ),
+                ),
+            ),
+        FigmaDesignPage.ExpenseFlow to
+            listOf(
+                FigmaDesignSection(
+                    title = "03. Expense Creation & Taxonomy Selection",
+                    subtitle =
+                        "Add / Edit transaction modal with category bottom sheet and custom label checklist",
+                    icon = Icons.Default.Palette,
+                    screens =
+                        listOf(
+                            FigmaScreenItem("03", "Add / Edit Expense", "Transaction Editor") {
+                              EditExpenseScreen()
+                            },
+                            FigmaScreenItem("09", "Select Category", "Bottom Sheet") {
+                              SelectCategoryScreen()
+                            },
+                            FigmaScreenItem("14", "Select Labels", "Tag Checklist") {
+                              SelectLabelsScreen()
+                            },
+                        ),
+                ),
+            ),
+        FigmaDesignPage.Categories to
+            listOf(
+                FigmaDesignSection(
+                    title = "04. Category Management & Icon Selection",
+                    subtitle =
+                        "Custom category list, spending allocation breakdown, new category wizard, and icon picker",
+                    icon = Icons.AutoMirrored.Filled.ViewQuilt,
+                    screens =
+                        listOf(
+                            FigmaScreenItem("10", "Category List", "Taxonomy") {
+                              CategoryListScreen()
+                            },
+                            FigmaScreenItem("11", "Category Detail", "Spend History") {
+                              CategoryDetailScreen()
+                            },
+                            FigmaScreenItem("13", "Add Category", "Creation Form") {
+                              AddCategoryScreen()
+                            },
+                            FigmaScreenItem("12", "Select Icon", "Icon Studio") {
+                              SelectIconScreen()
+                            },
+                        ),
+                ),
+            ),
+    )
+
+@FigmaBoardPreviews
+@Composable
+private fun FigmaBoardPreview() {
+  FigmaBoard()
+}

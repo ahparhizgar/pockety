@@ -30,16 +30,14 @@ description: Guide for designing UI in Compose Multiplatform. Use when touching 
     - Prefer tokenized dimensions (`MaterialTheme.colorScheme`, `MaterialTheme.typography`) over
       hardcoded values.
 
-## 3. Interactive Figma Canvas (`FigmaCanvas`)
+## 3. Interactive Figma-Like tool (`Catalog.kt`)
 
-The `FigmaCanvas` enables an interactive desktop workspace to preview, pan, and zoom across all app
-screens simultaneously.
+This tool is an interactive desktop workspace to preview, pan, and zoom across all app screens
+simultaneously.
 
-**Structure**:
-
-- `FigmaCanvas`: Root interactive viewport supporting pan and zoom. - `AllScreensFigmaBoard`: Board
-  arranging screens by flow.
-- After implementing a feature, add it to FigmaCanvas.
+Always register the new screen/state in the `Catalog.kt` and keep it complete.  
+Put the new screen/state in the appropriate feature group and provide a descriptive name.  
+Create a new section if the feature is totally new.
 
 ## 4. Previews & Verification
 

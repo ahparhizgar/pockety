@@ -1,4 +1,4 @@
-package com.base.design
+package com.base.design.figma
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement

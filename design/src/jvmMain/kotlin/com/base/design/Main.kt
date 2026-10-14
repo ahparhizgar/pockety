@@ -1,8 +1,5 @@
 package com.base.design
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,8 +42,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.base.design.canvas.FigmaCanvas
-import com.base.design.canvas.rememberFigmaCanvasState
+import com.base.design.figma.FigmaBoard
+import com.base.design.figma.FigmaCanvas
+import com.base.design.figma.FigmaDesignPage
+import com.base.design.figma.rememberFigmaCanvasState
 import com.base.design.ui.theme.PocketyTheme
 
 fun main() {
@@ -80,10 +79,10 @@ fun main() {
                 }
               },
           ) { deviceMode ->
-            AllScreensFigmaBoard(
-                deviceMode = deviceMode,
-                selectedPage = selectedPage,
-            )
+              FigmaBoard(
+                  deviceMode = deviceMode,
+                  selectedPage = selectedPage,
+              )
           }
         }
       }
@@ -91,14 +90,6 @@ fun main() {
   }
 }
 
-private fun FigmaDesignPage.icon(): ImageVector =
-    when (this) {
-      FigmaDesignPage.All -> Icons.Default.Layers
-      FigmaDesignPage.PrimaryNav -> Icons.Default.Dashboard
-      FigmaDesignPage.PocketSettings -> Icons.Default.Tune
-      FigmaDesignPage.ExpenseFlow -> Icons.Default.LocalOffer
-      FigmaDesignPage.Categories -> Icons.Default.Category
-    }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -136,7 +127,7 @@ fun CanvasPagesBar(
           horizontalArrangement = Arrangement.spacedBy(8.dp),
       ) {
         Icon(
-            imageVector = selectedPage.icon(),
+            imageVector = selectedPage.icon,
             contentDescription = "Pages (Hover to expand)",
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(20.dp),
@@ -183,7 +174,7 @@ fun CanvasPagesBar(
               modifier = Modifier.fillMaxWidth(),
               leadingIcon = {
                 Icon(
-                    imageVector = page.icon(),
+                    imageVector = page.icon,
                     contentDescription = null,
                     modifier = Modifier.size(16.dp),
                 )
