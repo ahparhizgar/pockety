@@ -13,6 +13,7 @@ import com.base.feature.root.TopLevelDestinationConfig
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 data class HomeState(
@@ -26,7 +27,7 @@ interface HomeComponent : TopLevelDestinationConfig {
 
   fun onAddExpenseClicked()
 
-  fun onEnableSmsTrackingClicked()
+  fun onEnableSmsTrackingClicked(): Job
 
   @Serializable data object Config : TopLevelDestinationConfig
 }
@@ -80,8 +81,12 @@ class DefaultHomeComponent(
     onAddExpense()
   }
 
-  override fun onEnableSmsTrackingClicked() {
-    permissionController.requestReceiveSmsPermission()
+  override fun onEnableSmsTrackingClicked(): Job = scope.launch {
+    val granted = permissionController.requestReceiveSmsPermission()
+    if (granted) {
+      // Future navigation to auto-track bank SMS / undecided expenses screen will be dispatched
+      // here
+    }
   }
 }
 
@@ -108,7 +113,7 @@ class FakeHomeComponent(
 
   override fun onAddExpenseClicked() {}
 
-  override fun onEnableSmsTrackingClicked() {}
+  override fun onEnableSmsTrackingClicked(): Job = Job().apply { complete() }
 }
 
 @Fake

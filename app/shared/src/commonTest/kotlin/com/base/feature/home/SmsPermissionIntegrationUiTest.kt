@@ -10,7 +10,6 @@ import com.base.util.injectUiRoot
 import com.base.util.uiKoin
 import com.base.util.waitForExistence
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
 class SmsPermissionIntegrationUiTest {

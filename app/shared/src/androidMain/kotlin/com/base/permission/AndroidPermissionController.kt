@@ -10,11 +10,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import java.lang.ref.WeakReference
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import androidx.core.content.edit
 
 class AndroidPermissionController(
     private val context: Context,
@@ -27,6 +28,7 @@ class AndroidPermissionController(
 
   private var activityRef: WeakReference<ComponentActivity>? = null
   private var launcherRef: ActivityResultLauncher<String>? = null
+  private var pendingResult: CompletableDeferred<Boolean>? = null
 
   fun attach(activity: ComponentActivity, launcher: ActivityResultLauncher<String>) {
     activityRef = WeakReference(activity)
@@ -37,6 +39,8 @@ class AndroidPermissionController(
   fun detach() {
     activityRef = null
     launcherRef = null
+    pendingResult?.cancel()
+    pendingResult = null
   }
 
   fun refreshPermissionState() {
@@ -46,43 +50,42 @@ class AndroidPermissionController(
 
   fun onPermissionResult(granted: Boolean) {
     _isSmsPermissionGranted.value = granted
+    pendingResult?.complete(granted)
+    pendingResult = null
   }
 
-  override fun requestReceiveSmsPermission() {
-    val granted = checkIsSmsPermissionGranted(context)
-    if (granted) {
+  override suspend fun requestReceiveSmsPermission(): Boolean {
+    if (checkIsSmsPermissionGranted(context)) {
       _isSmsPermissionGranted.value = true
-      return
+      return true
     }
 
+    return performPermissionRequest()
+  }
+
+  private suspend fun performPermissionRequest(): Boolean {
     val activity = activityRef?.get()
     val launcher = launcherRef
-
     val wasRequestedBefore = prefs.getBoolean(KEY_SMS_REQUESTED_BEFORE, false)
 
-    if (activity != null && wasRequestedBefore) {
-      val shouldShowRationale =
-          ActivityCompat.shouldShowRequestPermissionRationale(
-              activity,
-              Manifest.permission.RECEIVE_SMS,
-          )
+    val isPermanentlyDenied =
+        activity != null &&
+            wasRequestedBefore &&
+            !ActivityCompat.shouldShowRequestPermissionRationale(
+                activity,
+                Manifest.permission.RECEIVE_SMS,
+            )
 
-      // If we already requested before and shouldShowRationale is false,
-      // it means the user has permanently denied permission ("Don't ask again" / 2+ denials).
-      // Launching the system dialog would immediately fail silently with false.
-      // So on this click (the 3rd click, or 1st click after restart), directly open Settings!
-      if (!shouldShowRationale) {
-        openAppSettings()
-        return
-      }
+    if (isPermanentlyDenied || launcher == null) {
+      openAppSettings()
+      return false
     }
 
     prefs.edit { putBoolean(KEY_SMS_REQUESTED_BEFORE, true) }
-    if (launcher != null) {
-      launcher.launch(Manifest.permission.RECEIVE_SMS)
-    } else {
-      openAppSettings()
-    }
+    val deferred = CompletableDeferred<Boolean>()
+    pendingResult = deferred
+    launcher.launch(Manifest.permission.RECEIVE_SMS)
+    return deferred.await()
   }
 
   private fun openAppSettings() {

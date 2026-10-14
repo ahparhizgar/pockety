@@ -18,15 +18,15 @@ The system SHALL expose the current grant status of the SMS reception permission
 - **THEN** the permission status reflects as not granted
 
 ### Requirement: Request SMS permission
-The system SHALL trigger the platform permission request flow when requested by the user.
+The system SHALL trigger the platform permission request flow when requested by the user and return whether the permission was granted.
 
 #### Scenario: Permission approved by user
 - **WHEN** the user grants the SMS permission dialog
-- **THEN** the system updates permission status to granted
+- **THEN** the system updates permission status to granted and returns true to the caller
 
 #### Scenario: Permission denied by user
 - **WHEN** the user dismisses or rejects the permission prompt
-- **THEN** the system keeps permission status as not granted
+- **THEN** the system keeps permission status as not granted and returns false to the caller
 
 ### Requirement: Handle permanent permission denial
 The system SHALL open the application system settings when the user attempts to request permission after it has been permanently denied.

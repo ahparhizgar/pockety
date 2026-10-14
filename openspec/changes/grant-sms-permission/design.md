@@ -27,8 +27,8 @@ On Android, `RECEIVE_SMS` is a dangerous/restricted runtime permission. Handling
 ## Decisions
 
 ### 1. `PermissionController` interface on `CContext`
-- **Decision**: Add `permissionController: PermissionController` property to `CContext` (with default provided in `DefaultCContext` and `TestCContext`).
-- **Rationale**: `CContext` is the standard ambient carrier across all Decompose components in this codebase (carrying navigation, messageShower, windowSizeHolder). Placing `permissionController` on `CContext` allows any component to access permission status and dispatch requests without constructor bloat, while keeping platform details hidden.
+- **Decision**: Add `permissionController: PermissionController` property to `CContext` (with default provided in `DefaultCContext` and `TestCContext`), with `suspend fun requestReceiveSmsPermission(): Boolean`.
+- **Rationale**: `CContext` is the standard ambient carrier across all Decompose components in this codebase (carrying navigation, messageShower, windowSizeHolder). Placing `permissionController` on `CContext` allows any component to access permission status and dispatch requests without constructor bloat, while keeping platform details hidden. Making the request method `suspend` returning `Boolean` allows callers (e.g., `HomeComponent`) to await the result and immediately initiate subsequent workflows (like auto-navigation) when granted.
 - **Alternatives Considered**: Injected via Koin constructor parameter into `DefaultHomeComponent`. Rejected to maintain uniformity with `CContext` extensions (like `messageShower` and `navigation`) and seamless testing via `TestCContext`.
 
 ### 2. Leaking-free Android Activity Binding
@@ -36,12 +36,13 @@ On Android, `RECEIVE_SMS` is a dangerous/restricted runtime permission. Handling
   - `MainActivity` registers `registerForActivityResult(ActivityResultContracts.RequestPermission())` during `onCreate`.
   - In `MainActivity.onResume()` / `onCreate()`, it attaches its launcher to `AndroidPermissionController`.
   - In `MainActivity.onDestroy()`, it detaches / clears the launcher reference.
+  - Asynchronous request outcomes bridge from the Activity callback into the suspending call via `CompletableDeferred<Boolean>`.
 - **Rationale**: Decompose retained components can survive activity recreation (e.g. rotation). Never hold a strong reference to `Activity` inside `CContext` or `HomeComponent`.
 
 ### 3. Handling Permanent Denial & Settings Redirection
-- **Decision**: In `AndroidPermissionController`, maintain a preference or flag for whether the permission was previously requested.
+- **Decision**: In `AndroidPermissionController`, check platform rationale status and tracking of prior requests.
   - If `shouldShowRequestPermissionRationale(Manifest.permission.RECEIVE_SMS)` is `false` AND we have already prompted the user before, the system has permanently rejected / auto-blocked the dialog.
-  - In this case, `requestReceiveSmsPermission()` constructs an intent with `Settings.ACTION_APPLICATION_DETAILS_SETTINGS` targeting `Uri.fromParts("package", packageName, null)` and launches settings.
+  - In this case, `requestReceiveSmsPermission()` constructs an intent with `Settings.ACTION_APPLICATION_DETAILS_SETTINGS` targeting `Uri.fromParts("package", packageName, null)` and launches settings, returning `false`.
   - When the user returns to the app, `MainActivity.onResume()` triggers a check and refreshes `permissionController` state.
 
 ### 4. UI Transition on Home Screen
