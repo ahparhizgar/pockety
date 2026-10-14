@@ -13,9 +13,6 @@ import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.component.CContext
 import com.base.component.WindowSizeHolder
 import com.base.component.componentScope
-import com.base.feature.auth.AuthComponent
-import com.base.feature.auth.AuthComponentFactory
-import com.base.feature.auth.TokenStorage
 import com.base.feature.main.MainComponent
 import com.base.feature.main.MainComponentFactory
 import com.base.feature.splash.SplashDestination
@@ -40,7 +37,6 @@ interface RootComponentFactory {
 class DefaultRootComponent(
     cContext: CContext,
     private val componentProvider: ComponentProvider,
-    private val tokenStorage: TokenStorage,
 ) : RootComponent, CContext by cContext {
   val scope = componentScope()
 
@@ -57,14 +53,7 @@ class DefaultRootComponent(
     cContext.navigation = rootNavigation as StackNavigation<Any>
     messageShower = messageHolder
 
-    scope.launch {
-      val token = tokenStorage.getAccessToken()
-      if (!token.isNullOrEmpty()) {
-        rootNavigation.replaceAll(MainComponent.Config)
-      } else {
-        rootNavigation.replaceAll(AuthComponent.Config)
-      }
-    }
+    scope.launch { rootNavigation.replaceAll(MainComponent.Config) }
   }
 
   override val childStack: Value<ChildStack<TopLevelDestinationConfig, Any>> =
@@ -79,8 +68,6 @@ class DefaultRootComponent(
   private fun createChild(config: TopLevelDestinationConfig, cContext: CContext): Any {
     return when (config) {
       is SplashDestination -> SplashDestination
-      is AuthComponent.Config ->
-          componentProvider.provide(AuthComponentFactory::class).create(cContext)
       is MainComponent.Config ->
           componentProvider.provide(MainComponentFactory::class).create(cContext)
 
@@ -91,13 +78,11 @@ class DefaultRootComponent(
 
 class DefaultRootComponentFactory(
     private val componentProvider: ComponentProvider,
-    private val tokenStorage: TokenStorage,
 ) : RootComponentFactory {
   override fun create(context: CContext): RootComponent =
       DefaultRootComponent(
           cContext = context,
           componentProvider = componentProvider,
-          tokenStorage = tokenStorage,
       )
 }
 

@@ -6,7 +6,8 @@ Use IconButton instead of `clickable` modifier on an Icon most of the time.
 Always write previews for screens or public composable components.  
 Write multiple previews for different important states of the component/screen.  
 Use string resources instead of hard-coded strings.  
-Use one of `@ScreenPreviews` or `@ComponentPreviews`. Don't use `@Preview` directly.
+Use one of `@ScreenPreviews` or `@ComponentPreviews`. Don't use `@Preview` directly. Always extract
+UI component both for re-use and consistency and for readability.
 
 ## Large screens
 
@@ -215,7 +216,16 @@ blocking by an already running Gradle task in the IDE. So always use run_shell_c
 
 --- 
 
+# :design module
+
+Design module is a totally separate module from the main app.  
+UI components and screens and theme etc. should be implemented again in implementation modules.
+
 # Using Stitch MCP
 
 Designs of this app are in stitch accessible via MCP.  
 Resources (HTMLs and images) are pre-downloaded in ./design-stich folder.
+
+# Project UI components
+
+- PocketyTopAppBar

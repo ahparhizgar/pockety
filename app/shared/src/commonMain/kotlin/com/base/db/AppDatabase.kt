@@ -5,6 +5,8 @@ import androidx.room3.ConstructedBy
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomDatabaseConstructor
+import androidx.room3.migration.Migration
+import androidx.sqlite.SQLiteConnection
 import com.base.DataDir
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Dispatchers
@@ -13,13 +15,16 @@ import kotlinx.coroutines.Dispatchers
     entities =
         [
             ItemEntity::class,
+            TransactionEntity::class,
         ],
-    version = 1,
+    version = 2,
 )
 @ColumnTypeConverters(InstantConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
   abstract fun itemDao(): ItemDao
+
+  abstract fun transactionDao(): TransactionDao
 }
 
 // The Room compiler generates the `actual` implementations.
@@ -28,24 +33,31 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
   override fun initialize(): AppDatabase
 }
 
-// THIS IS TEMPLATE -- change it when needed
-// val MIGRATION_1_2 =
-//    object : Migration(1, 2) {
-//      override suspend fun migrate(connection: SQLiteConnection) {
-//        connection
-//            .prepare(
-//                // Query
-//            )
-//            .use { it.step() }
-//      }
-//    }
+val MIGRATION_1_2 =
+    object : Migration(1, 2) {
+      override suspend fun migrate(connection: SQLiteConnection) {
+        connection
+            .prepare(
+                """
+                CREATE TABLE IF NOT EXISTS `transactions` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `amount` INTEGER NOT NULL,
+                    `description` TEXT NOT NULL,
+                    `createdAt` INTEGER NOT NULL
+                )
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+      }
+    }
 
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
     queryContext: CoroutineContext = Dispatchers.Default,
 ): AppDatabase {
   return builder
-      //      .addMigrations(MIGRATION_1_2)
+      .addMigrations(MIGRATION_1_2)
       .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
       .setQueryCoroutineContext(queryContext)
       .build()

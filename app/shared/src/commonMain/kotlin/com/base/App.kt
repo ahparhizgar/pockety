@@ -16,8 +16,6 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.base.feature.auth.AuthComponent
-import com.base.feature.auth.AuthRootScreen
 import com.base.feature.main.MainComponent
 import com.base.feature.main.MainScreen
 import com.base.feature.root.FakeRootComponent
@@ -59,13 +57,6 @@ fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
       when (val child = it.instance) {
         is SplashDestination -> {
           SplashScreen(modifier = Modifier.testTag("splash-screen"))
-        }
-
-        is AuthComponent -> {
-          AuthRootScreen(
-              component = child,
-              modifier = Modifier.testTag("auth-screen"),
-          )
         }
 
         is MainComponent -> {

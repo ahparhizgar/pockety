@@ -4,8 +4,6 @@ import com.base.DataDir
 import com.base.db.AppDatabaseBuilderFactory
 import com.base.db.getRoomDatabase
 import com.base.di.appModule
-import com.base.feature.auth.AuthApi
-import com.base.feature.auth.FakeAuthApi
 import com.base.feature.auth.FakeTokenStorage
 import com.base.feature.auth.TokenStorage
 import com.base.testValue
@@ -48,7 +46,6 @@ fun integrationTestModule() = module {
         Dispatchers.Main,
     )
   }
-  single { FakeAuthApi() }.bind<AuthApi>()
   single { FakeTokenStorage() }.bind<TokenStorage>()
   single { com.base.feature.item.FakeItemApi() }.bind<com.base.feature.item.ItemApi>()
 

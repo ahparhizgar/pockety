@@ -10,4 +10,13 @@
     <string name="error_server_generic">خطایی در سمت سرور رخ داد</string>
     <string name="error_invalid_data">خطا در پردازش اطلاعات</string>
     <string name="error_unknown">خطای ناشناخته رخ داد</string>
+    <string name="add_transaction_title">افزودن تراکنش</string>
+    <string name="amount_label">مبلغ</string>
+    <string name="description_label">توضیحات</string>
+    <string name="save_action">ذخیره</string>
+    <string name="cancel_action">انصراف</string>
+    <string name="transactions_title">تراکنش‌ها</string>
+    <string name="no_transactions">هنوز تراکنشی ثبت نشده است</string>
+    <string name="error_invalid_amount">مبلغ باید بیشتر از صفر باشد</string>
+    <string name="error_empty_description">توضیحات نمی‌تواند خالی باشد</string>
 </resources>

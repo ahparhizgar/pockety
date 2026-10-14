@@ -10,4 +10,13 @@
     <string name="error_server_generic">An error occurred on our side</string>
     <string name="error_invalid_data">An error occurred during processing of data</string>
     <string name="error_unknown">An unknown error occurred</string>
+    <string name="add_transaction_title">Add Transaction</string>
+    <string name="amount_label">Amount</string>
+    <string name="description_label">Description</string>
+    <string name="save_action">Save</string>
+    <string name="cancel_action">Cancel</string>
+    <string name="transactions_title">Transactions</string>
+    <string name="no_transactions">No transactions yet</string>
+    <string name="error_invalid_amount">Amount must be greater than zero</string>
+    <string name="error_empty_description">Description cannot be empty</string>
 </resources>
