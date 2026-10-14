@@ -149,7 +149,10 @@ kotlin {
     //            implementation(libs.wrappers.browser)
     //        }
   }
-  compilerOptions { freeCompilerArgs.add("-Xexpect-actual-classes") }
+  compilerOptions {
+    allWarningsAsErrors.set(true)
+    freeCompilerArgs.addAll("-Xexpect-actual-classes")
+  }
 }
 
 tasks.withType<Test>().configureEach { useJUnitPlatform() }
