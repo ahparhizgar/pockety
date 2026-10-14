@@ -9,8 +9,26 @@ import androidx.compose.ui.graphics.Color
 data class ExtendedColorScheme(
     val success: ColorFamily,
     val warning: ColorFamily,
-    val youOwe: ColorFamily,
-    val youAreOwed: ColorFamily,
+    val primaryFixed: Color = com.base.ui.theme.primaryFixed,
+    val primaryFixedDim: Color = com.base.ui.theme.primaryFixedDim,
+    val onPrimaryFixed: Color = com.base.ui.theme.onPrimaryFixed,
+    val onPrimaryFixedVariant: Color = com.base.ui.theme.onPrimaryFixedVariant,
+    val secondaryFixed: Color = com.base.ui.theme.secondaryFixed,
+    val secondaryFixedDim: Color = com.base.ui.theme.secondaryFixedDim,
+    val onSecondaryFixed: Color = com.base.ui.theme.onSecondaryFixed,
+    val onSecondaryFixedVariant: Color = com.base.ui.theme.onSecondaryFixedVariant,
+    val tertiaryFixed: Color = com.base.ui.theme.tertiaryFixed,
+    val tertiaryFixedDim: Color = com.base.ui.theme.tertiaryFixedDim,
+    val onTertiaryFixed: Color = com.base.ui.theme.onTertiaryFixed,
+    val onTertiaryFixedVariant: Color = com.base.ui.theme.onTertiaryFixedVariant,
+)
+
+@Immutable
+data class ColorFamily(
+    val color: Color,
+    val onColor: Color,
+    val colorContainer: Color,
+    val onColorContainer: Color,
 )
 
 val lightScheme =
@@ -105,21 +123,7 @@ val extendedLight =
                 warningLight,
                 onWarningLight,
                 warningContainerLight,
-                onWarningContainerLight,
-            ),
-        youOwe =
-            ColorFamily(
-                youOweLight,
-                onYouOweLight,
-                youOweContainerLight,
-                onYouOweContainerLight,
-            ),
-        youAreOwed =
-            ColorFamily(
-                youAreOwedLight,
-                onYouAreOwedLight,
-                youAreOwedContainerLight,
-                onYouAreOwedContainerLight,
+                onSuccessWarningContainer,
             ),
     )
 
@@ -139,157 +143,4 @@ val extendedDark =
                 warningContainerDark,
                 onWarningContainerDark,
             ),
-        youOwe =
-            ColorFamily(
-                youOweDark,
-                onYouOweDark,
-                youOweContainerDark,
-                onYouOweContainerDark,
-            ),
-        youAreOwed =
-            ColorFamily(
-                youAreOwedDark,
-                onYouAreOwedDark,
-                youAreOwedContainerDark,
-                onYouAreOwedContainerDark,
-            ),
     )
-
-val extendedLightMediumContrast =
-    ExtendedColorScheme(
-        success =
-            ColorFamily(
-                successLightMediumContrast,
-                onSuccessLightMediumContrast,
-                successContainerLightMediumContrast,
-                onSuccessContainerLightMediumContrast,
-            ),
-        warning =
-            ColorFamily(
-                warningLightMediumContrast,
-                onWarningLightMediumContrast,
-                warningContainerLightMediumContrast,
-                onWarningContainerLightMediumContrast,
-            ),
-        youOwe =
-            ColorFamily(
-                youOweLightMediumContrast,
-                onYouOweLightMediumContrast,
-                youOweContainerLightMediumContrast,
-                onYouOweContainerLightMediumContrast,
-            ),
-        youAreOwed =
-            ColorFamily(
-                youAreOwedLightMediumContrast,
-                onYouAreOwedLightMediumContrast,
-                youAreOwedContainerLightMediumContrast,
-                onYouAreOwedContainerLightMediumContrast,
-            ),
-    )
-
-val extendedLightHighContrast =
-    ExtendedColorScheme(
-        success =
-            ColorFamily(
-                successLightHighContrast,
-                onSuccessLightHighContrast,
-                successContainerLightHighContrast,
-                onSuccessContainerLightHighContrast,
-            ),
-        warning =
-            ColorFamily(
-                warningLightHighContrast,
-                onWarningLightHighContrast,
-                warningContainerLightHighContrast,
-                onWarningContainerLightHighContrast,
-            ),
-        youOwe =
-            ColorFamily(
-                youOweLightHighContrast,
-                onYouOweLightHighContrast,
-                youOweContainerLightHighContrast,
-                onYouOweContainerLightHighContrast,
-            ),
-        youAreOwed =
-            ColorFamily(
-                youAreOwedLightHighContrast,
-                onYouAreOwedLightHighContrast,
-                youAreOwedContainerLightHighContrast,
-                onYouAreOwedContainerLightHighContrast,
-            ),
-    )
-
-val extendedDarkMediumContrast =
-    ExtendedColorScheme(
-        success =
-            ColorFamily(
-                successDarkMediumContrast,
-                onSuccessDarkMediumContrast,
-                successContainerDarkMediumContrast,
-                onSuccessContainerDarkMediumContrast,
-            ),
-        warning =
-            ColorFamily(
-                warningDarkMediumContrast,
-                onWarningDarkMediumContrast,
-                warningContainerDarkMediumContrast,
-                onWarningContainerDarkMediumContrast,
-            ),
-        youOwe =
-            ColorFamily(
-                youOweDarkMediumContrast,
-                onYouOweDarkMediumContrast,
-                youOweContainerDarkMediumContrast,
-                onYouOweContainerDarkMediumContrast,
-            ),
-        youAreOwed =
-            ColorFamily(
-                youAreOwedDarkMediumContrast,
-                onYouAreOwedDarkMediumContrast,
-                youAreOwedContainerDarkMediumContrast,
-                onYouAreOwedContainerDarkMediumContrast,
-            ),
-    )
-
-val extendedDarkHighContrast =
-    ExtendedColorScheme(
-        success =
-            ColorFamily(
-                successDarkHighContrast,
-                onSuccessDarkHighContrast,
-                successContainerDarkHighContrast,
-                onSuccessContainerDarkHighContrast,
-            ),
-        warning =
-            ColorFamily(
-                warningDarkHighContrast,
-                onWarningDarkHighContrast,
-                warningContainerDarkHighContrast,
-                onWarningContainerDarkHighContrast,
-            ),
-        youOwe =
-            ColorFamily(
-                youOweDarkHighContrast,
-                onYouOweDarkHighContrast,
-                youOweContainerDarkHighContrast,
-                onYouOweContainerDarkHighContrast,
-            ),
-        youAreOwed =
-            ColorFamily(
-                youAreOwedDarkHighContrast,
-                onYouAreOwedDarkHighContrast,
-                youAreOwedContainerDarkHighContrast,
-                onYouAreOwedContainerDarkHighContrast,
-            ),
-    )
-
-@Immutable
-data class ColorFamily(
-    val color: Color,
-    val onColor: Color,
-    val colorContainer: Color,
-    val onColorContainer: Color,
-)
-
-val unspecified_scheme =
-    ColorFamily(Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified)

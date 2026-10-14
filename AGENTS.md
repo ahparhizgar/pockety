@@ -62,7 +62,10 @@ Don't structure tests based on screens/components.
 Instead, structure tests into files based on the requirements. so logging in is a requirement. Being
 able to save a transaction is a requirement. Editing a transaction is a requirement. but transaction
 itself is a component. So we make AddTransactionTest.kt EditTransactionTest.kt not
-TransactionComponentTest.
+TransactionComponentTest.  
+In a component level test, don't get the repository to validate, instead, validate the state of the
+component or inject other components so tests are not dependent on the implementation details or the
+repository.
 
 ## Testing UI
 

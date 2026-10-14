@@ -1,6 +1,5 @@
 package com.base.usermessage
 
-import com.base.usermessage.plus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals

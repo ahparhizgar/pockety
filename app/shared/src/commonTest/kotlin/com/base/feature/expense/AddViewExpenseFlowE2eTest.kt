@@ -5,6 +5,8 @@ import com.base.feature.main.MainComponent
 import com.base.feature.root.RootComponentFactory
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
+import com.base.util.assertHomeComponent
+import com.base.util.assertMainComponent
 import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
@@ -49,10 +51,8 @@ class AddViewExpenseFlowE2eTest : BehaviorSpec() {
           }
 
           Then("navigates back to HomeScreen displaying the recorded expense") {
-            val main = root.childStack.value.active.instance.shouldBeInstanceOf<MainComponent>()
-            val homeChild =
-                main.stack.value.active.instance.shouldBeInstanceOf<MainComponent.Child.Home>()
-            val expenses = homeChild.component.state.value.expenses
+            val home = root.assertMainComponent().assertHomeComponent()
+            val expenses = home.state.value.expenses
 
             expenses shouldHaveSize 1
             expenses[0].amount shouldBe 320000

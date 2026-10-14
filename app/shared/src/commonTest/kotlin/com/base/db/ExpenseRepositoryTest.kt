@@ -25,7 +25,7 @@ class ExpenseRepositoryTest : BehaviorSpec() {
       }
 
       When("a expense is added") {
-        var insertedId: Long = 0
+        var insertedId: Long by testValue { 0 }
 
         beforeEach {
           insertedId = repository.addExpense(amount = 2500, description = "Lunch")

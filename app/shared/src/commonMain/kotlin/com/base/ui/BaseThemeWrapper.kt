@@ -6,6 +6,6 @@ import androidx.compose.ui.tooling.preview.PreviewWrapperProvider
 class BaseThemeWrapper : PreviewWrapperProvider {
   @Composable
   override fun Wrap(content: @Composable () -> Unit) {
-    BaseTheme { content() }
+    BaseTheme(useDynamicTheme = false, content = content)
   }
 }
