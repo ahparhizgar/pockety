@@ -1,4 +1,4 @@
-package com.base.feature.transaction.add
+package com.base.feature.expense.add
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -58,7 +58,7 @@ import com.base.ui.components.PocketyTopAppBar
 import com.base.usermessage.UiString
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.add_transaction_title
+import pockety.app.shared.generated.resources.add_expense_title
 import pockety.app.shared.generated.resources.cancel_action
 import pockety.app.shared.generated.resources.currency_symbol
 import pockety.app.shared.generated.resources.description_label
@@ -68,17 +68,17 @@ import pockety.app.shared.generated.resources.error_invalid_amount
 import pockety.app.shared.generated.resources.save_action
 
 @Composable
-fun AddTransactionScreen(
-    component: AddTransactionComponent,
+fun AddExpenseScreen(
+    component: AddExpenseComponent,
     modifier: Modifier = Modifier,
 ) {
   val state by component.state.subscribeAsState()
 
   Scaffold(
-      modifier = modifier.testTag("add-transaction-screen"),
+      modifier = modifier.testTag("add-expense-screen"),
       topBar = {
         PocketyTopAppBar(
-            title = stringResource(Res.string.add_transaction_title),
+            title = stringResource(Res.string.add_expense_title),
             navigationIcon = {
               IconButton(
                   onClick = component::onCancelClicked,
@@ -116,7 +116,7 @@ fun AddTransactionScreen(
                   .padding(horizontal = 20.dp, vertical = 16.dp),
           verticalArrangement = Arrangement.spacedBy(20.dp),
       ) {
-        AddTransactionForm(
+        AddExpenseForm(
             component = component,
             state = state,
         )
@@ -126,9 +126,9 @@ fun AddTransactionScreen(
 }
 
 @Composable
-private fun AddTransactionForm(
-    component: AddTransactionComponent,
-    state: AddTransactionState,
+private fun AddExpenseForm(
+    component: AddExpenseComponent,
+    state: AddExpenseState,
     modifier: Modifier = Modifier,
 ) {
   val focusManager = LocalFocusManager.current
@@ -163,7 +163,7 @@ private fun AddTransactionForm(
 
 @Composable
 private fun FormActions(
-    component: AddTransactionComponent,
+    component: AddExpenseComponent,
     isSaving: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -381,20 +381,20 @@ private fun DescriptionInputField(
 
 @ScreenPreviews
 @Composable
-private fun AddTransactionScreenDefaultPreview() {
-  AddTransactionScreen(
-      component = FakeAddTransactionComponent(),
+private fun AddExpenseScreenDefaultPreview() {
+  AddExpenseScreen(
+      component = FakeAddExpenseComponent(),
   )
 }
 
 @ScreenPreviews
 @Composable
-private fun AddTransactionScreenErrorPreview() {
-  AddTransactionScreen(
+private fun AddExpenseScreenErrorPreview() {
+  AddExpenseScreen(
       component =
-          FakeAddTransactionComponent(
+          FakeAddExpenseComponent(
               initialState =
-                  AddTransactionState(
+                  AddExpenseState(
                       amountText = "0",
                       descriptionText = "",
                       amountError = UiString(Res.string.error_invalid_amount),

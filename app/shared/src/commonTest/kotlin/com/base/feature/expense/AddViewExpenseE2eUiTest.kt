@@ -1,4 +1,4 @@
-package com.base.feature.transaction
+package com.base.feature.expense
 
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -19,9 +19,9 @@ import com.base.util.waitForExistence
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
-class AddViewTransactionE2eUiTest {
+class AddViewExpenseE2eUiTest {
   @Test
-  fun testAddAndObserveTransactionWithKeyboardActions() = runComposeUiTest {
+  fun testAddAndObserveExpenseWithKeyboardActions() = runComposeUiTest {
     val context = TestCContext()
     val koin = uiKoin()
 
@@ -30,13 +30,13 @@ class AddViewTransactionE2eUiTest {
 
     // Start on HomeScreen displaying empty state
     onNode(hasTestTag("main-home-screen")).waitForExistence().assertExists()
-    onNode(hasTestTag("empty-transactions-message")).waitForExistence().assertExists()
+    onNode(hasTestTag("empty-expenses-message")).waitForExistence().assertExists()
 
-    // Click "Add Transaction" FAB
-    onNode(hasTestTag("add-transaction-fab")).waitForExistence().performClick()
+    // Click "Add Expense" FAB
+    onNode(hasTestTag("add-expense-fab")).waitForExistence().performClick()
 
-    // Screen transitions to AddTransactionScreen
-    onNode(hasTestTag("main-add-transaction-screen")).waitForExistence().assertExists()
+    // Screen transitions to AddExpenseScreen
+    onNode(hasTestTag("main-add-expense-screen")).waitForExistence().assertExists()
     onNode(hasTestTag("amount-field")).waitForExistence().assertExists()
 
     // Type amount, tab to description, type description, and submit with Enter key
@@ -46,9 +46,9 @@ class AddViewTransactionE2eUiTest {
     onNode(isFocused()).performTextInput("Dinner with friends")
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
 
-    // Verify navigating back to HomeScreen and seeing recorded transaction
+    // Verify navigating back to HomeScreen and seeing recorded expense
     onNode(hasTestTag("main-home-screen")).waitForExistence().assertExists()
-    onNode(hasTestTag("transaction-list")).waitForExistence().assertExists()
+    onNode(hasTestTag("expense-list")).waitForExistence().assertExists()
     onNode(hasText("Dinner with friends")).waitForExistence().assertExists()
     onNode(hasText("120000 T")).assertExists()
   }

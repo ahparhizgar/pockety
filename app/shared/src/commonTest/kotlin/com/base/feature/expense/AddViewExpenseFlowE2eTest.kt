@@ -1,4 +1,4 @@
-package com.base.feature.transaction
+package com.base.feature.expense
 
 import com.base.component.TestCContext
 import com.base.feature.main.MainComponent
@@ -12,7 +12,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 
-class AddViewTransactionFlowE2eTest : BehaviorSpec() {
+class AddViewExpenseFlowE2eTest : BehaviorSpec() {
   init {
     extensions(MainDispatcherExtension())
 
@@ -24,39 +24,39 @@ class AddViewTransactionFlowE2eTest : BehaviorSpec() {
       When("cold start completes") {
         beforeEach { testCoroutineScheduler.advanceUntilIdle() }
 
-        Then("displays HomeScreen with empty transactions") {
+        Then("displays HomeScreen with empty expenses") {
           val main = root.childStack.value.active.instance.shouldBeInstanceOf<MainComponent>()
           val homeChild =
               main.stack.value.active.instance.shouldBeInstanceOf<MainComponent.Child.Home>()
-          homeChild.component.state.value.transactions shouldHaveSize 0
+          homeChild.component.state.value.expenses shouldHaveSize 0
         }
 
-        And("user navigates to add transaction and saves an expense") {
+        And("user navigates to add expense and saves an expense") {
           beforeEach {
             val main = root.childStack.value.active.instance.shouldBeInstanceOf<MainComponent>()
             val homeChild =
                 main.stack.value.active.instance.shouldBeInstanceOf<MainComponent.Child.Home>()
-            homeChild.component.onAddTransactionClicked()
+            homeChild.component.onAddExpenseClicked()
 
-            val addTransactionChild =
+            val addExpenseChild =
                 main.stack.value.active.instance.shouldBeInstanceOf<
-                    MainComponent.Child.AddTransaction
+                    MainComponent.Child.AddExpense
                 >()
-            addTransactionChild.component.onAmountChanged("320000")
-            addTransactionChild.component.onDescriptionChanged("Coffee and croissant")
-            addTransactionChild.component.onSaveClicked()
+            addExpenseChild.component.onAmountChanged("320000")
+            addExpenseChild.component.onDescriptionChanged("Coffee and croissant")
+            addExpenseChild.component.onSaveClicked()
             testCoroutineScheduler.advanceUntilIdle()
           }
 
-          Then("navigates back to HomeScreen displaying the recorded transaction") {
+          Then("navigates back to HomeScreen displaying the recorded expense") {
             val main = root.childStack.value.active.instance.shouldBeInstanceOf<MainComponent>()
             val homeChild =
                 main.stack.value.active.instance.shouldBeInstanceOf<MainComponent.Child.Home>()
-            val transactions = homeChild.component.state.value.transactions
+            val expenses = homeChild.component.state.value.expenses
 
-            transactions shouldHaveSize 1
-            transactions[0].amount shouldBe 320000
-            transactions[0].description shouldBe "Coffee and croissant"
+            expenses shouldHaveSize 1
+            expenses[0].amount shouldBe 320000
+            expenses[0].description shouldBe "Coffee and croissant"
           }
         }
       }

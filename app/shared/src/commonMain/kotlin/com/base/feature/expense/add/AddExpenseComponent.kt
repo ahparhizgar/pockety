@@ -1,4 +1,4 @@
-package com.base.feature.transaction.add
+package com.base.feature.expense.add
 
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
@@ -6,7 +6,7 @@ import com.arkivanov.decompose.value.update
 import com.base.Fake
 import com.base.component.CContext
 import com.base.component.componentScope
-import com.base.db.TransactionRepository
+import com.base.db.ExpenseRepository
 import com.base.feature.root.TopLevelDestinationConfig
 import com.base.usermessage.UiString
 import kotlinx.coroutines.Job
@@ -16,7 +16,7 @@ import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.error_empty_description
 import pockety.app.shared.generated.resources.error_invalid_amount
 
-data class AddTransactionState(
+data class AddExpenseState(
     val amountText: String = "",
     val descriptionText: String = "",
     val amountError: UiString? = null,
@@ -24,8 +24,8 @@ data class AddTransactionState(
     val isSaving: Boolean = false,
 )
 
-interface AddTransactionComponent : TopLevelDestinationConfig {
-  val state: Value<AddTransactionState>
+interface AddExpenseComponent : TopLevelDestinationConfig {
+  val state: Value<AddExpenseState>
 
   fun onAmountChanged(amount: String)
 
@@ -38,23 +38,23 @@ interface AddTransactionComponent : TopLevelDestinationConfig {
   @Serializable data object Config : TopLevelDestinationConfig
 }
 
-interface AddTransactionComponentFactory {
+interface AddExpenseComponentFactory {
   fun create(
       cContext: CContext,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
-  ): AddTransactionComponent
+  ): AddExpenseComponent
 }
 
-class DefaultAddTransactionComponent(
+class DefaultAddExpenseComponent(
     cContext: CContext,
-    private val transactionRepository: TransactionRepository,
+    private val expenseRepository: ExpenseRepository,
     private val onCompleted: () -> Unit,
     private val onCancelled: () -> Unit,
-) : AddTransactionComponent, CContext by cContext {
+) : AddExpenseComponent, CContext by cContext {
   private val scope = componentScope()
-  private val _state = MutableValue(AddTransactionState())
-  override val state: Value<AddTransactionState> = _state
+  private val _state = MutableValue(AddExpenseState())
+  override val state: Value<AddExpenseState> = _state
 
   override fun onAmountChanged(amount: String) {
     _state.update {
@@ -102,7 +102,7 @@ class DefaultAddTransactionComponent(
 
     _state.update { it.copy(isSaving = true) }
     try {
-      transactionRepository.addTransaction(
+      expenseRepository.addExpense(
           amount = amountNumber,
           description = currentState.descriptionText.trim(),
       )
@@ -117,28 +117,28 @@ class DefaultAddTransactionComponent(
   }
 }
 
-class DefaultAddTransactionComponentFactory(
-    private val transactionRepository: TransactionRepository,
-) : AddTransactionComponentFactory {
+class DefaultAddExpenseComponentFactory(
+    private val expenseRepository: ExpenseRepository,
+) : AddExpenseComponentFactory {
   override fun create(
       cContext: CContext,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
-  ): AddTransactionComponent =
-      DefaultAddTransactionComponent(
+  ): AddExpenseComponent =
+      DefaultAddExpenseComponent(
           cContext = cContext,
-          transactionRepository = transactionRepository,
+          expenseRepository = expenseRepository,
           onCompleted = onCompleted,
           onCancelled = onCancelled,
       )
 }
 
 @Fake
-class FakeAddTransactionComponent(
-    initialState: AddTransactionState = AddTransactionState(),
-) : AddTransactionComponent {
+class FakeAddExpenseComponent(
+    initialState: AddExpenseState = AddExpenseState(),
+) : AddExpenseComponent {
   private val _state = MutableValue(initialState)
-  override val state: Value<AddTransactionState> = _state
+  override val state: Value<AddExpenseState> = _state
 
   override fun onAmountChanged(amount: String) {
     _state.update { it.copy(amountText = amount) }
@@ -154,10 +154,10 @@ class FakeAddTransactionComponent(
 }
 
 @Fake
-class FakeAddTransactionComponentFactory : AddTransactionComponentFactory {
+class FakeAddExpenseComponentFactory : AddExpenseComponentFactory {
   override fun create(
       cContext: CContext,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
-  ): AddTransactionComponent = FakeAddTransactionComponent()
+  ): AddExpenseComponent = FakeAddExpenseComponent()
 }

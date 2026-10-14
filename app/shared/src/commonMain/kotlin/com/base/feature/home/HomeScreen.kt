@@ -35,15 +35,15 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.base.db.FakeTransactionFactory
-import com.base.db.TransactionEntity
+import com.base.db.ExpenseEntity
+import com.base.db.FakeExpenseFactory
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.add_transaction_title
-import pockety.app.shared.generated.resources.no_transactions
-import pockety.app.shared.generated.resources.transactions_title
+import pockety.app.shared.generated.resources.add_expense_title
+import pockety.app.shared.generated.resources.expenses_title
+import pockety.app.shared.generated.resources.no_expenses
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,24 +55,24 @@ fun HomeScreen(
       modifier = modifier.testTag("home-screen"),
       topBar = {
         PocketyTopAppBar(
-            title = stringResource(Res.string.transactions_title),
+            title = stringResource(Res.string.expenses_title),
         )
       },
       floatingActionButton = {
         ExtendedFloatingActionButton(
-            onClick = component::onAddTransactionClicked,
+            onClick = component::onAddExpenseClicked,
             shape = CircleShape,
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
             icon = { Icon(Icons.Default.Add, contentDescription = null) },
             text = {
               Text(
-                  text = stringResource(Res.string.add_transaction_title),
+                  text = stringResource(Res.string.add_expense_title),
                   style =
                       MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
               )
             },
-            modifier = Modifier.testTag("add-transaction-fab"),
+            modifier = Modifier.testTag("add-expense-fab"),
         )
       },
   ) { paddingValues ->
@@ -99,36 +99,36 @@ private fun HomeContent(
         contentAlignment = Alignment.TopCenter,
     ) {
       when {
-        state.isLoading && state.transactions.isEmpty() -> {
+        state.isLoading && state.expenses.isEmpty() -> {
           Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator(modifier = Modifier.testTag("home-loading"))
           }
         }
 
-        state.transactions.isEmpty() -> {
+        state.expenses.isEmpty() -> {
           Box(
               modifier = Modifier.fillMaxSize().padding(16.dp),
               contentAlignment = Alignment.Center,
           ) {
             Text(
-                text = stringResource(Res.string.no_transactions),
+                text = stringResource(Res.string.no_expenses),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.testTag("empty-transactions-message"),
+                modifier = Modifier.testTag("empty-expenses-message"),
             )
           }
         }
 
         else -> {
           LazyColumn(
-              modifier = Modifier.fillMaxSize().testTag("transaction-list"),
+              modifier = Modifier.fillMaxSize().testTag("expense-list"),
               contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
               verticalArrangement = Arrangement.spacedBy(12.dp),
           ) {
-            items(state.transactions, key = { it.id }) { transaction ->
-              TransactionItemCard(
-                  transaction = transaction,
-                  modifier = Modifier.fillMaxWidth().testTag("transaction-item-${transaction.id}"),
+            items(state.expenses, key = { it.id }) { expense ->
+              ExpenseItemCard(
+                  expense = expense,
+                  modifier = Modifier.fillMaxWidth().testTag("expense-item-${expense.id}"),
               )
             }
           }
@@ -139,8 +139,8 @@ private fun HomeContent(
 }
 
 @Composable
-private fun TransactionItemCard(
-    transaction: TransactionEntity,
+private fun ExpenseItemCard(
+    expense: ExpenseEntity,
     modifier: Modifier = Modifier,
 ) {
   Surface(
@@ -171,21 +171,21 @@ private fun TransactionItemCard(
 
       Column(modifier = Modifier.weight(1f)) {
         Text(
-            text = transaction.description,
+            text = expense.description,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.testTag("transaction-description"),
+            modifier = Modifier.testTag("expense-description"),
         )
       }
 
       Spacer(modifier = Modifier.width(16.dp))
 
       Text(
-          text = "${transaction.amount} T",
+          text = "${expense.amount} T",
           style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
           color = MaterialTheme.colorScheme.primary,
-          modifier = Modifier.testTag("transaction-amount"),
+          modifier = Modifier.testTag("expense-amount"),
       )
     }
   }
@@ -199,7 +199,7 @@ private fun HomeScreenPopulatedPreview() {
           FakeHomeComponent(
               initialState =
                   HomeState(
-                      transactions = FakeTransactionFactory.createList(4),
+                      expenses = FakeExpenseFactory.createList(4),
                       isLoading = false,
                   ),
           ),
@@ -214,7 +214,7 @@ private fun HomeScreenEmptyPreview() {
           FakeHomeComponent(
               initialState =
                   HomeState(
-                      transactions = emptyList(),
+                      expenses = emptyList(),
                       isLoading = false,
                   ),
           ),

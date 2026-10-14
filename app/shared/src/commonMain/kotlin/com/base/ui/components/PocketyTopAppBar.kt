@@ -61,7 +61,7 @@ private fun PocketyTopAppBarPreview() {
 @Composable
 private fun PocketyTopAppBarCustomSubtitlePreview() {
   PocketyTopAppBar(
-      title = "Transactions",
+      title = "Expenses",
       subtitle = "Overview",
   )
 }

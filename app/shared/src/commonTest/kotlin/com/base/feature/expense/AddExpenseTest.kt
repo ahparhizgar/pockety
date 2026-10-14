@@ -1,9 +1,9 @@
-package com.base.feature.transaction
+package com.base.feature.expense
 
 import com.base.component.TestCContext
-import com.base.db.TransactionRepository
-import com.base.feature.transaction.add.AddTransactionComponent
-import com.base.feature.transaction.add.DefaultAddTransactionComponent
+import com.base.db.ExpenseRepository
+import com.base.feature.expense.add.AddExpenseComponent
+import com.base.feature.expense.add.DefaultAddExpenseComponent
 import com.base.testValue
 import com.base.usermessage.UiString
 import com.base.util.FakeCallback
@@ -19,19 +19,19 @@ import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.error_empty_description
 import pockety.app.shared.generated.resources.error_invalid_amount
 
-class AddTransactionTest : BehaviorSpec() {
+class AddExpenseTest : BehaviorSpec() {
   init {
     extensions(MainDispatcherExtension())
 
-    Given("AddTransactionComponent with repository") {
+    Given("AddExpenseComponent with repository") {
       val koin by integrationKoin()
-      val repository by testValue { koin.get<TransactionRepository>() }
+      val repository by testValue { koin.get<ExpenseRepository>() }
       val completedCallback by testValue { FakeCallback<Unit>() }
       val cancelledCallback by testValue { FakeCallback<Unit>() }
-      val component: AddTransactionComponent by testValue {
-        DefaultAddTransactionComponent(
+      val component: AddExpenseComponent by testValue {
+        DefaultAddExpenseComponent(
             cContext = TestCContext(),
-            transactionRepository = repository,
+            expenseRepository = repository,
             onCompleted = completedCallback,
             onCancelled = cancelledCallback,
         )
@@ -90,16 +90,16 @@ class AddTransactionTest : BehaviorSpec() {
           testCoroutineScheduler.advanceUntilIdle()
         }
 
-        Then("saves transaction to repository and calls onCompleted") {
+        Then("saves expense to repository and calls onCompleted") {
           val state = component.state.value
           state.amountError.shouldBeNull()
           state.descriptionError.shouldBeNull()
           completedCallback.shouldBeCalled()
 
-          val transactions = repository.observeTransactions().first()
-          transactions shouldHaveSize 1
-          transactions[0].amount shouldBe 15000
-          transactions[0].description shouldBe "Groceries"
+          val expenses = repository.observeExpenses().first()
+          expenses shouldHaveSize 1
+          expenses[0].amount shouldBe 15000
+          expenses[0].description shouldBe "Groceries"
         }
       }
 

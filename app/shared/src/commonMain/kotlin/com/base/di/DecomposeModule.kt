@@ -1,5 +1,7 @@
 package com.base.di
 
+import com.base.feature.expense.add.AddExpenseComponentFactory
+import com.base.feature.expense.add.DefaultAddExpenseComponentFactory
 import com.base.feature.home.DefaultHomeComponentFactory
 import com.base.feature.home.HomeComponentFactory
 import com.base.feature.item.DefaultItemListComponentFactory
@@ -10,8 +12,6 @@ import com.base.feature.root.ComponentProvider
 import com.base.feature.root.DefaultRootComponentFactory
 import com.base.feature.root.KoinComponentProvider
 import com.base.feature.root.RootComponentFactory
-import com.base.feature.transaction.add.AddTransactionComponentFactory
-import com.base.feature.transaction.add.DefaultAddTransactionComponentFactory
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -21,6 +21,6 @@ fun decomposeModule() = module {
   factoryOf(::DefaultRootComponentFactory).bind<RootComponentFactory>()
   factoryOf(::DefaultMainComponentFactory).bind<MainComponentFactory>()
   factoryOf(::DefaultHomeComponentFactory).bind<HomeComponentFactory>()
-  factoryOf(::DefaultAddTransactionComponentFactory).bind<AddTransactionComponentFactory>()
+  factoryOf(::DefaultAddExpenseComponentFactory).bind<AddExpenseComponentFactory>()
   factoryOf(::DefaultItemListComponentFactory).bind<ItemListComponentFactory>()
 }

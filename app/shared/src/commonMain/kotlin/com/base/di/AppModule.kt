@@ -3,8 +3,8 @@ package com.base.di
 import com.base.datastore.createDataStore
 import com.base.db.AppDatabase
 import com.base.db.AppDatabaseBuilderFactory
-import com.base.db.DefaultTransactionRepository
-import com.base.db.TransactionRepository
+import com.base.db.DefaultExpenseRepository
+import com.base.db.ExpenseRepository
 import com.base.db.getRoomDatabase
 import com.base.feature.auth.DataStoreTokenStorage
 import com.base.feature.auth.TokenStorage
@@ -38,6 +38,6 @@ fun othersModule() = module {
     )
   }
   single { get<AppDatabase>().itemDao() }
-  single { get<AppDatabase>().transactionDao() }
-  singleOf(::DefaultTransactionRepository).bind<TransactionRepository>()
+  single { get<AppDatabase>().expenseDao() }
+  singleOf(::DefaultExpenseRepository).bind<ExpenseRepository>()
 }

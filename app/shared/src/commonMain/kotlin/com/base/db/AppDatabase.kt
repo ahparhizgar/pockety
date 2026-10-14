@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
     entities =
         [
             ItemEntity::class,
-            TransactionEntity::class,
+            ExpenseEntity::class,
         ],
     version = 2,
 )
@@ -24,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 abstract class AppDatabase : RoomDatabase() {
   abstract fun itemDao(): ItemDao
 
-  abstract fun transactionDao(): TransactionDao
+  abstract fun expenseDao(): ExpenseDao
 }
 
 // The Room compiler generates the `actual` implementations.

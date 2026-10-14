@@ -10,8 +10,8 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.base.feature.expense.add.AddExpenseScreen
 import com.base.feature.home.HomeScreen
-import com.base.feature.transaction.add.AddTransactionScreen
 import com.base.ui.ScreenPreviews
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -38,10 +38,10 @@ fun MainScreen(
         )
       }
 
-      is MainComponent.Child.AddTransaction -> {
-        AddTransactionScreen(
+      is MainComponent.Child.AddExpense -> {
+        AddExpenseScreen(
             component = child.component,
-            modifier = Modifier.testTag("main-add-transaction-screen"),
+            modifier = Modifier.testTag("main-add-expense-screen"),
         )
       }
     }

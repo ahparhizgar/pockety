@@ -9,32 +9,32 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.first
 
-class TransactionRepositoryTest : BehaviorSpec() {
+class ExpenseRepositoryTest : BehaviorSpec() {
   init {
     extensions(MainDispatcherExtension())
 
-    Given("TransactionRepository with in-memory database") {
+    Given("ExpenseRepository with in-memory database") {
       val koin by integrationKoin()
-      val repository by testValue { koin.get<TransactionRepository>() }
+      val repository by testValue { koin.get<ExpenseRepository>() }
 
-      When("no transactions exist") {
-        Then("observeTransactions emits empty list") {
-          val initialList = repository.observeTransactions().first()
+      When("no expenses exist") {
+        Then("observeExpenses emits empty list") {
+          val initialList = repository.observeExpenses().first()
           initialList shouldHaveSize 0
         }
       }
 
-      When("a transaction is added") {
+      When("a expense is added") {
         var insertedId: Long = 0
 
         beforeEach {
-          insertedId = repository.addTransaction(amount = 2500, description = "Lunch")
+          insertedId = repository.addExpense(amount = 2500, description = "Lunch")
           testCoroutineScheduler.advanceUntilIdle()
         }
 
-        Then("transaction is persisted and observed") {
+        Then("expense is persisted and observed") {
           insertedId shouldBe 1
-          val list = repository.observeTransactions().first()
+          val list = repository.observeExpenses().first()
           list shouldHaveSize 1
           list[0].amount shouldBe 2500
           list[0].description shouldBe "Lunch"

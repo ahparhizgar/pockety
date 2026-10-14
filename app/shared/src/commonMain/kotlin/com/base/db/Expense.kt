@@ -12,7 +12,7 @@ import kotlin.time.Instant
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "transactions")
-data class TransactionEntity(
+data class ExpenseEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val amount: Long,
     val description: String,
@@ -20,53 +20,52 @@ data class TransactionEntity(
 )
 
 @Dao
-interface TransactionDao {
+interface ExpenseDao {
   @Transaction
   @Query("SELECT * FROM transactions ORDER BY createdAt DESC")
-  fun observeTransactions(): Flow<List<TransactionEntity>>
+  fun observeExpenses(): Flow<List<ExpenseEntity>>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insertTransaction(transaction: TransactionEntity): Long
+  suspend fun insertExpense(expense: ExpenseEntity): Long
 }
 
-interface TransactionRepository {
-  fun observeTransactions(): Flow<List<TransactionEntity>>
+interface ExpenseRepository {
+  fun observeExpenses(): Flow<List<ExpenseEntity>>
 
-  suspend fun addTransaction(amount: Long, description: String): Long
+  suspend fun addExpense(amount: Long, description: String): Long
 }
 
-class DefaultTransactionRepository(
-    private val transactionDao: TransactionDao,
-) : TransactionRepository {
-  override fun observeTransactions(): Flow<List<TransactionEntity>> =
-      transactionDao.observeTransactions()
+class DefaultExpenseRepository(
+    private val expenseDao: ExpenseDao,
+) : ExpenseRepository {
+  override fun observeExpenses(): Flow<List<ExpenseEntity>> = expenseDao.observeExpenses()
 
-  override suspend fun addTransaction(amount: Long, description: String): Long {
-    val transaction =
-        TransactionEntity(
+  override suspend fun addExpense(amount: Long, description: String): Long {
+    val expense =
+        ExpenseEntity(
             amount = amount,
             description = description,
             createdAt = Clock.System.now(),
         )
-    return transactionDao.insertTransaction(transaction)
+    return expenseDao.insertExpense(expense)
   }
 }
 
-object FakeTransactionFactory {
+object FakeExpenseFactory {
   fun create(
       id: Long = 1,
       amount: Long = 1000,
       description: String = "Test expense",
       createdAt: Instant = Clock.System.now(),
-  ): TransactionEntity =
-      TransactionEntity(
+  ): ExpenseEntity =
+      ExpenseEntity(
           id = id,
           amount = amount,
           description = description,
           createdAt = createdAt,
       )
 
-  fun createList(count: Int = 3): List<TransactionEntity> =
+  fun createList(count: Int = 3): List<ExpenseEntity> =
       (1..count).map { index ->
         create(
             id = index.toLong(),
