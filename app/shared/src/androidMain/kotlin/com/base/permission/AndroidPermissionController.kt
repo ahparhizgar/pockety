@@ -14,10 +14,13 @@ import java.lang.ref.WeakReference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import androidx.core.content.edit
 
 class AndroidPermissionController(
     private val context: Context,
 ) : PermissionController {
+
+  private val prefs = context.getSharedPreferences("sms_permission_prefs", Context.MODE_PRIVATE)
 
   private val _isSmsPermissionGranted = MutableStateFlow(checkIsSmsPermissionGranted(context))
   override val isSmsPermissionGranted: StateFlow<Boolean> = _isSmsPermissionGranted.asStateFlow()
@@ -43,21 +46,6 @@ class AndroidPermissionController(
 
   fun onPermissionResult(granted: Boolean) {
     _isSmsPermissionGranted.value = granted
-    if (!granted) {
-      val activity = activityRef?.get()
-      if (activity != null) {
-        val shouldShowRationale =
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                Manifest.permission.RECEIVE_SMS,
-            )
-        // If permission was denied and rationale is false right after the request result,
-        // it means the user permanently denied it ("Don't ask again") or the OS auto-rejected it.
-        if (!shouldShowRationale) {
-          openAppSettings()
-        }
-      }
-    }
   }
 
   override fun requestReceiveSmsPermission() {
@@ -67,7 +55,29 @@ class AndroidPermissionController(
       return
     }
 
+    val activity = activityRef?.get()
     val launcher = launcherRef
+
+    val wasRequestedBefore = prefs.getBoolean(KEY_SMS_REQUESTED_BEFORE, false)
+
+    if (activity != null && wasRequestedBefore) {
+      val shouldShowRationale =
+          ActivityCompat.shouldShowRequestPermissionRationale(
+              activity,
+              Manifest.permission.RECEIVE_SMS,
+          )
+
+      // If we already requested before and shouldShowRationale is false,
+      // it means the user has permanently denied permission ("Don't ask again" / 2+ denials).
+      // Launching the system dialog would immediately fail silently with false.
+      // So on this click (the 3rd click, or 1st click after restart), directly open Settings!
+      if (!shouldShowRationale) {
+        openAppSettings()
+        return
+      }
+    }
+
+    prefs.edit { putBoolean(KEY_SMS_REQUESTED_BEFORE, true) }
     if (launcher != null) {
       launcher.launch(Manifest.permission.RECEIVE_SMS)
     } else {
@@ -85,6 +95,8 @@ class AndroidPermissionController(
   }
 
   companion object {
+    private const val KEY_SMS_REQUESTED_BEFORE = "sms_permission_requested_before"
+
     fun checkIsSmsPermissionGranted(context: Context): Boolean {
       return ContextCompat.checkSelfPermission(
           context,
