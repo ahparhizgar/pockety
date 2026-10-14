@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
@@ -46,13 +47,12 @@ fun FigmaDeviceArtboard(
     Surface(
         modifier = Modifier.width(390.dp).height(844.dp),
         shape = RoundedCornerShape(32.dp),
-        color = MaterialTheme.colorScheme.surface,
+        color = Color.Transparent,
         border =
             BorderStroke(
                 1.5.dp,
                 MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
             ),
-        shadowElevation = 8.dp,
     ) {
       Box(
           modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(32.dp)),

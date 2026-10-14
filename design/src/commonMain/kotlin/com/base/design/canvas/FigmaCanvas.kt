@@ -55,6 +55,9 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.base.design.FigmaDeviceArtboard
+import com.base.design.ui.ComponentPreviews
+import com.base.design.ui.FigmaBoardPreviews
 import com.base.design.ui.theme.PocketyTheme
 import kotlin.math.exp
 import kotlin.math.roundToInt
@@ -148,7 +151,7 @@ fun FigmaCanvas(
             onResetZoom = { state.reset() },
             isDarkTheme = state.isDarkTheme,
             onToggleTheme = { state.toggleTheme() },
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier.align(Alignment.BottomCenter).offset(y = (-20).dp),
         )
       }
     }
@@ -278,7 +281,7 @@ fun CanvasToolbar(
     modifier: Modifier = Modifier,
 ) {
   Surface(
-      modifier = modifier.offset(y = (-20).dp),
+      modifier = modifier,
       shape = RoundedCornerShape(16.dp),
       color = MaterialTheme.colorScheme.surfaceContainerHigh,
       tonalElevation = 6.dp,
@@ -355,4 +358,65 @@ private fun ToolIconButton(
         modifier = Modifier.size(20.dp),
     )
   }
+}
+
+@Composable
+fun FigmaCanvasSample(
+    modifier: Modifier = Modifier,
+) {
+  FigmaCanvas(
+      modifier = modifier,
+  ) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+    ) {
+      Row(
+          modifier = Modifier.padding(48.dp),
+          horizontalArrangement = Arrangement.spacedBy(36.dp),
+      ) {
+        FigmaDeviceArtboard(
+            number = "01",
+            title = "Home",
+            tag = "Main Tab",
+        ) {
+          Text("Home Screen")
+        }
+
+        FigmaDeviceArtboard(
+            number = "02",
+            title = "Inbox",
+            tag = "Smart Extraction",
+        ) {
+          Text("Inbox Screen")
+        }
+
+        FigmaDeviceArtboard(
+            number = "03",
+            title = "Pockets",
+            tag = "Budget Overview",
+        ) {
+          Text("Pockets Screen")
+        }
+      }
+    }
+  }
+}
+
+@FigmaBoardPreviews
+@Composable
+private fun FigmaCanvasSamplePreview() {
+  FigmaCanvasSample()
+}
+
+@ComponentPreviews
+@Composable
+private fun CanvasToolbarPreview() {
+  CanvasToolbar(
+      activeTool = CanvasTool.Select,
+      onToolSelect = {},
+      scale = 1.0f,
+      onResetZoom = {},
+      isDarkTheme = false,
+      onToggleTheme = {},
+  )
 }
