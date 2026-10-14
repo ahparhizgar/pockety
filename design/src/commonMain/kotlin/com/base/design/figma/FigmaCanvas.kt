@@ -133,8 +133,8 @@ fun rememberFigmaCanvasState(
 }
 
 /**
- * A general composable container that can contain [FigmaDeviceArtboard] or any
- * other screens/elements, allowing Figma-like canvas pan & zoom interactions:
+ * A general composable container that can contain [FigmaDeviceArtboard] or any other
+ * screens/elements, allowing Figma-like canvas pan & zoom interactions:
  * - Mouse wheel vertical scroll: pans vertically
  * - Shift + mouse wheel scroll: pans horizontally
  * - Ctrl / Cmd / Alt + mouse wheel: zooms centered at cursor

@@ -16,6 +16,7 @@ import com.base.design.features.categorydetail.CategoryDetailScreen
 import com.base.design.features.categorylist.CategoryListScreen
 import com.base.design.features.editexpense.EditExpenseScreen
 import com.base.design.features.home.HomeScreen
+import com.base.design.features.home.rememberDefaultHomeScreenState
 import com.base.design.features.inbox.InboxScreen
 import com.base.design.features.monthdetail.MonthDetailScreen
 import com.base.design.features.pocketdetail.PocketDetailScreen
@@ -56,6 +57,15 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                     screens =
                         listOf(
                             FigmaScreenItem("01", "Home", "Main Tab") { HomeScreen() },
+                            FigmaScreenItem("01b", "Home (Permission Prompt)", "SMS Permission") {
+                              HomeScreen(
+                                  state =
+                                      rememberDefaultHomeScreenState()
+                                          .copy(
+                                              isSmsPermissionGranted = false,
+                                          ),
+                              )
+                            },
                             FigmaScreenItem("02", "Inbox (SMS Extraction)", "Smart Extraction") {
                               InboxScreen()
                             },

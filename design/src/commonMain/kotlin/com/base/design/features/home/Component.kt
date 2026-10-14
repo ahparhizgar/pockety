@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Sms
 import androidx.compose.material.icons.filled.TrendingDown
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.Icon
@@ -140,6 +141,88 @@ fun UndecidedExpensesBanner(
           Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowForward,
               contentDescription = "View undecided expenses",
+              modifier = Modifier.size(18.dp),
+          )
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Clean, encouraging banner displayed in place of undecided expenses when READ_SMS permission is
+ * not granted.
+ *
+ * Explains clearly why the permission is needed (auto-detect bank transactions) and invites the
+ * user to tap to grant access.
+ */
+@Composable
+fun SmsPermissionBanner(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+) {
+  Surface(
+      onClick = onClick,
+      shape = RoundedCornerShape(24.dp),
+      color = MaterialTheme.colorScheme.secondaryContainer,
+      shadowElevation = 1.dp,
+      modifier = modifier.fillMaxWidth(),
+  ) {
+    Row(
+        modifier = Modifier.padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+      Row(
+          modifier = Modifier.weight(1f, fill = false),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(14.dp),
+      ) {
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.size(40.dp),
+        ) {
+          Box(contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = Icons.Default.Sms,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+          }
+        }
+
+        Column(
+            modifier = Modifier.weight(1f, fill = false),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+          Text(
+              text = "Auto-track bank SMS",
+              style = MaterialTheme.typography.titleMedium,
+              color = MaterialTheme.colorScheme.onSurface,
+              maxLines = 1,
+              overflow = TextOverflow.Ellipsis,
+          )
+          Text(
+              text = "Tap to enable auto-detection for expenses",
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.secondary,
+              overflow = TextOverflow.Ellipsis,
+          )
+        }
+      }
+
+      Surface(
+          shape = CircleShape,
+          color = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.8f),
+          contentColor = MaterialTheme.colorScheme.primary,
+          modifier = Modifier.size(32.dp),
+      ) {
+        Box(contentAlignment = Alignment.Center) {
+          Icon(
+              imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+              contentDescription = "Enable SMS permission",
               modifier = Modifier.size(18.dp),
           )
         }
@@ -589,6 +672,12 @@ private fun UndecidedExpensesBannerPreview() {
       count = 8,
       amountFormatted = "2,340,000T",
   )
+}
+
+@ComponentPreviews
+@Composable
+private fun SmsPermissionBannerPreview() {
+  SmsPermissionBanner()
 }
 
 @ComponentPreviews

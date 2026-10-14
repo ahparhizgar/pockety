@@ -46,160 +46,160 @@ fun FigmaBoard(
     deviceMode: FigmaDeviceMode = FigmaDeviceMode.Portrait,
     selectedPage: FigmaDesignPage = FigmaDesignPage.All,
 ) {
-    val visibleSections =
-        remember(selectedPage) {
-            if (selectedPage == FigmaDesignPage.All) {
-                figmaPageSections.values.flatten()
-            } else {
-                figmaPageSections[selectedPage] ?: emptyList()
-            }
+  val visibleSections =
+      remember(selectedPage) {
+        if (selectedPage == FigmaDesignPage.All) {
+          figmaPageSections.values.flatten()
+        } else {
+          figmaPageSections[selectedPage] ?: emptyList()
         }
+      }
 
-    Surface(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+  Surface(
+      modifier = modifier,
+      color = MaterialTheme.colorScheme.surfaceContainerLowest,
+  ) {
+    Column(
+        modifier = Modifier.padding(40.dp),
+        verticalArrangement = Arrangement.spacedBy(48.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(40.dp),
-            verticalArrangement = Arrangement.spacedBy(48.dp),
+      // Board Canvas Header
+      Column(
+          verticalArrangement = Arrangement.spacedBy(12.dp),
+      ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            // Board Canvas Header
-            Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Surface(
-                        shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(56.dp),
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ViewQuilt,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                modifier = Modifier.size(32.dp),
-                            )
-                        }
-                    }
-
-                    Column {
-                        Text(
-                            text = "Pockety — Design System & Screens Overview",
-                            style = MaterialTheme.typography.headlineLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                        Text(
-                            text = "Verdant Clarity (M3 Expressive) • All 14 Screens UI Only",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.secondary,
-                        )
-                    }
-                }
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.padding(top = 4.dp),
-                ) {
-                    Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.CheckCircle,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                                modifier = Modifier.size(16.dp),
-                            )
-                            Text(
-                                text = "14 Total Screens",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            )
-                        }
-                    }
-
-                    Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Palette,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(16.dp),
-                            )
-                            Text(
-                                text = "Forest Sage & Celadon Theme",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.primary,
-                            )
-                        }
-                    }
-
-                    Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AutoAwesome,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(16.dp),
-                            )
-                            Text(
-                                text = "Keyboard Accessible • Tonal Layering",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                }
+          Surface(
+              shape = RoundedCornerShape(16.dp),
+              color = MaterialTheme.colorScheme.primary,
+              modifier = Modifier.size(56.dp),
+          ) {
+            Box(contentAlignment = Alignment.Center) {
+              Icon(
+                  imageVector = Icons.AutoMirrored.Filled.ViewQuilt,
+                  contentDescription = null,
+                  tint = MaterialTheme.colorScheme.onPrimary,
+                  modifier = Modifier.size(32.dp),
+              )
             }
+          }
 
-            // Render dynamically from map
-            visibleSections.forEach { section ->
-                Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                    FigmaSectionHeader(
-                        title = section.title,
-                        subtitle = section.subtitle,
-                        icon = section.icon,
-                    )
-
-                    Row(horizontalArrangement = Arrangement.spacedBy(36.dp)) {
-                        section.screens.forEach { screen ->
-                            FigmaDeviceArtboard(
-                                number = screen.number,
-                                title = screen.title,
-                                tag = screen.tag,
-                                deviceMode = deviceMode,
-                            ) {
-                                screen.content()
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(40.dp))
+          Column {
+            Text(
+                text = "Pockety — Design System & Screens Overview",
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text = "Verdant Clarity (M3 Expressive) • All 14 Screens UI Only",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.secondary,
+            )
+          }
         }
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.padding(top = 4.dp),
+        ) {
+          Surface(
+              shape = CircleShape,
+              color = MaterialTheme.colorScheme.secondaryContainer,
+          ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+              Icon(
+                  imageVector = Icons.Default.CheckCircle,
+                  contentDescription = null,
+                  tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                  modifier = Modifier.size(16.dp),
+              )
+              Text(
+                  text = "14 Total Screens",
+                  style = MaterialTheme.typography.labelMedium,
+                  color = MaterialTheme.colorScheme.onSecondaryContainer,
+              )
+            }
+          }
+
+          Surface(
+              shape = CircleShape,
+              color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
+          ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+              Icon(
+                  imageVector = Icons.Default.Palette,
+                  contentDescription = null,
+                  tint = MaterialTheme.colorScheme.primary,
+                  modifier = Modifier.size(16.dp),
+              )
+              Text(
+                  text = "Forest Sage & Celadon Theme",
+                  style = MaterialTheme.typography.labelMedium,
+                  color = MaterialTheme.colorScheme.primary,
+              )
+            }
+          }
+
+          Surface(
+              shape = CircleShape,
+              color = MaterialTheme.colorScheme.surfaceContainerHigh,
+          ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+              Icon(
+                  imageVector = Icons.Default.AutoAwesome,
+                  contentDescription = null,
+                  tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                  modifier = Modifier.size(16.dp),
+              )
+              Text(
+                  text = "Keyboard Accessible • Tonal Layering",
+                  style = MaterialTheme.typography.labelMedium,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+            }
+          }
+        }
+      }
+
+      // Render dynamically from map
+      visibleSections.forEach { section ->
+        Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+          FigmaSectionHeader(
+              title = section.title,
+              subtitle = section.subtitle,
+              icon = section.icon,
+          )
+
+          Row(horizontalArrangement = Arrangement.spacedBy(36.dp)) {
+            section.screens.forEach { screen ->
+              FigmaDeviceArtboard(
+                  number = screen.number,
+                  title = screen.title,
+                  tag = screen.tag,
+                  deviceMode = deviceMode,
+              ) {
+                screen.content()
+              }
+            }
+          }
+        }
+      }
+
+      Spacer(modifier = Modifier.height(40.dp))
     }
+  }
 }

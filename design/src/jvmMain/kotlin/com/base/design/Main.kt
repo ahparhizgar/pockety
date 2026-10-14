@@ -14,11 +14,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuOpen
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.Layers
-import androidx.compose.material.icons.filled.LocalOffer
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -33,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.font.FontWeight
@@ -79,17 +73,16 @@ fun main() {
                 }
               },
           ) { deviceMode ->
-              FigmaBoard(
-                  deviceMode = deviceMode,
-                  selectedPage = selectedPage,
-              )
+            FigmaBoard(
+                deviceMode = deviceMode,
+                selectedPage = selectedPage,
+            )
           }
         }
       }
     }
   }
 }
-
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

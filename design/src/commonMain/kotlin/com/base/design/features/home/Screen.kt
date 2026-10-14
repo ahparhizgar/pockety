@@ -39,6 +39,7 @@ import com.base.design.ui.theme.colorSchemeExtended
 data class HomeScreenState(
     val title: String = "Home",
     val appName: String = "Pockety",
+    val isSmsPermissionGranted: Boolean = true,
     val undecidedExpenseCount: Int = 8,
     val undecidedExpenseAmount: String = "2,340,000T",
     val monthLabel: String = "Oct 2026",
@@ -67,6 +68,7 @@ fun rememberDefaultHomeScreenState(): HomeScreenState {
     HomeScreenState(
         title = "Home",
         appName = "Pockety",
+        isSmsPermissionGranted = true,
         undecidedExpenseCount = 8,
         undecidedExpenseAmount = "2,340,000T",
         monthLabel = "Oct 2026",
@@ -98,8 +100,9 @@ fun rememberDefaultHomeScreenState(): HomeScreenState {
 /**
  * Main Home screen for the Pockety application.
  *
- * Assembles TopBar, BottomBar, FloatingActionButton, UndecidedExpensesBanner,
- * MonthlyOutflowHeroCard, MonthOverMonthCard, and ActivePocketsSection with adaptive centering.
+ * Assembles TopBar, BottomBar, FloatingActionButton, UndecidedExpensesBanner (or
+ * SmsPermissionBanner), MonthlyOutflowHeroCard, MonthOverMonthCard, and ActivePocketsSection with
+ * adaptive centering.
  */
 @Composable
 fun HomeScreen(
@@ -110,6 +113,7 @@ fun HomeScreen(
     onNotificationsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     onUndecidedExpensesClick: () -> Unit = {},
+    onGrantSmsPermissionClick: () -> Unit = {},
     onDateClick: () -> Unit = {},
     onAllMonthsClick: () -> Unit = {},
     onManagePocketsClick: () -> Unit = {},
@@ -183,7 +187,11 @@ fun HomeScreen(
                   .padding(horizontal = 20.dp, vertical = 16.dp),
           verticalArrangement = Arrangement.spacedBy(16.dp),
       ) {
-        if (state.undecidedExpenseCount > 0) {
+        if (!state.isSmsPermissionGranted) {
+          SmsPermissionBanner(
+              onClick = onGrantSmsPermissionClick,
+          )
+        } else if (state.undecidedExpenseCount > 0) {
           UndecidedExpensesBanner(
               count = state.undecidedExpenseCount,
               amountFormatted = state.undecidedExpenseAmount,
@@ -255,5 +263,17 @@ private fun HomeScreenEmptyPreview() {
               inboxBadgeCount = 0,
               notificationCount = 0,
           ),
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun HomeScreenPermissionNotGrantedPreview() {
+  HomeScreen(
+      state =
+          rememberDefaultHomeScreenState()
+              .copy(
+                  isSmsPermissionGranted = false,
+              ),
   )
 }
