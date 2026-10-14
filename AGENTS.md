@@ -65,7 +65,9 @@ itself is a component. So we make AddTransactionTest.kt EditTransactionTest.kt n
 TransactionComponentTest.  
 In a component level test, don't get the repository to validate, instead, validate the state of the
 component or inject other components so tests are not dependent on the implementation details or the
-repository.
+repository.  
+Never write tests directly for fakes e.g. `FakeGroupApi`. Instead, write other tests that uses the
+fake.
 
 ## Testing UI
 

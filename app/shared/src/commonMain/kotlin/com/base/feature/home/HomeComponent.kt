@@ -18,12 +18,15 @@ import kotlinx.serialization.Serializable
 data class HomeState(
     val expenses: List<ExpenseEntity> = emptyList(),
     val isLoading: Boolean = false,
+    val isSmsPermissionGranted: Boolean = false,
 )
 
 interface HomeComponent : TopLevelDestinationConfig {
   val state: Value<HomeState>
 
   fun onAddExpenseClicked()
+
+  fun onEnableSmsTrackingClicked()
 
   @Serializable data object Config : TopLevelDestinationConfig
 }
@@ -41,11 +44,18 @@ class DefaultHomeComponent(
     private val onAddExpense: () -> Unit,
 ) : HomeComponent, CContext by cContext {
   private val scope = componentScope()
-  private val _state = MutableValue(HomeState(isLoading = true))
+  private val _state =
+      MutableValue(
+          HomeState(
+              isLoading = true,
+              isSmsPermissionGranted = permissionController.isSmsPermissionGranted.value,
+          )
+      )
   override val state: Value<HomeState> = _state
 
   init {
     observeExpenses()
+    observePermission()
   }
 
   private fun observeExpenses(): Job =
@@ -61,8 +71,17 @@ class DefaultHomeComponent(
           }
           .launchIn(scope)
 
+  private fun observePermission(): Job =
+      permissionController.isSmsPermissionGranted
+          .onEach { granted -> _state.update { it.copy(isSmsPermissionGranted = granted) } }
+          .launchIn(scope)
+
   override fun onAddExpenseClicked() {
     onAddExpense()
+  }
+
+  override fun onEnableSmsTrackingClicked() {
+    permissionController.requestReceiveSmsPermission()
   }
 }
 
@@ -88,6 +107,8 @@ class FakeHomeComponent(
   override val state: Value<HomeState> = _state
 
   override fun onAddExpenseClicked() {}
+
+  override fun onEnableSmsTrackingClicked() {}
 }
 
 @Fake

@@ -19,6 +19,8 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.lifecycle.resume
 import com.arkivanov.essenty.statekeeper.StateKeeper
 import com.arkivanov.essenty.statekeeper.StateKeeperDispatcher
+import com.base.permission.FakePermissionController
+import com.base.permission.PermissionController
 import com.base.remote.userMessage
 import com.base.usermessage.MessageHolder
 import com.base.usermessage.MessageShower
@@ -49,6 +51,7 @@ interface CContext : GenericComponentContext<CContext> {
   var navigation: StackNavigation<Any>
   var messageShower: MessageShower
   var windowSizeHolder: WindowSizeHolder
+  var permissionController: PermissionController
 }
 
 @Suppress("LongParameterList")
@@ -61,6 +64,7 @@ class DefaultCContext(
     override var navigation: StackNavigation<Any> = NoopStackNavigation(),
     override var messageShower: MessageShower = MessageHolder(),
     override var windowSizeHolder: WindowSizeHolder = WindowSizeHolder(),
+    override var permissionController: PermissionController = FakePermissionController(),
 ) : CContext {
   override val componentContextFactory: ComponentContextFactory<CContext> =
       ComponentContextFactory { lifecycle, stateKeeper, instanceKeeper, backHandler ->
@@ -72,6 +76,7 @@ class DefaultCContext(
             navigation = navigation,
             messageShower = messageShower,
             windowSizeHolder = windowSizeHolder,
+            permissionController = permissionController,
         )
       }
 }
@@ -108,12 +113,16 @@ fun snackbarExceptionHandler(messageShower: MessageShower, scope: CoroutineScope
       }
     }
 
-fun defaultCContext(componentContext: ComponentContext) =
+fun defaultCContext(
+    componentContext: ComponentContext,
+    permissionController: PermissionController = FakePermissionController(),
+) =
     DefaultCContext(
         lifecycle = componentContext.lifecycle,
         stateKeeper = componentContext.stateKeeper,
         instanceKeeper = componentContext.instanceKeeper,
         backHandler = componentContext.backHandler,
+        permissionController = permissionController,
     )
 
 class FakeStackNavigation<C : Any>(initial: C) : StackNavigation<C> {
@@ -167,6 +176,8 @@ class TestCContext : CContext {
   val messageHolder = MessageHolder()
   val testWindowSizeHolder = WindowSizeHolder()
 
+  val fakePermissionController = FakePermissionController()
+
   override val lifecycle: Lifecycle = lifecycleRegistry
 
   override val stateKeeper: StateKeeper = StateKeeperDispatcher()
@@ -186,11 +197,13 @@ class TestCContext : CContext {
             navigation = navigation,
             messageShower = messageShower,
             windowSizeHolder = windowSizeHolder,
+            permissionController = permissionController,
         )
       }
   override var navigation: StackNavigation<Any> = fakeStackNavigation
   override var messageShower: MessageShower = messageHolder
   override var windowSizeHolder: WindowSizeHolder = testWindowSizeHolder
+  override var permissionController: PermissionController = fakePermissionController
 
   fun resumed(): TestCContext {
     lifecycleRegistry.resume()

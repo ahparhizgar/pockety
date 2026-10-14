@@ -37,11 +37,13 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.db.ExpenseEntity
 import com.base.db.FakeExpenseFactory
+import com.base.ui.ComponentPreviews
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.add_expense_title
+import pockety.app.shared.generated.resources.currency_symbol
 import pockety.app.shared.generated.resources.expenses_title
 import pockety.app.shared.generated.resources.no_expenses
 
@@ -98,33 +100,45 @@ private fun HomeContent(
         modifier = Modifier.widthIn(max = 640.dp).fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
-      when {
-        state.isLoading && state.expenses.isEmpty() -> {
-          Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(modifier = Modifier.testTag("home-loading"))
-          }
+      if (state.isLoading && state.expenses.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+          CircularProgressIndicator(modifier = Modifier.testTag("home-loading"))
         }
-
-        state.expenses.isEmpty() -> {
-          Box(
-              modifier = Modifier.fillMaxSize().padding(16.dp),
-              contentAlignment = Alignment.Center,
-          ) {
-            Text(
-                text = stringResource(Res.string.no_expenses),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.testTag("empty-expenses-message"),
-            )
+      } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().testTag("expense-list"),
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+          item(key = "banner") {
+            if (!state.isSmsPermissionGranted) {
+              SmsPermissionBanner(
+                  onClick = component::onEnableSmsTrackingClicked,
+              )
+            } else {
+              val currency = stringResource(Res.string.currency_symbol)
+              UndecidedExpensesBanner(
+                  count = 0,
+                  amountFormatted = "0 $currency",
+              )
+            }
           }
-        }
 
-        else -> {
-          LazyColumn(
-              modifier = Modifier.fillMaxSize().testTag("expense-list"),
-              contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-              verticalArrangement = Arrangement.spacedBy(12.dp),
-          ) {
+          if (state.expenses.isEmpty()) {
+            item(key = "empty-expenses") {
+              Box(
+                  modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+                  contentAlignment = Alignment.Center,
+              ) {
+                Text(
+                    text = stringResource(Res.string.no_expenses),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.testTag("empty-expenses-message"),
+                )
+              }
+            }
+          } else {
             items(state.expenses, key = { it.id }) { expense ->
               ExpenseItemCard(
                   expense = expense,
@@ -193,7 +207,7 @@ private fun ExpenseItemCard(
 
 @ScreenPreviews
 @Composable
-private fun HomeScreenPopulatedPreview() {
+private fun HomeScreenPopulatedPermissionDeniedPreview() {
   HomeScreen(
       component =
           FakeHomeComponent(
@@ -201,6 +215,23 @@ private fun HomeScreenPopulatedPreview() {
                   HomeState(
                       expenses = FakeExpenseFactory.createList(4),
                       isLoading = false,
+                      isSmsPermissionGranted = false,
+                  ),
+          ),
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun HomeScreenPopulatedPermissionGrantedPreview() {
+  HomeScreen(
+      component =
+          FakeHomeComponent(
+              initialState =
+                  HomeState(
+                      expenses = FakeExpenseFactory.createList(4),
+                      isLoading = false,
+                      isSmsPermissionGranted = true,
                   ),
           ),
   )
@@ -216,7 +247,16 @@ private fun HomeScreenEmptyPreview() {
                   HomeState(
                       expenses = emptyList(),
                       isLoading = false,
+                      isSmsPermissionGranted = false,
                   ),
           ),
+  )
+}
+
+@ComponentPreviews
+@Composable
+private fun ExpenseItemCardPreview() {
+  ExpenseItemCard(
+      expense = FakeExpenseFactory.create(),
   )
 }
