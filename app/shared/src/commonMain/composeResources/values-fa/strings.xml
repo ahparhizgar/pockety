@@ -19,4 +19,6 @@
     <string name="no_transactions">هنوز تراکنشی ثبت نشده است</string>
     <string name="error_invalid_amount">مبلغ باید بیشتر از صفر باشد</string>
     <string name="error_empty_description">توضیحات نمی‌تواند خالی باشد</string>
+    <string name="description_placeholder">یادداشت خرج را وارد کنید...</string>
+    <string name="currency_symbol">تومان</string>
 </resources>

@@ -171,7 +171,10 @@ fun loadItems() = scope.launch {
 
 We implement vertical slices. So when implementing UI, implement the minimum needed for that
 slice.  
-We have a usable product at any given time.
+We have a usable product at any given time.  
+When implementing features that span through part of a designed screed, don't implement/add all
+components/screen parts. Only implement part of the screen that is required to fulfil the
+requirement while keeping the design match what is specified in the design spec.
 
 # Verification
 
