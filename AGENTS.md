@@ -87,7 +87,6 @@ When adding a new client feature:
    data layer with fake services.
 3. For logic heavy classes (e.g. pattern matching), use that class directly, mock everything else.
 
-
 Create meaningful factory functions.  
 Almost always should be a general create ().  
 Write createList () in fake factories if appropriate.  
@@ -169,7 +168,9 @@ fun loadItems() = scope.launch {
 
 # Be Agile
 
-We implement vertical slices. So when implementing UI, implement the minimum needed for that slice.
+We implement vertical slices. So when implementing UI, implement the minimum needed for that
+slice.  
+We have a usable product at any given time.
 
 # Verification
 
