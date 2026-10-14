@@ -16,21 +16,15 @@ annotation class ComponentPreviews
     heightDp = 844,
 )
 @Preview(
-    name = "Mobile Light",
-    uiMode = AndroidUiModes.UI_MODE_NIGHT_NO,
-    widthDp = 390,
-    heightDp = 844,
-)
-@Preview(
     name = "Mobile Landscape",
     widthDp = 844,
     heightDp = 390,
 )
-@Preview(
-    name = "Desktop",
-    widthDp = 1280,
-    heightDp = 800,
-)
+//@Preview(
+//    name = "Desktop",
+//    widthDp = 1280,
+//    heightDp = 800,
+//)
 @PreviewWrapper(PocketyThemeWrapper::class)
 annotation class ScreenPreviews
 

@@ -39,20 +39,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.base.design.features.AddCategoryScreen
-import com.base.design.features.CategoryDetailScreen
-import com.base.design.features.CategoryListScreen
-import com.base.design.features.EditExpenseScreen
-import com.base.design.features.HomeScreen
-import com.base.design.features.InboxScreen
-import com.base.design.features.MonthDetailScreen
-import com.base.design.features.PocketDetailScreen
-import com.base.design.features.PocketSettingsScreen
-import com.base.design.features.PocketsScreen
-import com.base.design.features.SelectCategoryScreen
-import com.base.design.features.SelectIconScreen
-import com.base.design.features.SelectLabelsScreen
-import com.base.design.features.SettingsScreen
+import com.base.design.features.addcategory.AddCategoryScreen
+import com.base.design.features.categorydetail.CategoryDetailScreen
+import com.base.design.features.categorylist.CategoryListScreen
+import com.base.design.features.editexpense.EditExpenseScreen
+import com.base.design.features.home.HomeScreen
+import com.base.design.features.inbox.InboxScreen
+import com.base.design.features.monthdetail.MonthDetailScreen
+import com.base.design.features.pocketdetail.PocketDetailScreen
+import com.base.design.features.pocketsettings.PocketSettingsScreen
+import com.base.design.features.pockets.PocketsScreen
+import com.base.design.features.selectcategory.SelectCategoryScreen
+import com.base.design.features.selecticon.SelectIconScreen
+import com.base.design.features.selectlabels.SelectLabelsScreen
+import com.base.design.features.settings.SettingsScreen
 import com.base.design.ui.FigmaBoardPreviews
 
 /**
