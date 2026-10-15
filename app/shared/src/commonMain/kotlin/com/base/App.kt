@@ -16,6 +16,8 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.base.feature.expense.add.AddExpenseComponent
+import com.base.feature.expense.add.AddExpenseScreen
 import com.base.feature.inbox.InboxComponent
 import com.base.feature.inbox.InboxScreen
 import com.base.feature.main.MainComponent
@@ -72,6 +74,13 @@ fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
           InboxScreen(
               component = child,
               modifier = Modifier.testTag("inbox-screen"),
+          )
+        }
+
+        is AddExpenseComponent -> {
+          AddExpenseScreen(
+              component = child,
+              modifier = Modifier.testTag("add-expense-screen"),
           )
         }
 

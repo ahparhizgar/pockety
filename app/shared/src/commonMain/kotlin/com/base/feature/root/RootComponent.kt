@@ -14,9 +14,10 @@ import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.component.CContext
 import com.base.component.WindowSizeHolder
 import com.base.component.componentScope
+import com.base.feature.expense.add.AddExpenseComponent
+import com.base.feature.expense.add.AddExpenseComponentFactory
 import com.base.feature.inbox.InboxComponent
 import com.base.feature.inbox.InboxComponentFactory
-import com.base.feature.main.MainChildConfig
 import com.base.feature.main.MainComponent
 import com.base.feature.main.MainComponentFactory
 import com.base.feature.splash.SplashDestination
@@ -81,14 +82,23 @@ class DefaultRootComponent(
                   cContext = cContext,
                   onSelectCandidate = { candidate ->
                     rootNavigation.pop()
-                    cContext.navigation.pushNew(
-                        MainChildConfig.AddExpense(
+                    rootNavigation.pushNew(
+                        AddExpenseComponent.Config(
                             initialAmount = candidate.amount.toString(),
                             candidateExpenseId = candidate.id,
                         )
                     )
                   },
                   onBack = { rootNavigation.pop() },
+              )
+      is AddExpenseComponent.Config ->
+          componentProvider
+              .provide(AddExpenseComponentFactory::class)
+              .create(
+                  cContext = cContext,
+                  config = config,
+                  onCompleted = { rootNavigation.pop() },
+                  onCancelled = { rootNavigation.pop() },
               )
 
       else -> error("Destination not defined in createChild")
