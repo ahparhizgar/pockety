@@ -5,9 +5,9 @@ import com.base.config.DatabaseConfig
 import com.base.database.DatabaseInitializer
 import com.base.database.connectDatabase
 import com.base.database.createHikariDataSource
-import com.base.feature.auth.authKoinModule
-import com.base.feature.auth.testAuthKoinModule
-import com.base.feature.item.itemKoinModule
+import com.base.capability.auth.authKoinModule
+import com.base.capability.auth.testAuthKoinModule
+import com.base.capability.item.itemKoinModule
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import org.koin.dsl.module

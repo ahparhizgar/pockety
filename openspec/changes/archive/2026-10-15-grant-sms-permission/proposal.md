@@ -25,5 +25,5 @@ Automating transaction recording from bank SMS requires access to SMS messages o
 
 - `CContext`: Extended with `permissionController` (or `smsPermissionController`).
 - `MainActivity`: Registers activity result launcher for `RECEIVE_SMS` and delegates to the Android permission controller without lifecycle memory leaks.
-- `app/shared/src/commonMain/kotlin/com/base/feature/home/`: `HomeComponent`, `HomeScreen`, and `HomeState` updated with permission states and banner composables.
+- `app/shared/src/commonMain/kotlin/com/base/capability/home/`: `HomeComponent`, `HomeScreen`, and `HomeState` updated with permission states and banner composables.
 - Manifest: `android.permission.RECEIVE_SMS` added.

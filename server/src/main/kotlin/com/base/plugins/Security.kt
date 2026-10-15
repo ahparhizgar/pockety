@@ -1,7 +1,7 @@
 package com.base.plugins
 
-import com.base.feature.auth.JwtService
-import com.base.feature.auth.UserPrincipal
+import com.base.capability.auth.JwtService
+import com.base.capability.auth.UserPrincipal
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication

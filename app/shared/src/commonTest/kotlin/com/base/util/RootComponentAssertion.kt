@@ -1,7 +1,7 @@
 package com.base.util
 
-import com.base.feature.main.MainComponent
-import com.base.feature.root.RootComponent
+import com.base.capability.main.MainComponent
+import com.base.capability.root_navigation.RootComponent
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 val RootComponent.activeConfig

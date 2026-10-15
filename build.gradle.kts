@@ -58,8 +58,11 @@ tasks.register("detektMain") {
           .map { subproject ->
             subproject.tasks.matching { task ->
               task.name == "detektMain" ||
+                  task.name == "detektTest" ||
                   task.name == "detektMainJvm" ||
-                  task.name == "detektMainAndroid"
+                  task.name == "detektTestJvm" ||
+                  task.name == "detektMainAndroid" ||
+                  task.name == "detektHostTestAndroid"
             }
           }
   )

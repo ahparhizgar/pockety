@@ -15,7 +15,7 @@ import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.base.component.DefaultCContext
 import com.base.di.appModule
-import com.base.feature.root.RootComponentFactory
+import com.base.capability.root_navigation.RootComponentFactory
 import javax.swing.SwingUtilities
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module

@@ -1,6 +1,6 @@
 package com.base.e2e.auth
 
-import com.base.feature.auth.BcryptPasswordHasher
+import com.base.capability.auth.BcryptPasswordHasher
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals

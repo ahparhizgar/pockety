@@ -1,0 +1,66 @@
+package com.base.capability.central_user_messages
+
+import com.base.usermessage.UiString
+import com.base.usermessage.plus
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.save_action
+
+class UiStringTest {
+
+  @Test
+  fun testEmptyString() {
+    val empty = UiString.Companion("")
+    assertEquals(UiString.EmptyString, empty)
+  }
+
+  @Test
+  fun testStringLiteral() {
+    val literal = UiString.Companion("hello")
+    assertEquals(UiString.StringLiteral("hello"), literal)
+    assertEquals("hello", literal.toString())
+  }
+
+  @Test
+  fun testStringRes() {
+    val res = UiString.Companion(Res.string.save_action)
+    assertEquals(UiString.StringRes(Res.string.save_action), res)
+  }
+
+  @Test
+  fun testStringResWithArgument() {
+    val argRes1 = UiString.Companion(Res.string.save_action, "arg1", 123)
+    val argRes2 = UiString.Companion(Res.string.save_action, "arg1", 123)
+    val argRes3 = UiString.Companion(Res.string.save_action, "arg2", 456)
+
+    assertEquals(argRes1, argRes2)
+    assertNotEquals(argRes1, argRes3)
+    assertEquals(argRes1.hashCode(), argRes2.hashCode())
+  }
+
+  @Test
+  fun testOperators() {
+    val empty = UiString.EmptyString
+    val s1 = UiString.Companion("Hello")
+    val s2 = UiString.Companion(" World")
+
+    assertEquals(s1, empty + s1)
+    assertEquals(s1, s1 + empty)
+
+    val combined = s1 + s2
+    val expected = UiString.Concat(listOf(s1, s2))
+    assertEquals(expected, combined)
+
+    val combinedWithStr = s1 + " World"
+    assertEquals(expected, combinedWithStr)
+
+    val concatMore = combined + UiString.Companion("!")
+    val expected3 = UiString.Concat(listOf(s1, s2, UiString.Companion("!")))
+    assertEquals(expected3, concatMore)
+
+    val emptyConcat = empty + empty
+    assertEquals(UiString.EmptyString, emptyConcat)
+  }
+}

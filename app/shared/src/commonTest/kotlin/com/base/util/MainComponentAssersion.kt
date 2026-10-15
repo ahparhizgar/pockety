@@ -1,7 +1,7 @@
 package com.base.util
 
-import com.base.feature.home.HomeComponent
-import com.base.feature.main.MainComponent
+import com.base.capability.home.HomeComponent
+import com.base.capability.main.MainComponent
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 val MainComponent.activeInstance

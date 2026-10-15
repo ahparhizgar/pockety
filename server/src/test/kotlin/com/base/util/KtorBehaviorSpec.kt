@@ -19,6 +19,7 @@ import org.jetbrains.exposed.v1.jdbc.deleteAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 /** BehaviorSpec with integrated Ktor TestApplication lifecycle per test. */
+@Suppress("AbstractClassCanBeConcreteClass")
 abstract class KtorBehaviorSpec(body: KtorBehaviorSpec.() -> Unit = {}) :
     BehaviorSpec(), ClientProvider {
   var testApplication: TestApplication? = null
@@ -30,8 +31,9 @@ abstract class KtorBehaviorSpec(body: KtorBehaviorSpec.() -> Unit = {}) :
   override fun createClient(
       block: HttpClientConfig<out HttpClientEngineConfig>.() -> Unit
   ): HttpClient {
-    return testApplication?.createClient(block)
-        ?: throw IllegalStateException("TestApplication is not initialized")
+    return checkNotNull(testApplication?.createClient(block)) {
+      "TestApplication is not initialized"
+    }
   }
 
   init {

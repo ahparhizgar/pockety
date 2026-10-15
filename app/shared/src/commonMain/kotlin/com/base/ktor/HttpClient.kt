@@ -3,7 +3,7 @@ package com.base.ktor
 import com.ahparhizgar.katch.ktor.ClientErrorExtras
 import com.ahparhizgar.katch.ktor.KatchPlugin
 import com.base.dto.ErrorResponse
-import com.base.feature.auth.TokenStorage
+import com.base.capability.auth.TokenStorage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
