@@ -23,26 +23,25 @@ import com.base.design.features.pocketdetail.PocketDetailScreen
 import com.base.design.features.pockets.PocketsScreen
 import com.base.design.features.pocketsettings.PocketSettingsScreen
 import com.base.design.features.selectcategory.SelectCategoryScreen
-import com.base.design.features.selecticon.SelectIconScreen
 import com.base.design.features.selectlabels.SelectLabelsScreen
 import com.base.design.features.settings.SettingsScreen
 import com.base.design.ui.FigmaBoardPreviews
 
 /**
- * Aggregated Figma canvas board displaying all 14 screens of the Pockety application.
+ * Aggregated Figma canvas board displaying screens of the Pockety application.
  *
  * Organized by flows:
  * 1. Primary Navigation Screens (Home, Inbox, Pockets, Month Detail)
  * 2. Pocket Management Flows (Pocket Detail, Pocket Settings, Settings)
  * 3. Expense & Tagging Flows (Edit Expense, Select Category, Select Labels)
- * 4. Taxonomy & Setup Flows (Category List, Category Detail, Add Category, Select Icon)
+ * 4. Taxonomy & Setup Flows (Category List, Category Detail, Add Category)
  */
 enum class FigmaDesignPage(val label: String, val icon: ImageVector) {
   All("All Features", Icons.Default.Layers),
   PrimaryNav("01. Primary Navigation", Icons.Default.Dashboard),
   PocketSettings("02. Pockets & Settings", Icons.Default.Tune),
   ExpenseFlow("03. Expense & Tags", Icons.Default.LocalOffer),
-  Categories("04. Categories & Icons", Icons.Default.Category),
+  Categories("04. Categories & Taxonomy", Icons.Default.Category),
 }
 
 val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
@@ -123,7 +122,7 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                 FigmaDesignSection(
                     title = "04. Category Management & Icon Selection",
                     subtitle =
-                        "Custom category list, spending allocation breakdown, new category wizard, and icon picker",
+                        "Custom category list, spending allocation breakdown, and new category wizard with icon/color customization",
                     icon = Icons.AutoMirrored.Filled.ViewQuilt,
                     screens =
                         listOf(
@@ -135,9 +134,6 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                             },
                             FigmaScreenItem("13", "Add Category", "Creation Form") {
                               AddCategoryScreen()
-                            },
-                            FigmaScreenItem("12", "Select Icon", "Icon Studio") {
-                              SelectIconScreen()
                             },
                         ),
                 ),

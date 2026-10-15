@@ -60,6 +60,8 @@ fun PocketIdentitySection(
     onPocketNameChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     icon: ImageVector = Icons.Default.LocalCafe,
+    containerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
     onEditIconClick: () -> Unit = {},
 ) {
   val focusManager = LocalFocusManager.current
@@ -76,8 +78,8 @@ fun PocketIdentitySection(
       Surface(
           modifier = Modifier.size(96.dp),
           shape = CircleShape,
-          color = MaterialTheme.colorScheme.secondaryContainer,
-          contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+          color = containerColor,
+          contentColor = contentColor,
           shadowElevation = 2.dp,
           onClick = onEditIconClick,
       ) {
@@ -86,6 +88,7 @@ fun PocketIdentitySection(
               imageVector = icon,
               contentDescription = "Pocket icon",
               modifier = Modifier.size(44.dp),
+              tint = contentColor,
           )
         }
       }

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.base.design.globalcomponents.AccentColorPicker
 import com.base.design.globalcomponents.PocketyTopBar
 import com.base.design.ui.ScreenPreviews
 import kotlinx.coroutines.launch
@@ -136,6 +137,7 @@ fun AddCategoryScreen(
             filters = defaultCategoryFilters,
             selectedFilter = selectedFilter,
             onFilterSelected = { selectedFilter = it },
+            accentColor = selectedColor.color,
         )
 
         Spacer(modifier = Modifier.height(4.dp))

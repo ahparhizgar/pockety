@@ -33,14 +33,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.base.design.globalcomponents.AccentColorPicker
+import com.base.design.globalcomponents.IconPickerSection
+import com.base.design.globalcomponents.ItemColorOption
+import com.base.design.globalcomponents.ItemIconOption
 import com.base.design.globalcomponents.PocketyTopBar
+import com.base.design.globalcomponents.defaultIconCategoryFilters
+import com.base.design.globalcomponents.defaultItemColors
+import com.base.design.globalcomponents.defaultItemIcons
 import com.base.design.ui.ScreenPreviews
 
 @Composable
 fun PocketSettingsScreen(
     onBackClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
-    onSaveChangesClick: () -> Unit = {},
+    onSaveChangesClick: (pocketName: String, icon: ItemIconOption, color: ItemColorOption) -> Unit =
+        { _, _, _ ->
+        },
     onDeletePocketClick: () -> Unit = {},
     onChangeCategoryClick: () -> Unit = {},
     onClearCategoryClick: () -> Unit = {},
@@ -48,6 +57,9 @@ fun PocketSettingsScreen(
     onConfirmTopUp: (String) -> Unit = {},
     onEditIconClick: () -> Unit = {},
     initialPocketName: String = "Daily Cafe & Coffee",
+    initialIcon: ItemIconOption =
+        defaultItemIcons.firstOrNull { it.id == "coffee" } ?: defaultItemIcons.first(),
+    initialColor: ItemColorOption = defaultItemColors.first(),
     initialAllocatedAmount: String = "1,500,000",
     initialCurrentBalance: String = "850,000",
     initialCategoryName: String = "Cafe & Dining",
@@ -56,12 +68,21 @@ fun PocketSettingsScreen(
     modifier: Modifier = Modifier,
 ) {
   var pocketName by remember { mutableStateOf(initialPocketName) }
+  var selectedIcon by remember { mutableStateOf(initialIcon) }
+  var selectedColor by remember { mutableStateOf(initialColor) }
+  var selectedIconFilter by remember { mutableStateOf("All") }
   var autoRefillEnabled by remember { mutableStateOf(true) }
   var topUpAmount by remember { mutableStateOf("") }
 
   PocketSettingsScreenContent(
       pocketName = pocketName,
       onPocketNameChange = { pocketName = it },
+      selectedIcon = selectedIcon,
+      onIconSelected = { selectedIcon = it },
+      selectedColor = selectedColor,
+      onColorSelected = { selectedColor = it },
+      selectedIconFilter = selectedIconFilter,
+      onIconFilterSelected = { selectedIconFilter = it },
       allocatedAmount = initialAllocatedAmount,
       currencySymbol = currencySymbol,
       autoRefillEnabled = autoRefillEnabled,
@@ -73,7 +94,7 @@ fun PocketSettingsScreen(
       categorySubtitle = initialCategorySubtitle,
       onBackClick = onBackClick,
       onProfileClick = onProfileClick,
-      onSaveChangesClick = onSaveChangesClick,
+      onSaveChangesClick = { onSaveChangesClick(pocketName, selectedIcon, selectedColor) },
       onDeletePocketClick = onDeletePocketClick,
       onChangeCategoryClick = onChangeCategoryClick,
       onClearCategoryClick = onClearCategoryClick,
@@ -91,6 +112,12 @@ fun PocketSettingsScreen(
 fun PocketSettingsScreenContent(
     pocketName: String,
     onPocketNameChange: (String) -> Unit,
+    selectedIcon: ItemIconOption,
+    onIconSelected: (ItemIconOption) -> Unit,
+    selectedColor: ItemColorOption,
+    onColorSelected: (ItemColorOption) -> Unit,
+    selectedIconFilter: String,
+    onIconFilterSelected: (String) -> Unit,
     allocatedAmount: String,
     currencySymbol: String,
     autoRefillEnabled: Boolean,
@@ -177,7 +204,28 @@ fun PocketSettingsScreenContent(
         PocketIdentitySection(
             pocketName = pocketName,
             onPocketNameChange = onPocketNameChange,
+            icon = selectedIcon.icon,
+            containerColor = selectedColor.color,
+            contentColor = selectedColor.onColor,
             onEditIconClick = onEditIconClick,
+        )
+
+        // Accent Color Selection
+        AccentColorPicker(
+            colors = defaultItemColors,
+            selectedColor = selectedColor,
+            onColorSelected = onColorSelected,
+        )
+
+        // Icon Selection Section
+        IconPickerSection(
+            icons = defaultItemIcons,
+            selectedIcon = selectedIcon,
+            onIconSelected = onIconSelected,
+            filters = defaultIconCategoryFilters,
+            selectedFilter = selectedIconFilter,
+            onFilterSelected = onIconFilterSelected,
+            accentColor = selectedColor.color,
         )
 
         MonthlyAllocationCard(
