@@ -1,31 +1,39 @@
 # Tests Specification
 
-## Test Strategy & Capability Mapping
+## Unit Tests (single component / class / function)
 
-<!-- Map specifications/scenarios to test types according to the AGENTS.md conventions:
-- Capability unit & component behavior tests (`<Capability>Test.kt`)
-- Full capability integration/navigation flow tests (`<Capability>FlowE2eTest.kt`)
-- UI & accessibility tests with keyboard interactions (`<Capability>E2eUiTest.kt`)
-- Dedicated data/repository tests if applicable (`<Target>RepositoryTest.kt`)
--->
+### `<name>/<Capability>Test`
 
-## Capability Tests
+**Target**: <!-- Component / business logic under test -->
+**Scenarios**:
 
-### `com.base.capability.<name>.<Capability>Test`
-- **Target**: <!-- Component / business logic under test -->
-- **Scenarios**:
-  - [ ] Given <!-- initial state/context -->, When <!-- action -->, Then <!-- expected state/output -->
+- Given <!-- initial state/context -->
+    - When <!-- action -->,
+        - [ ] Then <!-- expected state/output -->
 
-## Integration & E2E Flow Tests
+## E2E Flow Tests
 
-### `com.base.capability.<name>.<Capability>FlowE2eTest`
-- **Flow**: <!-- Navigation and integration flow from root component -->
-- **Scenarios**:
-  - [ ] Given <!-- initial state/context -->, When <!-- user navigates and performs actions -->, Then <!-- end-to-end verified state -->
+### `<name>/<Capability>FlowE2eTest`
+
+**Flow**: <!-- Navigation and integration flow from root component -->
+**Scenarios**:
+
+- Given <!-- initial state/context -->
+    - When <!-- user navigates and performs actions -->
+        - [ ] Then <!-- end-to-end verified state -->
+    - When <!-- user performs another action -->
+        - [ ] Then <!-- end-to-end verified state -->
+- Given <!-- another initial state/context -->
+    - When <!-- user navigates and performs actions -->
+        - [ ] Then <!-- end-to-end verified state -->
 
 ## UI & Accessibility Tests
 
 ### `com.base.capability.<name>.<Capability>E2eUiTest`
-- **Focus**: UI behavior, keyboard accessibility, previews
-- **Scenarios**:
-  - [ ] Given <!-- UI component loaded -->, When <!-- navigating via keyboard / typing -->, Then <!-- accessible and correct interaction -->
+
+<!-- Focus: UI behavior and state, navigation, keyboard accessibility -->
+
+**Scenarios**:
+
+1. explain the scenario
+2. explain the scenario
