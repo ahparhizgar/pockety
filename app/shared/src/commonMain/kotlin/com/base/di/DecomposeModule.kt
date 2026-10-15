@@ -1,7 +1,13 @@
 package com.base.di
 
+import com.base.capability.adding_expense.AddExpenseFlowComponentFactory
+import com.base.capability.adding_expense.DefaultAddExpenseFlowComponentFactory
 import com.base.capability.adding_expense.add.AddExpenseComponentFactory
 import com.base.capability.adding_expense.add.DefaultAddExpenseComponentFactory
+import com.base.capability.category_management.AddCategoryComponentFactory
+import com.base.capability.category_management.CategorySelectionComponentFactory
+import com.base.capability.category_management.DefaultAddCategoryComponentFactory
+import com.base.capability.category_management.DefaultCategorySelectionComponentFactory
 import com.base.capability.home.DefaultHomeComponentFactory
 import com.base.capability.home.HomeComponentFactory
 import com.base.capability.main.DefaultMainComponentFactory
@@ -23,4 +29,7 @@ fun decomposeModule() = module {
   factoryOf(::DefaultHomeComponentFactory).bind<HomeComponentFactory>()
   factoryOf(::DefaultAddExpenseComponentFactory).bind<AddExpenseComponentFactory>()
   factoryOf(::DefaultInboxComponentFactory).bind<InboxComponentFactory>()
+  factoryOf(::DefaultAddCategoryComponentFactory).bind<AddCategoryComponentFactory>()
+  factoryOf(::DefaultCategorySelectionComponentFactory).bind<CategorySelectionComponentFactory>()
+  factoryOf(::DefaultAddExpenseFlowComponentFactory).bind<AddExpenseFlowComponentFactory>()
 }

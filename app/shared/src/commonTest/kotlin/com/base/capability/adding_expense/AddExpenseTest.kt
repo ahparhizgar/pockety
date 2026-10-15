@@ -149,6 +149,33 @@ class AddExpenseTest : BehaviorSpec() {
         }
       }
 
+      When("submitting with valid amount, description, and selected category") {
+        val category =
+            com.base.db.CategoryEntity(
+                id = 42L,
+                name = "Dining",
+                icon = "restaurant",
+                color = 0xFFE57373,
+                createdAt = kotlin.time.Clock.System.now(),
+            )
+
+        beforeEach {
+          component.onAmountChanged("75000")
+          component.onDescriptionChanged("Dinner with colleagues")
+          component.onCategoryChanged(category)
+          component.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("expense is persisted in repository with categoryId") {
+          val expenses = homeComponent.state.value.expenses
+          expenses shouldHaveSize 1
+          expenses[0].amount shouldBe 75000L
+          expenses[0].description shouldBe "Dinner with colleagues"
+          expenses[0].categoryId shouldBe 42L
+        }
+      }
+
       When("cancel is clicked") {
         beforeEach { component.onCancelClicked() }
 

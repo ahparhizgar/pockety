@@ -23,3 +23,10 @@ fun RootComponent.assertAddExpense(): AddExpenseComponent {
 fun RootComponent.assertInbox(): InboxComponent {
   return activeInstance.shouldBeInstanceOf<InboxComponent>()
 }
+
+fun RootComponent.assertAddExpenseFlow():
+    com.base.capability.adding_expense.AddExpenseFlowComponent {
+  return activeInstance.shouldBeInstanceOf<
+      com.base.capability.adding_expense.AddExpenseFlowComponent
+  >()
+}

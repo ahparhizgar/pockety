@@ -57,6 +57,47 @@ class MigrationTest : BehaviorSpec() {
         }
       }
 
+      When("MIGRATION_4_5 is executed") {
+        MIGRATION_4_5.migrate(connection)
+
+        Then("categories table exists with required columns") {
+          connection.execSQL(
+              """
+              INSERT INTO `categories` (`id`, `name`, `icon`, `color`, `createdAt`)
+              VALUES (1, 'Dining', 'restaurant', 4293227379, 1700000000000)
+              """
+                  .trimIndent()
+          )
+
+          val statement =
+              connection.prepare("SELECT name, icon, color FROM categories WHERE id = 1")
+          val hasRow = statement.step()
+          hasRow shouldBe true
+          statement.getText(0) shouldBe "Dining"
+          statement.getText(1) shouldBe "restaurant"
+          statement.getLong(2) shouldBe 4293227379L
+          statement.close()
+        }
+
+        Then("transactions table contains nullable categoryId column") {
+          connection.execSQL(
+              """
+              INSERT INTO `transactions` (`id`, `amount`, `description`, `createdAt`, `categoryId`)
+              VALUES (101, 5000, 'Dinner', 1700000000000, 1)
+              """
+                  .trimIndent()
+          )
+
+          val statement =
+              connection.prepare("SELECT amount, categoryId FROM transactions WHERE id = 101")
+          val hasRow = statement.step()
+          hasRow shouldBe true
+          statement.getLong(0) shouldBe 5000L
+          statement.getLong(1) shouldBe 1L
+          statement.close()
+        }
+      }
+
       afterSpec { connection.close() }
     }
   }

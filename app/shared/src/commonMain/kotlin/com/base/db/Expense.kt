@@ -17,6 +17,7 @@ data class ExpenseEntity(
     val amount: Long,
     val description: String,
     val createdAt: Instant,
+    val categoryId: Long? = null,
 )
 
 @Dao
@@ -32,7 +33,7 @@ interface ExpenseDao {
 interface ExpenseRepository {
   fun observeExpenses(): Flow<List<ExpenseEntity>>
 
-  suspend fun addExpense(amount: Long, description: String): Long
+  suspend fun addExpense(amount: Long, description: String, categoryId: Long? = null): Long
 }
 
 class DefaultExpenseRepository(
@@ -40,12 +41,13 @@ class DefaultExpenseRepository(
 ) : ExpenseRepository {
   override fun observeExpenses(): Flow<List<ExpenseEntity>> = expenseDao.observeExpenses()
 
-  override suspend fun addExpense(amount: Long, description: String): Long {
+  override suspend fun addExpense(amount: Long, description: String, categoryId: Long?): Long {
     val expense =
         ExpenseEntity(
             amount = amount,
             description = description,
             createdAt = Clock.System.now(),
+            categoryId = categoryId,
         )
     return expenseDao.insertExpense(expense)
   }
@@ -57,12 +59,14 @@ object FakeExpenseFactory {
       amount: Long = 1000,
       description: String = "Test expense",
       createdAt: Instant = Clock.System.now(),
+      categoryId: Long? = null,
   ): ExpenseEntity =
       ExpenseEntity(
           id = id,
           amount = amount,
           description = description,
           createdAt = createdAt,
+          categoryId = categoryId,
       )
 
   fun createList(count: Int = 3): List<ExpenseEntity> =

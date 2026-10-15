@@ -84,6 +84,13 @@ fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
           )
         }
 
+        is com.base.capability.adding_expense.AddExpenseFlowComponent -> {
+          com.base.capability.adding_expense.AddExpenseFlowScreen(
+              component = child,
+              modifier = Modifier.testTag("add-expense-flow-screen"),
+          )
+        }
+
         else -> {
           error("Unknown child: $child")
         }

@@ -118,6 +118,15 @@ class DefaultRootComponent(
                   onCompleted = { rootNavigation.pop() },
                   onCancelled = { rootNavigation.pop() },
               )
+      is com.base.capability.adding_expense.AddExpenseFlowComponent.Config ->
+          componentProvider
+              .provide(com.base.capability.adding_expense.AddExpenseFlowComponentFactory::class)
+              .create(
+                  cContext = cContext,
+                  config = config,
+                  onCompleted = { rootNavigation.pop() },
+                  onCancelled = { rootNavigation.pop() },
+              )
 
       else -> error("Destination not defined in createChild")
     }

@@ -20,9 +20,13 @@ class FakeCallback<T> : () -> Unit {
 
 class FakeCallback1<T> : (T) -> Unit {
   var called = false
+  var lastValue: T? = null
+  val values = mutableListOf<T>()
 
   override fun invoke(p1: T) {
     called = true
+    lastValue = p1
+    values.add(p1)
   }
 
   fun shouldBeCalled() {

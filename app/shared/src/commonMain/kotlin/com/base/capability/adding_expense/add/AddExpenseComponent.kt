@@ -22,6 +22,7 @@ import pockety.app.shared.generated.resources.error_invalid_amount
 data class AddExpenseState(
     val amountText: String = "",
     val descriptionText: String = "",
+    val selectedCategoryId: Long? = null,
     val amountError: UiString? = null,
     val descriptionError: UiString? = null,
     val isSaving: Boolean = false,
@@ -33,6 +34,10 @@ interface AddExpenseComponent : TopLevelDestinationConfig {
   fun onAmountChanged(amount: String)
 
   fun onDescriptionChanged(description: String)
+
+  fun onCategoryChanged(categoryId: Long?)
+
+  fun onSelectCategoryClicked()
 
   fun onSaveClicked(): Job
 
@@ -86,6 +91,12 @@ class DefaultAddExpenseComponent(
     }
   }
 
+  override fun onCategoryChanged(categoryId: Long?) {
+    _state.update { it.copy(selectedCategoryId = categoryId) }
+  }
+
+  override fun onSelectCategoryClicked() {}
+
   override fun onSaveClicked(): Job = scope.launch {
     val currentState = _state.value
     val amountNumber = currentState.amountText.trim().replace(",", "").toLongOrNull()
@@ -117,6 +128,7 @@ class DefaultAddExpenseComponent(
       expenseRepository.addExpense(
           amount = amountNumber,
           description = currentState.descriptionText.trim(),
+          categoryId = currentState.selectedCategoryId,
       )
       config.candidateExpenseId?.let { id ->
         candidateExpenseRepository.updateStatus(id, CandidateExpenseStatus.ACCEPTED)
@@ -169,6 +181,12 @@ class FakeAddExpenseComponent(
   override fun onDescriptionChanged(description: String) {
     _state.update { it.copy(descriptionText = description) }
   }
+
+  override fun onCategoryChanged(categoryId: Long?) {
+    _state.update { it.copy(selectedCategoryId = categoryId) }
+  }
+
+  override fun onSelectCategoryClicked() {}
 
   override fun onSaveClicked(): Job = Job().apply { complete() }
 
