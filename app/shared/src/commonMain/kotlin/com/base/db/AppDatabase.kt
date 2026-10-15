@@ -100,9 +100,42 @@ val MIGRATION_4_5 =
                     .trimIndent(),
             )
             .use { it.step() }
-        connection.prepare("ALTER TABLE `transactions` ADD COLUMN `categoryId` INTEGER").use {
+
+        connection
+            .prepare(
+                """
+                CREATE TABLE IF NOT EXISTS `transactions_new` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `amount` INTEGER NOT NULL,
+                    `description` TEXT NOT NULL,
+                    `createdAt` INTEGER NOT NULL,
+                    `categoryId` INTEGER,
+                    FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL
+                )
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection
+            .prepare(
+                """
+                INSERT INTO `transactions_new` (`id`, `amount`, `description`, `createdAt`, `categoryId`)
+                SELECT `id`, `amount`, `description`, `createdAt`, NULL FROM `transactions`
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection.prepare("DROP TABLE `transactions`").use { it.step() }
+        connection.prepare("ALTER TABLE `transactions_new` RENAME TO `transactions`").use {
           it.step()
         }
+        connection
+            .prepare(
+                "CREATE INDEX IF NOT EXISTS `index_transactions_categoryId` ON `transactions` (`categoryId`)"
+            )
+            .use { it.step() }
       }
     }
 

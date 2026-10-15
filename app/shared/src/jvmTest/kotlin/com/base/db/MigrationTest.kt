@@ -96,6 +96,28 @@ class MigrationTest : BehaviorSpec() {
           statement.getLong(1) shouldBe 1L
           statement.close()
         }
+
+        Then("transactions table has categoryId index and foreign key") {
+          val indexStmt = connection.prepare("PRAGMA index_list(`transactions`)")
+          var foundIndex = false
+          while (indexStmt.step()) {
+            if (indexStmt.getText(1) == "index_transactions_categoryId") {
+              foundIndex = true
+            }
+          }
+          indexStmt.close()
+          foundIndex shouldBe true
+
+          val fkStmt = connection.prepare("PRAGMA foreign_key_list(`transactions`)")
+          var foundFk = false
+          while (fkStmt.step()) {
+            if (fkStmt.getText(2) == "categories") {
+              foundFk = true
+            }
+          }
+          fkStmt.close()
+          foundFk shouldBe true
+        }
       }
 
       afterSpec { connection.close() }
