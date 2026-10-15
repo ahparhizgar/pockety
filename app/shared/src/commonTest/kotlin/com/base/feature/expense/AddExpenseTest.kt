@@ -117,46 +117,6 @@ class AddExpenseTest : BehaviorSpec() {
 
         Then("calls onCancelled") { cancelledCallback.shouldBeCalled() }
       }
-
-      When("created from candidate expense with prefilled amount") {
-        val candidateRepo by testValue { koin.get<com.base.db.CandidateExpenseRepository>() }
-        var candidateId: Long by testValue { 0 }
-        var candidateAddExpenseComponent: AddExpenseComponent by testValue {
-          FakeAddExpenseComponent()
-        }
-
-        beforeEach {
-          candidateId = candidateRepo.addCandidate("Mellat", "Withdrawal 45000", 45000L)
-          candidateAddExpenseComponent =
-              koin
-                  .get<DefaultAddExpenseComponentFactory>()
-                  .create(
-                      cContext = TestCContext(),
-                      config =
-                          AddExpenseComponent.Config(
-                              initialAmount = "45000",
-                              candidateExpenseId = candidateId,
-                          ),
-                      onCompleted = completedCallback,
-                      onCancelled = cancelledCallback,
-                  )
-          testCoroutineScheduler.advanceUntilIdle()
-        }
-
-        Then("amount is prefilled from candidate") {
-          candidateAddExpenseComponent.state.value.amountText shouldBe "45000"
-        }
-
-        Then("saving expense marks candidate as ACCEPTED") {
-          candidateAddExpenseComponent.onDescriptionChanged("Supermarket")
-          candidateAddExpenseComponent.onSaveClicked()
-          testCoroutineScheduler.advanceUntilIdle()
-
-          completedCallback.shouldBeCalled()
-          val updated = candidateRepo.getCandidateById(candidateId)
-          updated?.status shouldBe com.base.db.CandidateExpenseStatus.ACCEPTED
-        }
-      }
     }
   }
 }

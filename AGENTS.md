@@ -58,16 +58,35 @@ changes, no need to change the binding.
 
 Use fake factories instead of constructing models.  
 Use default value of fake factories if it doesn't matter.  
+In a component level test, don't get the repository to validate, instead, validate the state of the
+component or inject other components so tests are not dependent on the implementation details or the
+repository.  
+Never write tests directly for fakes e.g. `FakeGroupApi`. Instead, write other tests that uses the
+fake.  
+Don't check implementation details: never check Calling functions except for callback parameters.  
+Assert service is called → Wrong. Assert onClick is called → Good.
+
+## Structuring tests into files
+
 Don't structure tests based on screens/components.  
 Instead, structure tests into files based on the requirements. so logging in is a requirement. Being
 able to save a transaction is a requirement. Editing a transaction is a requirement. but transaction
 itself is a component. So we make AddTransactionTest.kt EditTransactionTest.kt not
 TransactionComponentTest.  
-In a component level test, don't get the repository to validate, instead, validate the state of the
-component or inject other components so tests are not dependent on the implementation details or the
-repository.  
-Never write tests directly for fakes e.g. `FakeGroupApi`. Instead, write other tests that uses the
-fake.
+Requirements are additive. so for testing a feature that navigates form home to transaction screen,
+the test belongs to transaction not home.  
+Most of the time you should add the tests in the new requirement (feature) directory and not in the
+existing requirement directory/test files. So it's more open-closed. As we go spec driven
+development, we are implementing new requirements so it's OK to create a new requirement directory
+and add the tests there.
+
+## Behavioral testing
+
+Given: state/context  
+When: action  
+Then: expected state/output  
+Never combine when and then. wrong: `Then("selecting x happens y")` -> contains action (wrong).
+Correct: `When("selecting x")`, `Then("y happens")`.
 
 ## Testing UI
 

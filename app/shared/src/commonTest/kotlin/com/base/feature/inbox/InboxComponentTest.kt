@@ -3,7 +3,6 @@ package com.base.feature.inbox
 import com.base.component.TestCContext
 import com.base.db.CandidateExpenseEntity
 import com.base.db.CandidateExpenseRepository
-import com.base.db.CandidateExpenseStatus
 import com.base.testValue
 import com.base.util.FakeCallback
 import com.base.util.FakeCallback1
@@ -60,16 +59,13 @@ class InboxComponentTest : BehaviorSpec() {
           state.candidates[1].amount shouldBe 1000L
         }
 
-        Then("dismissing candidate updates status to REJECTED and removes from pending list") {
+        Then("dismissing candidate removes it from pending list in state") {
           component.onDismiss(id2)
           testCoroutineScheduler.advanceUntilIdle()
 
           val state = component.state.value
           state.candidates shouldHaveSize 1
           state.candidates[0].id shouldBe id1
-
-          val rejected = repository.getCandidateById(id2)
-          rejected?.status shouldBe CandidateExpenseStatus.REJECTED
         }
 
         Then("selecting candidate invokes onSelectCandidate callback") {

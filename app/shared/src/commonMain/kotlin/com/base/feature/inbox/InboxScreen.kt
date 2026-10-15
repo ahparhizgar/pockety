@@ -132,7 +132,7 @@ private fun InboxCleanCard(
     modifier: Modifier = Modifier,
 ) {
   Surface(
-      modifier = modifier.fillMaxWidth(),
+      modifier = modifier.fillMaxWidth().testTag("inbox-clean-card"),
       shape = RoundedCornerShape(24.dp),
       color = MaterialTheme.colorScheme.surfaceContainerLow,
   ) {
