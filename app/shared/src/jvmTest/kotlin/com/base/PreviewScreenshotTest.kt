@@ -43,6 +43,9 @@ class DelegatingPreview(
     }
   }
 
+  override val declaringClass: String
+    get() = ""
+
   override fun toString(): String {
     return delegate.methodName
   }
