@@ -77,6 +77,23 @@ class SmsExpenseParserTest : BehaviorSpec() {
 
         Then("it returns null") { parsed shouldBe null }
       }
+
+      When("SMS contains minus prefix amount with account and balance") {
+        val sms =
+            """
+            777.888.26236491.1
+            -5,150,000
+            07/23_14:52
+            مانده: 558,481,583
+            """
+                .trimIndent()
+        val parsed = SmsExpenseParser.parse(sms)
+
+        Then("it extracts the amount in Rials") {
+          parsed shouldNotBe null
+          parsed?.amount shouldBe 5150000L
+        }
+      }
     }
   }
 }

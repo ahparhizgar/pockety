@@ -49,7 +49,13 @@ object SmsExpenseParser {
           RegexOption.IGNORE_CASE,
       )
 
-  private val patterns = listOf(persianRegex, englishRegex, fallbackRegex)
+  private val minusAmountRegex =
+      Regex(
+          """(?:^|\n|\r)\s*[-−]\s*([0-9\u06F0-\u06F9\u0660-\u0669,\u060C]+)\s*(?:ریال|تومان|Rials?)?(?=\s*(?:\n|\r|$|\s))""",
+          RegexOption.IGNORE_CASE,
+      )
+
+  private val patterns = listOf(persianRegex, englishRegex, fallbackRegex, minusAmountRegex)
 
   private fun isEligibleExpenseText(text: String): Boolean {
     val lower = text.lowercase()
@@ -63,7 +69,8 @@ object SmsExpenseParser {
             lower.contains("withdrawal") ||
             lower.contains("purchase") ||
             lower.contains("transfer") ||
-            lower.contains("paid")
+            lower.contains("paid") ||
+            (text.contains("مانده") && (text.contains("-") || text.contains("−")))
     return !isDeposit || hasWithdrawal
   }
 
