@@ -24,23 +24,23 @@ class SmsBroadcastReceiver(
     val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
     if (messages.isNullOrEmpty()) return
 
-    val messagesBySender = messages.filterNotNull().groupBy { it.displayOriginatingAddress ?: "" }
+    val pendingResult = goAsync()
+    scope.launch {
+      try {
+        val messagesBySender = messages.filterNotNull().groupBy { it.displayOriginatingAddress ?: "" }
 
-    for ((sender, partList) in messagesBySender) {
-      val fullBody = partList.joinToString("") { it.displayMessageBody ?: "" }
-      val parsed = SmsExpenseParser.parse(fullBody) ?: continue
+        for ((sender, partList) in messagesBySender) {
+          val fullBody = partList.joinToString("") { it.displayMessageBody ?: "" }
+          val parsed = SmsExpenseParser.parse(fullBody) ?: continue
 
-      val pendingResult = goAsync()
-      scope.launch {
-        try {
           candidateExpenseRepository.addCandidate(
               sender = sender,
               rawBody = fullBody,
               amount = parsed.amount,
           )
-        } finally {
-          pendingResult.finish()
         }
+      } finally {
+        pendingResult.finish()
       }
     }
   }
