@@ -38,4 +38,20 @@
     <string name="inbox_clean_title">صندوق ورودی خالی است!</string>
     <string name="inbox_clean_desc">تمام موارد بررسی شده‌اند. پیامک‌های بانکی جدید به طور خودکار دریافت خواهند شد.</string>
     <string name="back_action">بازگشت</string>
+    <string name="add_category_title">افزودن دسته‌بندی</string>
+    <string name="category_name_label">نام دسته‌بندی</string>
+    <string name="category_name_placeholder">مثلاً رستوران، باشگاه، قبوض</string>
+    <string name="error_empty_category_name">نام دسته‌بندی نمی‌تواند خالی باشد</string>
+    <string name="category_accent_color_label">رنگ نماد</string>
+    <string name="category_icon_label">انتخاب آیکون</string>
+    <string name="save_category_action">ذخیره دسته‌بندی</string>
+    <string name="category_created_success">دسته‌بندی با موفقیت ایجاد شد!</string>
+    <string name="select_category_title">انتخاب دسته‌بندی</string>
+    <string name="category_search_placeholder">جستجوی دسته‌بندی...</string>
+    <string name="uncategorized_title">بدون دسته‌بندی</string>
+    <string name="uncategorized_desc">حذف دسته‌بندی انتخاب‌شده</string>
+    <string name="create_new_category_action">ایجاد دسته‌بندی جدید</string>
+    <string name="no_categories_found">دسته‌بندی‌ای یافت نشد</string>
+    <string name="category_label">دسته‌بندی</string>
+    <string name="change_category_action">تغییر</string>
 </resources>

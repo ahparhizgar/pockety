@@ -2,6 +2,8 @@ package com.base.db
 
 import androidx.room3.Dao
 import androidx.room3.Entity
+import androidx.room3.ForeignKey
+import androidx.room3.Index
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.PrimaryKey
@@ -11,7 +13,19 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlinx.coroutines.flow.Flow
 
-@Entity(tableName = "transactions")
+@Entity(
+    tableName = "transactions",
+    foreignKeys =
+        [
+            ForeignKey(
+                entity = CategoryEntity::class,
+                parentColumns = ["id"],
+                childColumns = ["categoryId"],
+                onDelete = ForeignKey.SET_NULL,
+            )
+        ],
+    indices = [Index("categoryId")],
+)
 data class ExpenseEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val amount: Long,

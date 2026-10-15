@@ -4,6 +4,7 @@ import com.base.component.TestCContext
 import com.base.db.CategoryRepository
 import com.base.testValue
 import com.base.util.FakeCallback
+import com.base.util.FakeCallback1
 import com.base.util.MainDispatcherExtension
 import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
@@ -19,7 +20,7 @@ class AddCategoryTest : BehaviorSpec() {
 
     Given("AddCategoryComponent") {
       val koin by integrationKoin()
-      val completedCallback by testValue { FakeCallback<Unit>() }
+      val completedCallback by testValue { FakeCallback1<Long>() }
       val cancelledCallback by testValue { FakeCallback<Unit>() }
       val categoryRepository by testValue { koin.get<CategoryRepository>() }
 

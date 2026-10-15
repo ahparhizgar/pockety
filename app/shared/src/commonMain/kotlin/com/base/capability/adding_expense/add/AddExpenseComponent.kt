@@ -54,6 +54,7 @@ interface AddExpenseComponentFactory {
   fun create(
       cContext: CContext,
       config: AddExpenseComponent.Config = AddExpenseComponent.Config(),
+      onSelectCategory: () -> Unit = {},
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseComponent
@@ -66,6 +67,7 @@ class DefaultAddExpenseComponent(
     private val candidateExpenseRepository: CandidateExpenseRepository,
     private val expenseNotificationManager: ExpenseNotificationManager,
     private val config: AddExpenseComponent.Config = AddExpenseComponent.Config(),
+    private val onSelectCategory: () -> Unit = {},
     private val onCompleted: () -> Unit,
     private val onCancelled: () -> Unit,
 ) : AddExpenseComponent, CContext by cContext {
@@ -95,7 +97,9 @@ class DefaultAddExpenseComponent(
     _state.update { it.copy(selectedCategoryId = categoryId) }
   }
 
-  override fun onSelectCategoryClicked() {}
+  override fun onSelectCategoryClicked() {
+    onSelectCategory.invoke()
+  }
 
   override fun onSaveClicked(): Job = scope.launch {
     val currentState = _state.value
@@ -153,6 +157,7 @@ class DefaultAddExpenseComponentFactory(
   override fun create(
       cContext: CContext,
       config: AddExpenseComponent.Config,
+      onSelectCategory: () -> Unit,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseComponent =
@@ -162,6 +167,7 @@ class DefaultAddExpenseComponentFactory(
           candidateExpenseRepository = candidateExpenseRepository,
           expenseNotificationManager = expenseNotificationManager,
           config = config,
+          onSelectCategory = onSelectCategory,
           onCompleted = onCompleted,
           onCancelled = onCancelled,
       )
@@ -170,6 +176,7 @@ class DefaultAddExpenseComponentFactory(
 @Fake
 class FakeAddExpenseComponent(
     initialState: AddExpenseState = AddExpenseState(),
+    private val onSelectCategory: () -> Unit = {},
 ) : AddExpenseComponent {
   private val _state = MutableValue(initialState)
   override val state: Value<AddExpenseState> = _state
@@ -186,7 +193,9 @@ class FakeAddExpenseComponent(
     _state.update { it.copy(selectedCategoryId = categoryId) }
   }
 
-  override fun onSelectCategoryClicked() {}
+  override fun onSelectCategoryClicked() {
+    onSelectCategory.invoke()
+  }
 
   override fun onSaveClicked(): Job = Job().apply { complete() }
 
@@ -198,8 +207,12 @@ class FakeAddExpenseComponentFactory : AddExpenseComponentFactory {
   override fun create(
       cContext: CContext,
       config: AddExpenseComponent.Config,
+      onSelectCategory: () -> Unit,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseComponent =
-      FakeAddExpenseComponent(AddExpenseState(amountText = config.initialAmount))
+      FakeAddExpenseComponent(
+          initialState = AddExpenseState(amountText = config.initialAmount),
+          onSelectCategory = onSelectCategory,
+      )
 }

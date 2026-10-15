@@ -100,6 +100,7 @@ class DefaultHomeComponent(
           .launchIn(scope)
 
   override fun onAddExpenseClicked() {
+    navigation.pushNew(com.base.capability.adding_expense.AddExpenseFlowComponent.Config())
     onAddExpense()
   }
 

@@ -11,6 +11,8 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.backhandler.BackHandler
+import com.base.capability.adding_expense.AddExpenseFlowComponent
+import com.base.capability.adding_expense.AddExpenseFlowComponentFactory
 import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.adding_expense.add.AddExpenseComponentFactory
 import com.base.capability.main.MainComponent
@@ -118,9 +120,9 @@ class DefaultRootComponent(
                   onCompleted = { rootNavigation.pop() },
                   onCancelled = { rootNavigation.pop() },
               )
-      is com.base.capability.adding_expense.AddExpenseFlowComponent.Config ->
+      is AddExpenseFlowComponent.Config ->
           componentProvider
-              .provide(com.base.capability.adding_expense.AddExpenseFlowComponentFactory::class)
+              .provide(AddExpenseFlowComponentFactory::class)
               .create(
                   cContext = cContext,
                   config = config,

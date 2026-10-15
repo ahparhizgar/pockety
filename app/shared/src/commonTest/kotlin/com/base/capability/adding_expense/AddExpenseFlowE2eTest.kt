@@ -2,7 +2,6 @@ package com.base.capability.adding_expense
 
 import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.TestCContext
-import com.base.db.CategoryRepository
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
 import com.base.util.assertAddCategoryComponent
@@ -25,7 +24,6 @@ class AddExpenseFlowE2eTest : BehaviorSpec() {
       val koin by integrationKoin()
       val context by testValue { TestCContext() }
       val root by testValue { koin.get<RootComponentFactory>().create(context) }
-      val categoryRepository by testValue { koin.get<CategoryRepository>() }
 
       When("user opens Add Expense") {
         beforeEach {
@@ -80,7 +78,7 @@ class AddExpenseFlowE2eTest : BehaviorSpec() {
               Then("category is saved, and flow pops back with Coffee category available") {
                 val flow = root.assertAddExpenseFlow()
                 val addExpense = flow.assertAddExpenseComponent()
-                addExpense.state.value.selectedCategory?.name shouldBe "Coffee"
+                addExpense.state.value.selectedCategoryId shouldBe 1L
               }
 
               And("user enters amount and description, and taps save") {

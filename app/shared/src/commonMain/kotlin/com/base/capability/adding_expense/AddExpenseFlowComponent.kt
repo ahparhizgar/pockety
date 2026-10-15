@@ -68,11 +68,15 @@ interface AddExpenseFlowComponentFactory {
   ): AddExpenseFlowComponent
 }
 
+data class AddExpenseFlowChildFactories(
+    val addExpenseComponentFactory: AddExpenseComponentFactory,
+    val categorySelectionComponentFactory: CategorySelectionComponentFactory,
+    val addCategoryComponentFactory: AddCategoryComponentFactory,
+)
+
 class DefaultAddExpenseFlowComponent(
     cContext: CContext,
-    private val addExpenseComponentFactory: AddExpenseComponentFactory,
-    private val categorySelectionComponentFactory: CategorySelectionComponentFactory,
-    private val addCategoryComponentFactory: AddCategoryComponentFactory,
+    private val factories: AddExpenseFlowChildFactories,
     private val config: AddExpenseFlowComponent.Config = AddExpenseFlowComponent.Config(),
     private val onCompleted: () -> Unit,
     private val onCancelled: () -> Unit,
@@ -97,31 +101,44 @@ class DefaultAddExpenseFlowComponent(
           childFactory = ::createChild,
       )
 
+  private var addExpenseComponent: AddExpenseComponent? = null
+
   private fun createChild(
       childConfig: AddExpenseFlowChildConfig,
       context: CContext,
   ): AddExpenseFlowComponent.Child {
     return when (childConfig) {
-      is AddExpenseFlowChildConfig.AddExpense ->
-          AddExpenseFlowComponent.Child.AddExpense(
-              addExpenseComponentFactory.create(
-                  cContext = context,
-                  config =
-                      AddExpenseComponent.Config(
-                          initialAmount = childConfig.initialAmount,
-                          candidateExpenseId = childConfig.candidateExpenseId,
-                      ),
-                  onCompleted = onCompleted,
-                  onCancelled = onCancelled,
-              )
-          )
+      is AddExpenseFlowChildConfig.AddExpense -> {
+        val expenseComp =
+            factories.addExpenseComponentFactory.create(
+                cContext = context,
+                config =
+                    AddExpenseComponent.Config(
+                        initialAmount = childConfig.initialAmount,
+                        candidateExpenseId = childConfig.candidateExpenseId,
+                    ),
+                onSelectCategory = {
+                  val currentCatId = addExpenseComponent?.state?.value?.selectedCategoryId
+                  flowNavigation.pushNew(
+                      AddExpenseFlowChildConfig.CategorySelection(currentCategoryId = currentCatId)
+                  )
+                },
+                onCompleted = onCompleted,
+                onCancelled = onCancelled,
+            )
+        addExpenseComponent = expenseComp
+        AddExpenseFlowComponent.Child.AddExpense(expenseComp)
+      }
 
       is AddExpenseFlowChildConfig.CategorySelection ->
           AddExpenseFlowComponent.Child.CategorySelection(
-              categorySelectionComponentFactory.create(
+              factories.categorySelectionComponentFactory.create(
                   cContext = context,
                   initialSelectedCategoryId = childConfig.currentCategoryId,
-                  onCategorySelected = { category -> flowNavigation.pop() },
+                  onCategorySelected = { category ->
+                    addExpenseComponent?.onCategoryChanged(category?.id)
+                    flowNavigation.pop()
+                  },
                   onCreateCategoryClicked = {
                     flowNavigation.pushNew(AddExpenseFlowChildConfig.AddCategory)
                   },
@@ -131,9 +148,13 @@ class DefaultAddExpenseFlowComponent(
 
       is AddExpenseFlowChildConfig.AddCategory ->
           AddExpenseFlowComponent.Child.AddCategory(
-              addCategoryComponentFactory.create(
+              factories.addCategoryComponentFactory.create(
                   cContext = context,
-                  onCompleted = { flowNavigation.pop() },
+                  onCompleted = { newCategoryId ->
+                    addExpenseComponent?.onCategoryChanged(newCategoryId)
+                    flowNavigation.pop()
+                    flowNavigation.pop()
+                  },
                   onCancelled = { flowNavigation.pop() },
               )
           )
@@ -154,9 +175,12 @@ class DefaultAddExpenseFlowComponentFactory(
   ): AddExpenseFlowComponent =
       DefaultAddExpenseFlowComponent(
           cContext = cContext,
-          addExpenseComponentFactory = addExpenseComponentFactory,
-          categorySelectionComponentFactory = categorySelectionComponentFactory,
-          addCategoryComponentFactory = addCategoryComponentFactory,
+          factories =
+              AddExpenseFlowChildFactories(
+                  addExpenseComponentFactory = addExpenseComponentFactory,
+                  categorySelectionComponentFactory = categorySelectionComponentFactory,
+                  addCategoryComponentFactory = addCategoryComponentFactory,
+              ),
           config = config,
           onCompleted = onCompleted,
           onCancelled = onCancelled,

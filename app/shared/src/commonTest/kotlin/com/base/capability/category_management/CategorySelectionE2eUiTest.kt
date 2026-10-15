@@ -3,7 +3,6 @@ package com.base.capability.category_management
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.performClick
@@ -51,7 +50,7 @@ class CategorySelectionE2eUiTest {
     onNode(isFocused()).performTextInput("Groceries")
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
 
-    onNode(hasText("Groceries")).waitForExistence().performClick()
+    onNode(hasTestTag("category-item-Groceries")).waitForExistence().performClick()
   }
 
   @Test

@@ -6,6 +6,7 @@ import com.base.capability.home.HomeComponent
 import com.base.capability.home.HomeComponentFactory
 import com.base.component.TestCContext
 import com.base.db.CandidateExpenseRepository
+import com.base.db.CategoryRepository
 import com.base.notification.ExpenseNotificationManager
 import com.base.notification.FakeExpenseNotificationManager
 import com.base.testValue
@@ -150,19 +151,14 @@ class AddExpenseTest : BehaviorSpec() {
       }
 
       When("submitting with valid amount, description, and selected category") {
-        val category =
-            com.base.db.CategoryEntity(
-                id = 42L,
-                name = "Dining",
-                icon = "restaurant",
-                color = 0xFFE57373,
-                createdAt = kotlin.time.Clock.System.now(),
-            )
+        var categoryId: Long = 0L
 
         beforeEach {
+          val categoryRepo = koin.get<CategoryRepository>()
+          categoryId = categoryRepo.addCategory("Dining", "restaurant", 0xFFE57373)
           component.onAmountChanged("75000")
           component.onDescriptionChanged("Dinner with colleagues")
-          component.onCategoryChanged(category)
+          component.onCategoryChanged(categoryId)
           component.onSaveClicked()
           testCoroutineScheduler.advanceUntilIdle()
         }
@@ -172,7 +168,7 @@ class AddExpenseTest : BehaviorSpec() {
           expenses shouldHaveSize 1
           expenses[0].amount shouldBe 75000L
           expenses[0].description shouldBe "Dinner with colleagues"
-          expenses[0].categoryId shouldBe 42L
+          expenses[0].categoryId shouldBe categoryId
         }
       }
 

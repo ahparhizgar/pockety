@@ -9,6 +9,8 @@ import com.base.component.componentScope
 import com.base.db.CategoryEntity
 import com.base.db.CategoryRepository
 import com.base.db.FakeCategoryFactory
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 data class CategorySelectionState(
     val categories: List<CategoryEntity> = emptyList(),
@@ -46,7 +48,7 @@ class DefaultCategorySelectionComponent(
     cContext: CContext,
     private val categoryRepository: CategoryRepository,
     private val initialSelectedCategoryId: Long? = null,
-    private val onCategorySelected: (CategoryEntity?) -> Unit,
+    private val onCategorySelectedCallback: (CategoryEntity?) -> Unit,
     private val onCreateCategoryClicked: () -> Unit,
     private val onBack: () -> Unit,
 ) : CategorySelectionComponent, CContext by cContext {
@@ -55,16 +57,50 @@ class DefaultCategorySelectionComponent(
       MutableValue(CategorySelectionState(selectedCategoryId = initialSelectedCategoryId))
   override val state: Value<CategorySelectionState> = _state
 
+  init {
+    observeCategories()
+  }
+
+  private fun observeCategories() {
+    categoryRepository
+        .observeCategories()
+        .onEach { categories ->
+          _state.update {
+            it.copy(
+                categories = categories,
+                filteredCategories = filterCategories(categories, it.searchQuery),
+            )
+          }
+        }
+        .launchIn(scope)
+  }
+
+  private fun filterCategories(
+      categories: List<CategoryEntity>,
+      query: String,
+  ): List<CategoryEntity> {
+    if (query.isBlank()) return categories
+    val trimmed = query.trim().lowercase()
+    return categories.filter { it.name.lowercase().contains(trimmed) }
+  }
+
   override fun onSearchQueryChanged(query: String) {
-    TODO("Not implemented yet - TDD Red Phase")
+    _state.update {
+      it.copy(
+          searchQuery = query,
+          filteredCategories = filterCategories(it.categories, query),
+      )
+    }
   }
 
   override fun onCategorySelected(category: CategoryEntity) {
-    TODO("Not implemented yet - TDD Red Phase")
+    _state.update { it.copy(selectedCategoryId = category.id) }
+    onCategorySelectedCallback(category)
   }
 
   override fun onUncategorizedSelected() {
-    TODO("Not implemented yet - TDD Red Phase")
+    _state.update { it.copy(selectedCategoryId = null) }
+    onCategorySelectedCallback(null)
   }
 
   override fun onCreateCategoryClicked() {
@@ -90,7 +126,7 @@ class DefaultCategorySelectionComponentFactory(
           cContext = cContext,
           categoryRepository = categoryRepository,
           initialSelectedCategoryId = initialSelectedCategoryId,
-          onCategorySelected = onCategorySelected,
+          onCategorySelectedCallback = onCategorySelected,
           onCreateCategoryClicked = onCreateCategoryClicked,
           onBack = onBack,
       )

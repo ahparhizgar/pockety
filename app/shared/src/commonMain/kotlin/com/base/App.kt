@@ -16,6 +16,8 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
+import com.base.capability.adding_expense.AddExpenseFlowComponent
+import com.base.capability.adding_expense.AddExpenseFlowScreen
 import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.adding_expense.add.AddExpenseScreen
 import com.base.capability.main.MainComponent
@@ -84,8 +86,8 @@ fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
           )
         }
 
-        is com.base.capability.adding_expense.AddExpenseFlowComponent -> {
-          com.base.capability.adding_expense.AddExpenseFlowScreen(
+        is AddExpenseFlowComponent -> {
+          AddExpenseFlowScreen(
               component = child,
               modifier = Modifier.testTag("add-expense-flow-screen"),
           )

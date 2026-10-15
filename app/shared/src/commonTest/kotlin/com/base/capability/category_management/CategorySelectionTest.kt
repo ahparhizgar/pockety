@@ -3,6 +3,7 @@ package com.base.capability.category_management
 import com.base.component.TestCContext
 import com.base.db.CategoryEntity
 import com.base.db.CategoryRepository
+import com.base.db.FakeCategoryFactory
 import com.base.testValue
 import com.base.util.FakeCallback
 import com.base.util.FakeCallback1
@@ -26,19 +27,17 @@ class CategorySelectionTest : BehaviorSpec() {
       val categoryRepository by testValue { koin.get<CategoryRepository>() }
 
       var diningCategory: CategoryEntity by testValue {
-        CategoryEntity(
+        FakeCategoryFactory.create(
             name = "Dining",
             icon = "restaurant",
             color = 0xFFE57373,
-            createdAt = kotlin.time.Clock.System.now(),
         )
       }
       var groceriesCategory: CategoryEntity by testValue {
-        CategoryEntity(
+        FakeCategoryFactory.create(
             name = "Groceries",
             icon = "shopping_cart",
             color = 0xFF81C784,
-            createdAt = kotlin.time.Clock.System.now(),
         )
       }
 
@@ -46,20 +45,18 @@ class CategorySelectionTest : BehaviorSpec() {
         val diningId = categoryRepository.addCategory("Dining", "restaurant", 0xFFE57373)
         val groceriesId = categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
         diningCategory =
-            CategoryEntity(
+            FakeCategoryFactory.create(
                 id = diningId,
                 name = "Dining",
                 icon = "restaurant",
                 color = 0xFFE57373,
-                createdAt = kotlin.time.Clock.System.now(),
             )
         groceriesCategory =
-            CategoryEntity(
+            FakeCategoryFactory.create(
                 id = groceriesId,
                 name = "Groceries",
                 icon = "shopping_cart",
                 color = 0xFF81C784,
-                createdAt = kotlin.time.Clock.System.now(),
             )
         testCoroutineScheduler.advanceUntilIdle()
       }

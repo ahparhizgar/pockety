@@ -10,6 +10,8 @@ import com.base.db.CategoryRepository
 import com.base.usermessage.UiString
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.error_empty_category_name
 
 data class AddCategoryState(
     val nameText: String = "",
@@ -36,7 +38,7 @@ interface AddCategoryComponent {
 interface AddCategoryComponentFactory {
   fun create(
       cContext: CContext,
-      onCompleted: () -> Unit,
+      onCompleted: (Long) -> Unit = {},
       onCancelled: () -> Unit,
   ): AddCategoryComponent
 }
@@ -44,7 +46,7 @@ interface AddCategoryComponentFactory {
 class DefaultAddCategoryComponent(
     cContext: CContext,
     private val categoryRepository: CategoryRepository,
-    private val onCompleted: () -> Unit,
+    private val onCompleted: (Long) -> Unit,
     private val onCancelled: () -> Unit,
 ) : AddCategoryComponent, CContext by cContext {
   private val scope = componentScope()
@@ -52,18 +54,43 @@ class DefaultAddCategoryComponent(
   override val state: Value<AddCategoryState> = _state
 
   override fun onNameChanged(name: String) {
-    TODO("Not implemented yet - TDD Red Phase")
+    _state.update {
+      it.copy(
+          nameText = name,
+          nameError = null,
+      )
+    }
   }
 
   override fun onColorSelected(color: Long) {
-    TODO("Not implemented yet - TDD Red Phase")
+    _state.update { it.copy(selectedColor = color) }
   }
 
   override fun onIconSelected(icon: String) {
-    TODO("Not implemented yet - TDD Red Phase")
+    _state.update { it.copy(selectedIcon = icon) }
   }
 
-  override fun onSaveClicked(): Job = scope.launch { TODO("Not implemented yet - TDD Red Phase") }
+  override fun onSaveClicked(): Job = scope.launch {
+    val currentState = _state.value
+    val trimmedName = currentState.nameText.trim()
+    if (trimmedName.isEmpty()) {
+      _state.update { it.copy(nameError = UiString(Res.string.error_empty_category_name)) }
+      return@launch
+    }
+
+    _state.update { it.copy(isSaving = true) }
+    try {
+      val newId =
+          categoryRepository.addCategory(
+              name = trimmedName,
+              icon = currentState.selectedIcon,
+              color = currentState.selectedColor,
+          )
+      onCompleted(newId)
+    } finally {
+      _state.update { it.copy(isSaving = false) }
+    }
+  }
 
   override fun onBackClicked() {
     onCancelled()
@@ -75,7 +102,7 @@ class DefaultAddCategoryComponentFactory(
 ) : AddCategoryComponentFactory {
   override fun create(
       cContext: CContext,
-      onCompleted: () -> Unit,
+      onCompleted: (Long) -> Unit,
       onCancelled: () -> Unit,
   ): AddCategoryComponent =
       DefaultAddCategoryComponent(
@@ -114,7 +141,7 @@ class FakeAddCategoryComponent(
 class FakeAddCategoryComponentFactory : AddCategoryComponentFactory {
   override fun create(
       cContext: CContext,
-      onCompleted: () -> Unit,
+      onCompleted: (Long) -> Unit,
       onCancelled: () -> Unit,
   ): AddCategoryComponent = FakeAddCategoryComponent()
 }

@@ -5,7 +5,6 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackDispatcher
@@ -76,7 +75,7 @@ class DefaultMainComponent(
           MainComponent.Child.Home(
               homeComponentFactory.create(
                   cContext = context,
-                  onAddExpense = { mainNavigation.pushNew(MainChildConfig.AddExpense()) },
+                  onAddExpense = {},
               )
           )
 

@@ -5,6 +5,7 @@ import com.base.component.TestCContext
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
 import com.base.util.assertAddExpenseComponent
+import com.base.util.assertAddExpenseFlow
 import com.base.util.assertHomeComponent
 import com.base.util.assertMainComponent
 import com.base.util.integrationKoin
@@ -35,8 +36,10 @@ class AddViewExpenseFlowE2eTest : BehaviorSpec() {
             val main = root.assertMainComponent()
             val home = main.assertHomeComponent()
             home.onAddExpenseClicked()
+            testCoroutineScheduler.advanceUntilIdle()
 
-            val addExpense = main.assertAddExpenseComponent()
+            val flow = root.assertAddExpenseFlow()
+            val addExpense = flow.assertAddExpenseComponent()
             addExpense.onAmountChanged("320000")
             addExpense.onDescriptionChanged("Coffee and croissant")
             addExpense.onSaveClicked()

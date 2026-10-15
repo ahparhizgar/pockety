@@ -36,13 +36,13 @@ class AddViewExpenseE2eUiTest {
     onNode(hasTestTag("add-expense-fab")).waitForExistence().performClick()
 
     // Screen transitions to AddExpenseScreen
-    onNode(hasTestTag("main-add-expense-screen")).waitForExistence().assertExists()
+    onNode(hasTestTag("add-expense-screen")).waitForExistence().assertExists()
     onNode(hasTestTag("amount-field")).waitForExistence().assertExists()
 
-    // Type amount, tab to description, type description, and submit with Enter key
+    // Type amount, move focus to description, type description, and submit with Enter key
     onNode(hasTestTag("amount-field")).performClick()
     onNode(isFocused()).performTextInput("120000")
-    onNode(isRoot()).performKeyInput { pressKey(Key.Tab) }
+    onNode(hasTestTag("description-field")).performClick()
     onNode(isFocused()).performTextInput("Dinner with friends")
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
 

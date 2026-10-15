@@ -1,5 +1,6 @@
 package com.base.util
 
+import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.main.MainComponent
 import com.base.capability.root_navigation.RootComponent
@@ -24,9 +25,6 @@ fun RootComponent.assertInbox(): InboxComponent {
   return activeInstance.shouldBeInstanceOf<InboxComponent>()
 }
 
-fun RootComponent.assertAddExpenseFlow():
-    com.base.capability.adding_expense.AddExpenseFlowComponent {
-  return activeInstance.shouldBeInstanceOf<
-      com.base.capability.adding_expense.AddExpenseFlowComponent
-  >()
+fun RootComponent.assertAddExpenseFlow(): AddExpenseFlowComponent {
+  return activeInstance.shouldBeInstanceOf<AddExpenseFlowComponent>()
 }
