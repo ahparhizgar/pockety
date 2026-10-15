@@ -1,5 +1,6 @@
 package com.base.feature.root
 
+import com.arkivanov.decompose.router.stack.pushNew
 import com.base.component.TestCContext
 import com.base.feature.main.MainComponent
 import com.base.testValue
@@ -24,6 +25,14 @@ class RootComponentTest : BehaviorSpec() {
         Then("routes directly to MainComponent") {
           val activeInstance = root.childStack.value.active.instance
           activeInstance.shouldBeInstanceOf<MainComponent>()
+        }
+
+        Then("navigates to InboxComponent when navigating to InboxComponent.Config") {
+          context.navigation.pushNew(com.base.feature.inbox.InboxComponent.Config)
+          testCoroutineScheduler.advanceUntilIdle()
+
+          val activeInstance = root.childStack.value.active.instance
+          activeInstance.shouldBeInstanceOf<com.base.feature.inbox.InboxComponent>()
         }
       }
     }

@@ -3,6 +3,8 @@ package com.base.di
 import com.base.datastore.createDataStore
 import com.base.db.AppDatabase
 import com.base.db.AppDatabaseBuilderFactory
+import com.base.db.CandidateExpenseRepository
+import com.base.db.DefaultCandidateExpenseRepository
 import com.base.db.DefaultExpenseRepository
 import com.base.db.ExpenseRepository
 import com.base.db.getRoomDatabase
@@ -39,5 +41,7 @@ fun othersModule() = module {
   }
   single { get<AppDatabase>().itemDao() }
   single { get<AppDatabase>().expenseDao() }
+  single { get<AppDatabase>().candidateExpenseDao() }
   singleOf(::DefaultExpenseRepository).bind<ExpenseRepository>()
+  singleOf(::DefaultCandidateExpenseRepository).bind<CandidateExpenseRepository>()
 }

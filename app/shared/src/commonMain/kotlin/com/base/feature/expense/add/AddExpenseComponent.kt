@@ -6,6 +6,8 @@ import com.arkivanov.decompose.value.update
 import com.base.Fake
 import com.base.component.CContext
 import com.base.component.componentScope
+import com.base.db.CandidateExpenseRepository
+import com.base.db.CandidateExpenseStatus
 import com.base.db.ExpenseRepository
 import com.base.feature.root.TopLevelDestinationConfig
 import com.base.usermessage.UiString
@@ -35,12 +37,17 @@ interface AddExpenseComponent : TopLevelDestinationConfig {
 
   fun onCancelClicked()
 
-  @Serializable data object Config : TopLevelDestinationConfig
+  @Serializable
+  data class Config(
+      val initialAmount: String = "",
+      val candidateExpenseId: Long? = null,
+  ) : TopLevelDestinationConfig
 }
 
 interface AddExpenseComponentFactory {
   fun create(
       cContext: CContext,
+      config: AddExpenseComponent.Config = AddExpenseComponent.Config(),
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseComponent
@@ -49,11 +56,13 @@ interface AddExpenseComponentFactory {
 class DefaultAddExpenseComponent(
     cContext: CContext,
     private val expenseRepository: ExpenseRepository,
+    private val candidateExpenseRepository: CandidateExpenseRepository,
+    private val config: AddExpenseComponent.Config = AddExpenseComponent.Config(),
     private val onCompleted: () -> Unit,
     private val onCancelled: () -> Unit,
 ) : AddExpenseComponent, CContext by cContext {
   private val scope = componentScope()
-  private val _state = MutableValue(AddExpenseState())
+  private val _state = MutableValue(AddExpenseState(amountText = config.initialAmount))
   override val state: Value<AddExpenseState> = _state
 
   override fun onAmountChanged(amount: String) {
@@ -106,6 +115,9 @@ class DefaultAddExpenseComponent(
           amount = amountNumber,
           description = currentState.descriptionText.trim(),
       )
+      config.candidateExpenseId?.let { id ->
+        candidateExpenseRepository.updateStatus(id, CandidateExpenseStatus.ACCEPTED)
+      }
       onCompleted()
     } finally {
       _state.update { it.copy(isSaving = false) }
@@ -119,15 +131,19 @@ class DefaultAddExpenseComponent(
 
 class DefaultAddExpenseComponentFactory(
     private val expenseRepository: ExpenseRepository,
+    private val candidateExpenseRepository: CandidateExpenseRepository,
 ) : AddExpenseComponentFactory {
   override fun create(
       cContext: CContext,
+      config: AddExpenseComponent.Config,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseComponent =
       DefaultAddExpenseComponent(
           cContext = cContext,
           expenseRepository = expenseRepository,
+          candidateExpenseRepository = candidateExpenseRepository,
+          config = config,
           onCompleted = onCompleted,
           onCancelled = onCancelled,
       )
@@ -157,7 +173,9 @@ class FakeAddExpenseComponent(
 class FakeAddExpenseComponentFactory : AddExpenseComponentFactory {
   override fun create(
       cContext: CContext,
+      config: AddExpenseComponent.Config,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
-  ): AddExpenseComponent = FakeAddExpenseComponent()
+  ): AddExpenseComponent =
+      FakeAddExpenseComponent(AddExpenseState(amountText = config.initialAmount))
 }

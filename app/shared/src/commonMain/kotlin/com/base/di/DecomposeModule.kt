@@ -4,6 +4,8 @@ import com.base.feature.expense.add.AddExpenseComponentFactory
 import com.base.feature.expense.add.DefaultAddExpenseComponentFactory
 import com.base.feature.home.DefaultHomeComponentFactory
 import com.base.feature.home.HomeComponentFactory
+import com.base.feature.inbox.DefaultInboxComponentFactory
+import com.base.feature.inbox.InboxComponentFactory
 import com.base.feature.item.DefaultItemListComponentFactory
 import com.base.feature.item.ItemListComponentFactory
 import com.base.feature.main.DefaultMainComponentFactory
@@ -23,4 +25,5 @@ fun decomposeModule() = module {
   factoryOf(::DefaultHomeComponentFactory).bind<HomeComponentFactory>()
   factoryOf(::DefaultAddExpenseComponentFactory).bind<AddExpenseComponentFactory>()
   factoryOf(::DefaultItemListComponentFactory).bind<ItemListComponentFactory>()
+  factoryOf(::DefaultInboxComponentFactory).bind<InboxComponentFactory>()
 }

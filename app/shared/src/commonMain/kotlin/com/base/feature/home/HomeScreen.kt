@@ -105,50 +105,69 @@ private fun HomeContent(
           CircularProgressIndicator(modifier = Modifier.testTag("home-loading"))
         }
       } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().testTag("expense-list"),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-          item(key = "banner") {
-            if (!state.isSmsPermissionGranted) {
-              SmsPermissionBanner(
-                  onClick = component::onEnableSmsTrackingClicked,
-              )
-            } else {
-              val currency = stringResource(Res.string.currency_symbol)
-              UndecidedExpensesBanner(
-                  count = 0,
-                  amountFormatted = "0 $currency",
-              )
-            }
-          }
-
-          if (state.expenses.isEmpty()) {
-            item(key = "empty-expenses") {
-              Box(
-                  modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
-                  contentAlignment = Alignment.Center,
-              ) {
-                Text(
-                    text = stringResource(Res.string.no_expenses),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.testTag("empty-expenses-message"),
-                )
-              }
-            }
-          } else {
-            items(state.expenses, key = { it.id }) { expense ->
-              ExpenseItemCard(
-                  expense = expense,
-                  modifier = Modifier.fillMaxWidth().testTag("expense-item-${expense.id}"),
-              )
-            }
-          }
-        }
+        ExpensesList(
+            component = component,
+            state = state,
+        )
       }
     }
+  }
+}
+
+@Composable
+private fun ExpensesList(
+    component: HomeComponent,
+    state: HomeState,
+    modifier: Modifier = Modifier,
+) {
+  LazyColumn(
+      modifier = modifier.fillMaxSize().testTag("expense-list"),
+      contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+      verticalArrangement = Arrangement.spacedBy(12.dp),
+  ) {
+    item(key = "banner") { HomeBannerItem(component = component, state = state) }
+
+    if (state.expenses.isEmpty()) {
+      item(key = "empty-expenses") {
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+          Text(
+              text = stringResource(Res.string.no_expenses),
+              style = MaterialTheme.typography.bodyLarge,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+              modifier = Modifier.testTag("empty-expenses-message"),
+          )
+        }
+      }
+    } else {
+      items(state.expenses, key = { it.id }) { expense ->
+        ExpenseItemCard(
+            expense = expense,
+            modifier = Modifier.fillMaxWidth().testTag("expense-item-${expense.id}"),
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun HomeBannerItem(
+    component: HomeComponent,
+    state: HomeState,
+) {
+  if (!state.isSmsPermissionGranted) {
+    SmsPermissionBanner(
+        onClick = component::onEnableSmsTrackingClicked,
+    )
+  } else {
+    val currency = stringResource(Res.string.currency_symbol)
+    UndecidedExpensesBanner(
+        count = state.pendingCandidateCount,
+        amountFormatted = "${state.pendingCandidateSum} $currency",
+        onClick = component::onUndecidedExpensesClicked,
+    )
   }
 }
 

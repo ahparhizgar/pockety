@@ -52,4 +52,33 @@ class SmsPermissionIntegrationUiTest {
     onNode(hasTestTag("undecided-expenses-banner")).waitForExistence().assertExists()
     onNode(hasTestTag("sms-permission-banner")).assertDoesNotExist()
   }
+
+  @Test
+  fun testUndecidedExpensesBannerClickNavigatesToInbox() = runComposeUiTest {
+    val context = TestCContext()
+    context.fakePermissionController.setSmsPermissionGranted(true)
+
+    val koin = uiKoin()
+    val candidateExpenseRepository = koin.get<com.base.db.CandidateExpenseRepository>()
+    kotlinx.coroutines.runBlocking {
+      candidateExpenseRepository.addCandidate(
+          sender = "Bank Mellat",
+          rawBody = "Withdrawal: 500,000 Rials",
+          amount = 500000L,
+      )
+    }
+
+    val root = koin.injectUiRoot(context)
+
+    setContent { RootScreen(root) }
+
+    // Wait for UndecidedExpensesBanner to appear
+    onNode(hasTestTag("undecided-expenses-banner")).waitForExistence().assertExists()
+
+    // Click banner
+    onNode(hasTestTag("undecided-expenses-banner")).performClick()
+
+    // Verify InboxScreen is displayed
+    onNode(hasTestTag("inbox-screen")).waitForExistence().assertExists()
+  }
 }

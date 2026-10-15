@@ -23,7 +23,11 @@ import kotlinx.serialization.Serializable
 sealed interface MainChildConfig {
   @Serializable data object Home : MainChildConfig
 
-  @Serializable data object AddExpense : MainChildConfig
+  @Serializable
+  data class AddExpense(
+      val initialAmount: String = "",
+      val candidateExpenseId: Long? = null,
+  ) : MainChildConfig
 }
 
 interface MainComponent : TopLevelDestinationConfig {
@@ -72,14 +76,19 @@ class DefaultMainComponent(
           MainComponent.Child.Home(
               homeComponentFactory.create(
                   cContext = context,
-                  onAddExpense = { mainNavigation.pushNew(MainChildConfig.AddExpense) },
+                  onAddExpense = { mainNavigation.pushNew(MainChildConfig.AddExpense()) },
               )
           )
 
-      MainChildConfig.AddExpense ->
+      is MainChildConfig.AddExpense ->
           MainComponent.Child.AddExpense(
               addExpenseComponentFactory.create(
                   cContext = context,
+                  config =
+                      AddExpenseComponent.Config(
+                          initialAmount = config.initialAmount,
+                          candidateExpenseId = config.candidateExpenseId,
+                      ),
                   onCompleted = { mainNavigation.pop() },
                   onCancelled = { mainNavigation.pop() },
               )

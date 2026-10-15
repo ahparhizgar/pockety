@@ -5,6 +5,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
@@ -13,6 +14,9 @@ import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.component.CContext
 import com.base.component.WindowSizeHolder
 import com.base.component.componentScope
+import com.base.feature.inbox.InboxComponent
+import com.base.feature.inbox.InboxComponentFactory
+import com.base.feature.main.MainChildConfig
 import com.base.feature.main.MainComponent
 import com.base.feature.main.MainComponentFactory
 import com.base.feature.splash.SplashDestination
@@ -70,6 +74,22 @@ class DefaultRootComponent(
       is SplashDestination -> SplashDestination
       is MainComponent.Config ->
           componentProvider.provide(MainComponentFactory::class).create(cContext)
+      is InboxComponent.Config ->
+          componentProvider
+              .provide(InboxComponentFactory::class)
+              .create(
+                  cContext = cContext,
+                  onSelectCandidate = { candidate ->
+                    rootNavigation.pop()
+                    cContext.navigation.pushNew(
+                        MainChildConfig.AddExpense(
+                            initialAmount = candidate.amount.toString(),
+                            candidateExpenseId = candidate.id,
+                        )
+                    )
+                  },
+                  onBack = { rootNavigation.pop() },
+              )
 
       else -> error("Destination not defined in createChild")
     }

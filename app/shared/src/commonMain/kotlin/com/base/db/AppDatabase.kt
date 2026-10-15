@@ -16,8 +16,9 @@ import kotlinx.coroutines.Dispatchers
         [
             ItemEntity::class,
             ExpenseEntity::class,
+            CandidateExpenseEntity::class,
         ],
-    version = 2,
+    version = 3,
 )
 @ColumnTypeConverters(InstantConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -25,6 +26,8 @@ abstract class AppDatabase : RoomDatabase() {
   abstract fun itemDao(): ItemDao
 
   abstract fun expenseDao(): ExpenseDao
+
+  abstract fun candidateExpenseDao(): CandidateExpenseDao
 }
 
 // The Room compiler generates the `actual` implementations.
@@ -52,12 +55,33 @@ val MIGRATION_1_2 =
       }
     }
 
+val MIGRATION_2_3 =
+    object : Migration(2, 3) {
+      override suspend fun migrate(connection: SQLiteConnection) {
+        connection
+            .prepare(
+                """
+                CREATE TABLE IF NOT EXISTS `candidate_expenses` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `sender` TEXT NOT NULL,
+                    `rawBody` TEXT NOT NULL,
+                    `amount` INTEGER NOT NULL,
+                    `status` TEXT NOT NULL,
+                    `receivedAt` INTEGER NOT NULL
+                )
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+      }
+    }
+
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
     queryContext: CoroutineContext = Dispatchers.Default,
 ): AppDatabase {
   return builder
-      .addMigrations(MIGRATION_1_2)
+      .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
       .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
       .setQueryCoroutineContext(queryContext)
       .build()

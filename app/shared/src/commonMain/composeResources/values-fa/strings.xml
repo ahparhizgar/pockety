@@ -21,4 +21,21 @@
     <string name="error_empty_description">توضیحات نمی‌تواند خالی باشد</string>
     <string name="description_placeholder">یادداشت خرج را وارد کنید...</string>
     <string name="currency_symbol">تومان</string>
+    <string name="auto_track_bank_sms">رهگیری خودکار پیامک بانک</string>
+    <string name="enable_auto_detection_subtitle">برای فعال‌سازی تشخیص خودکار خرج‌ها ضربه بزنید</string>
+    <string name="enable_sms_permission_description">فعال‌سازی دسترسی پیامک</string>
+    <string name="undecided_expenses">خرج‌های بررسی‌نشده</string>
+    <string name="pending_review">%1$s در انتظار بررسی</string>
+    <string name="view_undecided_expenses_description">مشاهده خرج‌های بررسی‌نشده</string>
+    <string name="inbox_title">صندوق ورودی</string>
+    <string name="inbox_smart_extraction">استخراج هوشمند</string>
+    <string name="inbox_auto_sync_on">همگام‌سازی خودکار روشن</string>
+    <string name="inbox_candidates_pending">%1$d مورد در انتظار بررسی</string>
+    <string name="inbox_candidates_desc">%1$d پیامک بانکی در انتظار تصمیم‌گیری شما. پس از تأیید یا رد، موارد حذف می‌شوند.</string>
+    <string name="inbox_parsed_sms">متن پیامک</string>
+    <string name="inbox_dismiss_action">رد کردن</string>
+    <string name="inbox_edit_open_action">ویرایش و ثبت</string>
+    <string name="inbox_clean_title">صندوق ورودی خالی است!</string>
+    <string name="inbox_clean_desc">تمام موارد بررسی شده‌اند. پیامک‌های بانکی جدید به طور خودکار دریافت خواهند شد.</string>
+    <string name="back_action">بازگشت</string>
 </resources>
