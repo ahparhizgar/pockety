@@ -2,8 +2,6 @@ package com.base.di
 
 import com.base.capability.auth.DataStoreTokenStorage
 import com.base.capability.auth.TokenStorage
-import com.base.capability.item.ItemApi
-import com.base.capability.item.KtorItemApi
 import com.base.datastore.createDataStore
 import com.base.db.AppDatabase
 import com.base.db.AppDatabaseBuilderFactory
@@ -30,7 +28,6 @@ fun othersModule() = module {
   factoryOf(::createHttpClient)
   singleOf(::createDataStore)
   singleOf(::DataStoreTokenStorage).bind<TokenStorage>()
-  factoryOf(::KtorItemApi).bind<ItemApi>()
   single { CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>(named("default"))) }
 
   single {
@@ -39,7 +36,6 @@ fun othersModule() = module {
         get<CoroutineDispatcher>(named("default")),
     )
   }
-  single { get<AppDatabase>().itemDao() }
   single { get<AppDatabase>().expenseDao() }
   single { get<AppDatabase>().candidateExpenseDao() }
   singleOf(::DefaultExpenseRepository).bind<ExpenseRepository>()

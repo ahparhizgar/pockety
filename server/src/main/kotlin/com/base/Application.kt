@@ -1,7 +1,6 @@
 package com.base
 
 import com.base.capability.auth.authModule
-import com.base.capability.item.itemRoutes
 import com.base.database.DatabaseInitializer
 import com.base.plugins.configureDependencies
 import com.base.plugins.configureHTTP
@@ -27,5 +26,4 @@ fun Application.baseApp(isTest: Boolean = false) {
   initializer.init()
 
   authModule()
-  itemRoutes()
 }

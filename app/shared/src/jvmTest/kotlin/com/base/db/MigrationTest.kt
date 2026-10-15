@@ -43,6 +43,20 @@ class MigrationTest : BehaviorSpec() {
         }
       }
 
+      When("MIGRATION_3_4 is executed") {
+        MIGRATION_3_4.migrate(connection)
+
+        Then("items table is dropped") {
+          val statement =
+              connection.prepare(
+                  "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='items'"
+              )
+          statement.step() shouldBe true
+          statement.getLong(0) shouldBe 0L
+          statement.close()
+        }
+      }
+
       afterSpec { connection.close() }
     }
   }

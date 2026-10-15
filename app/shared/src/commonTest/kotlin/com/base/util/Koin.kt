@@ -3,8 +3,6 @@ package com.base.util
 import com.base.DataDir
 import com.base.capability.auth.FakeTokenStorage
 import com.base.capability.auth.TokenStorage
-import com.base.capability.item.FakeItemApi
-import com.base.capability.item.ItemApi
 import com.base.db.AppDatabaseBuilderFactory
 import com.base.db.getRoomDatabase
 import com.base.di.appModule
@@ -49,7 +47,6 @@ fun integrationTestModule() = module {
     )
   }
   single { FakeTokenStorage() }.bind<TokenStorage>()
-  single { FakeItemApi() }.bind<ItemApi>()
 
   // Everything is overridden to Main. Main should be set to StandardTestDispatcher.
   factory<CoroutineDispatcher>(named("default")) { Dispatchers.Main }

@@ -1,7 +1,6 @@
 package com.base.util
 
 import com.base.baseApp
-import com.base.database.Items
 import com.base.database.Users
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.TestType
@@ -63,8 +62,5 @@ abstract class KtorBehaviorSpec(body: KtorBehaviorSpec.() -> Unit = {}) :
 }
 
 fun resetDatabase() {
-  transaction {
-    Users.deleteAll()
-    Items.deleteAll()
-  }
+  transaction { Users.deleteAll() }
 }

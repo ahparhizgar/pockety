@@ -14,17 +14,14 @@ import kotlinx.coroutines.Dispatchers
 @Database(
     entities =
         [
-            ItemEntity::class,
             ExpenseEntity::class,
             CandidateExpenseEntity::class,
         ],
-    version = 3,
+    version = 4,
 )
 @ColumnTypeConverters(InstantConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
-  abstract fun itemDao(): ItemDao
-
   abstract fun expenseDao(): ExpenseDao
 
   abstract fun candidateExpenseDao(): CandidateExpenseDao
@@ -76,12 +73,19 @@ val MIGRATION_2_3 =
       }
     }
 
+val MIGRATION_3_4 =
+    object : Migration(3, 4) {
+      override suspend fun migrate(connection: SQLiteConnection) {
+        connection.prepare("DROP TABLE IF EXISTS `items`").use { it.step() }
+      }
+    }
+
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
     queryContext: CoroutineContext = Dispatchers.Default,
 ): AppDatabase {
   return builder
-      .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+      .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
       .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
       .setQueryCoroutineContext(queryContext)
       .build()
