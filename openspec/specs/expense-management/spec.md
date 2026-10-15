@@ -40,9 +40,13 @@ The system SHALL display the "Auto-track bank SMS" banner on the home screen whe
 - **THEN** the system requests SMS permission or directs the user to app settings if previously permanently denied
 
 ### Requirement: Display undecided expenses banner when permission granted
-The system SHALL display the "Undecided expenses" banner on the home screen when SMS permission is granted.
+The system SHALL display the "Undecided expenses" banner on the home screen when SMS permission is granted, indicating the current count and total amount of pending candidate expenses, and navigating to the Inbox screen when clicked.
 
-#### Scenario: SMS permission is granted
-- **WHEN** the user views the home screen and SMS permission is granted
-- **THEN** the system replaces the SMS permission banner with the "Undecided expenses" banner showing 0 pending review items
+#### Scenario: SMS permission is granted with pending candidate expenses
+- **WHEN** the user views the home screen, SMS permission is granted, and pending candidate expenses exist
+- **THEN** the system displays the "Undecided expenses" banner showing the count and formatted sum of pending review items
+
+#### Scenario: Tap undecided expenses banner
+- **WHEN** the user taps the "Undecided expenses" banner
+- **THEN** the system navigates to the Inbox screen
 
