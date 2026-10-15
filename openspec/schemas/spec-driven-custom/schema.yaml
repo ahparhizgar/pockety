@@ -195,6 +195,33 @@ artifacts:
     requires:
       - proposal
 
+  - id: tests
+    generates: tests.md
+    description: Test plan and behavioral test specifications for capabilities
+    template: tests.md
+    instruction: |
+      Create the test plan and test specifications that define HOW the capabilities will be tested.
+
+      Derive test cases directly from the specs and design artifacts, conforming to the
+      capability-based test conventions in AGENTS.md.
+
+      Sections & Structure:
+      - **Capability Tests**: Map each capability requirement/scenario to component or unit-level tests.
+        Follow the convention: `com.base.capability.<name>.<Capability>Test.kt`.
+      - **Flow / Integration Tests**: Map cross-component flows and user journeys from root navigation.
+        Follow the convention: `com.base.capability.<name>.<Capability>FlowE2eTest.kt`.
+      - **UI & Accessibility Tests**: Specify keyboard interaction tests and UI verification.
+        Follow the convention: `com.base.capability.<name>.<Capability>E2eUiTest.kt`.
+      - **Repository / Data Tests**: Specify any migrations, database or network-level tests.
+
+      Format:
+      - Always write scenarios in distinct Given / When / Then behavioral format.
+      - Ensure keyboard accessibility verification is planned for any UI inputs/actions.
+      - Never test implementation details; assert public state and user-observable outcomes.
+    requires:
+      - specs
+      - design
+
   - id: tasks
     generates: tasks.md
     description: Implementation checklist with trackable tasks
@@ -259,10 +286,11 @@ artifacts:
       - Verify the archived result.
       ```
 
-      Reference specs for what needs to be built, design for how to build it.
+      Reference specs for what needs to be built, design for how to build it, and tests for how to verify it.
     requires:
       - specs
       - design
+      - tests
 
 apply:
   requires: [ tasks ]
