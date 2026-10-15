@@ -1,12 +1,12 @@
 package com.base
 
+import com.base.capability.auth.authModule
+import com.base.capability.item.itemRoutes
 import com.base.database.DatabaseInitializer
 import com.base.plugins.configureDependencies
 import com.base.plugins.configureHTTP
 import com.base.plugins.configureSecurity
 import com.base.plugins.configureSerialization
-import com.base.capability.auth.authModule
-import com.base.capability.item.itemRoutes
 import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty

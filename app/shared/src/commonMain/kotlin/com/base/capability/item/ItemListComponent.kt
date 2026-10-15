@@ -5,12 +5,12 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
+import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.dto.FakeItemDtoFactory
 import com.base.dto.ItemDto
 import com.base.remote.userMessage
-import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.usermessage.UiString
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

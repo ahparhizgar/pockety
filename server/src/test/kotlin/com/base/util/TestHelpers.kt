@@ -1,9 +1,9 @@
 package com.base.util
 
 import com.base.baseApp
+import com.base.capability.auth.AuthService
 import com.base.dto.AuthResult
 import com.base.dto.SignUpRequest
-import com.base.capability.auth.AuthService
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.DefaultRequest

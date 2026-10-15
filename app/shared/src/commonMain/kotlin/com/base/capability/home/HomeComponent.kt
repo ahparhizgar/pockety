@@ -5,14 +5,14 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
+import com.base.capability.root_navigation.TopLevelDestinationConfig
+import com.base.capability.sms_inbox.InboxComponent
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
 import com.base.db.ExpenseEntity
 import com.base.db.ExpenseRepository
 import com.base.db.FakeExpenseFactory
-import com.base.capability.sms_inbox.InboxComponent
-import com.base.capability.root_navigation.TopLevelDestinationConfig
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

@@ -1,7 +1,7 @@
 package com.base.e2e.auth
 
-import com.base.config.JwtConfig
 import com.base.capability.auth.JwtService
+import com.base.config.JwtConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

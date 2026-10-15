@@ -10,8 +10,8 @@ import com.base.db.CandidateExpenseRepository
 import com.base.util.injectUiRoot
 import com.base.util.uiKoin
 import com.base.util.waitForExistence
-import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalTestApi::class)
 class SmsPermissionIntegrationUiTest {

@@ -8,11 +8,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.arkivanov.decompose.retainedComponent
+import com.base.capability.root_navigation.FakeRootComponent
+import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.defaultCContext
 import com.base.permission.AndroidPermissionController
 import com.base.permission.PermissionController
-import com.base.capability.root_navigation.FakeRootComponent
-import com.base.capability.root_navigation.RootComponentFactory
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {

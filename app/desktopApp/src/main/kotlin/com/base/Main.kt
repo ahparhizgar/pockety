@@ -13,9 +13,9 @@ import com.arkivanov.decompose.DecomposeSettings
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
 import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
+import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.DefaultCContext
 import com.base.di.appModule
-import com.base.capability.root_navigation.RootComponentFactory
 import javax.swing.SwingUtilities
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module

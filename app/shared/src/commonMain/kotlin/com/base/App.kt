@@ -18,12 +18,12 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.adding_expense.add.AddExpenseScreen
-import com.base.capability.sms_inbox.InboxComponent
-import com.base.capability.sms_inbox.InboxScreen
 import com.base.capability.main.MainComponent
 import com.base.capability.main.MainScreen
 import com.base.capability.root_navigation.FakeRootComponent
 import com.base.capability.root_navigation.RootComponent
+import com.base.capability.sms_inbox.InboxComponent
+import com.base.capability.sms_inbox.InboxScreen
 import com.base.capability.splash.SplashDestination
 import com.base.capability.splash.SplashScreen
 import com.base.ui.BaseTheme
