@@ -69,16 +69,16 @@ Assert service is called → Wrong. Assert onClick is called → Good.
 ## Structuring tests into files
 
 Don't structure tests based on screens/components.  
-Instead, structure tests into files based on the requirements. so logging in is a requirement. Being
-able to save a transaction is a requirement. Editing a transaction is a requirement. but transaction
-itself is a component. So we make AddTransactionTest.kt EditTransactionTest.kt not
-TransactionComponentTest.  
-Requirements are additive. so for testing a feature that navigates form home to transaction screen,
-the test belongs to transaction not home.  
-Most of the time you should add the tests in the new requirement (feature) directory and not in the
-existing requirement directory/test files. So it's more open-closed. As we go spec driven
-development, we are implementing new requirements so it's OK to create a new requirement directory
-and add the tests there.
+Instead, structure tests into capability packages (`com.base.capability.<capability_name>`).  
+Capabilities represent cohesive functional capabilities (e.g. `adding_expense`, `sms_inbox`, `sms_parsing`, `grant_sms_permission`, `central_user_messages`, `root_navigation`).  
+Within each capability package, structure tests into files based on specific requirements and test levels:
+- `<Capability>Test.kt` / `<Requirement>Test.kt` for component / unit behavior (e.g., `AddExpenseTest.kt`, `SmsExpenseParserTest.kt`).
+- `<Capability>FlowE2eTest.kt` for end-to-end component / flow integration (e.g., `AddViewExpenseFlowE2eTest.kt`, `InboxFlowE2eTest.kt`).
+- `<Capability>E2eUiTest.kt` for UI end-to-end tests (e.g., `AddViewExpenseE2eUiTest.kt`, `InboxE2eUiTest.kt`).
+- `<Target>RepositoryTest.kt` for repository integration tests.
+
+Capabilities and requirements are additive. For testing a capability that navigates from home to adding an expense, the tests belong to `com.base.capability.adding_expense`, not `home`.  
+Add tests in the corresponding capability package so test architecture remains open-closed as we practice spec-driven development.
 
 ## Behavioral testing
 
