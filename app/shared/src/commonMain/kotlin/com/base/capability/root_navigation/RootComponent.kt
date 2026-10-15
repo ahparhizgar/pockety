@@ -21,6 +21,8 @@ import com.base.capability.splash.SplashDestination
 import com.base.component.CContext
 import com.base.component.WindowSizeHolder
 import com.base.component.componentScope
+import com.base.navigation.NavigationAction
+import com.base.navigation.NavigationActionBus
 import com.base.usermessage.MessageHolder
 import kotlin.reflect.KClass
 import kotlinx.coroutines.launch
@@ -42,6 +44,7 @@ interface RootComponentFactory {
 class DefaultRootComponent(
     cContext: CContext,
     private val componentProvider: ComponentProvider,
+    private val navigationActionBus: NavigationActionBus,
 ) : RootComponent, CContext by cContext {
   val scope = componentScope()
 
@@ -59,6 +62,21 @@ class DefaultRootComponent(
     messageShower = messageHolder
 
     scope.launch { rootNavigation.replaceAll(MainComponent.Config) }
+
+    scope.launch {
+      navigationActionBus.events.collect { action ->
+        when (action) {
+          is NavigationAction.OpenAddExpense -> {
+            rootNavigation.pushNew(
+                AddExpenseComponent.Config(
+                    initialAmount = action.initialAmount,
+                    candidateExpenseId = action.candidateExpenseId,
+                )
+            )
+          }
+        }
+      }
+    }
   }
 
   override val childStack: Value<ChildStack<TopLevelDestinationConfig, Any>> =
@@ -108,11 +126,13 @@ class DefaultRootComponent(
 
 class DefaultRootComponentFactory(
     private val componentProvider: ComponentProvider,
+    private val navigationActionBus: NavigationActionBus,
 ) : RootComponentFactory {
   override fun create(context: CContext): RootComponent =
       DefaultRootComponent(
           cContext = context,
           componentProvider = componentProvider,
+          navigationActionBus = navigationActionBus,
       )
 }
 

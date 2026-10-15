@@ -3,6 +3,8 @@ package com.base.capability.sms_inbox
 import com.base.component.TestCContext
 import com.base.db.CandidateExpenseEntity
 import com.base.db.CandidateExpenseRepository
+import com.base.notification.ExpenseNotificationManager
+import com.base.notification.FakeExpenseNotificationManager
 import com.base.testValue
 import com.base.util.FakeCallback
 import com.base.util.FakeCallback1
@@ -20,6 +22,7 @@ class InboxComponentTest : BehaviorSpec() {
     Given("InboxComponent with repository") {
       val koin by integrationKoin()
       val repository by testValue { koin.get<CandidateExpenseRepository>() }
+      val notificationManager by testValue { koin.get<ExpenseNotificationManager>() }
       val selectCallback by testValue { FakeCallback1<CandidateExpenseEntity>() }
       val backCallback by testValue { FakeCallback<Unit>() }
 
@@ -27,6 +30,7 @@ class InboxComponentTest : BehaviorSpec() {
         DefaultInboxComponent(
             cContext = TestCContext(),
             candidateExpenseRepository = repository,
+            expenseNotificationManager = notificationManager,
             onSelectCandidate = selectCallback,
             onBack = backCallback,
         )
@@ -59,13 +63,17 @@ class InboxComponentTest : BehaviorSpec() {
           state.candidates[1].amount shouldBe 1000L
         }
 
-        Then("dismissing candidate removes it from pending list in state") {
+        Then(
+            "dismissing candidate removes it from pending list in state and cancels notification"
+        ) {
           component.onDismiss(id2)
           testCoroutineScheduler.advanceUntilIdle()
 
           val state = component.state.value
           state.candidates shouldHaveSize 1
           state.candidates[0].id shouldBe id1
+          (notificationManager as FakeExpenseNotificationManager).cancelledCandidateIds shouldBe
+              listOf(id2)
         }
 
         Then("selecting candidate invokes onSelectCandidate callback") {

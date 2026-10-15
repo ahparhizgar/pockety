@@ -34,3 +34,15 @@ The system SHALL allow users to reject a candidate expense directly from the not
 #### Scenario: Tap deny action on candidate expense notification
 - **WHEN** the user taps the "Deny" action on the candidate expense notification
 - **THEN** the candidate expense status is updated to REJECTED in the local repository and the notification is dismissed without launching the UI
+
+### Requirement: Dismiss notification on candidate expense acceptance or dismissal
+The system SHALL dismiss the candidate expense notification when the candidate is accepted via the Add Expense flow or dismissed via the Inbox.
+
+#### Scenario: Dismiss notification on saving accepted expense
+- **WHEN** a candidate expense is accepted and saved in the Add Expense flow
+- **THEN** the active notification for that candidate expense is canceled
+
+#### Scenario: Dismiss notification on dismissing candidate in inbox
+- **WHEN** a candidate expense is dismissed from the Inbox screen
+- **THEN** the active notification for that candidate expense is canceled
+

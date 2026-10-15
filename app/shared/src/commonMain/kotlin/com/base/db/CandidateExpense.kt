@@ -7,9 +7,13 @@ import androidx.room3.OnConflictStrategy
 import androidx.room3.PrimaryKey
 import androidx.room3.Query
 import androidx.room3.Transaction
+import com.base.Fake
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 
 enum class CandidateExpenseStatus {
   PENDING,
@@ -115,4 +119,62 @@ object FakeCandidateExpenseEntityFactory {
             status = CandidateExpenseStatus.PENDING,
         )
       }
+}
+
+@Fake
+class FakeCandidateExpenseRepository(
+    initialCandidates: List<CandidateExpenseEntity> = emptyList(),
+) : CandidateExpenseRepository {
+  private val _candidates = MutableStateFlow(initialCandidates)
+  private var nextId = (initialCandidates.maxOfOrNull { it.id } ?: 0L) + 1L
+
+  var lastUpdatedId: Long? = null
+    private set
+
+  var lastUpdatedStatus: CandidateExpenseStatus? = null
+    private set
+
+  override fun observePendingCandidates(): Flow<List<CandidateExpenseEntity>> =
+      _candidates.map { list ->
+        list
+            .filter { it.status == CandidateExpenseStatus.PENDING }
+            .sortedByDescending { it.receivedAt }
+      }
+
+  override suspend fun getCandidateById(id: Long): CandidateExpenseEntity? =
+      _candidates.value.find { it.id == id }
+
+  override suspend fun addCandidate(
+      sender: String,
+      rawBody: String,
+      amount: Long,
+      receivedAt: Instant,
+  ): Long {
+    val id = nextId++
+    val candidate =
+        CandidateExpenseEntity(
+            id = id,
+            sender = sender,
+            rawBody = rawBody,
+            amount = amount,
+            status = CandidateExpenseStatus.PENDING,
+            receivedAt = receivedAt,
+        )
+    _candidates.update { it + candidate }
+    return id
+  }
+
+  override suspend fun updateStatus(id: Long, status: CandidateExpenseStatus) {
+    lastUpdatedId = id
+    lastUpdatedStatus = status
+    _candidates.update { list ->
+      list.map { candidate ->
+        if (candidate.id == id) {
+          candidate.copy(status = status)
+        } else {
+          candidate
+        }
+      }
+    }
+  }
 }

@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">جیبک</string>
+    <string name="app_name">Pockety</string>
+    <string name="notification_channel_name">Bank Transactions</string>
+    <string name="notification_channel_description">Notification for bank SMS messages to record expenses</string>
+    <string name="notification_expense_title">New expense detected</string>
+    <string name="notification_expense_body">Amount %1$,d Rial from %2$s. Tap to record the expense.</string>
+    <string name="notification_action_deny">Dismiss</string>
 </resources>

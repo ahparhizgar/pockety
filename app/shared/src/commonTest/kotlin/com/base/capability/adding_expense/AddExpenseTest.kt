@@ -5,6 +5,9 @@ import com.base.capability.adding_expense.add.DefaultAddExpenseComponentFactory
 import com.base.capability.home.HomeComponent
 import com.base.capability.home.HomeComponentFactory
 import com.base.component.TestCContext
+import com.base.db.CandidateExpenseRepository
+import com.base.notification.ExpenseNotificationManager
+import com.base.notification.FakeExpenseNotificationManager
 import com.base.testValue
 import com.base.usermessage.UiString
 import com.base.util.FakeCallback
@@ -108,6 +111,41 @@ class AddExpenseTest : BehaviorSpec() {
           expenses shouldHaveSize 1
           expenses[0].amount shouldBe 15000
           expenses[0].description shouldBe "Groceries"
+        }
+      }
+
+      When("submitting with linked candidateExpenseId") {
+        val candidateRepo by testValue { koin.get<CandidateExpenseRepository>() }
+        val notificationManager by testValue {
+          koin.get<ExpenseNotificationManager>() as FakeExpenseNotificationManager
+        }
+        val candidateId by testValue {
+          candidateRepo.addCandidate("Mellat", "Withdrawal 20000", 20000L)
+        }
+        val candidateComponent: AddExpenseComponent by testValue {
+          koin
+              .get<DefaultAddExpenseComponentFactory>()
+              .create(
+                  cContext = TestCContext(),
+                  config =
+                      AddExpenseComponent.Config(
+                          initialAmount = "20000",
+                          candidateExpenseId = candidateId,
+                      ),
+                  onCompleted = completedCallback,
+                  onCancelled = cancelledCallback,
+              )
+        }
+
+        beforeEach {
+          candidateComponent.onDescriptionChanged("Dinner")
+          candidateComponent.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("updates candidate status to ACCEPTED and cancels notification") {
+          completedCallback.shouldBeCalled()
+          notificationManager.cancelledCandidateIds shouldBe listOf(candidateId)
         }
       }
 

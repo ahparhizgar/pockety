@@ -35,7 +35,10 @@ Always use Value class for states.
 Use the concept of flows. flows are separate navigations from the main root navigation. e.g. when
 you want to creat a group of users, you create a flow component for that because creating a group
 involve multiple screens and components. So when there is a related set of components, create a flow
-component for them. In this way, removing the whole flow form the root navigations is so easy.
+component for them. In this way, removing the whole flow form the root navigations is so easy.  
+
+In Decompose tests, never write something like this: `val addExpense = root.childStack.value.active.instance.shouldBeInstanceOf<AddExpenseComponent>()`, instead extract functions: `root.assertAddExpense()`.  
+See `RootComponentAssertion.kt` for `assertMainComponent()` etc. or adding new ones.
 
 # Using kotlin
 
@@ -64,7 +67,9 @@ repository.
 Never write tests directly for fakes e.g. `FakeGroupApi`. Instead, write other tests that uses the
 fake.  
 Don't check implementation details: never check Calling functions except for callback parameters.  
-Assert service is called → Wrong. Assert onClick is called → Good.
+Assert service is called → Wrong. Assert onClick is called → Good.  
+Never inline fake implementations as objects in tests. always create reusable fake classes in `test`
+source set.
 
 ## Structuring tests into files
 

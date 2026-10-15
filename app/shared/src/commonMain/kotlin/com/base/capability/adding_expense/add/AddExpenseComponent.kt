@@ -10,6 +10,7 @@ import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
 import com.base.db.CandidateExpenseStatus
 import com.base.db.ExpenseRepository
+import com.base.notification.ExpenseNotificationManager
 import com.base.usermessage.UiString
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -53,10 +54,12 @@ interface AddExpenseComponentFactory {
   ): AddExpenseComponent
 }
 
+@Suppress("LongParameterList")
 class DefaultAddExpenseComponent(
     cContext: CContext,
     private val expenseRepository: ExpenseRepository,
     private val candidateExpenseRepository: CandidateExpenseRepository,
+    private val expenseNotificationManager: ExpenseNotificationManager,
     private val config: AddExpenseComponent.Config = AddExpenseComponent.Config(),
     private val onCompleted: () -> Unit,
     private val onCancelled: () -> Unit,
@@ -117,6 +120,7 @@ class DefaultAddExpenseComponent(
       )
       config.candidateExpenseId?.let { id ->
         candidateExpenseRepository.updateStatus(id, CandidateExpenseStatus.ACCEPTED)
+        expenseNotificationManager.cancelNotification(id)
       }
       onCompleted()
     } finally {
@@ -132,6 +136,7 @@ class DefaultAddExpenseComponent(
 class DefaultAddExpenseComponentFactory(
     private val expenseRepository: ExpenseRepository,
     private val candidateExpenseRepository: CandidateExpenseRepository,
+    private val expenseNotificationManager: ExpenseNotificationManager,
 ) : AddExpenseComponentFactory {
   override fun create(
       cContext: CContext,
@@ -143,6 +148,7 @@ class DefaultAddExpenseComponentFactory(
           cContext = cContext,
           expenseRepository = expenseRepository,
           candidateExpenseRepository = candidateExpenseRepository,
+          expenseNotificationManager = expenseNotificationManager,
           config = config,
           onCompleted = onCompleted,
           onCancelled = onCancelled,

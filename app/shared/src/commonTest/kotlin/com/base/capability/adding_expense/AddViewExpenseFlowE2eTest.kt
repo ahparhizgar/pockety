@@ -1,10 +1,10 @@
 package com.base.capability.adding_expense
 
-import com.base.capability.main.MainComponent
 import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.TestCContext
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
+import com.base.util.assertAddExpenseComponent
 import com.base.util.assertHomeComponent
 import com.base.util.assertMainComponent
 import com.base.util.integrationKoin
@@ -12,7 +12,6 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
 
 class AddViewExpenseFlowE2eTest : BehaviorSpec() {
   init {
@@ -27,26 +26,20 @@ class AddViewExpenseFlowE2eTest : BehaviorSpec() {
         beforeEach { testCoroutineScheduler.advanceUntilIdle() }
 
         Then("displays HomeScreen with empty expenses") {
-          val main = root.childStack.value.active.instance.shouldBeInstanceOf<MainComponent>()
-          val homeChild =
-              main.stack.value.active.instance.shouldBeInstanceOf<MainComponent.Child.Home>()
-          homeChild.component.state.value.expenses shouldHaveSize 0
+          val home = root.assertMainComponent().assertHomeComponent()
+          home.state.value.expenses shouldHaveSize 0
         }
 
         And("user navigates to add expense and saves an expense") {
           beforeEach {
-            val main = root.childStack.value.active.instance.shouldBeInstanceOf<MainComponent>()
-            val homeChild =
-                main.stack.value.active.instance.shouldBeInstanceOf<MainComponent.Child.Home>()
-            homeChild.component.onAddExpenseClicked()
+            val main = root.assertMainComponent()
+            val home = main.assertHomeComponent()
+            home.onAddExpenseClicked()
 
-            val addExpenseChild =
-                main.stack.value.active.instance.shouldBeInstanceOf<
-                    MainComponent.Child.AddExpense
-                >()
-            addExpenseChild.component.onAmountChanged("320000")
-            addExpenseChild.component.onDescriptionChanged("Coffee and croissant")
-            addExpenseChild.component.onSaveClicked()
+            val addExpense = main.assertAddExpenseComponent()
+            addExpense.onAmountChanged("320000")
+            addExpense.onDescriptionChanged("Coffee and croissant")
+            addExpense.onSaveClicked()
             testCoroutineScheduler.advanceUntilIdle()
           }
 

@@ -11,6 +11,8 @@ import com.base.db.DefaultExpenseRepository
 import com.base.db.ExpenseRepository
 import com.base.db.getRoomDatabase
 import com.base.ktor.createHttpClient
+import com.base.navigation.DefaultNavigationActionBus
+import com.base.navigation.NavigationActionBus
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -40,4 +42,5 @@ fun othersModule() = module {
   single { get<AppDatabase>().candidateExpenseDao() }
   singleOf(::DefaultExpenseRepository).bind<ExpenseRepository>()
   singleOf(::DefaultCandidateExpenseRepository).bind<CandidateExpenseRepository>()
+  singleOf(::DefaultNavigationActionBus).bind<NavigationActionBus>()
 }

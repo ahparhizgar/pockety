@@ -19,6 +19,12 @@ dependencies {
 
   implementation(libs.compose.uiToolingPreview)
   debugImplementation(libs.compose.uiTooling)
+
+  testImplementation(libs.kotlin.test)
+  testImplementation(libs.kotest.framework)
+  testImplementation(libs.kotest.assertion)
+  testImplementation(libs.kotest.junit)
+  testImplementation(libs.koin.test)
 }
 
 android {
@@ -38,4 +44,5 @@ android {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
   }
+  testOptions { unitTests.all { it.useJUnitPlatform() } }
 }

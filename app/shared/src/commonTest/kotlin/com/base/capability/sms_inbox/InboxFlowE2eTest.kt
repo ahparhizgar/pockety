@@ -1,19 +1,19 @@
 package com.base.capability.sms_inbox
 
-import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.TestCContext
 import com.base.db.CandidateExpenseRepository
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
+import com.base.util.assertAddExpense
 import com.base.util.assertHomeComponent
+import com.base.util.assertInbox
 import com.base.util.assertMainComponent
 import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.types.shouldBeInstanceOf
 
 class InboxFlowE2eTest : BehaviorSpec() {
   init {
@@ -44,29 +44,27 @@ class InboxFlowE2eTest : BehaviorSpec() {
         }
 
         Then("navigates to Inbox screen listing pending candidate expenses") {
-          val inbox = root.childStack.value.active.instance.shouldBeInstanceOf<InboxComponent>()
+          val inbox = root.assertInbox()
           inbox.state.value.candidates shouldHaveSize 1
           inbox.state.value.candidates[0].amount shouldBe 45000L
         }
 
         And("user selects a candidate expense from Inbox") {
           beforeEach {
-            val inbox = root.childStack.value.active.instance.shouldBeInstanceOf<InboxComponent>()
+            val inbox = root.assertInbox()
             val candidate = inbox.state.value.candidates.first()
             inbox.onSelectCandidate(candidate)
             testCoroutineScheduler.advanceUntilIdle()
           }
 
           Then("navigates to AddExpense screen with amount prefilled") {
-            val addExpense =
-                root.childStack.value.active.instance.shouldBeInstanceOf<AddExpenseComponent>()
+            val addExpense = root.assertAddExpense()
             addExpense.state.value.amountText shouldBe "45000"
           }
 
           And("user enters description and saves the expense") {
             beforeEach {
-              val addExpense =
-                  root.childStack.value.active.instance.shouldBeInstanceOf<AddExpenseComponent>()
+              val addExpense = root.assertAddExpense()
               addExpense.onDescriptionChanged("Groceries")
               addExpense.onSaveClicked()
               testCoroutineScheduler.advanceUntilIdle()
@@ -84,20 +82,20 @@ class InboxFlowE2eTest : BehaviorSpec() {
 
         And("user dismisses candidate expense from Inbox") {
           beforeEach {
-            val inbox = root.childStack.value.active.instance.shouldBeInstanceOf<InboxComponent>()
+            val inbox = root.assertInbox()
             val candidateId = inbox.state.value.candidates.first().id
             inbox.onDismiss(candidateId)
             testCoroutineScheduler.advanceUntilIdle()
           }
 
           Then("candidate is removed from Inbox state") {
-            val inbox = root.childStack.value.active.instance.shouldBeInstanceOf<InboxComponent>()
+            val inbox = root.assertInbox()
             inbox.state.value.candidates shouldHaveSize 0
           }
 
           And("user clicks back button in Inbox") {
             beforeEach {
-              val inbox = root.childStack.value.active.instance.shouldBeInstanceOf<InboxComponent>()
+              val inbox = root.assertInbox()
               inbox.onBackClicked()
               testCoroutineScheduler.advanceUntilIdle()
             }

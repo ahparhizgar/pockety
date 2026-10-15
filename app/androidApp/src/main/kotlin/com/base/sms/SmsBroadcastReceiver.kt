@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
 import com.base.db.CandidateExpenseRepository
+import com.base.notification.ExpenseNotificationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,6 +18,7 @@ class SmsBroadcastReceiver(
 ) : BroadcastReceiver(), KoinComponent {
 
   private val candidateExpenseRepository: CandidateExpenseRepository by inject()
+  private val expenseNotificationManager: ExpenseNotificationManager by inject()
 
   override fun onReceive(context: Context?, intent: Intent?) {
     if (intent?.action != Telephony.Sms.Intents.SMS_RECEIVED_ACTION) return
@@ -27,20 +29,20 @@ class SmsBroadcastReceiver(
     val pendingResult = goAsync()
     scope.launch {
       try {
-        val messagesBySender = messages.filterNotNull().groupBy { it.displayOriginatingAddress ?: "" }
+        val messagesBySender =
+            messages.filterNotNull().groupBy { it.displayOriginatingAddress ?: "" }
 
         for ((sender, partList) in messagesBySender) {
           val fullBody = partList.joinToString("") { it.displayMessageBody ?: "" }
-          val parsed = SmsExpenseParser.parse(fullBody) ?: continue
-
-          candidateExpenseRepository.addCandidate(
+          processSms(
               sender = sender,
-              rawBody = fullBody,
-              amount = parsed.amount,
+              body = fullBody,
+              repository = candidateExpenseRepository,
+              notificationManager = expenseNotificationManager,
           )
         }
       } finally {
-        pendingResult.finish()
+        pendingResult?.finish()
       }
     }
   }
@@ -49,12 +51,21 @@ class SmsBroadcastReceiver(
       sender: String,
       body: String,
       repository: CandidateExpenseRepository,
+      notificationManager: ExpenseNotificationManager? = null,
   ): Long? {
     val parsed = SmsExpenseParser.parse(body) ?: return null
-    return repository.addCandidate(
+    val id =
+        repository.addCandidate(
+            sender = sender,
+            rawBody = body,
+            amount = parsed.amount,
+        )
+    notificationManager?.showExpenseCandidateNotification(
+        candidateId = id,
+        amount = parsed.amount,
         sender = sender,
         rawBody = body,
-        amount = parsed.amount,
     )
+    return id
   }
 }

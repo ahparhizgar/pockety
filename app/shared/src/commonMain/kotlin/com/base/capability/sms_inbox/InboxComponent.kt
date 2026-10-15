@@ -11,6 +11,7 @@ import com.base.db.CandidateExpenseEntity
 import com.base.db.CandidateExpenseRepository
 import com.base.db.CandidateExpenseStatus
 import com.base.db.FakeCandidateExpenseEntityFactory
+import com.base.notification.ExpenseNotificationManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -45,6 +46,7 @@ interface InboxComponentFactory {
 class DefaultInboxComponent(
     cContext: CContext,
     private val candidateExpenseRepository: CandidateExpenseRepository,
+    private val expenseNotificationManager: ExpenseNotificationManager,
     private val onSelectCandidate: (CandidateExpenseEntity) -> Unit,
     private val onBack: () -> Unit,
 ) : InboxComponent, CContext by cContext {
@@ -71,6 +73,7 @@ class DefaultInboxComponent(
 
   override fun onDismiss(candidateId: Long): Job = scope.launch {
     candidateExpenseRepository.updateStatus(candidateId, CandidateExpenseStatus.REJECTED)
+    expenseNotificationManager.cancelNotification(candidateId)
   }
 
   override fun onSelectCandidate(candidate: CandidateExpenseEntity) {
@@ -84,6 +87,7 @@ class DefaultInboxComponent(
 
 class DefaultInboxComponentFactory(
     private val candidateExpenseRepository: CandidateExpenseRepository,
+    private val expenseNotificationManager: ExpenseNotificationManager,
 ) : InboxComponentFactory {
   override fun create(
       cContext: CContext,
@@ -93,6 +97,7 @@ class DefaultInboxComponentFactory(
       DefaultInboxComponent(
           cContext = cContext,
           candidateExpenseRepository = candidateExpenseRepository,
+          expenseNotificationManager = expenseNotificationManager,
           onSelectCandidate = onSelectCandidate,
           onBack = onBack,
       )

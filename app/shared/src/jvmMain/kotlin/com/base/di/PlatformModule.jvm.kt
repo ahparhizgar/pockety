@@ -6,6 +6,8 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.base.DataDir
 import com.base.db.AppDatabase
 import com.base.db.AppDatabaseBuilderFactory
+import com.base.notification.ExpenseNotificationManager
+import com.base.notification.FakeExpenseNotificationManager
 import com.base.permission.FakePermissionController
 import com.base.permission.PermissionController
 import java.io.File
@@ -16,6 +18,7 @@ import org.koin.dsl.module
 actual fun platformModule(): Module = module {
   single { JvmAppDatabaseBuilderFactory() }.bind<AppDatabaseBuilderFactory>()
   single { FakePermissionController() }.bind<PermissionController>()
+  single { FakeExpenseNotificationManager() }.bind<ExpenseNotificationManager>()
 }
 
 class JvmAppDatabaseBuilderFactory : AppDatabaseBuilderFactory {
