@@ -70,15 +70,23 @@ Assert service is called → Wrong. Assert onClick is called → Good.
 
 Don't structure tests based on screens/components.  
 Instead, structure tests into capability packages (`com.base.capability.<capability_name>`).  
-Capabilities represent cohesive functional capabilities (e.g. `adding_expense`, `sms_inbox`, `sms_parsing`, `grant_sms_permission`, `central_user_messages`, `root_navigation`).  
-Within each capability package, structure tests into files based on specific requirements and test levels:
-- `<Capability>Test.kt` / `<Requirement>Test.kt` for component / unit behavior (e.g., `AddExpenseTest.kt`, `SmsExpenseParserTest.kt`).
-- `<Capability>FlowE2eTest.kt` for end-to-end component / flow integration (e.g., `AddViewExpenseFlowE2eTest.kt`, `InboxFlowE2eTest.kt`).
-- `<Capability>E2eUiTest.kt` for UI end-to-end tests (e.g., `AddViewExpenseE2eUiTest.kt`, `InboxE2eUiTest.kt`).
+Capabilities represent cohesive functional capabilities (e.g. `adding_expense`, `sms_inbox`,
+`sms_parsing`, `grant_sms_permission`, `central_user_messages`, `root_navigation`).  
+Within each capability package, structure tests into files based on specific requirements and test
+levels:
+
+- `<Capability>Test.kt` / `<Requirement>Test.kt` for component / unit behavior (e.g.,
+  `AddExpenseTest.kt`, `SmsExpenseParserTest.kt`).
+- `<Capability>FlowE2eTest.kt` for end-to-end component / flow integration (e.g.,
+  `AddViewExpenseFlowE2eTest.kt`, `InboxFlowE2eTest.kt`).
+- `<Capability>E2eUiTest.kt` for UI end-to-end tests (e.g., `AddViewExpenseE2eUiTest.kt`,
+  `InboxE2eUiTest.kt`).
 - `<Target>RepositoryTest.kt` for repository integration tests.
 
-Capabilities and requirements are additive. For testing a capability that navigates from home to adding an expense, the tests belong to `com.base.capability.adding_expense`, not `home`.  
-Add tests in the corresponding capability package so test architecture remains open-closed as we practice spec-driven development.
+Capabilities and requirements are additive. For testing a capability that navigates from home to
+adding an expense, the tests belong to `com.base.capability.adding_expense`, not `home`.  
+Add tests in the corresponding capability package so test architecture remains open-closed as we
+practice spec-driven development.
 
 ## Behavioral testing
 
