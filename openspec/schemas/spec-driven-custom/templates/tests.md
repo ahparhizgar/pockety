@@ -5,6 +5,7 @@
 ### `<name>/<Capability>Test`
 
 **Target**: <!-- Component / business logic under test -->
+
 **Scenarios**:
 
 - Given <!-- initial state/context -->
@@ -16,22 +17,21 @@
 ### `<name>/<Capability>FlowE2eTest`
 
 **Flow**: <!-- Navigation and integration flow from root component -->
+
 **Scenarios**:
 
 - Given <!-- initial state/context -->
     - When <!-- user navigates and performs actions -->
         - [ ] Then <!-- end-to-end verified state -->
-    - When <!-- user performs another action -->
-        - [ ] Then <!-- end-to-end verified state -->
+        - And <!-- user performs another action -->
+            - [ ] Then <!-- end-to-end verified state -->
 - Given <!-- another initial state/context -->
     - When <!-- user navigates and performs actions -->
         - [ ] Then <!-- end-to-end verified state -->
 
 ## UI & Accessibility Tests
 
-### `com.base.capability.<name>.<Capability>E2eUiTest`
-
-<!-- Focus: UI behavior and state, navigation, keyboard accessibility -->
+### `<name>.<Capability>E2eUiTest`
 
 **Scenarios**:
 
