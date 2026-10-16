@@ -70,7 +70,7 @@ class DefaultRootComponent(
         when (action) {
           is NavigationAction.OpenAddExpense -> {
             rootNavigation.pushNew(
-                AddExpenseComponent.Config(
+                AddExpenseFlowComponent.Config(
                     initialAmount = action.initialAmount,
                     candidateExpenseId = action.candidateExpenseId,
                 )

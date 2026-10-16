@@ -7,7 +7,9 @@ import com.base.navigation.NavigationAction
 import com.base.navigation.NavigationActionBus
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
-import com.base.util.assertAddExpense
+import com.base.util.assertAddExpenseComponent
+import com.base.util.assertAddExpenseFlow
+import com.base.util.assertCategorySelectionComponent
 import com.base.util.assertHomeComponent
 import com.base.util.assertMainComponent
 import com.base.util.integrationKoin
@@ -49,14 +51,32 @@ class SmsExpenseNotificationFlowE2eTest : BehaviorSpec() {
           testCoroutineScheduler.advanceUntilIdle()
         }
 
-        Then("the active child becomes AddExpenseComponent with prefilled amount") {
-          val addExpense = root.assertAddExpense()
+        Then(
+            "the active child becomes AddExpenseFlowComponent showing AddExpenseComponent with prefilled amount"
+        ) {
+          val flow = root.assertAddExpenseFlow()
+          val addExpense = flow.assertAddExpenseComponent()
           addExpense.state.value.amountText shouldBe "75000"
+        }
+
+        And("user clicks on category") {
+          beforeEach {
+            val flow = root.assertAddExpenseFlow()
+            val addExpense = flow.assertAddExpenseComponent()
+            addExpense.onSelectCategoryClicked()
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then("category selection screen is shown in the flow") {
+            val flow = root.assertAddExpenseFlow()
+            flow.assertCategorySelectionComponent()
+          }
         }
 
         And("user enters description and saves the expense") {
           beforeEach {
-            val addExpense = root.assertAddExpense()
+            val flow = root.assertAddExpenseFlow()
+            val addExpense = flow.assertAddExpenseComponent()
             addExpense.onDescriptionChanged("Coffee")
             addExpense.onSaveClicked()
             testCoroutineScheduler.advanceUntilIdle()
