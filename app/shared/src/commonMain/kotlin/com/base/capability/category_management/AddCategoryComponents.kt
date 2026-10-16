@@ -358,7 +358,7 @@ internal fun CategoryLivePreviewAndNameFields(
 
     CategoryNameInputField(
         name = nameData.name,
-        nameError = nameErrorOrNull(nameData.nameError),
+        nameError = nameData.nameError,
         onNameChange = nameData.onNameChange,
         onDone = nameData.onDone,
     )
@@ -389,5 +389,3 @@ internal fun AddCategoryFormBody(
     }
   }
 }
-
-private fun nameErrorOrNull(error: String?): String? = error

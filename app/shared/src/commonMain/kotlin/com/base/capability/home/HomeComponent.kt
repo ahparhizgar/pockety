@@ -5,6 +5,7 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
+import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.capability.sms_inbox.InboxComponent
 import com.base.component.CContext
@@ -100,7 +101,7 @@ class DefaultHomeComponent(
           .launchIn(scope)
 
   override fun onAddExpenseClicked() {
-    navigation.pushNew(com.base.capability.adding_expense.AddExpenseFlowComponent.Config())
+    navigation.pushNew(AddExpenseFlowComponent.Config())
     onAddExpense()
   }
 
