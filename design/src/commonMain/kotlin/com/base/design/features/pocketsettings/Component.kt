@@ -92,23 +92,6 @@ fun PocketIdentitySection(
           )
         }
       }
-
-      Surface(
-          modifier = Modifier.size(32.dp),
-          shape = CircleShape,
-          color = MaterialTheme.colorScheme.primary,
-          contentColor = MaterialTheme.colorScheme.onPrimary,
-          shadowElevation = 4.dp,
-          onClick = onEditIconClick,
-      ) {
-        Box(contentAlignment = Alignment.Center) {
-          Icon(
-              imageVector = Icons.Default.Edit,
-              contentDescription = "Change pocket icon",
-              modifier = Modifier.size(18.dp),
-          )
-        }
-      }
     }
 
     Column(
