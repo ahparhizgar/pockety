@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.SmartDisplay
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -22,6 +23,7 @@ import com.base.design.features.monthdetail.MonthDetailScreen
 import com.base.design.features.pocketdetail.PocketDetailScreen
 import com.base.design.features.pockets.PocketsScreen
 import com.base.design.features.pocketsettings.PocketSettingsScreen
+import com.base.design.features.prototype.PrototypeAppScreen
 import com.base.design.features.selectcategory.SelectCategoryScreen
 import com.base.design.features.selectlabels.SelectLabelsScreen
 import com.base.design.features.settings.SettingsScreen
@@ -42,6 +44,7 @@ enum class FigmaDesignPage(val label: String, val icon: ImageVector) {
   PocketSettings("02. Pockets & Settings", Icons.Default.Tune),
   ExpenseFlow("03. Expense & Tags", Icons.Default.LocalOffer),
   Categories("04. Categories & Taxonomy", Icons.Default.Category),
+  Prototype("05. Interactive Prototype", Icons.Default.SmartDisplay),
 }
 
 val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
@@ -134,6 +137,21 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                             },
                             FigmaScreenItem("13", "Add Category", "Creation Form") {
                               AddCategoryScreen()
+                            },
+                        ),
+                ),
+            ),
+        FigmaDesignPage.Prototype to
+            listOf(
+                FigmaDesignSection(
+                    title = "05. Interactive Semi-Functional Prototype",
+                    subtitle =
+                        "Fully clickable end-to-end prototype linking all 14 screens, bottom tabs, expense creation, and budget pockets",
+                    icon = Icons.Default.SmartDisplay,
+                    screens =
+                        listOf(
+                            FigmaScreenItem("00", "Interactive App Prototype", "Interactive") {
+                              PrototypeAppScreen()
                             },
                         ),
                 ),

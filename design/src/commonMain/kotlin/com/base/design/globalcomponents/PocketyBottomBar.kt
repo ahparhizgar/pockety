@@ -74,7 +74,7 @@ fun PocketyBottomBar(
                   indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
                   selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
                   unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                  selectedTextColor = MaterialTheme.colorScheme.primaryContainer,
+                  selectedTextColor = MaterialTheme.colorScheme.primary,
                   unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
               ),
           icon = {
@@ -86,7 +86,7 @@ fun PocketyBottomBar(
               )
               if (tab == PocketyTab.Inbox && inboxBadgeCount > 0) {
                 Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
+                    color = MaterialTheme.colorScheme.primary,
                     shape = CircleShape,
                     modifier = Modifier.align(Alignment.TopEnd).offset(x = 6.dp, y = (-4).dp),
                 ) {

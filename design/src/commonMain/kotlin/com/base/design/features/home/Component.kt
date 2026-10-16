@@ -81,7 +81,7 @@ fun UndecidedExpensesBanner(
         Surface(
             shape = CircleShape,
             color = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.size(40.dp),
         ) {
           Box(contentAlignment = Alignment.Center) {
@@ -181,7 +181,7 @@ fun SmsPermissionBanner(
         Surface(
             shape = CircleShape,
             color = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.size(40.dp),
         ) {
           Box(contentAlignment = Alignment.Center) {
