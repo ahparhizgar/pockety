@@ -293,24 +293,6 @@ fun PocketsSectionHeader(
         fontWeight = FontWeight.SemiBold,
         color = MaterialTheme.colorScheme.onSurface,
     )
-    IconButton(
-        onClick = onFilterClick,
-    ) {
-      Surface(
-          modifier = Modifier.size(40.dp),
-          shape = CircleShape,
-          color = MaterialTheme.colorScheme.surfaceContainerLow,
-      ) {
-        Box(contentAlignment = Alignment.Center) {
-          Icon(
-              imageVector = Icons.Default.Tune,
-              contentDescription = "Filter pockets",
-              tint = MaterialTheme.colorScheme.onSurfaceVariant,
-              modifier = Modifier.size(20.dp),
-          )
-        }
-      }
-    }
   }
 }
 
