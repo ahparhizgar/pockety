@@ -22,7 +22,7 @@ fun RootComponent.assertAddExpense(): AddExpenseComponent {
 }
 
 fun RootComponent.assertInbox(): InboxComponent {
-  return activeInstance.shouldBeInstanceOf<InboxComponent>()
+  return assertMainComponent().assertInboxComponent()
 }
 
 fun RootComponent.assertAddExpenseFlow(): AddExpenseFlowComponent {

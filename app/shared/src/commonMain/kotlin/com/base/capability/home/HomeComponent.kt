@@ -7,7 +7,6 @@ import com.arkivanov.decompose.value.update
 import com.base.Fake
 import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.root_navigation.TopLevelDestinationConfig
-import com.base.capability.sms_inbox.InboxComponent
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
@@ -44,6 +43,7 @@ interface HomeComponentFactory {
   fun create(
       cContext: CContext,
       onAddExpense: () -> Unit,
+      onOpenInbox: () -> Unit = {},
   ): HomeComponent
 }
 
@@ -52,6 +52,7 @@ class DefaultHomeComponent(
     private val expenseRepository: ExpenseRepository,
     private val candidateExpenseRepository: CandidateExpenseRepository,
     private val onAddExpense: () -> Unit,
+    private val onOpenInbox: () -> Unit = {},
 ) : HomeComponent, CContext by cContext {
   private val scope = componentScope()
   private val _state =
@@ -106,7 +107,7 @@ class DefaultHomeComponent(
   }
 
   override fun onUndecidedExpensesClicked() {
-    navigation.pushNew(InboxComponent.Config)
+    onOpenInbox()
   }
 
   override fun onEnableSmsTrackingClicked(): Job = scope.launch {
@@ -124,12 +125,14 @@ class DefaultHomeComponentFactory(
   override fun create(
       cContext: CContext,
       onAddExpense: () -> Unit,
+      onOpenInbox: () -> Unit,
   ): HomeComponent =
       DefaultHomeComponent(
           cContext = cContext,
           expenseRepository = expenseRepository,
           candidateExpenseRepository = candidateExpenseRepository,
           onAddExpense = onAddExpense,
+          onOpenInbox = onOpenInbox,
       )
 }
 
@@ -152,5 +155,6 @@ class FakeHomeComponentFactory : HomeComponentFactory {
   override fun create(
       cContext: CContext,
       onAddExpense: () -> Unit,
+      onOpenInbox: () -> Unit,
   ): HomeComponent = FakeHomeComponent()
 }

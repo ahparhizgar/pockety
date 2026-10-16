@@ -54,4 +54,9 @@
     <string name="no_categories_found">No categories found</string>
     <string name="category_label">Category</string>
     <string name="change_category_action">Change</string>
+    <string name="tab_home">Home</string>
+    <string name="tab_inbox">Inbox</string>
+    <string name="tab_pockets">Pockets</string>
+    <string name="tab_analytics">Analytics</string>
+    <string name="tab_settings">Settings</string>
 </resources>
