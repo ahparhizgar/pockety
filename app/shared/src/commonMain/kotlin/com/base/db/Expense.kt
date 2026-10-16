@@ -22,9 +22,15 @@ import kotlinx.coroutines.flow.Flow
                 parentColumns = ["id"],
                 childColumns = ["categoryId"],
                 onDelete = ForeignKey.SET_NULL,
-            )
+            ),
+            ForeignKey(
+                entity = PocketEntity::class,
+                parentColumns = ["id"],
+                childColumns = ["pocketId"],
+                onDelete = ForeignKey.SET_NULL,
+            ),
         ],
-    indices = [Index("categoryId")],
+    indices = [Index("categoryId"), Index("pocketId")],
 )
 data class ExpenseEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -32,6 +38,7 @@ data class ExpenseEntity(
     val description: String,
     val createdAt: Instant,
     val categoryId: Long? = null,
+    val pocketId: Long? = null,
 )
 
 @Dao
@@ -47,7 +54,12 @@ interface ExpenseDao {
 interface ExpenseRepository {
   fun observeExpenses(): Flow<List<ExpenseEntity>>
 
-  suspend fun addExpense(amount: Long, description: String, categoryId: Long? = null): Long
+  suspend fun addExpense(
+      amount: Long,
+      description: String,
+      categoryId: Long? = null,
+      pocketId: Long? = null,
+  ): Long
 }
 
 class DefaultExpenseRepository(
@@ -55,25 +67,33 @@ class DefaultExpenseRepository(
 ) : ExpenseRepository {
   override fun observeExpenses(): Flow<List<ExpenseEntity>> = expenseDao.observeExpenses()
 
-  override suspend fun addExpense(amount: Long, description: String, categoryId: Long?): Long {
+  override suspend fun addExpense(
+      amount: Long,
+      description: String,
+      categoryId: Long?,
+      pocketId: Long?,
+  ): Long {
     val expense =
         ExpenseEntity(
             amount = amount,
             description = description,
             createdAt = Clock.System.now(),
             categoryId = categoryId,
+            pocketId = pocketId,
         )
     return expenseDao.insertExpense(expense)
   }
 }
 
 object FakeExpenseFactory {
+  @Suppress("LongParameterList")
   fun create(
       id: Long = 1,
       amount: Long = 1000,
       description: String = "Test expense",
       createdAt: Instant = Clock.System.now(),
       categoryId: Long? = null,
+      pocketId: Long? = null,
   ): ExpenseEntity =
       ExpenseEntity(
           id = id,
@@ -81,6 +101,7 @@ object FakeExpenseFactory {
           description = description,
           createdAt = createdAt,
           categoryId = categoryId,
+          pocketId = pocketId,
       )
 
   fun createList(count: Int = 3): List<ExpenseEntity> =

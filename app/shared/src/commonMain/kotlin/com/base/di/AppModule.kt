@@ -10,7 +10,9 @@ import com.base.db.CategoryRepository
 import com.base.db.DefaultCandidateExpenseRepository
 import com.base.db.DefaultCategoryRepository
 import com.base.db.DefaultExpenseRepository
+import com.base.db.DefaultPocketRepository
 import com.base.db.ExpenseRepository
+import com.base.db.PocketRepository
 import com.base.db.getRoomDatabase
 import com.base.ktor.createHttpClient
 import com.base.navigation.DefaultNavigationActionBus
@@ -43,8 +45,10 @@ fun othersModule() = module {
   single { get<AppDatabase>().expenseDao() }
   single { get<AppDatabase>().candidateExpenseDao() }
   single { get<AppDatabase>().categoryDao() }
+  single { get<AppDatabase>().pocketDao() }
   singleOf(::DefaultExpenseRepository).bind<ExpenseRepository>()
   singleOf(::DefaultCandidateExpenseRepository).bind<CandidateExpenseRepository>()
   singleOf(::DefaultCategoryRepository).bind<CategoryRepository>()
+  singleOf(::DefaultPocketRepository).bind<PocketRepository>()
   singleOf(::DefaultNavigationActionBus).bind<NavigationActionBus>()
 }

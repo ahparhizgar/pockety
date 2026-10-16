@@ -7,6 +7,7 @@ import com.base.ui.components.PocketyTab
 import com.base.util.MainDispatcherExtension
 import com.base.util.assertHomeComponent
 import com.base.util.assertInboxComponent
+import com.base.util.assertPocketsComponent
 import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
@@ -60,6 +61,30 @@ class MainNavigationTest : BehaviorSpec() {
           Then("active child is Inbox and backStack contains only Home") {
             main.assertInboxComponent()
             main.stack.value.backStack shouldHaveSize 1
+          }
+
+          And("user selects Pockets tab directly from Inbox") {
+            beforeEach {
+              main.onTabSelect(PocketyTab.Pockets)
+              testCoroutineScheduler.advanceUntilIdle()
+            }
+
+            Then("active child is Pockets and backStack contains only Home") {
+              main.assertPocketsComponent()
+              main.stack.value.backStack shouldHaveSize 1
+            }
+
+            And("user presses back from Pockets") {
+              beforeEach {
+                main.onBack()
+                testCoroutineScheduler.advanceUntilIdle()
+              }
+
+              Then("navigates directly back to Home") {
+                main.assertHomeComponent()
+                main.stack.value.backStack shouldHaveSize 0
+              }
+            }
           }
 
           And("user selects Settings tab directly from Inbox") {

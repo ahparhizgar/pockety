@@ -17,8 +17,9 @@ import kotlinx.coroutines.Dispatchers
             ExpenseEntity::class,
             CandidateExpenseEntity::class,
             CategoryEntity::class,
+            PocketEntity::class,
         ],
-    version = 5,
+    version = 6,
 )
 @ColumnTypeConverters(InstantConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -28,6 +29,8 @@ abstract class AppDatabase : RoomDatabase() {
   abstract fun candidateExpenseDao(): CandidateExpenseDao
 
   abstract fun categoryDao(): CategoryDao
+
+  abstract fun pocketDao(): PocketDao
 }
 
 // The Room compiler generates the `actual` implementations.
@@ -139,12 +142,76 @@ val MIGRATION_4_5 =
       }
     }
 
+val MIGRATION_5_6 =
+    object : Migration(5, 6) {
+      override suspend fun migrate(connection: SQLiteConnection) {
+        connection
+            .prepare(
+                """
+                CREATE TABLE IF NOT EXISTS `pockets` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `name` TEXT NOT NULL,
+                    `categoryTag` TEXT NOT NULL,
+                    `budgetAmount` INTEGER NOT NULL,
+                    `icon` TEXT NOT NULL,
+                    `createdAt` INTEGER NOT NULL
+                )
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection
+            .prepare(
+                """
+                CREATE TABLE IF NOT EXISTS `transactions_new` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `amount` INTEGER NOT NULL,
+                    `description` TEXT NOT NULL,
+                    `createdAt` INTEGER NOT NULL,
+                    `categoryId` INTEGER,
+                    `pocketId` INTEGER,
+                    FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL,
+                    FOREIGN KEY(`pocketId`) REFERENCES `pockets`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL
+                )
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection
+            .prepare(
+                """
+                INSERT INTO `transactions_new` (`id`, `amount`, `description`, `createdAt`, `categoryId`, `pocketId`)
+                SELECT `id`, `amount`, `description`, `createdAt`, `categoryId`, NULL FROM `transactions`
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection.prepare("DROP TABLE `transactions`").use { it.step() }
+        connection.prepare("ALTER TABLE `transactions_new` RENAME TO `transactions`").use {
+          it.step()
+        }
+        connection
+            .prepare(
+                "CREATE INDEX IF NOT EXISTS `index_transactions_categoryId` ON `transactions` (`categoryId`)"
+            )
+            .use { it.step() }
+        connection
+            .prepare(
+                "CREATE INDEX IF NOT EXISTS `index_transactions_pocketId` ON `transactions` (`pocketId`)"
+            )
+            .use { it.step() }
+      }
+    }
+
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
     queryContext: CoroutineContext = Dispatchers.Default,
 ): AppDatabase {
   return builder
-      .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+      .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
       .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
       .setQueryCoroutineContext(queryContext)
       .build()

@@ -120,6 +120,75 @@ class MigrationTest : BehaviorSpec() {
         }
       }
 
+      When("MIGRATION_5_6 is executed") {
+        MIGRATION_5_6.migrate(connection)
+
+        Then("pockets table exists with required columns") {
+          connection.execSQL(
+              """
+              INSERT INTO `pockets` (`id`, `name`, `categoryTag`, `budgetAmount`, `icon`, `createdAt`)
+              VALUES (1, 'Groceries', 'Food', 1000000, 'shopping_bag', 1700000000000)
+              """
+                  .trimIndent()
+          )
+
+          val statement =
+              connection.prepare(
+                  "SELECT name, categoryTag, budgetAmount, icon FROM pockets WHERE id = 1"
+              )
+          val hasRow = statement.step()
+          hasRow shouldBe true
+          statement.getText(0) shouldBe "Groceries"
+          statement.getText(1) shouldBe "Food"
+          statement.getLong(2) shouldBe 1000000L
+          statement.getText(3) shouldBe "shopping_bag"
+          statement.close()
+        }
+
+        Then("transactions table contains nullable pocketId column") {
+          connection.execSQL(
+              """
+              INSERT INTO `transactions` (`id`, `amount`, `description`, `createdAt`, `categoryId`, `pocketId`)
+              VALUES (102, 3000, 'Supermarket', 1700000000000, 1, 1)
+              """
+                  .trimIndent()
+          )
+
+          val statement =
+              connection.prepare(
+                  "SELECT amount, categoryId, pocketId FROM transactions WHERE id = 102"
+              )
+          val hasRow = statement.step()
+          hasRow shouldBe true
+          statement.getLong(0) shouldBe 3000L
+          statement.getLong(1) shouldBe 1L
+          statement.getLong(2) shouldBe 1L
+          statement.close()
+        }
+
+        Then("transactions table has pocketId index and foreign key") {
+          val indexStmt = connection.prepare("PRAGMA index_list(`transactions`)")
+          var foundIndex = false
+          while (indexStmt.step()) {
+            if (indexStmt.getText(1) == "index_transactions_pocketId") {
+              foundIndex = true
+            }
+          }
+          indexStmt.close()
+          foundIndex shouldBe true
+
+          val fkStmt = connection.prepare("PRAGMA foreign_key_list(`transactions`)")
+          var foundFk = false
+          while (fkStmt.step()) {
+            if (fkStmt.getText(2) == "pockets") {
+              foundFk = true
+            }
+          }
+          fkStmt.close()
+          foundFk shouldBe true
+        }
+      }
+
       afterSpec { connection.close() }
     }
   }

@@ -17,6 +17,9 @@ import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.home.FakeHomeComponent
 import com.base.capability.home.HomeComponent
 import com.base.capability.home.HomeComponentFactory
+import com.base.capability.pocket_management.FakePocketsComponent
+import com.base.capability.pocket_management.PocketsComponent
+import com.base.capability.pocket_management.PocketsComponentFactory
 import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.capability.sms_inbox.FakeInboxComponent
 import com.base.capability.sms_inbox.InboxComponent
@@ -62,7 +65,7 @@ interface MainComponent : TopLevelDestinationConfig {
 
     class Inbox(val component: InboxComponent) : Child
 
-    data object Pockets : Child
+    class Pockets(val component: PocketsComponent) : Child
 
     data object Analytics : Child
 
@@ -80,6 +83,7 @@ class DefaultMainComponent(
     cContext: CContext,
     private val homeComponentFactory: HomeComponentFactory,
     private val inboxComponentFactory: InboxComponentFactory,
+    private val pocketsComponentFactory: PocketsComponentFactory,
     private val candidateExpenseRepository: CandidateExpenseRepository,
 ) : MainComponent, CContext by cContext {
   private val scope = componentScope()
@@ -161,7 +165,14 @@ class DefaultMainComponent(
               )
           )
 
-      MainChildConfig.Pockets -> MainComponent.Child.Pockets
+      MainChildConfig.Pockets ->
+          MainComponent.Child.Pockets(
+              pocketsComponentFactory.create(
+                  cContext = context,
+                  onPocketClick = {},
+                  onAddPocketClick = {},
+              )
+          )
       MainChildConfig.Analytics -> MainComponent.Child.Analytics
       MainChildConfig.Settings -> MainComponent.Child.Settings
     }
@@ -171,6 +182,7 @@ class DefaultMainComponent(
 class DefaultMainComponentFactory(
     private val homeComponentFactory: HomeComponentFactory,
     private val inboxComponentFactory: InboxComponentFactory,
+    private val pocketsComponentFactory: PocketsComponentFactory,
     private val candidateExpenseRepository: CandidateExpenseRepository,
 ) : MainComponentFactory {
   override fun create(cContext: CContext): MainComponent =
@@ -178,6 +190,7 @@ class DefaultMainComponentFactory(
           cContext = cContext,
           homeComponentFactory = homeComponentFactory,
           inboxComponentFactory = inboxComponentFactory,
+          pocketsComponentFactory = pocketsComponentFactory,
           candidateExpenseRepository = candidateExpenseRepository,
       )
 }
@@ -224,7 +237,7 @@ class FakeMainComponent(
         when (tab) {
           PocketyTab.Home -> MainComponent.Child.Home(FakeHomeComponent())
           PocketyTab.Inbox -> MainComponent.Child.Inbox(FakeInboxComponent())
-          PocketyTab.Pockets -> MainComponent.Child.Pockets
+          PocketyTab.Pockets -> MainComponent.Child.Pockets(FakePocketsComponent())
           PocketyTab.Analytics -> MainComponent.Child.Analytics
           PocketyTab.Settings -> MainComponent.Child.Settings
         }

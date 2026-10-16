@@ -54,4 +54,17 @@
     <string name="no_categories_found">دسته‌بندی‌ای یافت نشد</string>
     <string name="category_label">دسته‌بندی</string>
     <string name="change_category_action">تغییر</string>
+    <string name="tab_home">خانه</string>
+    <string name="tab_inbox">صندوق پیام</string>
+    <string name="tab_pockets">جیب‌ها</string>
+    <string name="tab_analytics">تحلیل</string>
+    <string name="tab_settings">تنظیمات</string>
+    <string name="pockets_title">جیب‌ها</string>
+    <string name="pockets_header_title">جیب‌های بودجه شما</string>
+    <string name="pockets_empty_title">هنوز جیب بودجه‌ای تعریف نشده است</string>
+    <string name="pockets_empty_desc">اولین جیب بودجه خود را بسازید تا هزینه‌های خود را دسته‌بندی و مانده را رهگیری کنید.</string>
+    <string name="pockets_add_pocket_action">افزودن جیب</string>
+    <string name="pockets_top_up_action">شارژ</string>
+    <string name="pockets_dynamic_sync_title">همگام‌سازی پویای مانده</string>
+    <string name="pockets_dynamic_sync_desc">با حذف یا ویرایش خرج مرتبط با هر جیب، مانده آن به صورت خودکار و در لحظه بازیابی می‌شود.</string>
 </resources>

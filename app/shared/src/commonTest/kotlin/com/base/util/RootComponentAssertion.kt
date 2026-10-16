@@ -3,6 +3,7 @@ package com.base.util
 import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.main.MainComponent
+import com.base.capability.pocket_management.PocketsComponent
 import com.base.capability.root_navigation.RootComponent
 import com.base.capability.sms_inbox.InboxComponent
 import io.kotest.matchers.types.shouldBeInstanceOf
@@ -23,6 +24,10 @@ fun RootComponent.assertAddExpense(): AddExpenseComponent {
 
 fun RootComponent.assertInbox(): InboxComponent {
   return assertMainComponent().assertInboxComponent()
+}
+
+fun RootComponent.assertPockets(): PocketsComponent {
+  return assertMainComponent().assertPocketsComponent()
 }
 
 fun RootComponent.assertAddExpenseFlow(): AddExpenseFlowComponent {

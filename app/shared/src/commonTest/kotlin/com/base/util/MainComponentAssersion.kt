@@ -2,6 +2,7 @@ package com.base.util
 
 import com.base.capability.home.HomeComponent
 import com.base.capability.main.MainComponent
+import com.base.capability.pocket_management.PocketsComponent
 import com.base.capability.sms_inbox.InboxComponent
 import io.kotest.matchers.types.shouldBeInstanceOf
 
@@ -14,4 +15,8 @@ fun MainComponent.assertHomeComponent(): HomeComponent {
 
 fun MainComponent.assertInboxComponent(): InboxComponent {
   return activeInstance.shouldBeInstanceOf<MainComponent.Child.Inbox>().component
+}
+
+fun MainComponent.assertPocketsComponent(): PocketsComponent {
+  return activeInstance.shouldBeInstanceOf<MainComponent.Child.Pockets>().component
 }

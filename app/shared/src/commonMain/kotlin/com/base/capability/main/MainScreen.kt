@@ -19,6 +19,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.capability.home.HomeScreen
+import com.base.capability.pocket_management.PocketsScreen
 import com.base.capability.sms_inbox.InboxScreen
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyBottomBar
@@ -53,42 +54,57 @@ fun MainScreen(
         )
       },
   ) { paddingValues ->
-    Children(
-        stack = component.stack,
+    MainNavigationContent(
+        component = component,
         modifier = Modifier.padding(paddingValues),
-        animation =
-            predictiveBackAnimation(
-                backHandler = component.backHandler,
-                onBack = component::onBack,
-                fallbackAnimation = stackAnimation(fade() + scale()),
-            ),
-    ) {
-      when (val child = it.instance) {
-        is MainComponent.Child.Home -> {
-          HomeScreen(
-              component = child.component,
-              modifier = Modifier.testTag("main-home-screen"),
-          )
-        }
+    )
+  }
+}
 
-        is MainComponent.Child.Inbox -> {
-          InboxScreen(
-              component = child.component,
-              modifier = Modifier.testTag("inbox-screen"),
-          )
-        }
+@OptIn(ExperimentalDecomposeApi::class)
+@Composable
+private fun MainNavigationContent(
+    component: MainComponent,
+    modifier: Modifier = Modifier,
+) {
+  Children(
+      stack = component.stack,
+      modifier = modifier,
+      animation =
+          predictiveBackAnimation(
+              backHandler = component.backHandler,
+              onBack = component::onBack,
+              fallbackAnimation = stackAnimation(fade() + scale()),
+          ),
+  ) {
+    when (val child = it.instance) {
+      is MainComponent.Child.Home -> {
+        HomeScreen(
+            component = child.component,
+            modifier = Modifier.testTag("main-home-screen"),
+        )
+      }
 
-        is MainComponent.Child.Pockets -> {
-          Box(modifier = Modifier.fillMaxSize().testTag("pockets-screen"))
-        }
+      is MainComponent.Child.Inbox -> {
+        InboxScreen(
+            component = child.component,
+            modifier = Modifier.testTag("inbox-screen"),
+        )
+      }
 
-        is MainComponent.Child.Analytics -> {
-          Box(modifier = Modifier.fillMaxSize().testTag("analytics-screen"))
-        }
+      is MainComponent.Child.Pockets -> {
+        PocketsScreen(
+            component = child.component,
+            modifier = Modifier.testTag("pockets-screen"),
+        )
+      }
 
-        is MainComponent.Child.Settings -> {
-          Box(modifier = Modifier.fillMaxSize().testTag("settings-screen"))
-        }
+      is MainComponent.Child.Analytics -> {
+        Box(modifier = Modifier.fillMaxSize().testTag("analytics-screen"))
+      }
+
+      is MainComponent.Child.Settings -> {
+        Box(modifier = Modifier.fillMaxSize().testTag("settings-screen"))
       }
     }
   }
