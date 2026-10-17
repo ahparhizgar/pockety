@@ -2,7 +2,11 @@ package com.base.util
 
 import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.adding_expense.add.AddExpenseComponent
+import com.base.capability.category_management.AddCategoryComponent
+import com.base.capability.category_management.CategorySelectionComponent
 import com.base.capability.main.MainComponent
+import com.base.capability.pocket_management.PocketSettingsComponent
+import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketsComponent
 import com.base.capability.root_navigation.RootComponent
 import com.base.capability.sms_inbox.InboxComponent
@@ -32,4 +36,26 @@ fun RootComponent.assertPockets(): PocketsComponent {
 
 fun RootComponent.assertAddExpenseFlow(): AddExpenseFlowComponent {
   return activeInstance.shouldBeInstanceOf<AddExpenseFlowComponent>()
+}
+
+fun RootComponent.assertPocketSettingsFlow(): PocketSettingsFlowComponent {
+  return activeInstance.shouldBeInstanceOf<PocketSettingsFlowComponent>()
+}
+
+fun PocketSettingsFlowComponent.assertPocketSettings(): PocketSettingsComponent {
+  return stack.value.active.instance
+      .shouldBeInstanceOf<PocketSettingsFlowComponent.Child.PocketSettings>()
+      .component
+}
+
+fun PocketSettingsFlowComponent.assertCategorySelection(): CategorySelectionComponent {
+  return stack.value.active.instance
+      .shouldBeInstanceOf<PocketSettingsFlowComponent.Child.CategorySelection>()
+      .component
+}
+
+fun PocketSettingsFlowComponent.assertAddCategory(): AddCategoryComponent {
+  return stack.value.active.instance
+      .shouldBeInstanceOf<PocketSettingsFlowComponent.Child.AddCategory>()
+      .component
 }

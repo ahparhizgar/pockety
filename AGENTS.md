@@ -220,7 +220,7 @@ Run verification gate after finishing a task:
 ## Level 1: compilation
 
 ```bash
-unset ANDROID_PREFS_ROOT; ./gradlew compileKotlinJvm compileKotlin --offline --continue 2>&1 | grep -E "e: |FAILED"
+./gradlew compileKotlinJvm compileKotlin --offline --continue  --console=plain 2>&1 | grep -E '(^e:| error:|FAILURE:|BUILD (SUCCESSFUL|FAILED))'
 ```
 
 ## Level 2: tests & coverage:
@@ -228,30 +228,27 @@ unset ANDROID_PREFS_ROOT; ./gradlew compileKotlinJvm compileKotlin --offline --c
 Run often.
 
 ```bash
-unset ANDROID_PREFS_ROOT; ./gradlew jvmTest test --offline --continue 2>&1 | grep -E "e: |FAILED"
+./gradlew jvmTest test --offline --continue  --console=plain 2>&1 | grep -E '(^e:| error:|FAILURE:|BUILD (SUCCESSFUL|FAILED))'
 ```
 
 Being covered after implementing a vertical slice is very important.
 
 ```bash
-./gradlew koverVerify --offline
+./gradlew koverVerify --offline --console=plain 2>&1 | grep -E '(^e:| error:|FAILURE:|BUILD (SUCCESSFUL|FAILED))'
 ``` 
 
 ## Level 3: Detekt:
 
-`./gradlew :detektMain`
+`./gradlew :detektMain --offline --console=plain 2>&1 | grep -E '(^e:| error:|FAILURE:|BUILD (SUCCESSFUL|FAILED))'`
 
 ## Level 4: Ktfmt:
 
 Run after all code changes are done.  
-`./gradlew ktfmtFormat`
+```bash
+./gradlew ktfmtFormat --offline --console=plain 2>&1 | grep -E '(^e:| error:|FAILURE:|BUILD (SUCCESSFUL|FAILED))'
+```
 
-## Level 5: Screenshot testing
-
-Run only if you touched UI.  
-`./gradlew jvmTest -Proborazzi.test.compare=true`
-
-GEMINI: use `run_shell_command` tool ./gradlew instead of `gradle_build` tool call. this prevents
+GEMINI IN ANDROID STUDIO: use `run_shell_command` tool ./gradlew instead of `gradle_build` tool call. this prevents
 blocking by an already running Gradle task in the IDE. So always use run_shell_command tool.
 
 --- 
@@ -264,7 +261,7 @@ UI components and screens and theme etc. should be implemented again in implemen
 # Using Stitch MCP
 
 Designs of this app are in stitch accessible via MCP.  
-Resources (HTMLs and images) are pre-downloaded in ./design-stich folder.
+Resources (HTMLs and images) are pre-downloaded in ./design-stitch folder.
 
 # Project UI components
 

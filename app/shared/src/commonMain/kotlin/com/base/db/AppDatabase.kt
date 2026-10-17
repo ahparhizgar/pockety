@@ -19,7 +19,7 @@ import kotlinx.coroutines.Dispatchers
             CategoryEntity::class,
             PocketEntity::class,
         ],
-    version = 6,
+    version = 7,
 )
 @ColumnTypeConverters(InstantConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -206,12 +206,61 @@ val MIGRATION_5_6 =
       }
     }
 
+val MIGRATION_6_7 =
+    object : Migration(6, 7) {
+      override suspend fun migrate(connection: SQLiteConnection) {
+        connection
+            .prepare(
+                """
+                CREATE TABLE IF NOT EXISTS `pockets_new` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `name` TEXT NOT NULL,
+                    `categoryTag` TEXT NOT NULL,
+                    `budgetAmount` INTEGER NOT NULL,
+                    `icon` TEXT NOT NULL,
+                    `createdAt` INTEGER NOT NULL,
+                    `color` INTEGER NOT NULL,
+                    `categoryId` INTEGER,
+                    FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL
+                )
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection
+            .prepare(
+                """
+                INSERT INTO `pockets_new` (`id`, `name`, `categoryTag`, `budgetAmount`, `icon`, `createdAt`, `color`, `categoryId`)
+                SELECT `id`, `name`, `categoryTag`, `budgetAmount`, `icon`, `createdAt`, 4281426754, NULL FROM `pockets`
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection.prepare("DROP TABLE `pockets`").use { it.step() }
+        connection.prepare("ALTER TABLE `pockets_new` RENAME TO `pockets`").use { it.step() }
+        connection
+            .prepare(
+                "CREATE INDEX IF NOT EXISTS `index_pockets_categoryId` ON `pockets` (`categoryId`)"
+            )
+            .use { it.step() }
+      }
+    }
+
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
     queryContext: CoroutineContext = Dispatchers.Default,
 ): AppDatabase {
   return builder
-      .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+      .addMigrations(
+          MIGRATION_1_2,
+          MIGRATION_2_3,
+          MIGRATION_3_4,
+          MIGRATION_4_5,
+          MIGRATION_5_6,
+          MIGRATION_6_7,
+      )
       .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
       .setQueryCoroutineContext(queryContext)
       .build()

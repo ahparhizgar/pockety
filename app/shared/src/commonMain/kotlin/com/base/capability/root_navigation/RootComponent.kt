@@ -17,6 +17,8 @@ import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.adding_expense.add.AddExpenseComponentFactory
 import com.base.capability.main.MainComponent
 import com.base.capability.main.MainComponentFactory
+import com.base.capability.pocket_management.PocketSettingsFlowComponent
+import com.base.capability.pocket_management.PocketSettingsFlowComponentFactory
 import com.base.capability.sms_inbox.InboxComponent
 import com.base.capability.sms_inbox.InboxComponentFactory
 import com.base.capability.splash.SplashDestination
@@ -123,6 +125,15 @@ class DefaultRootComponent(
       is AddExpenseFlowComponent.Config ->
           componentProvider
               .provide(AddExpenseFlowComponentFactory::class)
+              .create(
+                  cContext = cContext,
+                  config = config,
+                  onCompleted = { rootNavigation.pop() },
+                  onCancelled = { rootNavigation.pop() },
+              )
+      is PocketSettingsFlowComponent.Config ->
+          componentProvider
+              .provide(PocketSettingsFlowComponentFactory::class)
               .create(
                   cContext = cContext,
                   config = config,

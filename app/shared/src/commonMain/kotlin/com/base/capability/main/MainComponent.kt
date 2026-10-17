@@ -18,6 +18,7 @@ import com.base.capability.home.FakeHomeComponent
 import com.base.capability.home.HomeComponent
 import com.base.capability.home.HomeComponentFactory
 import com.base.capability.pocket_management.FakePocketsComponent
+import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketsComponent
 import com.base.capability.pocket_management.PocketsComponentFactory
 import com.base.capability.root_navigation.TopLevelDestinationConfig
@@ -170,7 +171,7 @@ class DefaultMainComponent(
               pocketsComponentFactory.create(
                   cContext = context,
                   onPocketClick = {},
-                  onAddPocketClick = {},
+                  onAddPocketClick = { navigation.pushNew(PocketSettingsFlowComponent.Config()) },
               )
           )
       MainChildConfig.Analytics -> MainComponent.Child.Analytics

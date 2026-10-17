@@ -189,6 +189,62 @@ class MigrationTest : BehaviorSpec() {
         }
       }
 
+      When("MIGRATION_6_7 is executed") {
+        MIGRATION_6_7.migrate(connection)
+
+        Then("pockets table contains color and categoryId columns with defaults preserved") {
+          val statement =
+              connection.prepare("SELECT name, color, categoryId FROM pockets WHERE id = 1")
+          val hasRow = statement.step()
+          hasRow shouldBe true
+          statement.getText(0) shouldBe "Groceries"
+          statement.getLong(1) shouldBe 4281426754L
+          statement.isNull(2) shouldBe true
+          statement.close()
+        }
+
+        Then("pockets table allows setting categoryId and color") {
+          connection.execSQL(
+              """
+              INSERT INTO `pockets` (`id`, `name`, `categoryTag`, `budgetAmount`, `icon`, `createdAt`, `color`, `categoryId`)
+              VALUES (2, 'Dining Out', 'Food', 500000, 'restaurant', 1700000000000, 4293227379, 1)
+              """
+                  .trimIndent()
+          )
+
+          val statement =
+              connection.prepare("SELECT name, color, categoryId FROM pockets WHERE id = 2")
+          val hasRow = statement.step()
+          hasRow shouldBe true
+          statement.getText(0) shouldBe "Dining Out"
+          statement.getLong(1) shouldBe 4293227379L
+          statement.getLong(2) shouldBe 1L
+          statement.close()
+        }
+
+        Then("pockets table has categoryId index and foreign key") {
+          val indexStmt = connection.prepare("PRAGMA index_list(`pockets`)")
+          var foundIndex = false
+          while (indexStmt.step()) {
+            if (indexStmt.getText(1) == "index_pockets_categoryId") {
+              foundIndex = true
+            }
+          }
+          indexStmt.close()
+          foundIndex shouldBe true
+
+          val fkStmt = connection.prepare("PRAGMA foreign_key_list(`pockets`)")
+          var foundFk = false
+          while (fkStmt.step()) {
+            if (fkStmt.getText(2) == "categories") {
+              foundFk = true
+            }
+          }
+          fkStmt.close()
+          foundFk shouldBe true
+        }
+      }
+
       afterSpec { connection.close() }
     }
   }

@@ -67,4 +67,16 @@
     <string name="pockets_top_up_action">Top-up</string>
     <string name="pockets_dynamic_sync_title">Dynamic Balance Sync</string>
     <string name="pockets_dynamic_sync_desc">Deleting or editing an expense linked to a pocket automatically restores its balance in real time.</string>
+    <string name="pocket_settings_title">Pocket Settings</string>
+    <string name="pocket_name_label">Pocket Name</string>
+    <string name="error_empty_pocket_name">Pocket name cannot be empty</string>
+    <string name="save_changes_action">Save Changes</string>
+    <string name="associated_category_title">Associated Category</string>
+    <string name="associated_category_subtitle">Auto-deduct transactions</string>
+    <string name="clear_association_action">Clear association</string>
+    <string name="current_balance_label">Current Balance</string>
+    <string name="top_up_amount_placeholder">Enter custom amount in T...</string>
+    <string name="confirm_top_up_action">Confirm Top-up</string>
+    <string name="choose_category_action">Choose Category</string>
+    <string name="no_category_associated">No category associated</string>
 </resources>

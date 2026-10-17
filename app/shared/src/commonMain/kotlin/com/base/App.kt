@@ -22,6 +22,8 @@ import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.adding_expense.add.AddExpenseScreen
 import com.base.capability.main.MainComponent
 import com.base.capability.main.MainScreen
+import com.base.capability.pocket_management.PocketSettingsFlowComponent
+import com.base.capability.pocket_management.PocketSettingsFlowScreen
 import com.base.capability.root_navigation.FakeRootComponent
 import com.base.capability.root_navigation.RootComponent
 import com.base.capability.sms_inbox.InboxComponent
@@ -60,45 +62,51 @@ fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
                 fallbackAnimation = stackAnimation(fade() + scale()),
             ),
     ) {
-      when (val child = it.instance) {
-        is SplashDestination -> {
-          SplashScreen(modifier = Modifier.testTag("splash-screen"))
-        }
-
-        is MainComponent -> {
-          MainScreen(
-              component = child,
-              modifier = Modifier.testTag("main-screen"),
-          )
-        }
-
-        is InboxComponent -> {
-          InboxScreen(
-              component = child,
-              modifier = Modifier.testTag("inbox-screen"),
-          )
-        }
-
-        is AddExpenseComponent -> {
-          AddExpenseScreen(
-              component = child,
-              modifier = Modifier.testTag("add-expense-screen"),
-          )
-        }
-
-        is AddExpenseFlowComponent -> {
-          AddExpenseFlowScreen(
-              component = child,
-              modifier = Modifier.testTag("add-expense-flow-screen"),
-          )
-        }
-
-        else -> {
-          error("Unknown child: $child")
-        }
-      }
+      RootChildContent(child = it.instance)
     }
     SnackbarHost(hostState = hostState) { CustomSnackbar(snackbarData = it) }
+  }
+}
+
+@Composable
+private fun RootChildContent(child: Any) {
+  when (child) {
+    is SplashDestination -> {
+      SplashScreen(modifier = Modifier.testTag("splash-screen"))
+    }
+    is MainComponent -> {
+      MainScreen(
+          component = child,
+          modifier = Modifier.testTag("main-screen"),
+      )
+    }
+    is InboxComponent -> {
+      InboxScreen(
+          component = child,
+          modifier = Modifier.testTag("inbox-screen"),
+      )
+    }
+    is AddExpenseComponent -> {
+      AddExpenseScreen(
+          component = child,
+          modifier = Modifier.testTag("add-expense-screen"),
+      )
+    }
+    is AddExpenseFlowComponent -> {
+      AddExpenseFlowScreen(
+          component = child,
+          modifier = Modifier.testTag("add-expense-flow-screen"),
+      )
+    }
+    is PocketSettingsFlowComponent -> {
+      PocketSettingsFlowScreen(
+          component = child,
+          modifier = Modifier.testTag("pocket-settings-flow-screen"),
+      )
+    }
+    else -> {
+      error("Unknown child: $child")
+    }
   }
 }
 

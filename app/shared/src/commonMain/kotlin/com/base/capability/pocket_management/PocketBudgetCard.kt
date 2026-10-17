@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -160,18 +161,13 @@ private fun PocketCardIconBadge(pocket: PocketItemModel) {
   Surface(
       modifier = Modifier.size(40.dp),
       shape = CircleShape,
-      color = MaterialTheme.colorScheme.surfaceContainerLowest,
+      color = Color(pocket.color),
   ) {
     Box(contentAlignment = Alignment.Center) {
       Icon(
           imageVector = icon,
           contentDescription = pocket.name,
-          tint =
-              if (pocket.isOverBudget) {
-                MaterialTheme.colorScheme.error
-              } else {
-                MaterialTheme.colorScheme.primary
-              },
+          tint = Color.White,
           modifier = Modifier.size(20.dp),
       )
     }

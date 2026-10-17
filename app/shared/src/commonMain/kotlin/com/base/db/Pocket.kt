@@ -2,6 +2,8 @@ package com.base.db
 
 import androidx.room3.Dao
 import androidx.room3.Entity
+import androidx.room3.ForeignKey
+import androidx.room3.Index
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.PrimaryKey
@@ -15,7 +17,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
-@Entity(tableName = "pockets")
+@Entity(
+    tableName = "pockets",
+    foreignKeys =
+        [
+            ForeignKey(
+                entity = CategoryEntity::class,
+                parentColumns = ["id"],
+                childColumns = ["categoryId"],
+                onDelete = ForeignKey.SET_NULL,
+            ),
+        ],
+    indices = [Index("categoryId")],
+)
 data class PocketEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
@@ -23,6 +37,8 @@ data class PocketEntity(
     val budgetAmount: Long,
     val icon: String,
     val createdAt: Instant,
+    val color: Long = 0xFF316342,
+    val categoryId: Long? = null,
 )
 
 data class PocketWithSpent(
@@ -32,6 +48,8 @@ data class PocketWithSpent(
     val budgetAmount: Long,
     val icon: String,
     val createdAt: Instant,
+    val color: Long,
+    val categoryId: Long?,
     val spentAmount: Long,
 )
 
@@ -42,6 +60,8 @@ data class PocketItemModel(
     val budgetAmount: Long,
     val remainingBalance: Long,
     val icon: String,
+    val color: Long = 0xFF316342,
+    val categoryId: Long? = null,
     val isOverBudget: Boolean,
     val warningMessage: String? = null,
 )
@@ -58,6 +78,8 @@ interface PocketDao {
           p.budgetAmount, 
           p.icon, 
           p.createdAt,
+          p.color,
+          p.categoryId,
           COALESCE(SUM(t.amount), 0) AS spentAmount
       FROM pockets p
       LEFT JOIN transactions t ON t.pocketId = p.id
@@ -76,12 +98,17 @@ interface PocketDao {
 interface PocketRepository {
   fun observePockets(): Flow<List<PocketItemModel>>
 
+  @Suppress("LongParameterList")
   suspend fun addPocket(
       name: String,
       categoryTag: String,
       budgetAmount: Long,
       icon: String,
+      color: Long = 0xFF316342,
+      categoryId: Long? = null,
   ): Long
+
+  suspend fun getPocketById(id: Long): PocketEntity?
 }
 
 class DefaultPocketRepository(
@@ -105,17 +132,22 @@ class DefaultPocketRepository(
               budgetAmount = item.budgetAmount,
               remainingBalance = remainingBalance,
               icon = item.icon,
+              color = item.color,
+              categoryId = item.categoryId,
               isOverBudget = isOverBudget,
               warningMessage = warningMessage,
           )
         }
       }
 
+  @Suppress("LongParameterList")
   override suspend fun addPocket(
       name: String,
       categoryTag: String,
       budgetAmount: Long,
       icon: String,
+      color: Long,
+      categoryId: Long?,
   ): Long {
     val pocket =
         PocketEntity(
@@ -123,9 +155,15 @@ class DefaultPocketRepository(
             categoryTag = categoryTag,
             budgetAmount = budgetAmount,
             icon = icon,
+            color = color,
+            categoryId = categoryId,
             createdAt = Clock.System.now(),
         )
     return pocketDao.insertPocket(pocket)
+  }
+
+  override suspend fun getPocketById(id: Long): PocketEntity? {
+    return pocketDao.getPocketById(id)
   }
 
   private fun formatAmount(amount: Long): String {
@@ -166,17 +204,22 @@ class FakePocketRepository(
           budgetAmount = pocket.budgetAmount,
           remainingBalance = remaining,
           icon = pocket.icon,
+          color = pocket.color,
+          categoryId = pocket.categoryId,
           isOverBudget = isOverBudget,
           warningMessage = warningMessage,
       )
     }
   }
 
+  @Suppress("LongParameterList")
   override suspend fun addPocket(
       name: String,
       categoryTag: String,
       budgetAmount: Long,
       icon: String,
+      color: Long,
+      categoryId: Long?,
   ): Long {
     val id = nextId++
     val newPocket =
@@ -186,10 +229,16 @@ class FakePocketRepository(
             categoryTag = categoryTag,
             budgetAmount = budgetAmount,
             icon = icon,
+            color = color,
+            categoryId = categoryId,
             createdAt = Clock.System.now(),
         )
     pocketsFlow.update { listOf(newPocket) + it }
     return id
+  }
+
+  override suspend fun getPocketById(id: Long): PocketEntity? {
+    return pocketsFlow.value.firstOrNull { it.id == id }
   }
 
   private fun formatAmount(amount: Long): String {
@@ -206,6 +255,8 @@ object FakePocketEntityFactory {
       budgetAmount: Long = 1_000_000,
       icon: String = "shopping_bag",
       createdAt: Instant = Clock.System.now(),
+      color: Long = 0xFF316342,
+      categoryId: Long? = null,
   ): PocketEntity =
       PocketEntity(
           id = id,
@@ -214,6 +265,8 @@ object FakePocketEntityFactory {
           budgetAmount = budgetAmount,
           icon = icon,
           createdAt = createdAt,
+          color = color,
+          categoryId = categoryId,
       )
 
   fun createList(count: Int = 3): List<PocketEntity> =
@@ -224,6 +277,8 @@ object FakePocketEntityFactory {
             categoryTag = "Category $index",
             budgetAmount = index * 500_000L,
             icon = "icon_$index",
+            color = 0xFF316342,
+            categoryId = null,
         )
       }
 }
@@ -237,6 +292,8 @@ object FakePocketItemModelFactory {
       budgetAmount: Long = 1_000_000,
       remainingBalance: Long = 850_000,
       icon: String = "shopping_bag",
+      color: Long = 0xFF316342,
+      categoryId: Long? = null,
       isOverBudget: Boolean = false,
       warningMessage: String? = null,
   ): PocketItemModel =
@@ -247,6 +304,8 @@ object FakePocketItemModelFactory {
           budgetAmount = budgetAmount,
           remainingBalance = remainingBalance,
           icon = icon,
+          color = color,
+          categoryId = categoryId,
           isOverBudget = isOverBudget,
           warningMessage = warningMessage,
       )
@@ -260,6 +319,8 @@ object FakePocketItemModelFactory {
               budgetAmount = 1_000_000,
               remainingBalance = 850_000,
               icon = "shopping_bag",
+              color = 0xFF316342,
+              categoryId = null,
               isOverBudget = false,
               warningMessage = null,
           ),
@@ -270,6 +331,8 @@ object FakePocketItemModelFactory {
               budgetAmount = 500_000,
               remainingBalance = -65_000,
               icon = "local_cafe",
+              color = 0xFFB87D4B,
+              categoryId = null,
               isOverBudget = true,
               warningMessage = "Over budget by 65,000 T",
           ),
@@ -280,6 +343,8 @@ object FakePocketItemModelFactory {
               budgetAmount = 1_200_000,
               remainingBalance = 1_200_000,
               icon = "sports_esports",
+              color = 0xFF4A7C59,
+              categoryId = null,
               isOverBudget = false,
               warningMessage = null,
           ),
