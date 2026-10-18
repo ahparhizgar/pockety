@@ -17,6 +17,8 @@ import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.adding_expense.add.AddExpenseComponentFactory
 import com.base.capability.main.MainComponent
 import com.base.capability.main.MainComponentFactory
+import com.base.capability.pocket_management.PocketDetailsComponent
+import com.base.capability.pocket_management.PocketDetailsComponentFactory
 import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketSettingsFlowComponentFactory
 import com.base.capability.sms_inbox.InboxComponent
@@ -62,7 +64,7 @@ class DefaultRootComponent(
 
   init {
     @Suppress("UNCHECKED_CAST")
-    cContext.navigation = rootNavigation as StackNavigation<Any>
+    cContext.navigation = rootNavigation
     messageShower = messageHolder
 
     scope.launch { rootNavigation.replaceAll(MainComponent.Config) }
@@ -92,6 +94,7 @@ class DefaultRootComponent(
           childFactory = ::createChild,
       )
 
+  @Suppress("LongMethod")
   private fun createChild(config: TopLevelDestinationConfig, cContext: CContext): Any {
     return when (config) {
       is SplashDestination -> SplashDestination
@@ -105,22 +108,13 @@ class DefaultRootComponent(
                   onSelectCandidate = { candidate ->
                     rootNavigation.pop()
                     rootNavigation.pushNew(
-                        AddExpenseComponent.Config(
+                        AddExpenseFlowComponent.Config(
                             initialAmount = candidate.amount.toString(),
                             candidateExpenseId = candidate.id,
                         )
                     )
                   },
                   onBack = { rootNavigation.pop() },
-              )
-      is AddExpenseComponent.Config ->
-          componentProvider
-              .provide(AddExpenseComponentFactory::class)
-              .create(
-                  cContext = cContext,
-                  config = config,
-                  onCompleted = { rootNavigation.pop() },
-                  onCancelled = { rootNavigation.pop() },
               )
       is AddExpenseFlowComponent.Config ->
           componentProvider
@@ -139,6 +133,17 @@ class DefaultRootComponent(
                   config = config,
                   onCompleted = { rootNavigation.pop() },
                   onCancelled = { rootNavigation.pop() },
+              )
+      is PocketDetailsComponent.Config ->
+          componentProvider
+              .provide(PocketDetailsComponentFactory::class)
+              .create(
+                  cContext = cContext,
+                  pocketId = config.pocketId,
+                  onBack = { rootNavigation.pop() },
+                  onConfigure = { pocketId ->
+                    rootNavigation.pushNew(PocketSettingsFlowComponent.Config(pocketId = pocketId))
+                  },
               )
 
       else -> error("Destination not defined in createChild")

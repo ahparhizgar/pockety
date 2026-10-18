@@ -128,6 +128,29 @@ class PocketRepositoryTest : BehaviorSpec() {
           entity.budgetAmount shouldBe 5000L
         }
       }
+
+      When("topping up an existing pocket") {
+        var pocketId: Long by testValue { 0 }
+
+        beforeEach {
+          pocketId =
+              pocketRepository.addPocket(
+                  name = "Cafe",
+                  categoryTag = "Drinks",
+                  budgetAmount = 1000,
+                  icon = "coffee",
+              )
+          pocketRepository.topUpPocket(pocketId, 500)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the budget amount is updated and observable via observePockets") {
+          val list = pocketRepository.observePockets().first()
+          val pocket = list.first { it.id == pocketId }
+          pocket.budgetAmount shouldBe 1500L
+          pocket.remainingBalance shouldBe 1500L
+        }
+      }
     }
   }
 }

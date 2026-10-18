@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -49,7 +50,7 @@ fun PocketSettingsScreen(
     modifier: Modifier = Modifier,
 ) {
   Scaffold(
-      modifier = modifier.fillMaxSize().testTag("pocket-settings-screen"),
+      modifier = modifier.fillMaxSize().testTag("pocket-settings-screen").imePadding(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
         PocketyTopAppBar(
@@ -70,7 +71,7 @@ fun PocketSettingsScreen(
       bottomBar = { PocketSettingsBottomBar(component = component) },
   ) { innerPadding ->
     Box(
-        modifier = Modifier.fillMaxSize().padding(innerPadding),
+        modifier = Modifier.padding(innerPadding),
         contentAlignment = Alignment.TopCenter,
     ) {
       PocketSettingsContent(component = component)

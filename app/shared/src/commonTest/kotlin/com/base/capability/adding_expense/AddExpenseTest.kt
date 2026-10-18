@@ -36,6 +36,7 @@ class AddExpenseTest : BehaviorSpec() {
             .get<DefaultAddExpenseComponentFactory>()
             .create(
                 cContext = TestCContext(),
+                onSelectCategory = {},
                 onCompleted = completedCallback,
                 onCancelled = cancelledCallback,
             )
@@ -133,6 +134,7 @@ class AddExpenseTest : BehaviorSpec() {
                           initialAmount = "20000",
                           candidateExpenseId = candidateId,
                       ),
+                  onSelectCategory = {},
                   onCompleted = completedCallback,
                   onCancelled = cancelledCallback,
               )
@@ -151,7 +153,7 @@ class AddExpenseTest : BehaviorSpec() {
       }
 
       When("submitting with valid amount, description, and selected category") {
-        var categoryId: Long = 0L
+        var categoryId = 0L
 
         beforeEach {
           val categoryRepo = koin.get<CategoryRepository>()

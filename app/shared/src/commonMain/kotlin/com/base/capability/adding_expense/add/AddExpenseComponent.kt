@@ -28,7 +28,7 @@ data class AddExpenseState(
     val isSaving: Boolean = false,
 )
 
-interface AddExpenseComponent : TopLevelDestinationConfig {
+interface AddExpenseComponent {
   val state: Value<AddExpenseState>
 
   fun onAmountChanged(amount: String)
@@ -47,14 +47,14 @@ interface AddExpenseComponent : TopLevelDestinationConfig {
   data class Config(
       val initialAmount: String = "",
       val candidateExpenseId: Long? = null,
-  ) : TopLevelDestinationConfig
+  )
 }
 
 interface AddExpenseComponentFactory {
   fun create(
       cContext: CContext,
       config: AddExpenseComponent.Config = AddExpenseComponent.Config(),
-      onSelectCategory: () -> Unit = {},
+      onSelectCategory: () -> Unit,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseComponent

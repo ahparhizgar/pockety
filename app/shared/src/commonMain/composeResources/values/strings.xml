@@ -79,4 +79,20 @@
     <string name="confirm_top_up_action">Confirm Top-up</string>
     <string name="choose_category_action">Choose Category</string>
     <string name="no_category_associated">No category associated</string>
+    <string name="pocket_details_title">Pocket Details</string>
+    <string name="pocket_details_balance_label">Balance</string>
+    <string name="pocket_details_top_up_button">Top-up</string>
+    <string name="pocket_details_configure_button">Configure</string>
+    <string name="pocket_details_expenses_header">Expenses</string>
+    <string name="quick_top_up_title">Quick Top-up</string>
+    <string name="quick_top_up_subtitle">Add funds to pocket balance</string>
+    <string name="quick_top_up_custom_amount_label">Custom Amount</string>
+    <string name="quick_top_up_amount_placeholder">Amount in Tomans (T)</string>
+    <string name="quick_top_up_confirm_button">Top-up Pocket</string>
+    <string name="pocket_details_top_up_success_format">Pocket topped up by +%s T!</string>
+    <string name="pocket_details_tx_deleted_format">Deleted %s. +%s T restored!</string>
+    <string name="pocket_details_no_expenses">No expenses recorded yet</string>
+    <string name="pocket_details_back_action">Go back to Pockets</string>
+    <string name="pocket_details_settings_action">Pocket settings</string>
+    <string name="pocket_details_more_options">More options</string>
 </resources>

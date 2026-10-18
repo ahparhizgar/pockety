@@ -5,6 +5,7 @@ import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.category_management.AddCategoryComponent
 import com.base.capability.category_management.CategorySelectionComponent
 import com.base.capability.main.MainComponent
+import com.base.capability.pocket_management.PocketDetailsComponent
 import com.base.capability.pocket_management.PocketSettingsComponent
 import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketsComponent
@@ -58,4 +59,8 @@ fun PocketSettingsFlowComponent.assertAddCategory(): AddCategoryComponent {
   return stack.value.active.instance
       .shouldBeInstanceOf<PocketSettingsFlowComponent.Child.AddCategory>()
       .component
+}
+
+fun RootComponent.assertPocketDetails(): PocketDetailsComponent {
+  return activeInstance.shouldBeInstanceOf<PocketDetailsComponent>()
 }

@@ -93,6 +93,9 @@ interface PocketDao {
   suspend fun insertPocket(pocket: PocketEntity): Long
 
   @Query("SELECT * FROM pockets WHERE id = :id") suspend fun getPocketById(id: Long): PocketEntity?
+
+  @Query("UPDATE pockets SET budgetAmount = budgetAmount + :amount WHERE id = :id")
+  suspend fun topUpPocket(id: Long, amount: Long)
 }
 
 interface PocketRepository {
@@ -109,6 +112,8 @@ interface PocketRepository {
   ): Long
 
   suspend fun getPocketById(id: Long): PocketEntity?
+
+  suspend fun topUpPocket(id: Long, amount: Long)
 }
 
 class DefaultPocketRepository(
@@ -164,6 +169,10 @@ class DefaultPocketRepository(
 
   override suspend fun getPocketById(id: Long): PocketEntity? {
     return pocketDao.getPocketById(id)
+  }
+
+  override suspend fun topUpPocket(id: Long, amount: Long) {
+    pocketDao.topUpPocket(id, amount)
   }
 
   private fun formatAmount(amount: Long): String {
@@ -239,6 +248,18 @@ class FakePocketRepository(
 
   override suspend fun getPocketById(id: Long): PocketEntity? {
     return pocketsFlow.value.firstOrNull { it.id == id }
+  }
+
+  override suspend fun topUpPocket(id: Long, amount: Long) {
+    pocketsFlow.update { list ->
+      list.map { pocket ->
+        if (pocket.id == id) {
+          pocket.copy(budgetAmount = pocket.budgetAmount + amount)
+        } else {
+          pocket
+        }
+      }
+    }
   }
 
   private fun formatAmount(amount: Long): String {

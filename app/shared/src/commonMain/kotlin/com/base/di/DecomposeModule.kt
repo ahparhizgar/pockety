@@ -12,9 +12,11 @@ import com.base.capability.home.DefaultHomeComponentFactory
 import com.base.capability.home.HomeComponentFactory
 import com.base.capability.main.DefaultMainComponentFactory
 import com.base.capability.main.MainComponentFactory
+import com.base.capability.pocket_management.DefaultPocketDetailsComponentFactory
 import com.base.capability.pocket_management.DefaultPocketSettingsComponentFactory
 import com.base.capability.pocket_management.DefaultPocketSettingsFlowComponentFactory
 import com.base.capability.pocket_management.DefaultPocketsComponentFactory
+import com.base.capability.pocket_management.PocketDetailsComponentFactory
 import com.base.capability.pocket_management.PocketSettingsComponentFactory
 import com.base.capability.pocket_management.PocketSettingsFlowComponentFactory
 import com.base.capability.pocket_management.PocketsComponentFactory
@@ -36,6 +38,7 @@ fun decomposeModule() = module {
   factoryOf(::DefaultAddExpenseComponentFactory).bind<AddExpenseComponentFactory>()
   factoryOf(::DefaultInboxComponentFactory).bind<InboxComponentFactory>()
   factoryOf(::DefaultPocketsComponentFactory).bind<PocketsComponentFactory>()
+  factoryOf(::DefaultPocketDetailsComponentFactory).bind<PocketDetailsComponentFactory>()
   factoryOf(::DefaultAddCategoryComponentFactory).bind<AddCategoryComponentFactory>()
   factoryOf(::DefaultCategorySelectionComponentFactory).bind<CategorySelectionComponentFactory>()
   factoryOf(::DefaultAddExpenseFlowComponentFactory).bind<AddExpenseFlowComponentFactory>()

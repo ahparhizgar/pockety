@@ -13,11 +13,12 @@ import com.arkivanov.decompose.value.update
 import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.Fake
-import com.base.capability.adding_expense.add.AddExpenseComponent
+import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.home.FakeHomeComponent
 import com.base.capability.home.HomeComponent
 import com.base.capability.home.HomeComponentFactory
 import com.base.capability.pocket_management.FakePocketsComponent
+import com.base.capability.pocket_management.PocketDetailsComponent
 import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketsComponent
 import com.base.capability.pocket_management.PocketsComponentFactory
@@ -150,7 +151,7 @@ class DefaultMainComponent(
                   onSelectCandidate = { candidate ->
                     mainNavigation.replaceAll(MainChildConfig.Home)
                     navigation.pushNew(
-                        AddExpenseComponent.Config(
+                        AddExpenseFlowComponent.Config(
                             initialAmount = candidate.amount.toString(),
                             candidateExpenseId = candidate.id,
                         )
@@ -170,7 +171,9 @@ class DefaultMainComponent(
           MainComponent.Child.Pockets(
               pocketsComponentFactory.create(
                   cContext = context,
-                  onPocketClick = {},
+                  onPocketClick = { pocketId ->
+                    navigation.pushNew(PocketDetailsComponent.Config(pocketId = pocketId))
+                  },
                   onAddPocketClick = { navigation.pushNew(PocketSettingsFlowComponent.Config()) },
               )
           )

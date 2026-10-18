@@ -22,6 +22,8 @@ import com.base.capability.adding_expense.add.AddExpenseComponent
 import com.base.capability.adding_expense.add.AddExpenseScreen
 import com.base.capability.main.MainComponent
 import com.base.capability.main.MainScreen
+import com.base.capability.pocket_management.PocketDetailsComponent
+import com.base.capability.pocket_management.PocketDetailsScreen
 import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketSettingsFlowScreen
 import com.base.capability.root_navigation.FakeRootComponent
@@ -102,6 +104,12 @@ private fun RootChildContent(child: Any) {
       PocketSettingsFlowScreen(
           component = child,
           modifier = Modifier.testTag("pocket-settings-flow-screen"),
+      )
+    }
+    is PocketDetailsComponent -> {
+      PocketDetailsScreen(
+          component = child,
+          modifier = Modifier.testTag("pocket-details-screen"),
       )
     }
     else -> {

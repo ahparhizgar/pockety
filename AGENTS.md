@@ -35,9 +35,11 @@ Always use Value class for states.
 Use the concept of flows. flows are separate navigations from the main root navigation. e.g. when
 you want to creat a group of users, you create a flow component for that because creating a group
 involve multiple screens and components. So when there is a related set of components, create a flow
-component for them. In this way, removing the whole flow form the root navigations is so easy.  
+component for them. In this way, removing the whole flow form the root navigations is so easy.
 
-In Decompose tests, never write something like this: `val addExpense = root.childStack.value.active.instance.shouldBeInstanceOf<AddExpenseComponent>()`, instead extract functions: `root.assertAddExpense()`.  
+In Decompose tests, never write something like this:
+`val addExpense = root.childStack.value.active.instance.shouldBeInstanceOf<AddExpenseComponent>()`,
+instead extract functions: `root.assertAddExpense()`.  
 See `RootComponentAssertion.kt` for `assertMainComponent()` etc. or adding new ones.
 
 # Using kotlin
@@ -49,7 +51,10 @@ If you need millis use `Clock.System.now().toEpochMilliseconds()`.
 Don't use fully qualified name. Write simple name, and let the compiler give error to you.  
 Prefer enums over strings. Use enums in DTOs and DAOs and domain layer where possible.  
 when using delay use the overload delay (`10.milliseconds`) not the one with Long parameter
-(deprecated).
+(deprecated).  
+Avoid using default parameters specially when they are mandatory. let the compiler tell you where
+you need to pass the parameter after parameter addition. Avoid default noop callbacks
+(`() -> Unit = {}`) in public functions. Instead, make the callback mandatory.
 
 # Using KOIN
 
@@ -243,13 +248,15 @@ Being covered after implementing a vertical slice is very important.
 
 ## Level 4: Ktfmt:
 
-Run after all code changes are done.  
+Run after all code changes are done.
+
 ```bash
 ./gradlew ktfmtFormat --offline --console=plain 2>&1 | grep -E '(^e:| error:|FAILURE:|BUILD (SUCCESSFUL|FAILED))'
 ```
 
-GEMINI IN ANDROID STUDIO: use `run_shell_command` tool ./gradlew instead of `gradle_build` tool call. this prevents
-blocking by an already running Gradle task in the IDE. So always use run_shell_command tool.
+GEMINI IN ANDROID STUDIO: use `run_shell_command` tool ./gradlew instead of `gradle_build` tool
+call. this prevents blocking by an already running Gradle task in the IDE. So always use
+run_shell_command tool.
 
 --- 
 

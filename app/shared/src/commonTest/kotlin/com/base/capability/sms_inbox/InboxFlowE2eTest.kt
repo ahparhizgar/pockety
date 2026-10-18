@@ -5,7 +5,8 @@ import com.base.component.TestCContext
 import com.base.db.CandidateExpenseRepository
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
-import com.base.util.assertAddExpense
+import com.base.util.assertAddExpenseComponent
+import com.base.util.assertAddExpenseFlow
 import com.base.util.assertHomeComponent
 import com.base.util.assertInbox
 import com.base.util.assertMainComponent
@@ -58,13 +59,13 @@ class InboxFlowE2eTest : BehaviorSpec() {
           }
 
           Then("navigates to AddExpense screen with amount prefilled") {
-            val addExpense = root.assertAddExpense()
+            val addExpense = root.assertAddExpenseFlow().assertAddExpenseComponent()
             addExpense.state.value.amountText shouldBe "45000"
           }
 
           And("user enters description and saves the expense") {
             beforeEach {
-              val addExpense = root.assertAddExpense()
+              val addExpense = root.assertAddExpenseFlow().assertAddExpenseComponent()
               addExpense.onDescriptionChanged("Groceries")
               addExpense.onSaveClicked()
               testCoroutineScheduler.advanceUntilIdle()
