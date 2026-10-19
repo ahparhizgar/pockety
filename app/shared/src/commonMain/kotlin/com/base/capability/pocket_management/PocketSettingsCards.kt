@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -34,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,9 +49,7 @@ import pockety.app.shared.generated.resources.change_category_action
 import pockety.app.shared.generated.resources.choose_category_action
 import pockety.app.shared.generated.resources.clear_association_action
 import pockety.app.shared.generated.resources.confirm_top_up_action
-import pockety.app.shared.generated.resources.current_balance_label
 import pockety.app.shared.generated.resources.no_category_associated
-import pockety.app.shared.generated.resources.top_up_amount_placeholder
 
 @Composable
 fun PocketAssociatedCategoryCard(
@@ -201,154 +197,6 @@ private fun PocketSelectedCategoryRow(
   }
 }
 
-@Composable
-fun PocketManualTopUpCard(
-    component: PocketSettingsComponent,
-    state: PocketSettingsState,
-    modifier: Modifier = Modifier,
-) {
-  Surface(
-      modifier = modifier.fillMaxWidth(),
-      shape = RoundedCornerShape(24.dp),
-      color = MaterialTheme.colorScheme.surfaceContainerLow,
-      shadowElevation = 1.dp,
-  ) {
-    Column(
-        modifier = Modifier.padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-      PocketBalanceHeader(balanceAmount = state.balanceAmount)
-      PocketTopUpForm(component = component, state = state)
-    }
-  }
-}
-
-@Composable
-private fun PocketBalanceHeader(
-    balanceAmount: Long,
-    modifier: Modifier = Modifier,
-) {
-  Row(
-      modifier = modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Column {
-      Text(
-          text = stringResource(Res.string.current_balance_label),
-          style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-      )
-      Text(
-          text = formatCurrency(balanceAmount),
-          style = MaterialTheme.typography.headlineMedium,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onSurface,
-          modifier = Modifier.testTag("current-balance-display"),
-      )
-    }
-
-    Surface(
-        modifier = Modifier.size(40.dp),
-        shape = CircleShape,
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    ) {
-      Box(contentAlignment = Alignment.Center) {
-        Icon(
-            imageVector = Icons.Default.AccountBalanceWallet,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.size(24.dp),
-        )
-      }
-    }
-  }
-}
-
-@Composable
-private fun PocketTopUpForm(
-    component: PocketSettingsComponent,
-    state: PocketSettingsState,
-    modifier: Modifier = Modifier,
-) {
-  val focusManager = LocalFocusManager.current
-
-  Column(
-      modifier = modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(12.dp),
-  ) {
-    OutlinedTextField(
-        value = state.topUpAmountText,
-        onValueChange = component::onTopUpAmountChanged,
-        placeholder = {
-          Text(
-              text = stringResource(Res.string.top_up_amount_placeholder),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.outline,
-          )
-        },
-        modifier = Modifier.fillMaxWidth().testTag("top-up-amount-input"),
-        singleLine = true,
-        textStyle = MaterialTheme.typography.bodyMedium,
-        shape = RoundedCornerShape(16.dp),
-        colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = Color.Transparent,
-            ),
-        keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done,
-            ),
-        keyboardActions =
-            KeyboardActions(
-                onDone = {
-                  focusManager.clearFocus()
-                  component.onConfirmTopUp()
-                },
-            ),
-    )
-
-    PocketTopUpButton(
-        onClick = {
-          focusManager.clearFocus()
-          component.onConfirmTopUp()
-        },
-    )
-  }
-}
-
-@Composable
-private fun PocketTopUpButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  Button(
-      onClick = onClick,
-      modifier = modifier.fillMaxWidth().height(48.dp).testTag("confirm-top-up-btn"),
-      shape = CircleShape,
-      colors =
-          ButtonDefaults.buttonColors(
-              containerColor = MaterialTheme.colorScheme.secondaryContainer,
-              contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-          ),
-  ) {
-    Icon(
-        imageVector = Icons.Default.Add,
-        contentDescription = null,
-        modifier = Modifier.size(20.dp),
-    )
-    Spacer(modifier = Modifier.width(6.dp))
-    Text(
-        text = stringResource(Res.string.confirm_top_up_action),
-        style = MaterialTheme.typography.labelLarge,
-    )
-  }
-}
-
 @ComponentPreviews
 @Composable
 private fun PocketAssociatedCategoryCardPreview() {
@@ -358,14 +206,5 @@ private fun PocketAssociatedCategoryCardPreview() {
           FakePocketSettingsStateFactory.create(
               selectedCategory = FakeCategoryFactory.create(name = "Cafe & Dining"),
           ),
-  )
-}
-
-@ComponentPreviews
-@Composable
-private fun PocketManualTopUpCardPreview() {
-  PocketManualTopUpCard(
-      component = FakePocketSettingsComponent(),
-      state = FakePocketSettingsStateFactory.create(balanceAmount = 850_000),
   )
 }

@@ -72,6 +72,8 @@
     <string name="pocket_name_label">Pocket Name</string>
     <string name="error_empty_pocket_name">Pocket name cannot be empty</string>
     <string name="save_changes_action">Save Changes</string>
+    <string name="apply_action">Apply</string>
+    <string name="initial_balance_label">Initial Balance</string>
     <string name="associated_category_title">Associated Category</string>
     <string name="associated_category_subtitle">Auto-deduct transactions</string>
     <string name="clear_association_action">Clear association</string>

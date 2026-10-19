@@ -316,60 +316,59 @@ object FakePocketDetailsStateFactory {
           transactions = transactions,
       )
 
-
-    @Suppress("MagicNumber")
-    fun defaultPocketTransactions(): List<PocketTransactionUiModel> =
-        listOf(
-            PocketTransactionUiModel(
-                id = "tx-1",
-                title = "Sam Cafe Vanak",
-                icon = "coffee",
-                timestamp = "Today, 10:15 AM",
-                note = "Meeting with Ali",
-                amount = 85000,
-            ),
-            PocketTransactionUiModel(
-                id = "tx-2",
-                title = "Lamiz Coffee Jordan",
-                icon = "local_cafe",
-                timestamp = "Yesterday, 4:30 PM",
-                note = "Iced Latte & Cookie",
-                amount = 120000,
-            ),
-            PocketTransactionUiModel(
-                id = "tx-3",
-                title = "Monthly Pocket Allocation",
-                icon = "arrow_downward_alt",
-                timestamp = "23 Oct, 09:00 AM",
-                note = "Auto-deposit",
-                amount = 500000,
-                isTopUp = true,
-            ),
-            PocketTransactionUiModel(
-                id = "tx-4",
-                title = "Reza Bakery & Espresso",
-                icon = "bakery_dining",
-                timestamp = "22 Oct, 11:20 AM",
-                note = "Morning Americano",
-                amount = 65000,
-            ),
-            PocketTransactionUiModel(
-                id = "tx-5",
-                title = "Cafe Kariz Garden",
-                icon = "cloud_sync",
-                timestamp = "20 Oct, 6:00 PM",
-                note = "Herbal tea & cheesecake",
-                amount = 95000,
-            ),
-            PocketTransactionUiModel(
-                id = "tx-6",
-                title = "Bread & Salt Bakery",
-                icon = "shopping_bag",
-                timestamp = "18 Oct, 08:10 AM",
-                note = "Sourdough & filter roast",
-                amount = 45000,
-            ),
-        )
+  @Suppress("MagicNumber")
+  fun defaultPocketTransactions(): List<PocketTransactionUiModel> =
+      listOf(
+          PocketTransactionUiModel(
+              id = "tx-1",
+              title = "Sam Cafe Vanak",
+              icon = "coffee",
+              timestamp = "Today, 10:15 AM",
+              note = "Meeting with Ali",
+              amount = 85000,
+          ),
+          PocketTransactionUiModel(
+              id = "tx-2",
+              title = "Lamiz Coffee Jordan",
+              icon = "local_cafe",
+              timestamp = "Yesterday, 4:30 PM",
+              note = "Iced Latte & Cookie",
+              amount = 120000,
+          ),
+          PocketTransactionUiModel(
+              id = "tx-3",
+              title = "Monthly Pocket Allocation",
+              icon = "arrow_downward_alt",
+              timestamp = "23 Oct, 09:00 AM",
+              note = "Auto-deposit",
+              amount = 500000,
+              isTopUp = true,
+          ),
+          PocketTransactionUiModel(
+              id = "tx-4",
+              title = "Reza Bakery & Espresso",
+              icon = "bakery_dining",
+              timestamp = "22 Oct, 11:20 AM",
+              note = "Morning Americano",
+              amount = 65000,
+          ),
+          PocketTransactionUiModel(
+              id = "tx-5",
+              title = "Cafe Kariz Garden",
+              icon = "cloud_sync",
+              timestamp = "20 Oct, 6:00 PM",
+              note = "Herbal tea & cheesecake",
+              amount = 95000,
+          ),
+          PocketTransactionUiModel(
+              id = "tx-6",
+              title = "Bread & Salt Bakery",
+              icon = "shopping_bag",
+              timestamp = "18 Oct, 08:10 AM",
+              note = "Sourdough & filter roast",
+              amount = 45000,
+          ),
+      )
 }
 
 object FakePocketTransactionUiModelFactory {

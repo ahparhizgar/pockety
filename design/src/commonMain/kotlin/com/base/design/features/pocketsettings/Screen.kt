@@ -54,6 +54,7 @@ fun PocketSettingsScreen(
     initialCategoryName: String = "Cafe & Dining",
     initialCategorySubtitle: String = "Auto-deduct transactions",
     currencySymbol: String = "T",
+    isNewPocket: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
   var pocketName by remember { mutableStateOf(initialPocketName) }
@@ -81,6 +82,7 @@ fun PocketSettingsScreen(
       onTopUpAmountChange = { topUpAmount = it },
       categoryName = initialCategoryName,
       categorySubtitle = initialCategorySubtitle,
+      isNewPocket = isNewPocket,
       onBackClick = onBackClick,
       onSaveChangesClick = { onSaveChangesClick(pocketName, selectedIcon, selectedColor) },
       onDeletePocketClick = onDeletePocketClick,
@@ -115,6 +117,7 @@ fun PocketSettingsScreenContent(
     categoryName: String,
     categorySubtitle: String,
     modifier: Modifier = Modifier,
+    isNewPocket: Boolean = false,
     onBackClick: () -> Unit = {},
     onSaveChangesClick: () -> Unit = {},
     onDeletePocketClick: () -> Unit = {},
@@ -128,13 +131,13 @@ fun PocketSettingsScreenContent(
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
         PocketyTopAppBar(
-            title = "Pocket Settings",
+            title = if (isNewPocket) "New Pocket" else "Pocket Settings",
             onBackClick = onBackClick,
         )
       },
       bottomBar = {
         PocketyBottomActionBar(
-            text = "Save Changes",
+            text = if (isNewPocket) "Save" else "Apply",
             onClick = onSaveChangesClick,
         )
       },
@@ -198,11 +201,14 @@ fun PocketSettingsScreenContent(
             amount = topUpAmount,
             onAmountChange = onTopUpAmountChange,
             onConfirmTopUp = onConfirmTopUp,
+            isNewPocket = isNewPocket,
         )
 
-        DangerZoneCard(
-            onDeletePocketClick = onDeletePocketClick,
-        )
+        if (!isNewPocket) {
+          DangerZoneCard(
+              onDeletePocketClick = onDeletePocketClick,
+          )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
       }
@@ -212,6 +218,16 @@ fun PocketSettingsScreenContent(
 
 @ScreenPreviews
 @Composable
-private fun PocketSettingsScreenPreview() {
-  PocketSettingsScreen()
+private fun PocketSettingsScreenExistingPreview() {
+  PocketSettingsScreen(isNewPocket = false)
+}
+
+@ScreenPreviews
+@Composable
+private fun PocketSettingsScreenNewPreview() {
+  PocketSettingsScreen(
+      initialPocketName = "",
+      initialCurrentBalance = "0",
+      isNewPocket = true,
+  )
 }

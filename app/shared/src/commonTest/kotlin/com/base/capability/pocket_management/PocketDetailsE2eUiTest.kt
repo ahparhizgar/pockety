@@ -151,6 +151,10 @@ class PocketDetailsE2eUiTest {
     // Pocket Settings Screen is displayed
     onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
 
+    // Assert "Apply" button is displayed for existing pocket
+    onNode(hasTestTag("save-pocket-btn")).assertExists()
+    onNode(hasText("Apply")).assertExists()
+
     // Press Back from settings
     onNode(hasTestTag("back-button")).performClick()
 

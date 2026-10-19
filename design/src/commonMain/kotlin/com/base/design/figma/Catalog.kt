@@ -91,7 +91,14 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                               PocketDetailScreen()
                             },
                             FigmaScreenItem("08", "Pocket Settings", "Configuration") {
-                              PocketSettingsScreen()
+                              PocketSettingsScreen(isNewPocket = false)
+                            },
+                            FigmaScreenItem("08b", "New Pocket", "Creation") {
+                              PocketSettingsScreen(
+                                  initialPocketName = "",
+                                  initialCurrentBalance = "0",
+                                  isNewPocket = true,
+                              )
                             },
                             FigmaScreenItem("06", "App Settings", "Preferences") {
                               SettingsScreen()

@@ -34,6 +34,10 @@ class PocketSettingsE2eUiTest {
     // Pocket Settings Screen is open
     onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
 
+    // Assert "Save" button is displayed for new pocket
+    onNode(hasTestTag("save-pocket-btn")).assertExists()
+    onNode(hasText("Save")).assertExists()
+
     // Focus pocket name field and type name
     onNode(hasTestTag("pocket-name-input")).performClick()
     onNode(isFocused()).performTextInput("Coffee & Dining")

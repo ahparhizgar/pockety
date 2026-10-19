@@ -45,8 +45,6 @@ interface PocketSettingsComponent {
 
   fun onTopUpAmountChanged(amount: String)
 
-  fun onConfirmTopUp()
-
   fun onSelectCategoryClicked()
 
   fun onSaveClicked(): Job
@@ -140,19 +138,6 @@ class DefaultPocketSettingsComponent(
 
   override fun onTopUpAmountChanged(amount: String) {
     _state.update { it.copy(topUpAmountText = amount) }
-  }
-
-  override fun onConfirmTopUp() {
-    val cleanText = _state.value.topUpAmountText.replace(",", "").trim()
-    val amount = cleanText.toLongOrNull() ?: 0L
-    if (amount > 0) {
-      _state.update {
-        it.copy(
-            balanceAmount = it.balanceAmount + amount,
-            topUpAmountText = "",
-        )
-      }
-    }
   }
 
   override fun onSelectCategoryClicked() {
@@ -269,19 +254,6 @@ class FakePocketSettingsComponent(
 
   override fun onTopUpAmountChanged(amount: String) {
     _state.update { it.copy(topUpAmountText = amount) }
-  }
-
-  override fun onConfirmTopUp() {
-    val cleanText = _state.value.topUpAmountText.replace(",", "").trim()
-    val amount = cleanText.toLongOrNull() ?: 0L
-    if (amount > 0) {
-      _state.update {
-        it.copy(
-            balanceAmount = it.balanceAmount + amount,
-            topUpAmountText = "",
-        )
-      }
-    }
   }
 
   override fun onSelectCategoryClicked() {}

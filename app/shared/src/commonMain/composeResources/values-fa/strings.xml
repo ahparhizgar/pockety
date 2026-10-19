@@ -68,4 +68,6 @@
     <string name="pockets_top_up_action">شارژ</string>
     <string name="pockets_dynamic_sync_title">همگام‌سازی پویای مانده</string>
     <string name="pockets_dynamic_sync_desc">با حذف یا ویرایش خرج مرتبط با هر جیب، مانده آن به صورت خودکار و در لحظه بازیابی می‌شود.</string>
+    <string name="apply_action">اعمال</string>
+    <string name="initial_balance_label">موجودی اولیه</string>
 </resources>

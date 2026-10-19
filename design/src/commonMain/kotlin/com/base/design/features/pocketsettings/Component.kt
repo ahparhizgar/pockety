@@ -375,6 +375,7 @@ fun ManualTopUpCard(
     onAmountChange: (String) -> Unit,
     onConfirmTopUp: () -> Unit,
     modifier: Modifier = Modifier,
+    isNewPocket: Boolean = false,
     currencySymbol: String = "T",
 ) {
   val focusManager = LocalFocusManager.current
@@ -396,7 +397,7 @@ fun ManualTopUpCard(
       ) {
         Column {
           Text(
-              text = "Current Balance",
+              text = if (isNewPocket) "Initial Balance" else "Current Balance",
               style = MaterialTheme.typography.labelSmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
           )
@@ -444,7 +445,12 @@ fun ManualTopUpCard(
             onValueChange = onAmountChange,
             placeholder = {
               Text(
-                  text = "Enter custom amount in T...",
+                  text =
+                      if (isNewPocket) {
+                        "Enter initial amount in T (optional)..."
+                      } else {
+                        "Enter custom amount in T..."
+                      },
                   style = MaterialTheme.typography.bodyMedium,
                   color = MaterialTheme.colorScheme.outline,
               )
@@ -491,7 +497,7 @@ fun ManualTopUpCard(
           )
           Spacer(modifier = Modifier.width(6.dp))
           Text(
-              text = "Confirm Top-up",
+              text = if (isNewPocket) "Set Initial Balance" else "Confirm Top-up",
               style = MaterialTheme.typography.labelLarge,
           )
         }
@@ -616,6 +622,18 @@ private fun ManualTopUpCardPreview() {
       amount = "250,000",
       onAmountChange = {},
       onConfirmTopUp = {},
+  )
+}
+
+@ComponentPreviews
+@Composable
+private fun InitialBalanceCardPreview() {
+  ManualTopUpCard(
+      currentBalance = "0",
+      amount = "",
+      onAmountChange = {},
+      onConfirmTopUp = {},
+      isNewPocket = true,
   )
 }
 
