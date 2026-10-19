@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import com.arkivanov.decompose.retainedComponent
 import com.base.capability.root_navigation.FakeRootComponent
 import com.base.capability.root_navigation.RootComponentFactory
@@ -16,6 +15,7 @@ import com.base.navigation.NavigationAction
 import com.base.navigation.NavigationActionBus
 import com.base.permission.AndroidPermissionController
 import com.base.permission.PermissionController
+import com.base.ui.ScreenPreviews
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
@@ -81,7 +81,7 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-@Preview
+@ScreenPreviews
 @Composable
 private fun RootScreenAndroidPreview() {
   RootScreen(FakeRootComponent())
