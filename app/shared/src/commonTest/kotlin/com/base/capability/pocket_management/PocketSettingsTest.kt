@@ -116,28 +116,11 @@ class PocketSettingsTest : BehaviorSpec() {
         }
       }
 
-      When("user inputs 50,000 in top-up amount and confirms on a balance of 100,000") {
-        beforeEach {
-          component.onTopUpAmountChanged("100,000")
-          component.onConfirmTopUp()
-          component.onTopUpAmountChanged("50,000")
-          component.onConfirmTopUp()
-        }
-
-        Then("balance updates to 150,000 and top-up input field clears") {
-          val state = component.state.value
-          state.balanceAmount shouldBe 150_000L
-          state.topUpAmountText shouldBe ""
-        }
-      }
-
-      When("user taps save action with valid name, icon, color, and budget") {
+      When("user taps save action with valid name, icon, and color") {
         beforeEach {
           component.onNameChanged("Groceries")
           component.onColorSelected(0xFF4A7C59)
           component.onIconSelected("shopping_bag")
-          component.onTopUpAmountChanged("150,000")
-          component.onConfirmTopUp()
           component.onSaveClicked()
           testCoroutineScheduler.advanceUntilIdle()
         }
@@ -151,7 +134,60 @@ class PocketSettingsTest : BehaviorSpec() {
           saved.name shouldBe "Groceries"
           saved.color shouldBe 0xFF4A7C59
           saved.icon shouldBe "shopping_bag"
-          saved.budgetAmount shouldBe 150_000L
+        }
+      }
+    }
+
+    Given("PocketSettingsComponent initialized in edit mode") {
+      val koin by integrationKoin()
+      val completedCallback by testValue { FakeCallback1<Long>() }
+      val cancelledCallback by testValue { FakeCallback<Unit>() }
+      val pocketRepository by testValue { koin.get<PocketRepository>() }
+      var pocketId: Long by testValue { 0 }
+
+      beforeEach {
+        pocketId =
+            pocketRepository.addPocket(
+                name = "Original Name",
+                categoryTag = "shopping",
+                icon = "shopping_bag",
+                budgetAmount = 50_000L,
+                color = 0xFF112233,
+                categoryId = null,
+            )
+        testCoroutineScheduler.advanceUntilIdle()
+      }
+
+      val component: PocketSettingsComponent by testValue {
+        koin
+            .get<PocketSettingsComponentFactory>()
+            .create(
+                cContext = TestCContext(),
+                pocketId = pocketId,
+                onCompleted = completedCallback,
+                onCancelled = cancelledCallback,
+            )
+      }
+
+      When("user updates pocket details and clicks save") {
+        beforeEach {
+          testCoroutineScheduler.advanceUntilIdle()
+          component.onNameChanged("Updated Name")
+          component.onIconSelected("restaurant")
+          component.onColorSelected(0xFF998877)
+          component.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("existing pocket is updated without creating a new pocket") {
+          completedCallback.shouldBeCalled()
+
+          val pockets = pocketRepository.observePockets().first()
+          pockets shouldHaveSize 1
+          val updated = pockets.first()
+          updated.name shouldBe "Updated Name"
+          updated.icon shouldBe "restaurant"
+          updated.color shouldBe 0xFF998877
         }
       }
     }

@@ -132,6 +132,23 @@ interface PocketDao {
   @Query("SELECT * FROM transactions WHERE pocketId = :pocketId ORDER BY createdAt DESC")
   fun observePocketExpenses(pocketId: Long): Flow<List<ExpenseEntity>>
 
+  @Suppress("LongParameterList")
+  @Query(
+      """
+      UPDATE pockets 
+      SET name = :name, categoryTag = :categoryTag, icon = :icon, color = :color, categoryId = :categoryId 
+      WHERE id = :id
+      """
+  )
+  suspend fun updatePocket(
+      id: Long,
+      name: String,
+      categoryTag: String,
+      icon: String,
+      color: Long,
+      categoryId: Long?,
+  )
+
   @Query("DELETE FROM transactions WHERE id = :id") suspend fun deleteExpense(id: Long)
 }
 
@@ -151,6 +168,16 @@ interface PocketRepository {
       color: Long = 0xFF316342,
       categoryId: Long? = null,
   ): Long
+
+  @Suppress("LongParameterList")
+  suspend fun updatePocket(
+      id: Long,
+      name: String,
+      categoryTag: String,
+      icon: String,
+      color: Long = 0xFF316342,
+      categoryId: Long? = null,
+  )
 
   suspend fun getPocketById(id: Long): PocketEntity?
 
@@ -225,6 +252,25 @@ class DefaultPocketRepository(
       pocketDao.insertTopUp(initialTopUp)
     }
     return pocketId
+  }
+
+  @Suppress("LongParameterList")
+  override suspend fun updatePocket(
+      id: Long,
+      name: String,
+      categoryTag: String,
+      icon: String,
+      color: Long,
+      categoryId: Long?,
+  ) {
+    pocketDao.updatePocket(
+        id = id,
+        name = name,
+        categoryTag = categoryTag,
+        icon = icon,
+        color = color,
+        categoryId = categoryId,
+    )
   }
 
   override suspend fun getPocketById(id: Long): PocketEntity? {
@@ -344,6 +390,32 @@ class FakePocketRepository(
       topUpsFlow.update { listOf(initialTopUp) + it }
     }
     return id
+  }
+
+  @Suppress("LongParameterList")
+  override suspend fun updatePocket(
+      id: Long,
+      name: String,
+      categoryTag: String,
+      icon: String,
+      color: Long,
+      categoryId: Long?,
+  ) {
+    pocketsFlow.update { list ->
+      list.map { pocket ->
+        if (pocket.id == id) {
+          pocket.copy(
+              name = name,
+              categoryTag = categoryTag,
+              icon = icon,
+              color = color,
+              categoryId = categoryId,
+          )
+        } else {
+          pocket
+        }
+      }
+    }
   }
 
   override suspend fun getPocketById(id: Long): PocketEntity? {

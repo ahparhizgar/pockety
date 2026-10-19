@@ -15,8 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -38,9 +36,7 @@ import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.pocket_details_back_action
 import pockety.app.shared.generated.resources.pocket_details_expenses_header
-import pockety.app.shared.generated.resources.pocket_details_more_options
 import pockety.app.shared.generated.resources.pocket_details_no_expenses
-import pockety.app.shared.generated.resources.pocket_details_settings_action
 import pockety.app.shared.generated.resources.pocket_details_title
 
 @Composable
@@ -98,28 +94,6 @@ private fun PocketDetailsTopAppBar(
           Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
               contentDescription = stringResource(Res.string.pocket_details_back_action),
-          )
-        }
-      },
-      actions = {
-        IconButton(
-            onClick = component::onConfigureClicked,
-            modifier = Modifier.testTag("topbar-configure-button"),
-        ) {
-          Icon(
-              imageVector = Icons.Default.Tune,
-              contentDescription = stringResource(Res.string.pocket_details_settings_action),
-              tint = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
-        }
-        IconButton(
-            onClick = {},
-            modifier = Modifier.testTag("topbar-more-button"),
-        ) {
-          Icon(
-              imageVector = Icons.Default.MoreVert,
-              contentDescription = stringResource(Res.string.pocket_details_more_options),
-              tint = MaterialTheme.colorScheme.onSurfaceVariant,
           )
         }
       },

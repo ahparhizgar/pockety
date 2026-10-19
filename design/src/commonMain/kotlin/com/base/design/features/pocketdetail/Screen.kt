@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ScreenPreviews
 
 @Composable
@@ -47,12 +48,10 @@ fun PocketDetailScreen(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-        PocketDetailTopBar(
-            title = title,
-            onBackClick = onBackClick,
-            onSettingsClick = onSettingsClick,
-            onMoreOptionsClick = onMoreOptionsClick,
-        )
+          PocketyTopAppBar(
+              title = title,
+              onBackClick = onBackClick,
+          )
       },
   ) { innerPadding ->
     Box(

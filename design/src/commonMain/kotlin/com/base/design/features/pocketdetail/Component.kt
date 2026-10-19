@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.LocalCafe
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.Button
@@ -119,37 +118,6 @@ val samplePocketLedgerItems: List<PocketLedgerItem> =
             icon = Icons.Default.BakeryDining,
         ),
     )
-
-@Composable
-fun PocketDetailTopBar(
-    title: String = "Pocket Details",
-    modifier: Modifier = Modifier,
-    onBackClick: () -> Unit = {},
-    onSettingsClick: () -> Unit = {},
-    onMoreOptionsClick: () -> Unit = {},
-) {
-  PocketyTopAppBar(
-      modifier = modifier,
-      title = title,
-      onBackClick = onBackClick,
-      actions = {
-        IconButton(onClick = onSettingsClick) {
-          Icon(
-              imageVector = Icons.Default.Tune,
-              contentDescription = "Pocket settings",
-              tint = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
-        }
-        IconButton(onClick = onMoreOptionsClick) {
-          Icon(
-              imageVector = Icons.Default.MoreVert,
-              contentDescription = "More options",
-              tint = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
-        }
-      },
-  )
-}
 
 @Composable
 fun PocketHeroBalance(
@@ -524,7 +492,10 @@ fun PocketTopUpEventRow(
 @ComponentPreviews
 @Composable
 private fun PocketDetailTopBarPreview() {
-  PocketDetailTopBar()
+    PocketyTopAppBar(
+        title = "Pocket Details",
+        onBackClick = {},
+    )
 }
 
 @ComponentPreviews

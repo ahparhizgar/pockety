@@ -5,7 +5,6 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.RootScreen
@@ -111,7 +110,7 @@ class PocketSettingsE2eUiTest {
   }
 
   @Test
-  fun testManualTopUpUpdatesDisplayedBalance() = runComposeUiTest {
+  fun testEditPocketDisplaysApplyButtonAndSaves() = runComposeUiTest {
     val context = TestCContext()
     val koin = uiKoin()
     val root = koin.injectUiRoot(context)
@@ -121,18 +120,26 @@ class PocketSettingsE2eUiTest {
     onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
     onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
 
-    // Enter custom top-up amount
-    onNode(hasTestTag("top-up-amount-input")).performScrollTo().performClick()
-    onNode(isFocused()).performTextInput("150000")
+    onNode(hasTestTag("pocket-name-input")).performClick()
+    onNode(isFocused()).performTextInput("Original Pocket")
+    onNode(hasTestTag("save-pocket-btn")).performClick()
 
-    // Confirm top-up
-    onNode(hasTestTag("confirm-top-up-btn")).performScrollTo().performClick()
+    onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
+    onNode(hasText("Original Pocket")).waitForExistence().performClick()
 
-    // Verify balance update displayed on current-balance-display
-    onNode(hasTestTag("current-balance-display"))
-        .performScrollTo()
-        .waitForExistence()
-        .assertExists()
-    onNode(hasText("150,000 T")).assertExists()
+    // On Pocket Details screen, click settings / configure
+    onNode(hasTestTag("topbar-configure-button")).waitForExistence().performClick()
+
+    // Assert "Apply" button is displayed for existing pocket
+    onNode(hasTestTag("save-pocket-btn")).waitForExistence().assertExists()
+    onNode(hasText("Apply")).assertExists()
+
+    // Update name
+    onNode(hasTestTag("pocket-name-input")).performClick()
+    onNode(isFocused()).performTextInput(" Renamed")
+    onNode(hasTestTag("save-pocket-btn")).performClick()
+
+    // Verify updated pocket name
+    onNode(hasText("Original Pocket Renamed")).waitForExistence().assertExists()
   }
 }

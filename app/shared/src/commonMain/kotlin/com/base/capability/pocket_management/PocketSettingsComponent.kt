@@ -155,16 +155,29 @@ class DefaultPocketSettingsComponent(
     _state.update { it.copy(isSaving = true) }
     try {
       val categoryTag = currentState.selectedCategory?.name ?: "General"
-      val newId =
-          pocketRepository.addPocket(
-              name = trimmedName,
-              categoryTag = categoryTag,
-              budgetAmount = currentState.balanceAmount,
-              icon = currentState.selectedIcon,
-              color = currentState.selectedColor,
-              categoryId = currentState.selectedCategory?.id,
-          )
-      onCompleted(newId)
+      val existingId = currentState.pocketId
+      if (existingId != null) {
+        pocketRepository.updatePocket(
+            id = existingId,
+            name = trimmedName,
+            categoryTag = categoryTag,
+            icon = currentState.selectedIcon,
+            color = currentState.selectedColor,
+            categoryId = currentState.selectedCategory?.id,
+        )
+        onCompleted(existingId)
+      } else {
+        val newId =
+            pocketRepository.addPocket(
+                name = trimmedName,
+                categoryTag = categoryTag,
+                budgetAmount = currentState.balanceAmount,
+                icon = currentState.selectedIcon,
+                color = currentState.selectedColor,
+                categoryId = currentState.selectedCategory?.id,
+            )
+        onCompleted(newId)
+      }
     } finally {
       _state.update { it.copy(isSaving = false) }
     }
