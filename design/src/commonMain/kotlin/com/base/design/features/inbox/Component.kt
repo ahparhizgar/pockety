@@ -61,7 +61,6 @@ fun SmartExtractionHeaderCard(
     remainingCount: Int,
     modifier: Modifier = Modifier,
     totalCount: Int = 8,
-    isAutoSyncOn: Boolean = true,
 ) {
   val progress =
       if (totalCount > 0) {
@@ -84,44 +83,6 @@ fun SmartExtractionHeaderCard(
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.SpaceBetween,
       ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-          Text(
-              text = "SMART EXTRACTION",
-              style = MaterialTheme.typography.labelSmall,
-              fontWeight = FontWeight.SemiBold,
-              color = MaterialTheme.colorScheme.secondary,
-              letterSpacing = 0.5.sp,
-          )
-
-          if (isAutoSyncOn) {
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.secondaryContainer,
-            ) {
-              Row(
-                  modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                  verticalAlignment = Alignment.CenterVertically,
-                  horizontalArrangement = Arrangement.spacedBy(6.dp),
-              ) {
-                Surface(
-                    modifier = Modifier.size(6.dp),
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary,
-                ) {}
-                Text(
-                    text = "Auto-Sync ON",
-                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    fontWeight = FontWeight.Medium,
-                )
-              }
-            }
-          }
-        }
-
         Text(
             text = "$remainingCount remaining",
             style = MaterialTheme.typography.labelSmall,
@@ -375,7 +336,7 @@ fun CandidateExpenseCard(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         ) {
           Text(
-              text = "Edit / Open",
+              text = "Create Expense",
               style = MaterialTheme.typography.labelSmall,
               fontWeight = FontWeight.SemiBold,
           )

@@ -177,27 +177,13 @@ fun CategorySelectorSection(
             color = MaterialTheme.colorScheme.onSurface,
         )
       }
-      TextButton(onClick = onChangeClick) {
-        Text(
-            text = "Change",
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.primary,
-        )
-        Spacer(modifier = Modifier.width(2.dp))
-        Icon(
-            imageVector = Icons.Default.ArrowDropDown,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(16.dp),
-        )
-      }
     }
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.7f),
+        onClick = onChangeClick,
     ) {
       Row(
           modifier = Modifier.fillMaxWidth().padding(14.dp),

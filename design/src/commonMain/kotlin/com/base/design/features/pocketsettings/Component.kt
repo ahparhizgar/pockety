@@ -61,7 +61,6 @@ fun PocketIdentitySection(
     icon: ImageVector = Icons.Default.LocalCafe,
     containerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
-    onEditIconClick: () -> Unit = {},
 ) {
   val focusManager = LocalFocusManager.current
 
@@ -80,7 +79,6 @@ fun PocketIdentitySection(
           color = containerColor,
           contentColor = contentColor,
           shadowElevation = 2.dp,
-          onClick = onEditIconClick,
       ) {
         Box(contentAlignment = Alignment.Center) {
           Icon(

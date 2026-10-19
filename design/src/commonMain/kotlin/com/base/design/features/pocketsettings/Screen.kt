@@ -93,7 +93,6 @@ fun PocketSettingsScreen(
       categoryName = initialCategoryName,
       categorySubtitle = initialCategorySubtitle,
       onBackClick = onBackClick,
-      onProfileClick = onProfileClick,
       onSaveChangesClick = { onSaveChangesClick(pocketName, selectedIcon, selectedColor) },
       onDeletePocketClick = onDeletePocketClick,
       onChangeCategoryClick = onChangeCategoryClick,
@@ -103,7 +102,6 @@ fun PocketSettingsScreen(
         onConfirmTopUp(topUpAmount)
         topUpAmount = ""
       },
-      onEditIconClick = onEditIconClick,
       modifier = modifier,
   )
 }
@@ -129,14 +127,12 @@ fun PocketSettingsScreenContent(
     categorySubtitle: String,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {},
     onSaveChangesClick: () -> Unit = {},
     onDeletePocketClick: () -> Unit = {},
     onChangeCategoryClick: () -> Unit = {},
     onClearCategoryClick: () -> Unit = {},
     onTuneClick: () -> Unit = {},
     onConfirmTopUp: () -> Unit = {},
-    onEditIconClick: () -> Unit = {},
 ) {
   Scaffold(
       modifier = modifier.fillMaxSize(),
@@ -207,7 +203,6 @@ fun PocketSettingsScreenContent(
             icon = selectedIcon.icon,
             containerColor = selectedColor.color,
             contentColor = selectedColor.onColor,
-            onEditIconClick = onEditIconClick,
         )
 
         // Accent Color Selection

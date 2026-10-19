@@ -99,7 +99,6 @@ fun InboxScreen(
           SmartExtractionHeaderCard(
               remainingCount = candidateList.size,
               totalCount = totalCount,
-              isAutoSyncOn = isAutoSyncOn,
           )
         }
 
