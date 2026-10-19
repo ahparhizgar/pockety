@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.BakeryDining
@@ -132,15 +131,7 @@ fun PocketDetailTopBar(
   PocketyTopBar(
       modifier = modifier,
       title = title,
-      navigationIcon = {
-        IconButton(onClick = onBackClick) {
-          Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = "Go back",
-              tint = MaterialTheme.colorScheme.onSurface,
-          )
-        }
-      },
+      onBackClick = onBackClick,
       actions = {
         IconButton(onClick = onSettingsClick) {
           Icon(

@@ -114,8 +114,15 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                             FigmaScreenItem("09", "Select Category", "Bottom Sheet") {
                               SelectCategoryScreen()
                             },
-                            FigmaScreenItem("14", "Select Labels", "Tag Checklist") {
+                            FigmaScreenItem("14", "Select Labels", "Full Screen") {
                               SelectLabelsScreen()
+                            },
+                            FigmaScreenItem(
+                                "14b",
+                                "Select Labels (Search)",
+                                "Live Filter & Create",
+                            ) {
+                              SelectLabelsScreen(initialSearchQuery = "sdfs")
                             },
                         ),
                 ),

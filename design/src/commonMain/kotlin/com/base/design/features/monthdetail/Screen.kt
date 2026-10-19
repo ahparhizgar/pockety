@@ -18,8 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.base.design.globalcomponents.PocketyBottomBar
+import com.base.design.globalcomponents.PocketyProfileButton
 import com.base.design.globalcomponents.PocketyTab
-import com.base.design.globalcomponents.PocketyTopBar
+import com.base.design.globalcomponents.PocketyTabTopBar
 import com.base.design.ui.ScreenPreviews
 
 @Composable
@@ -51,9 +52,9 @@ fun MonthDetailScreen(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-        PocketyTopBar(
+        PocketyTabTopBar(
             title = "Expenses",
-            subtitle = "Pockety",
+            actions = { PocketyProfileButton(onClick = onProfileClick) },
         )
       },
       bottomBar = {

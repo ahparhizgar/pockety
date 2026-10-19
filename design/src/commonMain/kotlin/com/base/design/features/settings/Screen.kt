@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.base.design.globalcomponents.PocketyBottomBar
 import com.base.design.globalcomponents.PocketyTab
-import com.base.design.globalcomponents.PocketyTopBar
+import com.base.design.globalcomponents.PocketyTabTopBar
 import com.base.design.ui.ScreenPreviews
 import com.base.design.ui.theme.colorSchemeExtended
 
@@ -54,9 +54,8 @@ fun SettingsScreen(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-        PocketyTopBar(
+        PocketyTabTopBar(
             title = "Settings",
-            subtitle = "Pockety",
         )
       },
       bottomBar = {

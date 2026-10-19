@@ -15,14 +15,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,13 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.base.design.globalcomponents.PocketyBottomBar
+import com.base.design.globalcomponents.PocketyProfileButton
 import com.base.design.globalcomponents.PocketyTab
-import com.base.design.globalcomponents.PocketyTopBar
+import com.base.design.globalcomponents.PocketyTabTopBar
 import com.base.design.ui.ScreenPreviews
 import com.base.design.ui.theme.colorSchemeExtended
 
 data class HomeScreenState(
-    val title: String = "Home",
+    val title: String = "Pockety",
     val appName: String = "Pockety",
     val isSmsPermissionGranted: Boolean = true,
     val undecidedExpenseCount: Int = 8,
@@ -66,7 +65,7 @@ fun rememberDefaultHomeScreenState(): HomeScreenState {
 
   return remember(primary, primaryContainer, secondary, secondaryFixedDim, surfaceDim) {
     HomeScreenState(
-        title = "Home",
+        title = "Pockety",
         appName = "Pockety",
         isSmsPermissionGranted = true,
         undecidedExpenseCount = 8,
@@ -124,25 +123,9 @@ fun HomeScreen(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-        PocketyTopBar(
+        PocketyTabTopBar(
             title = state.title,
-            subtitle = state.appName,
-            navigationIcon = {
-              Surface(
-                  shape = CircleShape,
-                  color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f),
-                  contentColor = MaterialTheme.colorScheme.primary,
-                  modifier = Modifier.padding(start = 12.dp).size(36.dp),
-              ) {
-                Box(contentAlignment = Alignment.Center) {
-                  Icon(
-                      imageVector = Icons.Default.Insights,
-                      contentDescription = "Pockety logo",
-                      modifier = Modifier.size(20.dp),
-                  )
-                }
-              }
-            },
+            actions = { PocketyProfileButton(onClick = onProfileClick) },
         )
       },
       bottomBar = {

@@ -2,27 +2,17 @@ package com.base.design.features.selectlabels
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,14 +26,15 @@ import com.base.design.ui.ScreenPreviews
 
 @Composable
 fun SelectLabelsScreen(
-    modifier: Modifier = Modifier,
     initialLabels: List<LabelItem> = FakeLabelsFactory.createList(),
     initialSearchQuery: String = "",
-    onClose: () -> Unit = {},
-    onDone: () -> Unit = {},
-    onCancel: () -> Unit = {},
+    onBackClick: (() -> Unit)? = null,
+    onClose: (() -> Unit)? = null,
+    onDone: (() -> Unit)? = null,
+    onCancel: (() -> Unit)? = null,
     onApply: (List<LabelItem>) -> Unit = {},
     onProfileClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
   var labels by remember { mutableStateOf(initialLabels) }
   var searchQuery by remember { mutableStateOf(initialSearchQuery) }
@@ -59,6 +50,7 @@ fun SelectLabelsScreen(
       }
 
   val selectedCount = remember(labels) { labels.count { it.isSelected } }
+  val selectedLabels = remember(labels) { labels.filter { it.isSelected } }
 
   val showCreateRow =
       remember(searchQuery, filteredLabels) {
@@ -66,8 +58,16 @@ fun SelectLabelsScreen(
             filteredLabels.none { it.name.equals(searchQuery.trim(), ignoreCase = true) }
       }
 
+  val handleBack: () -> Unit = { (onBackClick ?: onClose ?: onCancel)?.invoke() }
+  val handleCancel: () -> Unit = { (onCancel ?: onBackClick ?: onClose)?.invoke() }
+  val handleApply: () -> Unit = {
+    onApply(labels.filter { it.isSelected })
+    (onDone ?: onBackClick ?: onClose)?.invoke()
+  }
+
   SelectLabelsContent(
       filteredLabels = filteredLabels,
+      selectedLabels = selectedLabels,
       selectedCount = selectedCount,
       searchQuery = searchQuery,
       showCreateRow = showCreateRow,
@@ -92,11 +92,20 @@ fun SelectLabelsScreen(
           }
         }
       },
+      onRemoveLabel = { labelId ->
+        labels = labels.map {
+          if (it.id == labelId) {
+            it.copy(isSelected = false)
+          } else {
+            it
+          }
+        }
+      },
       onClearAll = { labels = labels.map { it.copy(isSelected = false) } },
-      onClose = onClose,
-      onDone = onDone,
-      onCancel = onCancel,
-      onApply = { onApply(labels.filter { it.isSelected }) },
+      onBackClick = handleBack,
+      onCancel = handleCancel,
+      onApply = handleApply,
+      onDone = handleApply,
       onProfileClick = onProfileClick,
       modifier = modifier,
   )
@@ -105,6 +114,7 @@ fun SelectLabelsScreen(
 @Composable
 fun SelectLabelsContent(
     filteredLabels: List<LabelItem>,
+    selectedLabels: List<LabelItem>,
     selectedCount: Int,
     searchQuery: String,
     showCreateRow: Boolean,
@@ -112,105 +122,90 @@ fun SelectLabelsContent(
     onClearSearchQuery: () -> Unit,
     onCreateLabel: (String) -> Unit,
     onToggleLabel: (String) -> Unit,
+    onRemoveLabel: (String) -> Unit,
     onClearAll: () -> Unit,
-    onClose: () -> Unit,
-    onDone: () -> Unit,
+    onBackClick: () -> Unit,
     onCancel: () -> Unit,
     onApply: () -> Unit,
-    onProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onDone: () -> Unit = onApply,
+    onProfileClick: () -> Unit = {},
 ) {
   Scaffold(
-      modifier = modifier,
+      modifier = modifier.fillMaxSize(),
+      containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
         PocketyTopBar(
             title = "Select Labels",
-            navigationIcon = {
-              IconButton(onClick = onClose) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Dismiss dialog",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-              }
-            },
-            actions = {
-              Button(
-                  onClick = onDone,
-                  colors =
-                      ButtonDefaults.buttonColors(
-                          containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                          contentColor = MaterialTheme.colorScheme.primary,
-                      ),
-                  shape = CircleShape,
-                  contentPadding = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
-                  modifier = Modifier.height(36.dp),
-              ) {
-                Text(
-                    text = "Done",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-              }
-            },
+            onBackClick = onBackClick,
         )
       },
-      containerColor = MaterialTheme.colorScheme.surface,
+      bottomBar = {
+        SelectLabelsBottomBar(
+            selectedCount = selectedCount,
+            onCancel = onCancel,
+            onApply = onApply,
+        )
+      },
   ) { innerPadding ->
     Box(
-        modifier =
-            Modifier.fillMaxSize().padding(innerPadding).verticalScroll(rememberScrollState()),
+        modifier = Modifier.fillMaxSize().padding(innerPadding),
         contentAlignment = Alignment.TopCenter,
     ) {
-      Surface(
-          modifier =
-              Modifier.fillMaxWidth()
-                  .widthIn(max = 640.dp)
-                  .padding(horizontal = 16.dp, vertical = 8.dp),
-          shape = RoundedCornerShape(28.dp),
-          color = MaterialTheme.colorScheme.surfaceContainerLowest,
-          shadowElevation = 8.dp,
+      LazyColumn(
+          modifier = Modifier.fillMaxWidth().widthIn(max = 640.dp),
+          contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+          verticalArrangement = Arrangement.spacedBy(12.dp),
       ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-          SelectLabelsCardHeader(
-              selectedCount = selectedCount,
-              onClearAll = onClearAll,
-          )
-
+        item(key = "search_field") {
           LabelSearchField(
               query = searchQuery,
               onQueryChange = onSearchQueryChange,
               onClearQuery = onClearSearchQuery,
           )
+        }
 
-          if (showCreateRow) {
+        if (selectedLabels.isNotEmpty()) {
+          item(key = "selected_chips") {
+            SelectedLabelChipsRow(
+                selectedLabels = selectedLabels,
+                onRemoveLabel = onRemoveLabel,
+            )
+          }
+        }
+
+        item(key = "selection_header") {
+          SelectLabelsHeader(
+              selectedCount = selectedCount,
+              onClearAll = onClearAll,
+              title = "All Labels",
+          )
+        }
+
+        if (showCreateRow) {
+          item(key = "create_prompt") {
             CreateLabelRow(
                 labelName = searchQuery.trim(),
                 onCreateClick = { onCreateLabel(searchQuery.trim()) },
             )
           }
-
-          Column(
-              modifier = Modifier.fillMaxWidth(),
-              verticalArrangement = Arrangement.spacedBy(4.dp),
-          ) {
-            filteredLabels.forEach { label ->
-              LabelCheckItem(
-                  label = label,
-                  onToggle = { onToggleLabel(label.id) },
-              )
-            }
-          }
-
-          SelectLabelsBottomBar(
-              selectedCount = selectedCount,
-              onCancel = onCancel,
-              onApply = onApply,
-          )
         }
+
+        if (filteredLabels.isEmpty() && !showCreateRow) {
+          item(key = "empty_state") { LabelsEmptyState() }
+        } else {
+          items(
+              items = filteredLabels,
+              key = { it.id },
+          ) { label ->
+            LabelCheckItem(
+                label = label,
+                onToggle = { onToggleLabel(label.id) },
+            )
+          }
+        }
+
+        item(key = "bottom_spacer") { Spacer(modifier = Modifier.height(16.dp)) }
       }
     }
   }
@@ -233,5 +228,13 @@ private fun SelectLabelsScreenSearchingPreview() {
 private fun SelectLabelsScreenEmptySelectionPreview() {
   SelectLabelsScreen(
       initialLabels = FakeLabelsFactory.createList().map { it.copy(isSelected = false) },
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun SelectLabelsScreenNoResultsPreview() {
+  SelectLabelsScreen(
+      initialLabels = emptyList(),
   )
 }

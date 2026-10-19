@@ -10,13 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Insights
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -24,8 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.base.design.globalcomponents.PocketyBottomBar
+import com.base.design.globalcomponents.PocketyProfileButton
 import com.base.design.globalcomponents.PocketyTab
-import com.base.design.globalcomponents.PocketyTopBar
+import com.base.design.globalcomponents.PocketyTabTopBar
 import com.base.design.ui.ScreenPreviews
 
 /**
@@ -57,25 +53,9 @@ fun InboxScreen(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-        PocketyTopBar(
+        PocketyTabTopBar(
             title = "Inbox",
-            subtitle = "Pockety",
-            navigationIcon = {
-              Surface(
-                  shape = CircleShape,
-                  color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f),
-                  contentColor = MaterialTheme.colorScheme.primary,
-                  modifier = Modifier.padding(start = 12.dp).size(36.dp),
-              ) {
-                Box(contentAlignment = Alignment.Center) {
-                  Icon(
-                      imageVector = Icons.Default.Insights,
-                      contentDescription = "Pockety logo",
-                      modifier = Modifier.size(20.dp),
-                  )
-                }
-              }
-            },
+            actions = { PocketyProfileButton(onClick = onProfileClick) },
         )
       },
       bottomBar = {

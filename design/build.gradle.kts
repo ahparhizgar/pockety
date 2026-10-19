@@ -34,3 +34,5 @@ kotlin {
 }
 
 dependencies { androidRuntimeClasspath(libs.compose.uiTooling) }
+
+compose.desktop { application { mainClass = "com.base.design.MainKt" } }

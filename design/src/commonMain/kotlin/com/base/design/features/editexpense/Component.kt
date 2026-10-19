@@ -19,7 +19,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.AccountBalanceWallet
@@ -694,15 +693,7 @@ fun EditExpenseTopBar(
   PocketyTopBar(
       modifier = modifier,
       title = title,
-      navigationIcon = {
-        IconButton(onClick = onBackClick) {
-          Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = "Go back",
-              tint = MaterialTheme.colorScheme.onSurface,
-          )
-        }
-      },
+      onBackClick = onBackClick,
       actions = {
         if (showCloseAction) {
           IconButton(onClick = onCloseClick) {
