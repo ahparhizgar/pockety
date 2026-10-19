@@ -8,10 +8,13 @@ import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.PocketRepository
+import kotlin.time.Instant
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 
 data class PocketTransactionUiModel(
@@ -86,7 +89,7 @@ class DefaultPocketDetailsComponent(
           PocketDetailsState(
               pocketId = pocketId,
               isLoading = true,
-              transactions = defaultPocketTransactions(),
+              transactions = emptyList(),
           )
       )
   override val state: Value<PocketDetailsState> = _state
@@ -96,11 +99,40 @@ class DefaultPocketDetailsComponent(
   }
 
   private fun observePocket(): Job =
-      pocketRepository
-          .observePockets()
-          .onEach { pockets ->
+      combine(
+              pocketRepository.observePockets(),
+              pocketRepository.observePocketTopUps(pocketId),
+              pocketRepository.observePocketExpenses(pocketId),
+          ) { pockets, topUps, expenses ->
             val pocket = pockets.firstOrNull { it.id == pocketId }
             if (pocket != null) {
+              val topUpItems = topUps.map { topUp ->
+                PocketTransactionUiModel(
+                    id = "topup-${topUp.id}",
+                    title = topUp.description?.takeIf { it.isNotBlank() } ?: "Top-up",
+                    icon = "arrow_downward_alt",
+                    timestamp = formatInstant(topUp.createdAt),
+                    note = "",
+                    amount = topUp.amount,
+                    isTopUp = true,
+                ) to topUp.createdAt
+              }
+
+              val expenseItems = expenses.map { expense ->
+                PocketTransactionUiModel(
+                    id = "expense-${expense.id}",
+                    title = expense.description.ifBlank { "Expense" },
+                    icon = "shopping_bag",
+                    timestamp = formatInstant(expense.createdAt),
+                    note = "",
+                    amount = expense.amount,
+                    isTopUp = false,
+                ) to expense.createdAt
+              }
+
+              val sortedTransactions =
+                  (topUpItems + expenseItems).sortedByDescending { it.second }.map { it.first }
+
               _state.update {
                 it.copy(
                     pocketId = pocket.id,
@@ -109,6 +141,7 @@ class DefaultPocketDetailsComponent(
                     icon = pocket.icon,
                     color = pocket.color,
                     isLoading = false,
+                    transactions = sortedTransactions,
                 )
               }
             } else {
@@ -163,19 +196,31 @@ class DefaultPocketDetailsComponent(
   override fun onDeleteTransaction(id: String) {
     val tx = _state.value.transactions.firstOrNull { it.id == id }
     if (tx != null) {
+      if (id.startsWith("expense-")) {
+        val expenseId = id.removePrefix("expense-").toLongOrNull()
+        if (expenseId != null) {
+          scope.launch { pocketRepository.deleteExpense(expenseId) }
+        }
+      } else {
+        _state.update {
+          it.copy(transactions = it.transactions.filterNot { item -> item.id == id })
+        }
+      }
       _state.update {
         it.copy(
-            transactions = it.transactions.filterNot { item -> item.id == id },
             confirmationMessage = "Deleted ${tx.title}. +${formatAmount(tx.amount)} T restored!",
         )
       }
     }
   }
+}
 
-  private fun formatAmount(amount: Long): String {
-    val chunkSize = 3
-    return amount.toString().reversed().chunked(chunkSize).joinToString(",").reversed()
-  }
+private fun formatInstant(instant: Instant): String {
+  val local = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+  val hour = local.hour.toString().padStart(2, '0')
+  val minute = local.minute.toString().padStart(2, '0')
+  val month = local.month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
+  return "${local.day} $month, $hour:$minute"
 }
 
 class DefaultPocketDetailsComponentFactory(
@@ -195,60 +240,6 @@ class DefaultPocketDetailsComponentFactory(
           onConfigure = onConfigure,
       )
 }
-
-@Suppress("MagicNumber")
-fun defaultPocketTransactions(): List<PocketTransactionUiModel> =
-    listOf(
-        PocketTransactionUiModel(
-            id = "tx-1",
-            title = "Sam Cafe Vanak",
-            icon = "coffee",
-            timestamp = "Today, 10:15 AM",
-            note = "Meeting with Ali",
-            amount = 85000,
-        ),
-        PocketTransactionUiModel(
-            id = "tx-2",
-            title = "Lamiz Coffee Jordan",
-            icon = "local_cafe",
-            timestamp = "Yesterday, 4:30 PM",
-            note = "Iced Latte & Cookie",
-            amount = 120000,
-        ),
-        PocketTransactionUiModel(
-            id = "tx-3",
-            title = "Monthly Pocket Allocation",
-            icon = "arrow_downward_alt",
-            timestamp = "23 Oct, 09:00 AM",
-            note = "Auto-deposit",
-            amount = 500000,
-            isTopUp = true,
-        ),
-        PocketTransactionUiModel(
-            id = "tx-4",
-            title = "Reza Bakery & Espresso",
-            icon = "bakery_dining",
-            timestamp = "22 Oct, 11:20 AM",
-            note = "Morning Americano",
-            amount = 65000,
-        ),
-        PocketTransactionUiModel(
-            id = "tx-5",
-            title = "Cafe Kariz Garden",
-            icon = "cloud_sync",
-            timestamp = "20 Oct, 6:00 PM",
-            note = "Herbal tea & cheesecake",
-            amount = 95000,
-        ),
-        PocketTransactionUiModel(
-            id = "tx-6",
-            title = "Bread & Salt Bakery",
-            icon = "shopping_bag",
-            timestamp = "18 Oct, 08:10 AM",
-            note = "Sourdough & filter roast",
-            amount = 45000,
-        ),
-    )
 
 @Fake
 class FakePocketDetailsComponent(
@@ -324,6 +315,61 @@ object FakePocketDetailsStateFactory {
           confirmationMessage = confirmationMessage,
           transactions = transactions,
       )
+
+
+    @Suppress("MagicNumber")
+    fun defaultPocketTransactions(): List<PocketTransactionUiModel> =
+        listOf(
+            PocketTransactionUiModel(
+                id = "tx-1",
+                title = "Sam Cafe Vanak",
+                icon = "coffee",
+                timestamp = "Today, 10:15 AM",
+                note = "Meeting with Ali",
+                amount = 85000,
+            ),
+            PocketTransactionUiModel(
+                id = "tx-2",
+                title = "Lamiz Coffee Jordan",
+                icon = "local_cafe",
+                timestamp = "Yesterday, 4:30 PM",
+                note = "Iced Latte & Cookie",
+                amount = 120000,
+            ),
+            PocketTransactionUiModel(
+                id = "tx-3",
+                title = "Monthly Pocket Allocation",
+                icon = "arrow_downward_alt",
+                timestamp = "23 Oct, 09:00 AM",
+                note = "Auto-deposit",
+                amount = 500000,
+                isTopUp = true,
+            ),
+            PocketTransactionUiModel(
+                id = "tx-4",
+                title = "Reza Bakery & Espresso",
+                icon = "bakery_dining",
+                timestamp = "22 Oct, 11:20 AM",
+                note = "Morning Americano",
+                amount = 65000,
+            ),
+            PocketTransactionUiModel(
+                id = "tx-5",
+                title = "Cafe Kariz Garden",
+                icon = "cloud_sync",
+                timestamp = "20 Oct, 6:00 PM",
+                note = "Herbal tea & cheesecake",
+                amount = 95000,
+            ),
+            PocketTransactionUiModel(
+                id = "tx-6",
+                title = "Bread & Salt Bakery",
+                icon = "shopping_bag",
+                timestamp = "18 Oct, 08:10 AM",
+                note = "Sourdough & filter roast",
+                amount = 45000,
+            ),
+        )
 }
 
 object FakePocketTransactionUiModelFactory {

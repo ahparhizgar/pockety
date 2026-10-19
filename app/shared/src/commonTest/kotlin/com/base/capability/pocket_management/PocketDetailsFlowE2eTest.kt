@@ -2,6 +2,7 @@ package com.base.capability.pocket_management
 
 import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.TestCContext
+import com.base.db.ExpenseRepository
 import com.base.db.PocketRepository
 import com.base.testValue
 import com.base.ui.components.PocketyTab
@@ -14,6 +15,7 @@ import com.base.util.assertPockets
 import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 
 class PocketDetailsFlowE2eTest : BehaviorSpec() {
@@ -25,6 +27,7 @@ class PocketDetailsFlowE2eTest : BehaviorSpec() {
       val context by testValue { TestCContext() }
       val root by testValue { koin.get<RootComponentFactory>().create(context) }
       val pocketRepository by testValue { koin.get<PocketRepository>() }
+      val expenseRepository by testValue { koin.get<ExpenseRepository>() }
       var pocketId: Long by testValue { 0 }
 
       beforeEach {
@@ -36,6 +39,11 @@ class PocketDetailsFlowE2eTest : BehaviorSpec() {
                 icon = "coffee",
                 color = 0xFF4A7C59,
             )
+        expenseRepository.addExpense(
+            amount = 50000,
+            description = "Sam Cafe",
+            pocketId = pocketId,
+        )
         testCoroutineScheduler.advanceUntilIdle()
 
         val main = root.assertMainComponent()
@@ -54,7 +62,12 @@ class PocketDetailsFlowE2eTest : BehaviorSpec() {
           val details = root.assertPocketDetails()
           details.state.value.pocketId shouldBe pocketId
           details.state.value.name shouldBe "Daily Cafe & Coffee"
-          details.state.value.balanceAmount shouldBe 850000L
+          details.state.value.balanceAmount shouldBe 800000L
+          details.state.value.transactions shouldHaveSize 2
+          details.state.value.transactions[0].isTopUp shouldBe false
+          details.state.value.transactions[0].amount shouldBe 50000L
+          details.state.value.transactions[1].isTopUp shouldBe true
+          details.state.value.transactions[1].amount shouldBe 850000L
         }
 
         And("user opens quick top-up and confirms an addition of 100,000 T") {
@@ -66,9 +79,12 @@ class PocketDetailsFlowE2eTest : BehaviorSpec() {
             testCoroutineScheduler.advanceUntilIdle()
           }
 
-          Then("pocket balance reflects the new total") {
+          Then("pocket balance reflects the new total and new top-up item appears in the feed") {
             val details = root.assertPocketDetails()
-            details.state.value.balanceAmount shouldBe 950000L
+            details.state.value.balanceAmount shouldBe 900000L
+            details.state.value.transactions shouldHaveSize 3
+            details.state.value.transactions[0].isTopUp shouldBe true
+            details.state.value.transactions[0].amount shouldBe 100000L
           }
 
           And("user taps Configure") {
@@ -106,7 +122,7 @@ class PocketDetailsFlowE2eTest : BehaviorSpec() {
                   root.assertMainComponent()
                   val pockets = root.assertPockets()
                   val pocket = pockets.state.value.pockets.first { it.id == pocketId }
-                  pocket.remainingBalance shouldBe 950000L
+                  pocket.remainingBalance shouldBe 900000L
                 }
               }
             }

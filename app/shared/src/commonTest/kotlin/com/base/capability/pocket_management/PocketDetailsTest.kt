@@ -1,6 +1,7 @@
 package com.base.capability.pocket_management
 
 import com.base.component.TestCContext
+import com.base.db.ExpenseRepository
 import com.base.db.PocketRepository
 import com.base.testValue
 import com.base.util.FakeCallback
@@ -9,8 +10,10 @@ import com.base.util.MainDispatcherExtension
 import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.flow.first
 
 class PocketDetailsTest : BehaviorSpec() {
   init {
@@ -21,6 +24,7 @@ class PocketDetailsTest : BehaviorSpec() {
       val backCallback by testValue { FakeCallback<Unit>() }
       val configureCallback by testValue { FakeCallback1<Long>() }
       val pocketRepository by testValue { koin.get<PocketRepository>() }
+      val expenseRepository by testValue { koin.get<ExpenseRepository>() }
       var pocketId: Long by testValue { 0 }
 
       beforeEach {
@@ -56,6 +60,48 @@ class PocketDetailsTest : BehaviorSpec() {
           state.color shouldBe 0xFF4A7C59
           state.isLoading shouldBe false
           state.isQuickTopUpVisible shouldBe false
+          state.transactions shouldHaveSize 1
+          state.transactions[0].isTopUp shouldBe true
+          state.transactions[0].amount shouldBe 850000L
+        }
+      }
+
+      When("pocket has linked expenses and top-ups in the repository") {
+        beforeEach {
+          expenseRepository.addExpense(
+              amount = 50000,
+              description = "Sam Cafe",
+              pocketId = pocketId,
+          )
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then(
+            "the component state emits dynamically computed balance: sum(top-ups) - sum(expenses)"
+        ) {
+          val state = component.state.value
+          state.balanceAmount shouldBe 800000L
+          state.transactions shouldHaveSize 2
+          state.transactions[0].isTopUp shouldBe false
+          state.transactions[0].amount shouldBe 50000L
+          state.transactions[0].title shouldBe "Sam Cafe"
+          state.transactions[1].isTopUp shouldBe true
+          state.transactions[1].amount shouldBe 850000L
+        }
+
+        And("user deletes a linked expense transaction") {
+          beforeEach {
+            val expenseTx = component.state.value.transactions.first { tx -> !tx.isTopUp }
+            component.onDeleteTransaction(expenseTx.id)
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then("the expense is removed and pocket balance reflects the restored amount") {
+            val state = component.state.value
+            state.transactions.none { tx -> !tx.isTopUp } shouldBe true
+            state.balanceAmount shouldBe 850000L
+            state.confirmationMessage.shouldNotBeNull()
+          }
         }
       }
 
@@ -98,9 +144,8 @@ class PocketDetailsTest : BehaviorSpec() {
           state.balanceAmount shouldBe 950000L
           state.confirmationMessage.shouldNotBeNull()
 
-          val updatedPocket = pocketRepository.getPocketById(pocketId)
-          updatedPocket.shouldNotBeNull()
-          updatedPocket.budgetAmount shouldBe 950000L
+          val updatedPocket = pocketRepository.observePockets().first().first { it.id == pocketId }
+          updatedPocket.remainingBalance shouldBe 950000L
         }
       }
 
@@ -113,10 +158,14 @@ class PocketDetailsTest : BehaviorSpec() {
           testCoroutineScheduler.advanceUntilIdle()
         }
 
-        Then("pocket balance increases by 250,000 T and confirmation message is displayed") {
+        Then(
+            "pocket balance increases by 250,000 T, new top-up transaction appears, and confirmation message is displayed"
+        ) {
           val state = component.state.value
           state.isQuickTopUpVisible shouldBe false
           state.balanceAmount shouldBe 1100000L
+          state.transactions.first().isTopUp shouldBe true
+          state.transactions.first().amount shouldBe 250000L
           state.confirmationMessage shouldBe "Pocket topped up by +250,000 T!"
         }
       }
@@ -154,19 +203,6 @@ class PocketDetailsTest : BehaviorSpec() {
         }
 
         Then("onBack callback is invoked") { backCallback.called shouldBe true }
-      }
-
-      When("user deletes a mock transaction in the UI layer") {
-        beforeEach {
-          testCoroutineScheduler.advanceUntilIdle()
-          component.onDeleteTransaction("tx-1")
-        }
-
-        Then("transaction is removed and confirmation feedback is set") {
-          val state = component.state.value
-          state.transactions.none { it.id == "tx-1" } shouldBe true
-          state.confirmationMessage.shouldNotBeNull()
-        }
       }
     }
   }

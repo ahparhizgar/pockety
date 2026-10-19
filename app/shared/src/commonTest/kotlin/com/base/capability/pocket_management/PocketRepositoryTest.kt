@@ -125,11 +125,10 @@ class PocketRepositoryTest : BehaviorSpec() {
           entity.icon shouldBe "shopping_bag"
           entity.color shouldBe 0xFF4A7C59
           entity.categoryId.shouldNotBeNull()
-          entity.budgetAmount shouldBe 5000L
         }
       }
 
-      When("topping up an existing pocket") {
+      When("topping up an existing pocket with expenses") {
         var pocketId: Long by testValue { 0 }
 
         beforeEach {
@@ -140,15 +139,31 @@ class PocketRepositoryTest : BehaviorSpec() {
                   budgetAmount = 1000,
                   icon = "coffee",
               )
-          pocketRepository.topUpPocket(pocketId, 500)
+          expenseRepository.addExpense(
+              amount = 300,
+              description = "Espresso",
+              pocketId = pocketId,
+          )
+          pocketRepository.topUpPocket(pocketId, 500, "Weekly allowance")
           testCoroutineScheduler.advanceUntilIdle()
         }
 
-        Then("the budget amount is updated and observable via observePockets") {
+        Then("new top-up row is recorded and observePockets reflects initial + topUp - expenses") {
           val list = pocketRepository.observePockets().first()
           val pocket = list.first { it.id == pocketId }
           pocket.budgetAmount shouldBe 1500L
-          pocket.remainingBalance shouldBe 1500L
+          pocket.remainingBalance shouldBe 1200L
+
+          val topUps = pocketRepository.observePocketTopUps(pocketId).first()
+          topUps shouldHaveSize 2
+          topUps[0].amount shouldBe 500L
+          topUps[0].description shouldBe "Weekly allowance"
+          topUps[1].amount shouldBe 1000L
+          topUps[1].description shouldBe "Initial Balance"
+
+          val expenses = pocketRepository.observePocketExpenses(pocketId).first()
+          expenses shouldHaveSize 1
+          expenses[0].amount shouldBe 300L
         }
       }
     }

@@ -93,7 +93,6 @@ class DefaultPocketSettingsComponent(
                 nameText = pocket.name,
                 selectedColor = pocket.color,
                 selectedIcon = pocket.icon,
-                balanceAmount = pocket.budgetAmount,
                 selectedCategory = category,
             )
           }

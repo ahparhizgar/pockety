@@ -245,6 +245,57 @@ class MigrationTest : BehaviorSpec() {
         }
       }
 
+      When("MIGRATION_7_8 is executed") {
+        MIGRATION_7_8.migrate(connection)
+
+        Then("pockets table does not contain budgetAmount column") {
+          val pragmaStmt = connection.prepare("PRAGMA table_info(`pockets`)")
+          var hasBudgetAmount = false
+          while (pragmaStmt.step()) {
+            if (pragmaStmt.getText(1) == "budgetAmount") {
+              hasBudgetAmount = true
+            }
+          }
+          pragmaStmt.close()
+          hasBudgetAmount shouldBe false
+        }
+
+        Then("pocket_top_ups table contains migrated initial balance rows") {
+          val statement =
+              connection.prepare(
+                  "SELECT pocketId, amount, description FROM pocket_top_ups WHERE pocketId = 1"
+              )
+          val hasRow = statement.step()
+          hasRow shouldBe true
+          statement.getLong(0) shouldBe 1L
+          statement.getLong(1) shouldBe 1000000L
+          statement.getText(2) shouldBe "Initial Balance"
+          statement.close()
+        }
+
+        Then("pocket_top_ups table has pocketId index and foreign key") {
+          val indexStmt = connection.prepare("PRAGMA index_list(`pocket_top_ups`)")
+          var foundIndex = false
+          while (indexStmt.step()) {
+            if (indexStmt.getText(1) == "index_pocket_top_ups_pocketId") {
+              foundIndex = true
+            }
+          }
+          indexStmt.close()
+          foundIndex shouldBe true
+
+          val fkStmt = connection.prepare("PRAGMA foreign_key_list(`pocket_top_ups`)")
+          var foundFk = false
+          while (fkStmt.step()) {
+            if (fkStmt.getText(2) == "pockets") {
+              foundFk = true
+            }
+          }
+          fkStmt.close()
+          foundFk shouldBe true
+        }
+      }
+
       afterSpec { connection.close() }
     }
   }

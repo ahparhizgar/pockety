@@ -18,8 +18,9 @@ import kotlinx.coroutines.Dispatchers
             CandidateExpenseEntity::class,
             CategoryEntity::class,
             PocketEntity::class,
+            PocketTopUpEntity::class,
         ],
-    version = 7,
+    version = 8,
 )
 @ColumnTypeConverters(InstantConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -248,6 +249,86 @@ val MIGRATION_6_7 =
       }
     }
 
+val MIGRATION_7_8 =
+    object : Migration(7, 8) {
+      override suspend fun migrate(connection: SQLiteConnection) {
+        createPocketTopUpsTable(connection)
+        recreatePocketsTable(connection)
+      }
+
+      private fun createPocketTopUpsTable(connection: SQLiteConnection) {
+        connection
+            .prepare(
+                """
+                CREATE TABLE IF NOT EXISTS `pocket_top_ups` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `pocketId` INTEGER NOT NULL,
+                    `amount` INTEGER NOT NULL,
+                    `description` TEXT,
+                    `createdAt` INTEGER NOT NULL,
+                    FOREIGN KEY(`pocketId`) REFERENCES `pockets`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                )
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection
+            .prepare(
+                """
+                INSERT INTO `pocket_top_ups` (`pocketId`, `amount`, `description`, `createdAt`)
+                SELECT `id`, `budgetAmount`, 'Initial Balance', `createdAt` FROM `pockets` WHERE `budgetAmount` > 0
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection
+            .prepare(
+                "CREATE INDEX IF NOT EXISTS `index_pocket_top_ups_pocketId` ON `pocket_top_ups` (`pocketId`)"
+            )
+            .use { it.step() }
+      }
+
+      private fun recreatePocketsTable(connection: SQLiteConnection) {
+        connection
+            .prepare(
+                """
+                CREATE TABLE IF NOT EXISTS `pockets_new` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `name` TEXT NOT NULL,
+                    `categoryTag` TEXT NOT NULL,
+                    `icon` TEXT NOT NULL,
+                    `createdAt` INTEGER NOT NULL,
+                    `color` INTEGER NOT NULL,
+                    `categoryId` INTEGER,
+                    FOREIGN KEY(`categoryId`) REFERENCES `categories`(`id`) ON UPDATE NO ACTION ON DELETE SET NULL
+                )
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection
+            .prepare(
+                """
+                INSERT INTO `pockets_new` (`id`, `name`, `categoryTag`, `icon`, `createdAt`, `color`, `categoryId`)
+                SELECT `id`, `name`, `categoryTag`, `icon`, `createdAt`, `color`, `categoryId` FROM `pockets`
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+
+        connection.prepare("DROP TABLE `pockets`").use { it.step() }
+        connection.prepare("ALTER TABLE `pockets_new` RENAME TO `pockets`").use { it.step() }
+        connection
+            .prepare(
+                "CREATE INDEX IF NOT EXISTS `index_pockets_categoryId` ON `pockets` (`categoryId`)"
+            )
+            .use { it.step() }
+      }
+    }
+
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
     queryContext: CoroutineContext = Dispatchers.Default,
@@ -260,6 +341,7 @@ fun getRoomDatabase(
           MIGRATION_4_5,
           MIGRATION_5_6,
           MIGRATION_6_7,
+          MIGRATION_7_8,
       )
       .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
       .setQueryCoroutineContext(queryContext)

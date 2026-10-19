@@ -8,6 +8,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.RootScreen
 import com.base.component.TestCContext
+import com.base.db.ExpenseRepository
 import com.base.db.PocketRepository
 import com.base.util.injectUiRoot
 import com.base.util.uiKoin
@@ -26,6 +27,7 @@ class PocketDetailsE2eUiTest {
 
     runTest {
       val repository = koin.get<PocketRepository>()
+      val expenseRepository = koin.get<ExpenseRepository>()
       pocketId =
           repository.addPocket(
               name = "Daily Cafe & Coffee",
@@ -34,6 +36,11 @@ class PocketDetailsE2eUiTest {
               icon = "coffee",
               color = 0xFF4A7C59,
           )
+      expenseRepository.addExpense(
+          amount = 50000,
+          description = "Sam Cafe",
+          pocketId = pocketId,
+      )
     }
 
     val root = koin.injectUiRoot(context)
@@ -48,7 +55,13 @@ class PocketDetailsE2eUiTest {
     // Pocket Details Screen is displayed
     onNode(hasTestTag("pocket-details-screen")).waitForExistence().assertExists()
     onNode(hasText("Daily Cafe & Coffee")).assertExists()
-    onNode(hasText("850,000")).assertExists()
+    onNode(hasText("800,000")).assertExists()
+
+    // Combined activity feed contains expense and top-up
+    onNode(hasText("Sam Cafe")).assertExists()
+    onNode(hasText("-50,000 T")).assertExists()
+    onNode(hasText("Initial Balance")).assertExists()
+    onNode(hasText("+850,000 T")).assertExists()
 
     // Tap action Top-up button
     onNode(hasTestTag("action-top-up-button")).performClick()
@@ -62,8 +75,9 @@ class PocketDetailsE2eUiTest {
     // Confirm top-up
     onNode(hasTestTag("confirm-top-up-button")).performClick()
 
-    // Balance is updated to 950,000 T and feedback banner is shown
-    onNode(hasText("950,000")).waitForExistence().assertExists()
+    // Balance is updated to 900,000 T, new top-up transaction appears, and feedback banner is shown
+    onNode(hasText("900,000")).waitForExistence().assertExists()
+    onNode(hasText("+100,000 T")).assertExists()
     onNode(hasTestTag("feedback-banner")).assertExists()
   }
 
@@ -148,5 +162,33 @@ class PocketDetailsE2eUiTest {
 
     // Back to Pockets Screen
     onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
+  }
+
+  @Test
+  fun testPocketDetailsEmptyState() = runComposeUiTest {
+    val context = TestCContext()
+    val koin = uiKoin()
+    var pocketId = 0L
+
+    runTest {
+      val repository = koin.get<PocketRepository>()
+      pocketId =
+          repository.addPocket(
+              name = "Zero Balance Pocket",
+              categoryTag = "Other",
+              budgetAmount = 0,
+              icon = "wallet",
+              color = 0xFF4A7C59,
+          )
+    }
+
+    val root = koin.injectUiRoot(context)
+    setContent { RootScreen(root) }
+
+    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
+    onNode(hasTestTag("pocket-card-$pocketId")).waitForExistence().performClick()
+    onNode(hasTestTag("pocket-details-screen")).waitForExistence().assertExists()
+
+    onNode(hasText("No expenses recorded yet")).assertExists()
   }
 }
