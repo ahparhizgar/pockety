@@ -3,8 +3,10 @@ package com.base.design.features.editexpense
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -14,7 +16,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.ShoppingBasket
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +31,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.base.design.globalcomponents.PocketyBottomActionBar
 import com.base.design.ui.ScreenPreviews
 
 @Composable
@@ -61,11 +67,18 @@ fun EditExpenseScreen(
 ) {
   Scaffold(
       modifier = modifier.fillMaxSize(),
+      containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
         EditExpenseTopBar(
             title = "Edit Expense",
             onBackClick = onBackClick,
             onCloseClick = onCloseClick,
+        )
+      },
+      bottomBar = {
+        PocketyBottomActionBar(
+            text = "Save Expense",
+            onClick = onSaveExpense,
         )
       },
   ) { paddingValues ->
@@ -78,7 +91,7 @@ fun EditExpenseScreen(
               Modifier.fillMaxWidth()
                   .widthIn(max = 640.dp)
                   .verticalScroll(rememberScrollState())
-                  .padding(horizontal = 20.dp, vertical = 16.dp),
+                  .padding(horizontal = 16.dp, vertical = 12.dp),
           verticalArrangement = Arrangement.spacedBy(20.dp),
       ) {
         AmountHeroSection(
@@ -127,10 +140,18 @@ fun EditExpenseScreen(
             rawSms = rawSms,
         )
 
-        EditExpenseActionButtons(
-            onSaveExpense = onSaveExpense,
-            onDismissSms = onDismissSms,
-        )
+        TextButton(
+            onClick = onDismissSms,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+          Text(
+              text = "Dismiss SMS",
+              style = MaterialTheme.typography.labelMedium,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
       }
     }
   }

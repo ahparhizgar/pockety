@@ -8,23 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +29,7 @@ import com.base.design.globalcomponents.AccentColorPicker
 import com.base.design.globalcomponents.IconPickerSection
 import com.base.design.globalcomponents.ItemColorOption
 import com.base.design.globalcomponents.ItemIconOption
+import com.base.design.globalcomponents.PocketyBottomActionBar
 import com.base.design.globalcomponents.PocketyTopBar
 import com.base.design.globalcomponents.defaultIconCategoryFilters
 import com.base.design.globalcomponents.defaultItemColors
@@ -151,38 +144,10 @@ fun PocketSettingsScreenContent(
         )
       },
       bottomBar = {
-        Surface(
-            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-          Box(
-              modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-              contentAlignment = Alignment.Center,
-          ) {
-            Button(
-                onClick = onSaveChangesClick,
-                modifier = Modifier.fillMaxWidth().widthIn(max = 640.dp).height(56.dp),
-                shape = CircleShape,
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                    ),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
-            ) {
-              Icon(
-                  imageVector = Icons.Default.Check,
-                  contentDescription = null,
-                  modifier = Modifier.size(22.dp),
-              )
-              Spacer(modifier = Modifier.width(8.dp))
-              Text(
-                  text = "Save Changes",
-                  style = MaterialTheme.typography.labelLarge,
-              )
-            }
-          }
-        }
+        PocketyBottomActionBar(
+            text = "Save Changes",
+            onClick = onSaveChangesClick,
+        )
       },
   ) { innerPadding ->
     Box(
