@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.base.design.globalcomponents.PocketyBottomActionBar
+import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ScreenPreviews
 
 @Composable
@@ -69,10 +70,9 @@ fun EditExpenseScreen(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-        EditExpenseTopBar(
+        PocketyTopAppBar(
             title = "Edit Expense",
             onBackClick = onBackClick,
-            onCloseClick = onCloseClick,
         )
       },
       bottomBar = {
