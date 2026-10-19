@@ -1,7 +1,6 @@
 package com.base.design.globalcomponents
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -23,13 +22,13 @@ import androidx.compose.ui.unit.dp
 import com.base.design.ui.ComponentPreviews
 
 /**
- * Top app bar for primary bottom-navigation tab destinations (Home, Inbox, Pockets, Analytics).
+ * Top app bar for primary screens and sub-screens.
  *
- * Tab screens do not have a back arrow because navigation is driven by the bottom bar. Features a
- * clean, single-line title and optional action items (e.g. profile avatar, notifications).
+ * Features a clean, single-line title and optional action items (e.g. profile avatar,
+ * notifications).
  */
 @Composable
-fun PocketyTabTopBar(
+fun PocketyTopAppBar(
     title: String,
     modifier: Modifier = Modifier,
     navigationIcon: (@Composable () -> Unit)? = null,
@@ -62,7 +61,7 @@ fun PocketyTabTopBar(
  * Always displays a back button (ArrowBack) on the left to navigate back to the previous screen.
  */
 @Composable
-fun PocketyTopBar(
+fun PocketyTopAppBar(
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -123,40 +122,10 @@ fun PocketyProfileButton(
   }
 }
 
-/** Backward-compatible delegating top bar. */
-@Composable
-fun PocketyTopBar(
-    title: String,
-    modifier: Modifier = Modifier,
-    navigationIcon: (@Composable () -> Unit)? = null,
-    actions: @Composable RowScope.() -> Unit = {},
-) {
-  TopAppBar(
-      modifier = modifier,
-      colors =
-          TopAppBarDefaults.topAppBarColors(
-              containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-              titleContentColor = MaterialTheme.colorScheme.onSurface,
-          ),
-      navigationIcon = { navigationIcon?.invoke() },
-      title = {
-        Column {
-          Text(
-              text = title,
-              style = MaterialTheme.typography.titleLarge,
-              fontWeight = FontWeight.Bold,
-              color = MaterialTheme.colorScheme.onSurface,
-          )
-        }
-      },
-      actions = actions,
-  )
-}
-
 @ComponentPreviews
 @Composable
-private fun PocketyTabTopBarPreview() {
-  PocketyTabTopBar(
+private fun PocketyTopAppBarTabPreview() {
+  PocketyTopAppBar(
       title = "Pockety",
       actions = { PocketyProfileButton(onClick = {}) },
   )
@@ -164,8 +133,8 @@ private fun PocketyTabTopBarPreview() {
 
 @ComponentPreviews
 @Composable
-private fun PocketyTopBarPreview() {
-  PocketyTopBar(
+private fun PocketyTopAppBarDetailPreview() {
+  PocketyTopAppBar(
       title = "Pocket Settings",
       onBackClick = {},
   )

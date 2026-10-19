@@ -82,7 +82,7 @@ class DefaultCContext(
       }
 }
 
-object InitialTestDestination: TopLevelDestinationConfig
+object InitialTestDestination : TopLevelDestinationConfig
 
 fun CContext.componentScope(): CoroutineScope {
   return CoroutineScope(

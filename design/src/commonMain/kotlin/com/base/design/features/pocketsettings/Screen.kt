@@ -26,7 +26,7 @@ import com.base.design.globalcomponents.IconPickerSection
 import com.base.design.globalcomponents.ItemColorOption
 import com.base.design.globalcomponents.ItemIconOption
 import com.base.design.globalcomponents.PocketyBottomActionBar
-import com.base.design.globalcomponents.PocketyTopBar
+import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.globalcomponents.defaultIconCategoryFilters
 import com.base.design.globalcomponents.defaultItemColors
 import com.base.design.globalcomponents.defaultItemIcons
@@ -127,7 +127,7 @@ fun PocketSettingsScreenContent(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-        PocketyTopBar(
+        PocketyTopAppBar(
             title = "Pocket Settings",
             onBackClick = onBackClick,
         )

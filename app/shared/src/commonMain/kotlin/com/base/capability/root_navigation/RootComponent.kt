@@ -13,8 +13,6 @@ import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.adding_expense.AddExpenseFlowComponentFactory
-import com.base.capability.adding_expense.add.AddExpenseComponent
-import com.base.capability.adding_expense.add.AddExpenseComponentFactory
 import com.base.capability.main.MainComponent
 import com.base.capability.main.MainComponentFactory
 import com.base.capability.pocket_management.PocketDetailsComponent

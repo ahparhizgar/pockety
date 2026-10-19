@@ -39,7 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.base.design.globalcomponents.PocketyTopBar
+import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ComponentPreviews
 
 sealed interface PocketLedgerItem {
@@ -128,7 +128,7 @@ fun PocketDetailTopBar(
     onSettingsClick: () -> Unit = {},
     onMoreOptionsClick: () -> Unit = {},
 ) {
-  PocketyTopBar(
+  PocketyTopAppBar(
       modifier = modifier,
       title = title,
       onBackClick = onBackClick,

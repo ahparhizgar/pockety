@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
@@ -23,10 +22,9 @@ import androidx.compose.ui.unit.sp
 import com.base.ui.ComponentPreviews
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.inbox_auto_sync_on
 import pockety.app.shared.generated.resources.inbox_candidates_desc
 import pockety.app.shared.generated.resources.inbox_candidates_pending
-import pockety.app.shared.generated.resources.inbox_smart_extraction
+import pockety.app.shared.generated.resources.inbox_remaining_count
 
 @Composable
 fun SmartExtractionHeaderCard(
@@ -42,7 +40,7 @@ fun SmartExtractionHeaderCard(
         modifier = Modifier.padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-      SmartExtractionHeaderBadge()
+      SmartExtractionHeaderBadge(remainingCount = remainingCount)
       SmartExtractionHeaderText(remainingCount = remainingCount)
 
       LinearProgressIndicator(
@@ -56,47 +54,17 @@ fun SmartExtractionHeaderCard(
 }
 
 @Composable
-private fun SmartExtractionHeaderBadge() {
+private fun SmartExtractionHeaderBadge(remainingCount: Int) {
   Row(
       modifier = Modifier.fillMaxWidth(),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
   ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-      Text(
-          text = stringResource(Res.string.inbox_smart_extraction),
-          style = MaterialTheme.typography.labelSmall,
-          fontWeight = FontWeight.SemiBold,
-          color = MaterialTheme.colorScheme.secondary,
-          letterSpacing = 0.5.sp,
-      )
-
-      Surface(
-          shape = CircleShape,
-          color = MaterialTheme.colorScheme.secondaryContainer,
-      ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-          Surface(
-              modifier = Modifier.size(6.dp),
-              shape = CircleShape,
-              color = MaterialTheme.colorScheme.primary,
-          ) {}
-          Text(
-              text = stringResource(Res.string.inbox_auto_sync_on),
-              style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-              color = MaterialTheme.colorScheme.onSecondaryContainer,
-              fontWeight = FontWeight.Medium,
-          )
-        }
-      }
-    }
+    Text(
+        text = stringResource(Res.string.inbox_remaining_count, remainingCount),
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.outline,
+    )
   }
 }
 

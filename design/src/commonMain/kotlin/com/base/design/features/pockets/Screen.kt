@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.base.design.globalcomponents.PocketyBottomBar
 import com.base.design.globalcomponents.PocketyProfileButton
 import com.base.design.globalcomponents.PocketyTab
-import com.base.design.globalcomponents.PocketyTabTopBar
+import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ScreenPreviews
 
 @Composable
@@ -50,7 +50,7 @@ fun PocketsScreen(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-        PocketyTabTopBar(
+        PocketyTopAppBar(
             title = "Pockets",
             actions = { PocketyProfileButton(onClick = onProfileClick) },
         )

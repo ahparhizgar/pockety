@@ -29,12 +29,13 @@
     <string name="view_undecided_expenses_description">View undecided expenses</string>
     <string name="inbox_title">Inbox</string>
     <string name="inbox_smart_extraction">SMART EXTRACTION</string>
+    <string name="inbox_remaining_count">%1$d remaining</string>
     <string name="inbox_auto_sync_on">Auto-Sync ON</string>
     <string name="inbox_candidates_pending">%1$d Candidates Pending Review</string>
     <string name="inbox_candidates_desc">%1$d bank SMS candidates awaiting action. Items disappear permanently once confirmed or dismissed.</string>
     <string name="inbox_parsed_sms">Parsed SMS</string>
     <string name="inbox_dismiss_action">Dismiss</string>
-    <string name="inbox_edit_open_action">Edit / Open</string>
+    <string name="inbox_edit_open_action">Create Expense</string>
     <string name="inbox_clean_title">Inbox Clean!</string>
     <string name="inbox_clean_desc">All candidates have been processed. New financial SMS will be caught automatically.</string>
     <string name="back_action">Back</string>

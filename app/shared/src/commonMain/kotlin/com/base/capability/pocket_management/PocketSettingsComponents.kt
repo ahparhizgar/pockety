@@ -196,8 +196,8 @@ private fun PocketColorSwatchRow(
       color = MaterialTheme.colorScheme.surfaceContainerLow,
   ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth().padding(16.dp).horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
       defaultCategoryColors.forEach { option ->

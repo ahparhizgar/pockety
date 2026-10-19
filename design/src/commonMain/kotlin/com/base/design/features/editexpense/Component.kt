@@ -60,7 +60,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.base.design.globalcomponents.PocketyTopBar
+import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ComponentPreviews
 
 data class CategoryQuickChip(
@@ -310,7 +310,13 @@ fun LabelChipRow(
           contentColor = MaterialTheme.colorScheme.onSurface,
       ) {
         Row(
-            modifier = Modifier.padding(start = 12.dp, top = 4.dp, end = 6.dp, bottom = 4.dp),
+            modifier =
+                Modifier.padding(
+                    start = 12.dp,
+                    top = 4.dp,
+                    end = 6.dp,
+                    bottom = 4.dp,
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
@@ -682,31 +688,6 @@ fun SourceSmsCard(
   }
 }
 
-@Composable
-fun EditExpenseTopBar(
-    modifier: Modifier = Modifier,
-    title: String = "Edit Expense",
-    onBackClick: () -> Unit = {},
-    showCloseAction: Boolean = false,
-    onCloseClick: () -> Unit = {},
-) {
-  PocketyTopBar(
-      modifier = modifier,
-      title = title,
-      onBackClick = onBackClick,
-      actions = {
-        if (showCloseAction) {
-          IconButton(onClick = onCloseClick) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Close",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-          }
-        }
-      },
-  )
-}
 
 @Composable
 fun EditExpenseActionButtons(
