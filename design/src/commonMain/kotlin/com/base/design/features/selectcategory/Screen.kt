@@ -10,21 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.LabelOff
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.HealthAndSafety
-import androidx.compose.material.icons.filled.LabelOff
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,8 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ScreenPreviews
 import com.base.design.ui.theme.colorSchemeExtended
 
@@ -49,7 +47,7 @@ fun rememberDefaultCategories(): List<CategoryItemData> {
             id = "uncategorized",
             name = "Uncategorized",
             description = "Clear category assignment",
-            icon = Icons.Default.LabelOff,
+            icon = Icons.AutoMirrored.Filled.LabelOff,
             iconBackgroundColor = colors.surfaceContainerHighest,
             iconContentColor = colors.outline,
             isFrequent = false,
@@ -291,10 +289,10 @@ fun SelectCategorySheetContent(
  * Screen 9: SelectCategoryScreen
  *
  * Full screen representation featuring:
- * - Underlying Expense Settings background form (dimmed & scrimmed)
- * - Expressive Modal Bottom Sheet with grab handle and category options
+ * - TopAppBar with back navigation and clear "Select Category" title
+ * - Live category search field
+ * - Frequent and full category list with option to clear or create category
  * - Support for large screens by centering with max 640.dp width
- * - Live category search and selection
  */
 @Composable
 fun SelectCategoryScreen(
@@ -304,53 +302,146 @@ fun SelectCategoryScreen(
     categories: List<CategoryItemData> = rememberDefaultCategories(),
     onCategorySelected: (CategoryItemData) -> Unit = {},
     onCreateCategoryClick: () -> Unit = {},
-    onDismissRequest: () -> Unit = {},
+    onBackClick: (() -> Unit)? = null,
+    onDismissRequest: () -> Unit = onBackClick ?: {},
 ) {
   var searchQuery by remember { mutableStateOf(initialSearchQuery) }
   var selectedCategoryId by remember { mutableStateOf<String?>(initialSelectedCategoryId) }
 
+  val effectiveBackClick = onBackClick ?: onDismissRequest
+
+  val uncategorizedItem = categories.firstOrNull { it.id == "uncategorized" }
+  val frequentItems = categories.filter { it.isFrequent && it.id != "uncategorized" }
+  val otherItems = categories.filter { !it.isFrequent && it.id != "uncategorized" }
+
+  val isSearchActive = searchQuery.isNotBlank()
+  val filteredItems =
+      remember(searchQuery, categories) {
+        if (!isSearchActive) {
+          emptyList()
+        } else {
+          val query = searchQuery.trim().lowercase()
+          categories.filter { item ->
+            item.name.lowercase().contains(query) ||
+                item.description?.lowercase()?.contains(query) == true ||
+                item.searchKeywords.any { it.lowercase().contains(query) }
+          }
+        }
+      }
+
   Scaffold(
       modifier = modifier.fillMaxSize(),
-      containerColor = MaterialTheme.colorScheme.background,
+      containerColor = MaterialTheme.colorScheme.surface,
+      topBar = {
+        PocketyTopAppBar(
+            title = "Select Category",
+            onBackClick = effectiveBackClick,
+        )
+      },
   ) { paddingValues ->
     Box(
         modifier = Modifier.fillMaxSize().padding(paddingValues),
+        contentAlignment = Alignment.TopCenter,
     ) {
-      // Underlying screen context (dimmed mock form)
-      UnderlyingExpenseFormPreview(
-          modifier = Modifier.fillMaxSize().alpha(0.35f),
-      )
-
-      // Ambient Backdrop Scrim
-      Surface(
-          modifier = Modifier.fillMaxSize(),
-          color = MaterialTheme.colorScheme.scrim.copy(alpha = 0.28f),
-          onClick = onDismissRequest,
-      ) {}
-
-      // Expressive Modal Bottom Sheet Container (responsive & centered on large screens)
-      Box(
-          modifier = Modifier.fillMaxSize(),
-          contentAlignment = Alignment.BottomCenter,
+      LazyColumn(
+          modifier = Modifier.fillMaxWidth().widthIn(max = 640.dp).padding(horizontal = 20.dp),
+          verticalArrangement = Arrangement.spacedBy(8.dp),
+          contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
       ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth().widthIn(max = 640.dp),
-            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 16.dp,
-        ) {
-          SelectCategorySheetContent(
-              searchQuery = searchQuery,
-              onSearchQueryChange = { searchQuery = it },
-              selectedCategoryId = selectedCategoryId,
-              categories = categories,
-              onCategorySelected = { item ->
-                selectedCategoryId = item.id
-                onCategorySelected(item)
-              },
-              onCreateCategoryClick = onCreateCategoryClick,
-              onCloseClick = onDismissRequest,
+        item(key = "search_field") {
+          CategorySearchField(
+              query = searchQuery,
+              onQueryChange = { searchQuery = it },
+              modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
           )
+        }
+
+        if (!isSearchActive) {
+          if (uncategorizedItem != null) {
+            item(key = uncategorizedItem.id) {
+              CategoryOptionItem(
+                  name = uncategorizedItem.name,
+                  description = uncategorizedItem.description,
+                  icon = uncategorizedItem.icon,
+                  iconBackgroundColor = uncategorizedItem.iconBackgroundColor,
+                  iconContentColor = uncategorizedItem.iconContentColor,
+                  isSelected = selectedCategoryId == uncategorizedItem.id,
+                  onClick = {
+                    selectedCategoryId = uncategorizedItem.id
+                    onCategorySelected(uncategorizedItem)
+                  },
+              )
+            }
+          }
+
+          item(key = "divider_frequent") { CategorySectionDivider(title = "Frequent") }
+
+          items(frequentItems, key = { it.id }) { item ->
+            CategoryOptionItem(
+                name = item.name,
+                description = item.description,
+                icon = item.icon,
+                iconBackgroundColor = item.iconBackgroundColor,
+                iconContentColor = item.iconContentColor,
+                isSelected = selectedCategoryId == item.id,
+                onClick = {
+                  selectedCategoryId = item.id
+                  onCategorySelected(item)
+                },
+            )
+          }
+
+          if (otherItems.isNotEmpty()) {
+            item(key = "divider_all") { CategorySectionDivider(title = "All Categories") }
+
+            items(otherItems, key = { it.id }) { item ->
+              CategoryOptionItem(
+                  name = item.name,
+                  description = item.description,
+                  icon = item.icon,
+                  iconBackgroundColor = item.iconBackgroundColor,
+                  iconContentColor = item.iconContentColor,
+                  isSelected = selectedCategoryId == item.id,
+                  onClick = {
+                    selectedCategoryId = item.id
+                    onCategorySelected(item)
+                  },
+              )
+            }
+          }
+
+          item(key = "action_create") {
+            CreateCategoryButton(
+                onClick = onCreateCategoryClick,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+          }
+        } else {
+          if (filteredItems.isEmpty()) {
+            item(key = "search_empty") { CategoryEmptyState() }
+          } else {
+            items(filteredItems, key = { it.id }) { item ->
+              CategoryOptionItem(
+                  name = item.name,
+                  description = item.description,
+                  icon = item.icon,
+                  iconBackgroundColor = item.iconBackgroundColor,
+                  iconContentColor = item.iconContentColor,
+                  isSelected = selectedCategoryId == item.id,
+                  onClick = {
+                    selectedCategoryId = item.id
+                    onCategorySelected(item)
+                  },
+              )
+            }
+          }
+
+          item(key = "action_create_search") {
+            CreateCategoryButton(
+                onClick = onCreateCategoryClick,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+          }
         }
       }
     }

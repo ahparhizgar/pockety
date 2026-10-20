@@ -117,14 +117,14 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                 FigmaDesignSection(
                     title = "03. Expense Creation & Taxonomy Selection",
                     subtitle =
-                        "Add / Edit transaction modal with category bottom sheet and custom label checklist",
+                        "Add / Edit transaction modal with category selector and custom label checklist",
                     icon = Icons.Default.Palette,
                     screens =
                         listOf(
                             FigmaScreenItem("03", "Add / Edit Expense", "Transaction Editor") {
                               EditExpenseScreen()
                             },
-                            FigmaScreenItem("09", "Select Category", "Bottom Sheet") {
+                            FigmaScreenItem("09", "Select Category", "Full Screen") {
                               SelectCategoryScreen()
                             },
                             FigmaScreenItem("14", "Select Labels", "Full Screen") {

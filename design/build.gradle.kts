@@ -31,6 +31,7 @@ kotlin {
       implementation(libs.compose.material.icons.extended)
       implementation(libs.compose.components.resources)
       implementation(libs.compose.uiToolingPreview)
+      implementation(libs.navigation3.ui)
     }
     jvmMain.dependencies { implementation(compose.desktop.currentOs) }
     androidMain.dependencies { implementation(libs.androidx.activity.compose) }

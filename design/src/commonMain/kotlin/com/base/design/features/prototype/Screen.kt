@@ -1,11 +1,5 @@
 package com.base.design.features.prototype
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.runtime.Composable
@@ -14,8 +8,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import com.base.design.features.addcategory.AddCategoryScreen
 import com.base.design.features.categorydetail.CategoryDetailScreen
 import com.base.design.features.categorylist.CategoryListScreen
@@ -37,7 +35,7 @@ import com.base.design.features.settings.SettingsScreen
 import com.base.design.globalcomponents.PocketyTab
 import com.base.design.ui.ScreenPreviews
 
-sealed interface PrototypeDestination {
+sealed interface PrototypeDestination : NavKey {
   data object Home : PrototypeDestination
 
   data object Inbox : PrototypeDestination
@@ -70,6 +68,23 @@ sealed interface PrototypeDestination {
   data object AddCategory : PrototypeDestination
 }
 
+private fun <T : NavKey> SnapshotStateList<T>.navigateTo(key: T) {
+  add(key)
+}
+
+private fun <T : NavKey> SnapshotStateList<T>.navigateBack(): Boolean {
+  if (size > 1) {
+    removeAt(lastIndex)
+    return true
+  }
+  return false
+}
+
+private fun <T : NavKey> SnapshotStateList<T>.setRoot(key: T) {
+  clear()
+  add(key)
+}
+
 /**
  * Interactive Prototype Screen linking all 14 screens of Pockety into a cohesive, responsive,
  * semi-functional interactive app flow.
@@ -78,20 +93,7 @@ sealed interface PrototypeDestination {
 fun PrototypeAppScreen(
     modifier: Modifier = Modifier,
 ) {
-  var backStack by remember {
-    mutableStateOf(listOf<PrototypeDestination>(PrototypeDestination.Home))
-  }
-  val currentDestination = backStack.lastOrNull() ?: PrototypeDestination.Home
-
-  fun navigateTo(dest: PrototypeDestination) {
-    backStack = backStack + dest
-  }
-
-  fun navigateBack() {
-    if (backStack.size > 1) {
-      backStack = backStack.dropLast(1)
-    }
-  }
+  val backStack = remember { mutableStateListOf<PrototypeDestination>(PrototypeDestination.Home) }
 
   fun switchTab(tab: PocketyTab) {
     val dest =
@@ -101,7 +103,7 @@ fun PrototypeAppScreen(
           PocketyTab.Pockets -> PrototypeDestination.Pockets
           PocketyTab.Analytics -> PrototypeDestination.Analytics
         }
-    backStack = listOf(dest)
+    backStack.setRoot(dest)
   }
 
   // Live mutable prototype state
@@ -120,222 +122,236 @@ fun PrototypeAppScreen(
   var selectedExpenseLabels by remember { mutableStateOf(listOf("#WorkMeeting", "#Personal")) }
   var selectedExpensePocket by remember { mutableStateOf<String?>("Coffee Pocket") }
 
-  Box(modifier = modifier.fillMaxSize()) {
-    AnimatedContent(
-        targetState = currentDestination,
-        transitionSpec = { fadeIn() togetherWith fadeOut() },
-        label = "PrototypeNavigation",
-    ) { destination ->
-      when (destination) {
-        is PrototypeDestination.Home -> {
-          HomeScreen(
-              state =
-                  homeState.copy(
-                      undecidedExpenseCount = candidates.size,
-                      inboxBadgeCount = candidates.size,
-                  ),
-              onTabSelected = ::switchTab,
-              onUndecidedExpensesClick = { navigateTo(PrototypeDestination.Inbox) },
-              onGrantSmsPermissionClick = { navigateTo(PrototypeDestination.Inbox) },
-              onDateClick = { navigateTo(PrototypeDestination.Analytics) },
-              onAllMonthsClick = { navigateTo(PrototypeDestination.Analytics) },
-              onManagePocketsClick = { navigateTo(PrototypeDestination.Pockets) },
-              onPocketClick = { pocket ->
-                navigateTo(PrototypeDestination.PocketDetail(pocket.name))
-              },
-              onAddExpenseClick = {
-                navigateTo(
-                    PrototypeDestination.EditExpense(
-                        initialAmount = "320,000",
-                        initialCategory = selectedExpenseCategory,
-                    ),
-                )
-              },
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-          )
-        }
+  NavDisplay(
+      backStack = backStack,
+      modifier = modifier,
+      entryProvider =
+          entryProvider {
+            entry<PrototypeDestination.Home> {
+              HomeScreen(
+                  state =
+                      homeState.copy(
+                          undecidedExpenseCount = candidates.size,
+                          inboxBadgeCount = candidates.size,
+                      ),
+                  onTabSelected = ::switchTab,
+                  onUndecidedExpensesClick = { backStack.navigateTo(PrototypeDestination.Inbox) },
+                  onGrantSmsPermissionClick = { backStack.navigateTo(PrototypeDestination.Inbox) },
+                  onDateClick = { backStack.navigateTo(PrototypeDestination.Analytics) },
+                  onAllMonthsClick = { backStack.navigateTo(PrototypeDestination.Analytics) },
+                  onManagePocketsClick = { backStack.navigateTo(PrototypeDestination.Pockets) },
+                  onPocketClick = { pocket ->
+                    backStack.navigateTo(PrototypeDestination.PocketDetail(pocket.name))
+                  },
+                  onAddExpenseClick = {
+                    backStack.navigateTo(
+                        PrototypeDestination.EditExpense(
+                            initialAmount = "320,000",
+                            initialCategory = selectedExpenseCategory,
+                        ),
+                    )
+                  },
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+              )
+            }
 
-        is PrototypeDestination.Inbox -> {
-          InboxScreen(
-              candidates = candidates,
-              selectedTab = PocketyTab.Inbox,
-              totalCount = candidates.size,
-              onTabSelected = ::switchTab,
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-              onDismissClick = { candidate -> candidates.remove(candidate) },
-              onCategoryClick = { candidate, _ -> candidates.remove(candidate) },
-              onOpenEditClick = { candidate ->
-                navigateTo(
-                    PrototypeDestination.EditExpense(
-                        initialAmount =
-                            candidate.amountFormatted.filter { it.isDigit() || it == ',' },
-                        initialCategory = "Cafe & Dining",
-                        initialDescription = "SMS from ${candidate.bankName}",
-                    ),
-                )
-              },
-          )
-        }
+            entry<PrototypeDestination.Inbox> {
+              InboxScreen(
+                  candidates = candidates,
+                  selectedTab = PocketyTab.Inbox,
+                  totalCount = candidates.size,
+                  onTabSelected = ::switchTab,
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+                  onDismissClick = { candidate -> candidates.remove(candidate) },
+                  onCategoryClick = { candidate, _ -> candidates.remove(candidate) },
+                  onOpenEditClick = { candidate ->
+                    backStack.navigateTo(
+                        PrototypeDestination.EditExpense(
+                            initialAmount =
+                                candidate.amountFormatted.filter { it.isDigit() || it == ',' },
+                            initialCategory = "Cafe & Dining",
+                            initialDescription = "SMS from ${candidate.bankName}",
+                        ),
+                    )
+                  },
+              )
+            }
 
-        is PrototypeDestination.Pockets -> {
-          PocketsScreen(
-              pockets = pockets,
-              selectedTab = PocketyTab.Pockets,
-              onTabSelected = ::switchTab,
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-              onAddPocketClick = {
-                navigateTo(PrototypeDestination.PocketSettings("New Budget Pocket"))
-              },
-              onHistoryClick = { pocket ->
-                navigateTo(PrototypeDestination.PocketDetail(pocket.name))
-              },
-              onSettingsClick = { pocket ->
-                navigateTo(PrototypeDestination.PocketSettings(pocket.name))
-              },
-              onTopUpClick = { pocket ->
-                navigateTo(PrototypeDestination.PocketDetail(pocket.name))
-              },
-          )
-        }
+            entry<PrototypeDestination.Pockets> {
+              PocketsScreen(
+                  pockets = pockets,
+                  selectedTab = PocketyTab.Pockets,
+                  onTabSelected = ::switchTab,
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+                  onAddPocketClick = {
+                    backStack.navigateTo(
+                        PrototypeDestination.PocketSettings("New Budget Pocket"),
+                    )
+                  },
+                  onHistoryClick = { pocket ->
+                    backStack.navigateTo(PrototypeDestination.PocketDetail(pocket.name))
+                  },
+                  onSettingsClick = { pocket ->
+                    backStack.navigateTo(PrototypeDestination.PocketSettings(pocket.name))
+                  },
+                  onTopUpClick = { pocket ->
+                    backStack.navigateTo(PrototypeDestination.PocketDetail(pocket.name))
+                  },
+              )
+            }
 
-        is PrototypeDestination.Analytics -> {
-          MonthDetailScreen(
-              selectedTab = PocketyTab.Analytics,
-              onTabSelected = ::switchTab,
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-              onCategoryClick = { category ->
-                navigateTo(PrototypeDestination.CategoryDetail(category.name))
-              },
-              onExpenseClick = { expense ->
-                navigateTo(
-                    PrototypeDestination.EditExpense(
-                        initialAmount = expense.amountFormatted,
-                        initialCategory = expense.title,
-                        initialDescription = expense.subtitle,
-                    ),
-                )
-              },
-          )
-        }
+            entry<PrototypeDestination.Analytics> {
+              MonthDetailScreen(
+                  selectedTab = PocketyTab.Analytics,
+                  onTabSelected = ::switchTab,
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+                  onCategoryClick = { category ->
+                    backStack.navigateTo(PrototypeDestination.CategoryDetail(category.name))
+                  },
+                  onExpenseClick = { expense ->
+                    backStack.navigateTo(
+                        PrototypeDestination.EditExpense(
+                            initialAmount = expense.amountFormatted,
+                            initialCategory = expense.title,
+                            initialDescription = expense.subtitle,
+                        ),
+                    )
+                  },
+              )
+            }
 
-        is PrototypeDestination.Settings -> {
-          SettingsScreen(
-              onBackClick = if (backStack.size > 1) ::navigateBack else null,
-              onTabSelected = ::switchTab,
-              onCategoriesClick = { navigateTo(PrototypeDestination.CategoryList) },
-              onLabelsClick = { navigateTo(PrototypeDestination.SelectLabels) },
-          )
-        }
+            entry<PrototypeDestination.Settings> {
+              SettingsScreen(
+                  onBackClick =
+                      if (backStack.size > 1) {
+                        { backStack.navigateBack() }
+                      } else {
+                        null
+                      },
+                  onTabSelected = ::switchTab,
+                  onCategoriesClick = { backStack.navigateTo(PrototypeDestination.CategoryList) },
+                  onLabelsClick = { backStack.navigateTo(PrototypeDestination.SelectLabels) },
+              )
+            }
 
-        is PrototypeDestination.PocketDetail -> {
-          PocketDetailScreen(
-              pocketTitle = destination.pocketName,
-              onBackClick = ::navigateBack,
-              onSettingsClick = {
-                navigateTo(PrototypeDestination.PocketSettings(destination.pocketName))
-              },
-              onConfigureClick = {
-                navigateTo(PrototypeDestination.PocketSettings(destination.pocketName))
-              },
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-          )
-        }
+            entry<PrototypeDestination.PocketDetail> { destination ->
+              PocketDetailScreen(
+                  pocketTitle = destination.pocketName,
+                  onBackClick = { backStack.navigateBack() },
+                  onSettingsClick = {
+                    backStack.navigateTo(
+                        PrototypeDestination.PocketSettings(destination.pocketName)
+                    )
+                  },
+                  onConfigureClick = {
+                    backStack.navigateTo(
+                        PrototypeDestination.PocketSettings(destination.pocketName)
+                    )
+                  },
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+              )
+            }
 
-        is PrototypeDestination.PocketSettings -> {
-          PocketSettingsScreen(
-              initialPocketName = destination.pocketName,
-              onBackClick = ::navigateBack,
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-              onChangeCategoryClick = { navigateTo(PrototypeDestination.SelectCategory) },
-              onSaveChangesClick = { name, icon, color -> navigateBack() },
-              onDeletePocketClick = ::navigateBack,
-          )
-        }
+            entry<PrototypeDestination.PocketSettings> { destination ->
+              PocketSettingsScreen(
+                  initialPocketName = destination.pocketName,
+                  onBackClick = { backStack.navigateBack() },
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+                  onChangeCategoryClick = {
+                    backStack.navigateTo(PrototypeDestination.SelectCategory)
+                  },
+                  onSaveChangesClick = { _, _, _ -> backStack.navigateBack() },
+                  onDeletePocketClick = { backStack.navigateBack() },
+              )
+            }
 
-        is PrototypeDestination.EditExpense -> {
-          var editAmount by remember { mutableStateOf(destination.initialAmount) }
-          var editDesc by remember { mutableStateOf(destination.initialDescription) }
+            entry<PrototypeDestination.EditExpense> { destination ->
+              var editAmount by remember { mutableStateOf(destination.initialAmount) }
+              var editDesc by remember { mutableStateOf(destination.initialDescription) }
 
-          EditExpenseScreen(
-              amount = editAmount,
-              selectedCategoryName = selectedExpenseCategory,
-              selectedCategoryIcon = selectedExpenseIcon,
-              description = editDesc,
-              labels = selectedExpenseLabels,
-              pocketName = selectedExpensePocket,
-              onAmountChange = { editAmount = it },
-              onDescriptionChange = { editDesc = it },
-              onBackClick = ::navigateBack,
-              onCloseClick = ::navigateBack,
-              onChangeCategoryClick = { navigateTo(PrototypeDestination.SelectCategory) },
-              onClearCategoryClick = { selectedExpenseCategory = "" },
-              onPocketClick = { navigateTo(PrototypeDestination.Pockets) },
-              onClearPocketClick = { selectedExpensePocket = null },
-              onAddLabelClick = { navigateTo(PrototypeDestination.SelectLabels) },
-              onRemoveLabel = { label ->
-                selectedExpenseLabels = selectedExpenseLabels.filter { it != label }
-              },
-              onSaveExpense = ::navigateBack,
-              onDismissSms = ::navigateBack,
-          )
-        }
+              EditExpenseScreen(
+                  amount = editAmount,
+                  selectedCategoryName = selectedExpenseCategory,
+                  selectedCategoryIcon = selectedExpenseIcon,
+                  description = editDesc,
+                  labels = selectedExpenseLabels,
+                  pocketName = selectedExpensePocket,
+                  onAmountChange = { editAmount = it },
+                  onDescriptionChange = { editDesc = it },
+                  onBackClick = { backStack.navigateBack() },
+                  onCloseClick = { backStack.navigateBack() },
+                  onChangeCategoryClick = {
+                    backStack.navigateTo(PrototypeDestination.SelectCategory)
+                  },
+                  onClearCategoryClick = { selectedExpenseCategory = "" },
+                  onPocketClick = { backStack.navigateTo(PrototypeDestination.Pockets) },
+                  onClearPocketClick = { selectedExpensePocket = null },
+                  onAddLabelClick = { backStack.navigateTo(PrototypeDestination.SelectLabels) },
+                  onRemoveLabel = { label ->
+                    selectedExpenseLabels = selectedExpenseLabels.filter { it != label }
+                  },
+                  onSaveExpense = { backStack.navigateBack() },
+                  onDismissSms = { backStack.navigateBack() },
+              )
+            }
 
-        is PrototypeDestination.SelectCategory -> {
-          SelectCategoryScreen(
-              initialSelectedCategoryId = "dining",
-              onDismissRequest = ::navigateBack,
-              onCategorySelected = { category ->
-                selectedExpenseCategory = category.name
-                selectedExpenseIcon = category.icon
-                navigateBack()
-              },
-              onCreateCategoryClick = { navigateTo(PrototypeDestination.AddCategory) },
-          )
-        }
+            entry<PrototypeDestination.SelectCategory> {
+              SelectCategoryScreen(
+                  initialSelectedCategoryId = "dining",
+                  onDismissRequest = { backStack.navigateBack() },
+                  onCategorySelected = { category ->
+                    selectedExpenseCategory = category.name
+                    selectedExpenseIcon = category.icon
+                    backStack.navigateBack()
+                  },
+                  onCreateCategoryClick = {
+                    backStack.navigateTo(PrototypeDestination.AddCategory)
+                  },
+              )
+            }
 
-        is PrototypeDestination.SelectLabels -> {
-          SelectLabelsScreen(
-              onClose = ::navigateBack,
-              onDone = ::navigateBack,
-              onCancel = ::navigateBack,
-              onApply = { chosenLabels ->
-                selectedExpenseLabels = chosenLabels.map { "#${it.name.removePrefix("#")}" }
-                navigateBack()
-              },
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-          )
-        }
+            entry<PrototypeDestination.SelectLabels> {
+              SelectLabelsScreen(
+                  onClose = { backStack.navigateBack() },
+                  onDone = { backStack.navigateBack() },
+                  onCancel = { backStack.navigateBack() },
+                  onApply = { chosenLabels ->
+                    selectedExpenseLabels = chosenLabels.map { "#${it.name.removePrefix("#")}" }
+                    backStack.navigateBack()
+                  },
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+              )
+            }
 
-        is PrototypeDestination.CategoryList -> {
-          CategoryListScreen(
-              onBackClick = ::navigateBack,
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-              onCategoryClick = { cat ->
-                navigateTo(PrototypeDestination.CategoryDetail(cat.name))
-              },
-          )
-        }
+            entry<PrototypeDestination.CategoryList> {
+              CategoryListScreen(
+                  onBackClick = { backStack.navigateBack() },
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+                  onCategoryClick = { cat ->
+                    backStack.navigateTo(PrototypeDestination.CategoryDetail(cat.name))
+                  },
+              )
+            }
 
-        is PrototypeDestination.CategoryDetail -> {
-          CategoryDetailScreen(
-              categoryName = destination.categoryName,
-              onBackClick = ::navigateBack,
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-              onRenameClick = { navigateTo(PrototypeDestination.AddCategory) },
-              onChangeIconClick = { navigateTo(PrototypeDestination.AddCategory) },
-          )
-        }
+            entry<PrototypeDestination.CategoryDetail> { destination ->
+              CategoryDetailScreen(
+                  categoryName = destination.categoryName,
+                  onBackClick = { backStack.navigateBack() },
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+                  onRenameClick = { backStack.navigateTo(PrototypeDestination.AddCategory) },
+                  onChangeIconClick = { backStack.navigateTo(PrototypeDestination.AddCategory) },
+              )
+            }
 
-        is PrototypeDestination.AddCategory -> {
-          AddCategoryScreen(
-              onBackClick = ::navigateBack,
-              onProfileClick = { navigateTo(PrototypeDestination.Settings) },
-              onSaveCategory = { name, color, icon -> navigateBack() },
-          )
-        }
-      }
-    }
-  }
+            entry<PrototypeDestination.AddCategory> {
+              AddCategoryScreen(
+                  onBackClick = { backStack.navigateBack() },
+                  onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
+                  onSaveCategory = { _, _, _ -> backStack.navigateBack() },
+              )
+            }
+          },
+  )
 }
 
 @ScreenPreviews

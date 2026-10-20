@@ -42,12 +42,14 @@ composablePreviewScanner = "0.9.3"
 detekt = "2.0.0-alpha.6"
 composeRules = "0.6.7"
 kotlinx-datetime = "0.7.1"
+navigation3 = "1.1.2"
 
 [libraries]
 compose-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
 compose-adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
 compose-adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptive" }
 compose-adaptive-navigation-suite = { module = "org.jetbrains.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
+navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 compose-material3-windowSizeClass = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
