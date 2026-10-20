@@ -242,18 +242,15 @@ fun CategorySelectorSection(
                   maxLines = 1,
                   overflow = TextOverflow.Ellipsis,
               )
-              Text(
-                  text =
-                      if (hasCategory) {
-                        "Auto-deduct transactions"
-                      } else {
-                        "Assign a category to this expense"
-                      },
-                  style = MaterialTheme.typography.bodySmall,
-                  color = MaterialTheme.colorScheme.onSurfaceVariant,
-                  maxLines = 1,
-                  overflow = TextOverflow.Ellipsis,
-              )
+              if (!hasCategory) {
+                Text(
+                    text = "Assign a category to this expense",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+              }
             }
           }
 

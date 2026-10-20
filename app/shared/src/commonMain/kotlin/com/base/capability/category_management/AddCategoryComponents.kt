@@ -282,6 +282,46 @@ private fun ColorCircleItem(
   }
 }
 
+@Immutable
+internal data class CategoryVisualSelection(
+    val iconOption: CategoryIconOption,
+    val colorOption: CategoryColorOption,
+)
+
+@Immutable
+internal data class CategoryNameFieldData(
+    val name: String,
+    val nameError: String?,
+    val onNameChange: (String) -> Unit,
+    val onDone: () -> Unit,
+)
+
+@Composable
+internal fun CategoryLivePreviewAndNameFields(
+    nameData: CategoryNameFieldData,
+    visualSelection: CategoryVisualSelection,
+    modifier: Modifier = Modifier,
+) {
+  Column(
+      modifier = modifier.fillMaxWidth(),
+      verticalArrangement = Arrangement.spacedBy(20.dp),
+  ) {
+    CategoryLivePreviewCard(
+        categoryName = nameData.name,
+        selectedIcon = visualSelection.iconOption.icon,
+        selectedColor = visualSelection.colorOption.color,
+        onColor = visualSelection.colorOption.onColor,
+    )
+
+    CategoryNameInputField(
+        name = nameData.name,
+        nameError = nameData.nameError,
+        onNameChange = nameData.onNameChange,
+        onDone = nameData.onDone,
+    )
+  }
+}
+
 @Composable
 internal fun SaveCategoryButton(
     onClick: () -> Unit,
@@ -322,46 +362,6 @@ internal fun SaveCategoryButton(
         )
       }
     }
-  }
-}
-
-@Immutable
-internal data class CategoryVisualSelection(
-    val iconOption: CategoryIconOption,
-    val colorOption: CategoryColorOption,
-)
-
-@Immutable
-internal data class CategoryNameFieldData(
-    val name: String,
-    val nameError: String?,
-    val onNameChange: (String) -> Unit,
-    val onDone: () -> Unit,
-)
-
-@Composable
-internal fun CategoryLivePreviewAndNameFields(
-    nameData: CategoryNameFieldData,
-    visualSelection: CategoryVisualSelection,
-    modifier: Modifier = Modifier,
-) {
-  Column(
-      modifier = modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(20.dp),
-  ) {
-    CategoryLivePreviewCard(
-        categoryName = nameData.name,
-        selectedIcon = visualSelection.iconOption.icon,
-        selectedColor = visualSelection.colorOption.color,
-        onColor = visualSelection.colorOption.onColor,
-    )
-
-    CategoryNameInputField(
-        name = nameData.name,
-        nameError = nameData.nameError,
-        onNameChange = nameData.onNameChange,
-        onDone = nameData.onDone,
-    )
   }
 }
 

@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.base.ui.ExcludeScreenshotTest
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
@@ -197,6 +198,7 @@ private fun PocketDetailsScreenNormalPreview() {
 }
 
 @ScreenPreviews
+@ExcludeScreenshotTest
 @Composable
 private fun PocketDetailsScreenTopUpOpenPreview() {
   PocketDetailsScreen(

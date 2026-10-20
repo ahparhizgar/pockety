@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -52,7 +53,7 @@ fun AddCategoryScreen(
   val state by component.state.subscribeAsState()
 
   Scaffold(
-      modifier = modifier.fillMaxSize().testTag("add-category-screen"),
+      modifier = modifier.fillMaxSize().testTag("add-category-screen").navigationBarsPadding(),
       topBar = {
         PocketyTopAppBar(
             title = stringResource(Res.string.add_category_title),
@@ -322,6 +323,22 @@ private fun AddCategoryScreenFilledPreview() {
                   nameText = "Groceries",
                   selectedColor = 0xFF4A7C59,
                   selectedIcon = "shopping_cart",
+              )
+      )
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun AddCategoryScreenSavingPreview() {
+  AddCategoryScreen(
+      FakeAddCategoryComponent(
+          initialState =
+              AddCategoryState(
+                  nameText = "Groceries",
+                  selectedColor = 0xFF4A7C59,
+                  selectedIcon = "shopping_cart",
+                  isSaving = true,
               )
       )
   )
