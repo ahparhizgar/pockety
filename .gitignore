@@ -23,5 +23,6 @@ _bmad
 .agents/skills/bmad-*
 .design
 .screenshots/
+design/screenshots
 design-stitch/
 worktree/

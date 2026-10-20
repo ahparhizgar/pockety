@@ -6,7 +6,10 @@ plugins {
   alias(libs.plugins.composeMultiplatform)
   alias(libs.plugins.composeCompiler)
   alias(libs.plugins.ktfmt)
+  alias(libs.plugins.roborazzi)
 }
+
+roborazzi { outputDir.set(project.file("screenshots")) }
 
 kotlin {
   jvm()
@@ -30,6 +33,14 @@ kotlin {
       implementation(libs.compose.uiToolingPreview)
     }
     jvmMain.dependencies { implementation(compose.desktop.currentOs) }
+    androidMain.dependencies { implementation(libs.androidx.activity.compose) }
+    jvmTest.dependencies {
+      implementation(compose.desktop.currentOs)
+      implementation(libs.junit)
+      implementation(libs.junit.vintage.engine)
+      implementation(libs.roborazzi.core)
+      implementation(libs.roborazzi.compose.desktop)
+    }
   }
 }
 
