@@ -1,6 +1,5 @@
 package com.base.capability.pocket_management
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,8 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -38,15 +35,16 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.base.capability.category_management.CategoryColorsWrapper
 import com.base.capability.category_management.CategoryIconsWrapper
 import com.base.capability.category_management.defaultCategoryColors
 import com.base.capability.category_management.defaultCategoryIcons
 import com.base.capability.category_management.defaultIconCategoryFilters
 import com.base.capability.category_management.resolveCategoryIcon
 import com.base.ui.ComponentPreviews
+import com.base.ui.components.AccentColorPicker
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.category_accent_color_label
 import pockety.app.shared.generated.resources.category_icon_label
 import pockety.app.shared.generated.resources.pocket_name_label
 
@@ -159,76 +157,12 @@ fun PocketAccentColorPicker(
       defaultCategoryColors.firstOrNull { it.colorHex == state.selectedColor }
           ?: defaultCategoryColors.first()
 
-  Column(
-      modifier = modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(8.dp),
-  ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Text(
-          text = stringResource(Res.string.category_accent_color_label),
-          style = MaterialTheme.typography.labelLarge,
-          color = MaterialTheme.colorScheme.onSurface,
-      )
-      Text(
-          text = selectedOption.name,
-          style = MaterialTheme.typography.labelSmall,
-          color = MaterialTheme.colorScheme.secondary,
-      )
-    }
-
-    PocketColorSwatchRow(component = component, state = state)
-  }
-}
-
-@Composable
-private fun PocketColorSwatchRow(
-    component: PocketSettingsComponent,
-    state: PocketSettingsState,
-    modifier: Modifier = Modifier,
-) {
-  Surface(
-      modifier = modifier.fillMaxWidth(),
-      shape = RoundedCornerShape(24.dp),
-      color = MaterialTheme.colorScheme.surfaceContainerLow,
-  ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp).horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-      defaultCategoryColors.forEach { option ->
-        val isSelected = option.colorHex == state.selectedColor
-        Surface(
-            onClick = { component.onColorSelected(option.colorHex) },
-            modifier = Modifier.size(44.dp).testTag("color-swatch-${option.colorHex}"),
-            shape = CircleShape,
-            color = option.color,
-            border =
-                if (isSelected) {
-                  BorderStroke(3.dp, MaterialTheme.colorScheme.surface)
-                } else {
-                  null
-                },
-            shadowElevation = if (isSelected) 4.dp else 1.dp,
-        ) {
-          if (isSelected) {
-            Box(contentAlignment = Alignment.Center) {
-              Icon(
-                  imageVector = Icons.Default.Check,
-                  contentDescription = "Selected",
-                  tint = option.onColor,
-                  modifier = Modifier.size(20.dp),
-              )
-            }
-          }
-        }
-      }
-    }
-  }
+  AccentColorPicker(
+      colors = CategoryColorsWrapper(defaultCategoryColors),
+      selectedColor = selectedOption,
+      onColorSelect = { component.onColorSelected(it.colorHex) },
+      modifier = modifier,
+  )
 }
 
 @Composable

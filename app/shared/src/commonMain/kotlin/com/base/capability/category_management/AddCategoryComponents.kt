@@ -1,6 +1,5 @@
 package com.base.capability.category_management
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Label
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -48,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.category_accent_color_label
 import pockety.app.shared.generated.resources.category_name_label
 import pockety.app.shared.generated.resources.category_name_placeholder
 import pockety.app.shared.generated.resources.save_category_action
@@ -175,110 +172,6 @@ internal fun CategoryNameInputField(
             ),
         keyboardActions = KeyboardActions(onDone = { onDone() }),
     )
-  }
-}
-
-@Composable
-internal fun AccentColorPicker(
-    colors: CategoryColorsWrapper,
-    selectedColor: CategoryColorOption,
-    onColorSelect: (CategoryColorOption) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  Column(
-      modifier = modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(8.dp),
-  ) {
-    AccentColorHeader(selectedColorName = selectedColor.name)
-
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-    ) {
-      Row(
-          modifier = Modifier.fillMaxWidth().padding(16.dp),
-          horizontalArrangement = Arrangement.SpaceBetween,
-          verticalAlignment = Alignment.CenterVertically,
-      ) {
-        colors.items.forEach { option ->
-          ColorCircleItem(
-              option = option,
-              isSelected = option.name == selectedColor.name,
-              onSelect = { onColorSelect(option) },
-          )
-        }
-      }
-    }
-  }
-}
-
-@Composable
-private fun AccentColorHeader(
-    selectedColorName: String,
-    modifier: Modifier = Modifier,
-) {
-  Row(
-      modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Text(
-        text = stringResource(Res.string.category_accent_color_label),
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurface,
-    )
-    Text(
-        text = selectedColorName,
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.secondary,
-    )
-  }
-}
-
-@Composable
-private fun ColorCircleItem(
-    option: CategoryColorOption,
-    isSelected: Boolean,
-    onSelect: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  Box(
-      modifier = modifier.size(44.dp),
-      contentAlignment = Alignment.Center,
-  ) {
-    if (isSelected) {
-      Surface(
-          modifier = Modifier.size(44.dp),
-          shape = CircleShape,
-          color = Color.Transparent,
-          border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-      ) {}
-      Surface(
-          modifier = Modifier.size(36.dp),
-          shape = CircleShape,
-          color = option.color,
-          shadowElevation = 2.dp,
-          onClick = onSelect,
-      ) {
-        Box(contentAlignment = Alignment.Center) {
-          Icon(
-              imageVector = Icons.Default.Check,
-              contentDescription = "Selected ${option.name}",
-              tint = option.onColor,
-              modifier = Modifier.size(18.dp),
-          )
-        }
-      }
-    } else {
-      Surface(
-          modifier = Modifier.size(38.dp),
-          shape = CircleShape,
-          color = option.color,
-          shadowElevation = 1.dp,
-          onClick = onSelect,
-      ) {}
-    }
   }
 }
 
