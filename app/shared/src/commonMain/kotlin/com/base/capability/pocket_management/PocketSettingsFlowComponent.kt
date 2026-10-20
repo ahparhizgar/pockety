@@ -60,6 +60,7 @@ interface PocketSettingsFlowComponentFactory {
       config: PocketSettingsFlowComponent.Config = PocketSettingsFlowComponent.Config(),
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
+      onDeleted: () -> Unit,
   ): PocketSettingsFlowComponent
 }
 
@@ -75,6 +76,7 @@ class DefaultPocketSettingsFlowComponent(
     private val config: PocketSettingsFlowComponent.Config = PocketSettingsFlowComponent.Config(),
     private val onCompleted: () -> Unit,
     private val onCancelled: () -> Unit,
+    private val onDeleted: () -> Unit,
 ) : PocketSettingsFlowComponent, CContext by cContext {
   private val flowNavigation = StackNavigation<PocketSettingsFlowChildConfig>()
   override val backHandler: BackHandler = cContext.backHandler
@@ -118,6 +120,7 @@ class DefaultPocketSettingsFlowComponent(
                 },
                 onCompleted = { onCompleted() },
                 onCancelled = { onCancelled() },
+                onDeleted = { onDeleted() },
             )
         pocketSettingsComponent = settingsComp
         PocketSettingsFlowComponent.Child.PocketSettings(settingsComp)
@@ -165,6 +168,7 @@ class DefaultPocketSettingsFlowComponentFactory(
       config: PocketSettingsFlowComponent.Config,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
+      onDeleted: () -> Unit,
   ): PocketSettingsFlowComponent =
       DefaultPocketSettingsFlowComponent(
           cContext = cContext,
@@ -177,6 +181,7 @@ class DefaultPocketSettingsFlowComponentFactory(
           config = config,
           onCompleted = onCompleted,
           onCancelled = onCancelled,
+          onDeleted = onDeleted,
       )
 }
 
@@ -209,5 +214,6 @@ class FakePocketSettingsFlowComponentFactory : PocketSettingsFlowComponentFactor
       config: PocketSettingsFlowComponent.Config,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
+      onDeleted: () -> Unit,
   ): PocketSettingsFlowComponent = FakePocketSettingsFlowComponent()
 }

@@ -492,10 +492,10 @@ fun PocketTopUpEventRow(
 @ComponentPreviews
 @Composable
 private fun PocketDetailTopBarPreview() {
-    PocketyTopAppBar(
-        title = "Pocket Details",
-        onBackClick = {},
-    )
+  PocketyTopAppBar(
+      title = "Pocket Details",
+      onBackClick = {},
+  )
 }
 
 @ComponentPreviews

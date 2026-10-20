@@ -5,6 +5,7 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.RootScreen
@@ -128,7 +129,7 @@ class PocketSettingsE2eUiTest {
     onNode(hasText("Original Pocket")).waitForExistence().performClick()
 
     // On Pocket Details screen, click settings / configure
-    onNode(hasTestTag("topbar-configure-button")).waitForExistence().performClick()
+    onNode(hasTestTag("action-configure-button")).waitForExistence().performClick()
 
     // Assert "Apply" button is displayed for existing pocket
     onNode(hasTestTag("save-pocket-btn")).waitForExistence().assertExists()
@@ -141,5 +142,38 @@ class PocketSettingsE2eUiTest {
 
     // Verify updated pocket name
     onNode(hasText("Original Pocket Renamed")).waitForExistence().assertExists()
+  }
+
+  @Test
+  fun testDeletePocketFromDangerZone() = runComposeUiTest {
+    val context = TestCContext()
+    val koin = uiKoin()
+    val root = koin.injectUiRoot(context)
+    setContent { RootScreen(root) }
+
+    // 1. Create a pocket
+    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
+    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
+    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+
+    // Danger zone shouldn't exist in create mode
+    onNode(hasTestTag("delete-pocket-btn")).assertDoesNotExist()
+
+    onNode(hasTestTag("pocket-name-input")).performClick()
+    onNode(isFocused()).performTextInput("Pocket To Be Deleted")
+    onNode(hasTestTag("save-pocket-btn")).performClick()
+
+    // 2. Open details then configure/settings
+    onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
+    onNode(hasText("Pocket To Be Deleted")).waitForExistence().performClick()
+    onNode(hasTestTag("action-configure-button")).waitForExistence().performClick()
+
+    // 3. Danger zone should be visible in edit mode
+    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+    onNode(hasTestTag("delete-pocket-btn")).waitForExistence().performScrollTo().performClick()
+
+    // 4. Verify pocket is removed on PocketsScreen (popped back directly upon deletion)
+    onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
+    onNode(hasText("Pocket To Be Deleted")).assertDoesNotExist()
   }
 }

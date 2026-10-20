@@ -150,6 +150,8 @@ interface PocketDao {
   )
 
   @Query("DELETE FROM transactions WHERE id = :id") suspend fun deleteExpense(id: Long)
+
+  @Query("DELETE FROM pockets WHERE id = :id") suspend fun deletePocket(id: Long)
 }
 
 interface PocketRepository {
@@ -184,6 +186,8 @@ interface PocketRepository {
   suspend fun topUpPocket(id: Long, amount: Long, description: String? = null)
 
   suspend fun deleteExpense(id: Long)
+
+  suspend fun deletePocket(id: Long)
 }
 
 class DefaultPocketRepository(
@@ -292,6 +296,10 @@ class DefaultPocketRepository(
     pocketDao.deleteExpense(id)
   }
 
+  override suspend fun deletePocket(id: Long) {
+    pocketDao.deletePocket(id)
+  }
+
   private fun formatAmount(amount: Long): String {
     val formatted = amount.toString().reversed().chunked(3).joinToString(",").reversed()
     return formatted
@@ -299,6 +307,7 @@ class DefaultPocketRepository(
 }
 
 @Fake
+@Suppress("TooManyFunctions")
 class FakePocketRepository(
     initialPockets: List<PocketEntity> = emptyList(),
     initialExpenses: List<ExpenseEntity> = emptyList(),
@@ -436,6 +445,20 @@ class FakePocketRepository(
 
   override suspend fun deleteExpense(id: Long) {
     expensesFlow.update { list -> list.filterNot { it.id == id } }
+  }
+
+  override suspend fun deletePocket(id: Long) {
+    pocketsFlow.update { list -> list.filterNot { it.id == id } }
+    topUpsFlow.update { list -> list.filterNot { it.pocketId == id } }
+    expensesFlow.update { list ->
+      list.map { expense ->
+        if (expense.pocketId == id) {
+          expense.copy(pocketId = null)
+        } else {
+          expense
+        }
+      }
+    }
   }
 
   private fun formatAmount(amount: Long): String {

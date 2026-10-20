@@ -49,16 +49,20 @@ interface PocketSettingsComponent {
 
   fun onSaveClicked(): Job
 
+  fun onDeleteClicked(): Job
+
   fun onBackClicked()
 }
 
 interface PocketSettingsComponentFactory {
+  @Suppress("LongParameterList")
   fun create(
       cContext: CContext,
       pocketId: Long? = null,
       onSelectCategory: () -> Unit = {},
       onCompleted: (Long) -> Unit = {},
       onCancelled: () -> Unit = {},
+      onDeleted: () -> Unit = {},
   ): PocketSettingsComponent
 }
 
@@ -71,6 +75,7 @@ class DefaultPocketSettingsComponent(
     private val onSelectCategory: () -> Unit = {},
     private val onCompleted: (Long) -> Unit = {},
     private val onCancelled: () -> Unit = {},
+    private val onDeleted: () -> Unit = {},
 ) : PocketSettingsComponent, CContext by cContext {
   private val scope = componentScope()
   private val _state = MutableValue(PocketSettingsState(pocketId = pocketId))
@@ -183,6 +188,12 @@ class DefaultPocketSettingsComponent(
     }
   }
 
+  override fun onDeleteClicked(): Job = scope.launch {
+    val id = pocketId ?: return@launch
+    pocketRepository.deletePocket(id)
+    onDeleted()
+  }
+
   override fun onBackClicked() {
     onCancelled()
   }
@@ -198,6 +209,7 @@ class DefaultPocketSettingsComponentFactory(
       onSelectCategory: () -> Unit,
       onCompleted: (Long) -> Unit,
       onCancelled: () -> Unit,
+      onDeleted: () -> Unit,
   ): PocketSettingsComponent =
       DefaultPocketSettingsComponent(
           cContext = cContext,
@@ -207,6 +219,7 @@ class DefaultPocketSettingsComponentFactory(
           onSelectCategory = onSelectCategory,
           onCompleted = onCompleted,
           onCancelled = onCancelled,
+          onDeleted = onDeleted,
       )
 }
 
@@ -273,6 +286,8 @@ class FakePocketSettingsComponent(
 
   override fun onSaveClicked(): Job = Job()
 
+  override fun onDeleteClicked(): Job = Job()
+
   override fun onBackClicked() {}
 }
 
@@ -284,5 +299,6 @@ class FakePocketSettingsComponentFactory : PocketSettingsComponentFactory {
       onSelectCategory: () -> Unit,
       onCompleted: (Long) -> Unit,
       onCancelled: () -> Unit,
+      onDeleted: () -> Unit,
   ): PocketSettingsComponent = FakePocketSettingsComponent()
 }

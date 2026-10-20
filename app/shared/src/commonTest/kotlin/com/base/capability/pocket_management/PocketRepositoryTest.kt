@@ -166,6 +166,44 @@ class PocketRepositoryTest : BehaviorSpec() {
           expenses[0].amount shouldBe 300L
         }
       }
+
+      When("deleting an existing pocket") {
+        var pocketId: Long by testValue { 0 }
+        var expenseId: Long by testValue { 0 }
+
+        beforeEach {
+          pocketId =
+              pocketRepository.addPocket(
+                  name = "To Delete",
+                  categoryTag = "Test",
+                  budgetAmount = 2000,
+                  icon = "delete",
+              )
+          expenseId =
+              expenseRepository.addExpense(
+                  amount = 500,
+                  description = "Expense to unlink",
+                  pocketId = pocketId,
+              )
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the pocket is removed, top-ups are cleared, and expenses are unlinked") {
+          pocketRepository.deletePocket(pocketId)
+          testCoroutineScheduler.advanceUntilIdle()
+
+          val pockets = pocketRepository.observePockets().first()
+          pockets.none { it.id == pocketId } shouldBe true
+
+          pocketRepository.getPocketById(pocketId) shouldBe null
+
+          val topUps = pocketRepository.observePocketTopUps(pocketId).first()
+          topUps shouldHaveSize 0
+
+          val expense = expenseRepository.observeExpenses().first().first { it.id == expenseId }
+          expense.pocketId shouldBe null
+        }
+      }
     }
   }
 }

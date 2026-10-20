@@ -4,13 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.base.capability.category_management.resolveCategoryIcon
@@ -35,6 +42,9 @@ import pockety.app.shared.generated.resources.change_category_action
 import pockety.app.shared.generated.resources.choose_category_action
 import pockety.app.shared.generated.resources.clear_association_action
 import pockety.app.shared.generated.resources.no_category_associated
+import pockety.app.shared.generated.resources.pocket_danger_zone_delete_action
+import pockety.app.shared.generated.resources.pocket_danger_zone_desc
+import pockety.app.shared.generated.resources.pocket_danger_zone_title
 
 @Composable
 fun PocketAssociatedCategoryCard(
@@ -191,5 +201,89 @@ private fun PocketAssociatedCategoryCardPreview() {
           FakePocketSettingsStateFactory.create(
               selectedCategory = FakeCategoryFactory.create(name = "Cafe & Dining"),
           ),
+  )
+}
+
+@Composable
+fun PocketDangerZoneCard(
+    onDeletePocketClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+  Surface(
+      modifier = modifier.fillMaxWidth(),
+      shape = RoundedCornerShape(24.dp),
+      color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f),
+  ) {
+    Column(
+        modifier = Modifier.padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+      Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(8.dp),
+      ) {
+        Icon(
+            imageVector = Icons.Default.Warning,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.error,
+            modifier = Modifier.size(22.dp),
+        )
+        Text(
+            text = stringResource(Res.string.pocket_danger_zone_title),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.error,
+        )
+      }
+
+      Text(
+          text = stringResource(Res.string.pocket_danger_zone_desc),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+      )
+
+      Spacer(modifier = Modifier.height(4.dp))
+
+      DangerZoneDeleteButton(onClick = onDeletePocketClick)
+    }
+  }
+}
+
+@Composable
+private fun DangerZoneDeleteButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+  Surface(
+      onClick = onClick,
+      shape = CircleShape,
+      color = MaterialTheme.colorScheme.surfaceContainerLowest,
+      contentColor = MaterialTheme.colorScheme.error,
+      shadowElevation = 1.dp,
+      modifier = modifier.fillMaxWidth().height(48.dp).testTag("delete-pocket-btn"),
+  ) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+      Icon(
+          imageVector = Icons.Default.Delete,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.error,
+          modifier = Modifier.size(20.dp),
+      )
+      Spacer(modifier = Modifier.width(6.dp))
+      Text(
+          text = stringResource(Res.string.pocket_danger_zone_delete_action),
+          style = MaterialTheme.typography.labelLarge,
+          color = MaterialTheme.colorScheme.error,
+      )
+    }
+  }
+}
+
+@ComponentPreviews
+@Composable
+private fun PocketDangerZoneCardPreview() {
+  PocketDangerZoneCard(
+      onDeletePocketClick = {},
   )
 }

@@ -149,6 +149,13 @@ private fun PocketSettingsContent(
 
     PocketAssociatedCategoryCard(component = component, state = state)
 
+    val isNewPocket = state.pocketId == null
+    if (!isNewPocket) {
+      PocketDangerZoneCard(
+          onDeletePocketClick = { component.onDeleteClicked() },
+      )
+    }
+
     Spacer(modifier = Modifier.height(16.dp))
   }
 }

@@ -190,6 +190,34 @@ class PocketSettingsTest : BehaviorSpec() {
           updated.color shouldBe 0xFF998877
         }
       }
+
+      When("user clicks delete pocket") {
+        val deletedCallback by testValue { FakeCallback<Unit>() }
+        val editComponentWithDelete: PocketSettingsComponent by testValue {
+          koin
+              .get<PocketSettingsComponentFactory>()
+              .create(
+                  cContext = TestCContext(),
+                  pocketId = pocketId,
+                  onCompleted = completedCallback,
+                  onCancelled = cancelledCallback,
+                  onDeleted = deletedCallback,
+              )
+        }
+
+        beforeEach {
+          testCoroutineScheduler.advanceUntilIdle()
+          editComponentWithDelete.onDeleteClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("pocket is deleted from repository and onDeleted callback is invoked") {
+          deletedCallback.shouldBeCalled()
+
+          val pockets = pocketRepository.observePockets().first()
+          pockets.none { it.id == pocketId } shouldBe true
+        }
+      }
     }
   }
 }

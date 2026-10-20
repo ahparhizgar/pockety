@@ -3,11 +3,13 @@ package com.base.capability.pocket_management
 import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.TestCContext
 import com.base.db.CategoryRepository
+import com.base.db.PocketRepository
 import com.base.testValue
 import com.base.ui.components.PocketyTab
 import com.base.util.MainDispatcherExtension
 import com.base.util.assertCategorySelection
 import com.base.util.assertMainComponent
+import com.base.util.assertPocketDetails
 import com.base.util.assertPocketSettings
 import com.base.util.assertPocketSettingsFlow
 import com.base.util.assertPockets
@@ -18,6 +20,7 @@ import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.flow.first
 
 class PocketSettingsFlowE2eTest : BehaviorSpec() {
   init {
@@ -142,6 +145,52 @@ class PocketSettingsFlowE2eTest : BehaviorSpec() {
         ) {
           val pocketsComponent = root.assertMainComponent().assertPocketsComponent()
           pocketsComponent.state.value.pockets shouldHaveSize 0
+        }
+      }
+    }
+
+    Given("existing pocket in PocketSettingsFlowComponent") {
+      val koin by integrationKoin()
+      val context by testValue { TestCContext() }
+      val root by testValue { koin.get<RootComponentFactory>().create(context) }
+      val pocketRepository by testValue { koin.get<PocketRepository>() }
+      var pocketId: Long by testValue { 0 }
+
+      beforeEach {
+        pocketId =
+            pocketRepository.addPocket(
+                name = "Pocket To Remove",
+                categoryTag = "Tag",
+                budgetAmount = 1000,
+                icon = "coffee",
+            )
+        testCoroutineScheduler.advanceUntilIdle()
+
+        val main = root.assertMainComponent()
+        main.onTabSelect(PocketyTab.Pockets)
+        testCoroutineScheduler.advanceUntilIdle()
+
+        val pockets = root.assertPockets()
+        pockets.onPocketClick(pocketId)
+        testCoroutineScheduler.advanceUntilIdle()
+
+        val details = root.assertPocketDetails()
+        details.onConfigureClicked()
+        testCoroutineScheduler.advanceUntilIdle()
+      }
+
+      When("user deletes the pocket from settings") {
+        beforeEach {
+          val flow = root.assertPocketSettingsFlow()
+          val pocketSettings = flow.assertPocketSettings()
+          pocketSettings.onDeleteClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("PocketSettingsFlowComponent is popped and pocket is removed") {
+          val pockets = pocketRepository.observePockets().first()
+          pockets.none { it.id == pocketId } shouldBe true
+          root.assertMainComponent()
         }
       }
     }

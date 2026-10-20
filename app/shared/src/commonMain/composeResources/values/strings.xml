@@ -98,4 +98,7 @@
     <string name="pocket_details_back_action">Go back to Pockets</string>
     <string name="pocket_details_settings_action">Pocket settings</string>
     <string name="pocket_details_more_options">More options</string>
+    <string name="pocket_danger_zone_title">Danger Zone</string>
+    <string name="pocket_danger_zone_desc">Deleting this pocket will unlink all associated expenses. Expense history will be preserved in your general transactions.</string>
+    <string name="pocket_danger_zone_delete_action">Delete Pocket</string>
 </resources>

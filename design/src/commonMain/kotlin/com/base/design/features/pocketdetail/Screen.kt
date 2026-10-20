@@ -48,10 +48,10 @@ fun PocketDetailScreen(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-          PocketyTopAppBar(
-              title = title,
-              onBackClick = onBackClick,
-          )
+        PocketyTopAppBar(
+            title = title,
+            onBackClick = onBackClick,
+        )
       },
   ) { innerPadding ->
     Box(

@@ -5,6 +5,7 @@ import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.popWhile
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.MutableValue
@@ -131,6 +132,7 @@ class DefaultRootComponent(
                   config = config,
                   onCompleted = { rootNavigation.pop() },
                   onCancelled = { rootNavigation.pop() },
+                  onDeleted = { rootNavigation.popWhile { it !is MainComponent.Config } },
               )
       is PocketDetailsComponent.Config ->
           componentProvider
