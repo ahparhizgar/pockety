@@ -26,6 +26,7 @@ import com.base.design.features.pocketsettings.PocketSettingsScreen
 import com.base.design.features.prototype.PrototypeAppScreen
 import com.base.design.features.selectcategory.SelectCategoryScreen
 import com.base.design.features.selectlabels.SelectLabelsScreen
+import com.base.design.features.selectpocket.SelectPocketScreen
 import com.base.design.features.settings.SettingsScreen
 import com.base.design.ui.FigmaBoardPreviews
 
@@ -126,6 +127,9 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                             },
                             FigmaScreenItem("09", "Select Category", "Full Screen") {
                               SelectCategoryScreen()
+                            },
+                            FigmaScreenItem("09b", "Select Pocket", "Full Screen") {
+                              SelectPocketScreen()
                             },
                             FigmaScreenItem("14", "Select Labels", "Full Screen") {
                               SelectLabelsScreen()

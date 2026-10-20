@@ -31,6 +31,7 @@ import com.base.design.features.pockets.PocketsScreen
 import com.base.design.features.pocketsettings.PocketSettingsScreen
 import com.base.design.features.selectcategory.SelectCategoryScreen
 import com.base.design.features.selectlabels.SelectLabelsScreen
+import com.base.design.features.selectpocket.SelectPocketScreen
 import com.base.design.features.settings.SettingsScreen
 import com.base.design.globalcomponents.PocketyTab
 import com.base.design.ui.ScreenPreviews
@@ -57,6 +58,8 @@ sealed interface PrototypeDestination : NavKey {
   ) : PrototypeDestination
 
   data object SelectCategory : PrototypeDestination
+
+  data object SelectPocket : PrototypeDestination
 
   data object SelectLabels : PrototypeDestination
 
@@ -284,7 +287,7 @@ fun PrototypeAppScreen(
                     backStack.navigateTo(PrototypeDestination.SelectCategory)
                   },
                   onClearCategoryClick = { selectedExpenseCategory = "" },
-                  onPocketClick = { backStack.navigateTo(PrototypeDestination.Pockets) },
+                  onPocketClick = { backStack.navigateTo(PrototypeDestination.SelectPocket) },
                   onClearPocketClick = { selectedExpensePocket = null },
                   onAddLabelClick = { backStack.navigateTo(PrototypeDestination.SelectLabels) },
                   onRemoveLabel = { label ->
@@ -292,6 +295,20 @@ fun PrototypeAppScreen(
                   },
                   onSaveExpense = { backStack.navigateBack() },
                   onDismissSms = { backStack.navigateBack() },
+              )
+            }
+
+            entry<PrototypeDestination.SelectPocket> {
+              SelectPocketScreen(
+                  initialSelectedPocketId = "cafe",
+                  onDismissRequest = { backStack.navigateBack() },
+                  onPocketSelected = { pocket ->
+                    selectedExpensePocket = if (pocket.id == "no_pocket") null else pocket.name
+                    backStack.navigateBack()
+                  },
+                  onCreatePocketClick = {
+                    backStack.navigateTo(PrototypeDestination.PocketSettings("New Pocket"))
+                  },
               )
             }
 
