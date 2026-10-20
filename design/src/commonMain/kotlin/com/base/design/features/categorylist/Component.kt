@@ -62,16 +62,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.base.design.ui.ComponentPreviews
 import com.base.design.ui.theme.colorSchemeExtended
-import com.base.design.ui.theme.onPrimaryFixed
-import com.base.design.ui.theme.onSecondaryContainerLight
-import com.base.design.ui.theme.onSecondaryFixed
-import com.base.design.ui.theme.onTertiaryContainerLight
-import com.base.design.ui.theme.onTertiaryFixed
-import com.base.design.ui.theme.primaryFixed
-import com.base.design.ui.theme.secondaryContainerLight
-import com.base.design.ui.theme.secondaryFixed
-import com.base.design.ui.theme.tertiaryContainerLight
-import com.base.design.ui.theme.tertiaryFixed
 
 data class CategoryItemUiModel(
     val id: String,
@@ -494,8 +484,8 @@ object FakeCategoryFactory {
       id: String = "1",
       name: String = "Food & Dining",
       icon: ImageVector = Icons.Default.Restaurant,
-      iconContainerColor: Color = secondaryContainerLight,
-      iconContentColor: Color = onSecondaryContainerLight,
+      iconContainerColor: Color = Color(0xFFCCE9DA),
+      iconContentColor: Color = Color(0xFF184E3F),
       subtitle: String? = null,
   ): CategoryItemUiModel =
       CategoryItemUiModel(
@@ -513,43 +503,43 @@ object FakeCategoryFactory {
               id = "food-dining",
               name = "Food & Dining",
               icon = Icons.Default.Restaurant,
-              iconContainerColor = secondaryContainerLight,
-              iconContentColor = onSecondaryContainerLight,
+              iconContainerColor = Color(0xFFCCE9DA),
+              iconContentColor = Color(0xFF184E3F),
           ),
           CategoryItemUiModel(
               id = "groceries",
               name = "Groceries",
               icon = Icons.Default.ShoppingCart,
-              iconContainerColor = tertiaryContainerLight,
-              iconContentColor = onTertiaryContainerLight,
+              iconContainerColor = Color(0xFFFFDCC1),
+              iconContentColor = Color(0xFF432C14),
           ),
           CategoryItemUiModel(
               id = "transportation-fuel",
               name = "Transportation & Fuel",
               icon = Icons.Default.DirectionsCar,
-              iconContainerColor = primaryFixed,
-              iconContentColor = onPrimaryFixed,
+              iconContainerColor = Color(0xFFB9EFC5),
+              iconContentColor = Color(0xFF00532B),
           ),
           CategoryItemUiModel(
               id = "bills-utilities",
               name = "Bills & Utilities",
               icon = Icons.Default.Bolt,
-              iconContainerColor = secondaryFixed,
-              iconContentColor = onSecondaryFixed,
+              iconContainerColor = Color(0xFFCCE9DA),
+              iconContentColor = Color(0xFF184E3F),
           ),
           CategoryItemUiModel(
               id = "entertainment",
               name = "Entertainment",
               icon = Icons.Default.SportsEsports,
-              iconContainerColor = tertiaryFixed,
-              iconContentColor = onTertiaryFixed,
+              iconContainerColor = Color(0xFFFFDCC1),
+              iconContentColor = Color(0xFF432C14),
           ),
           CategoryItemUiModel(
               id = "shopping",
               name = "Shopping",
               icon = Icons.Default.Checkroom,
-              iconContainerColor = secondaryContainerLight,
-              iconContentColor = onSecondaryContainerLight,
+              iconContainerColor = Color(0xFFCCE9DA),
+              iconContentColor = Color(0xFF184E3F),
           ),
       )
 }

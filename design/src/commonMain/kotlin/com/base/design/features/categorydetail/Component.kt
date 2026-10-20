@@ -31,7 +31,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -194,20 +193,21 @@ fun CategorySpendSummaryCard(
           )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Box(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .height(12.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+        Surface(
+            modifier = Modifier.fillMaxWidth().height(12.dp),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
         ) {
-          Box(
-              modifier =
-                  Modifier.fillMaxWidth(fraction = budgetProgress.coerceIn(0f, 1f))
-                      .fillMaxHeight()
-                      .clip(CircleShape)
-                      .background(MaterialTheme.colorScheme.primary),
-          )
+          Box {
+            Surface(
+                modifier =
+                    Modifier.fillMaxWidth(fraction = budgetProgress.coerceIn(0f, 1f))
+                        .fillMaxHeight(),
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primary,
+                content = {},
+            )
+          }
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(

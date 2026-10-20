@@ -71,6 +71,9 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                             FigmaScreenItem("02", "Inbox (SMS Extraction)", "Smart Extraction") {
                               InboxScreen()
                             },
+                            FigmaScreenItem("02b", "Inbox (Clean / Empty)", "All Processed") {
+                              InboxScreen(candidates = emptyList())
+                            },
                             FigmaScreenItem("04", "Pockets", "Budget Overview") { PocketsScreen() },
                             FigmaScreenItem("05", "Month Detail (Expenses)", "Analytics Tab") {
                               MonthDetailScreen()
@@ -89,6 +92,9 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                         listOf(
                             FigmaScreenItem("07", "Pocket Detail", "Ledger View") {
                               PocketDetailScreen()
+                            },
+                            FigmaScreenItem("07b", "Pocket Detail (Empty)", "No Transactions") {
+                              PocketDetailScreen(items = emptyList())
                             },
                             FigmaScreenItem("08", "Pocket Settings", "Configuration") {
                               PocketSettingsScreen(isNewPocket = false)
@@ -145,6 +151,9 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                         listOf(
                             FigmaScreenItem("10", "Category List", "Taxonomy") {
                               CategoryListScreen()
+                            },
+                            FigmaScreenItem("10b", "Category List (Empty)", "No Categories") {
+                              CategoryListScreen(initialCategories = emptyList())
                             },
                             FigmaScreenItem("11", "Category Detail", "Spend History") {
                               CategoryDetailScreen()

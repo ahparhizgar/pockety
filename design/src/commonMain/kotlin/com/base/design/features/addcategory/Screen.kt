@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.base.design.globalcomponents.AccentColorPicker
+import com.base.design.globalcomponents.PocketyBottomActionBar
 import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ScreenPreviews
 import kotlinx.coroutines.launch
@@ -73,6 +74,13 @@ fun AddCategoryScreen(
         PocketyTopAppBar(
             title = "Add a Category",
             onBackClick = onBackClick,
+        )
+      },
+      bottomBar = {
+        PocketyBottomActionBar(
+            text = "Save Category",
+            onClick = handleSave,
+            enabled = categoryName.isNotBlank(),
         )
       },
       snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -126,15 +134,6 @@ fun AddCategoryScreen(
             selectedFilter = selectedFilter,
             onFilterSelected = { selectedFilter = it },
             accentColor = selectedColor.color,
-        )
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        // Save Category Button
-        SaveCategoryButton(
-            onClick = handleSave,
-            text = "Save Category",
-            enabled = categoryName.isNotBlank(),
         )
 
         Spacer(modifier = Modifier.height(24.dp))

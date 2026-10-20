@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.base.design.globalcomponents.PocketyBottomActionBar
 import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ScreenPreviews
 
@@ -141,10 +142,11 @@ fun SelectLabelsContent(
         )
       },
       bottomBar = {
-        SelectLabelsBottomBar(
-            selectedCount = selectedCount,
-            onCancel = onCancel,
-            onApply = onApply,
+        PocketyBottomActionBar(
+            text = "Apply ($selectedCount)",
+            onClick = onApply,
+            secondaryButtonText = "Cancel",
+            onSecondaryClick = onCancel,
         )
       },
   ) { innerPadding ->

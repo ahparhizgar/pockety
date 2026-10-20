@@ -19,11 +19,13 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EventRepeat
 import androidx.compose.material.icons.filled.LocalCafe
+import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Warning
@@ -38,7 +40,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -269,13 +270,15 @@ fun MonthlyAllocationCard(
 
 @Composable
 fun AssociatedCategoryCard(
-    categoryName: String,
+    categoryName: String?,
     modifier: Modifier = Modifier,
     categorySubtitle: String = "Auto-deduct transactions",
     categoryIcon: ImageVector = Icons.Default.Restaurant,
-    onChangeCategoryClick: () -> Unit = {},
+    onCategoryClick: () -> Unit = {},
     onClearCategoryClick: () -> Unit = {},
 ) {
+  val hasCategory = !categoryName.isNullOrBlank()
+
   Surface(
       modifier = modifier.fillMaxWidth(),
       shape = RoundedCornerShape(24.dp),
@@ -291,16 +294,20 @@ fun AssociatedCategoryCard(
           horizontalArrangement = Arrangement.SpaceBetween,
           verticalAlignment = Alignment.CenterVertically,
       ) {
-        Text(
-            text = "Associated Category",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        TextButton(onClick = onChangeCategoryClick) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+          Icon(
+              imageVector = Icons.Default.LocalOffer,
+              contentDescription = null,
+              tint = MaterialTheme.colorScheme.primary,
+              modifier = Modifier.size(20.dp),
+          )
           Text(
-              text = "Change",
-              style = MaterialTheme.typography.labelMedium,
-              color = MaterialTheme.colorScheme.primary,
+              text = "Associated Category",
+              style = MaterialTheme.typography.titleMedium,
+              color = MaterialTheme.colorScheme.onSurface,
           )
         }
       }
@@ -310,6 +317,7 @@ fun AssociatedCategoryCard(
           shape = RoundedCornerShape(16.dp),
           color = MaterialTheme.colorScheme.surfaceContainerLowest,
           shadowElevation = 1.dp,
+          onClick = onCategoryClick,
       ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -324,12 +332,22 @@ fun AssociatedCategoryCard(
             Surface(
                 modifier = Modifier.size(48.dp),
                 shape = CircleShape,
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                color =
+                    if (hasCategory) {
+                      MaterialTheme.colorScheme.secondaryContainer
+                    } else {
+                      MaterialTheme.colorScheme.surfaceContainerHigh
+                    },
+                contentColor =
+                    if (hasCategory) {
+                      MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                      MaterialTheme.colorScheme.onSurfaceVariant
+                    },
             ) {
               Box(contentAlignment = Alignment.Center) {
                 Icon(
-                    imageVector = categoryIcon,
+                    imageVector = if (hasCategory) categoryIcon else Icons.Default.Category,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                 )
@@ -338,14 +356,24 @@ fun AssociatedCategoryCard(
 
             Column(modifier = Modifier.weight(1f)) {
               Text(
-                  text = categoryName,
+                  text = if (hasCategory) categoryName else "Tap to select category",
                   style = MaterialTheme.typography.titleMedium,
-                  color = MaterialTheme.colorScheme.onSurface,
+                  color =
+                      if (hasCategory) {
+                        MaterialTheme.colorScheme.onSurface
+                      } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                      },
                   maxLines = 1,
                   overflow = TextOverflow.Ellipsis,
               )
               Text(
-                  text = categorySubtitle,
+                  text =
+                      if (hasCategory) {
+                        categorySubtitle
+                      } else {
+                        "Auto-deduct transactions for this pocket"
+                      },
                   style = MaterialTheme.typography.bodySmall,
                   color = MaterialTheme.colorScheme.onSurfaceVariant,
                   maxLines = 1,
@@ -354,13 +382,15 @@ fun AssociatedCategoryCard(
             }
           }
 
-          IconButton(onClick = onClearCategoryClick) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Clear association",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(20.dp),
-            )
+          if (hasCategory) {
+            IconButton(onClick = onClearCategoryClick) {
+              Icon(
+                  imageVector = Icons.Default.Close,
+                  contentDescription = "Clear association",
+                  tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                  modifier = Modifier.size(20.dp),
+              )
+            }
           }
         }
       }
@@ -611,6 +641,14 @@ private fun AssociatedCategoryCardPreview() {
   AssociatedCategoryCard(
       categoryName = "Cafe & Dining",
       categorySubtitle = "Auto-deduct transactions",
+  )
+}
+
+@ComponentPreviews
+@Composable
+private fun AssociatedCategoryCardUnlinkedPreview() {
+  AssociatedCategoryCard(
+      categoryName = null,
   )
 }
 

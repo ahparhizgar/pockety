@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DirectionsCar
@@ -142,14 +143,17 @@ fun AmountHeroSection(
 
 @Composable
 fun CategorySelectorSection(
-    selectedCategoryName: String,
+    selectedCategoryName: String?,
     modifier: Modifier = Modifier,
     selectedCategoryIcon: ImageVector = Icons.Default.LocalCafe,
     quickChips: List<CategoryQuickChip> = defaultQuickCategories,
     selectedChipId: String? = "cafe",
-    onChangeClick: () -> Unit = {},
+    onCategoryClick: () -> Unit = {},
+    onClearCategoryClick: () -> Unit = {},
     onQuickChipClick: (CategoryQuickChip) -> Unit = {},
 ) {
+  val hasCategory = !selectedCategoryName.isNullOrBlank()
+
   Surface(
       modifier = modifier.fillMaxWidth(),
       shape = RoundedCornerShape(24.dp),
@@ -181,13 +185,6 @@ fun CategorySelectorSection(
               color = MaterialTheme.colorScheme.onSurface,
           )
         }
-        TextButton(onClick = onChangeClick) {
-          Text(
-              text = "Change",
-              style = MaterialTheme.typography.labelMedium,
-              color = MaterialTheme.colorScheme.primary,
-          )
-        }
       }
 
       Surface(
@@ -195,43 +192,80 @@ fun CategorySelectorSection(
           shape = RoundedCornerShape(16.dp),
           color = MaterialTheme.colorScheme.surfaceContainerLowest,
           shadowElevation = 1.dp,
-          onClick = onChangeClick,
+          onClick = onCategoryClick,
       ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-          Surface(
-              modifier = Modifier.size(48.dp),
-              shape = CircleShape,
-              color = MaterialTheme.colorScheme.secondaryContainer,
-              contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+          Row(
+              modifier = Modifier.weight(1f),
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.spacedBy(12.dp),
           ) {
-            Box(contentAlignment = Alignment.Center) {
-              Icon(
-                  imageVector = selectedCategoryIcon,
-                  contentDescription = selectedCategoryName,
-                  modifier = Modifier.size(24.dp),
+            Surface(
+                modifier = Modifier.size(48.dp),
+                shape = CircleShape,
+                color =
+                    if (hasCategory) {
+                      MaterialTheme.colorScheme.secondaryContainer
+                    } else {
+                      MaterialTheme.colorScheme.surfaceContainerHigh
+                    },
+                contentColor =
+                    if (hasCategory) {
+                      MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                      MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+            ) {
+              Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = if (hasCategory) selectedCategoryIcon else Icons.Default.Category,
+                    contentDescription = selectedCategoryName,
+                    modifier = Modifier.size(24.dp),
+                )
+              }
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
+              Text(
+                  text = if (hasCategory) selectedCategoryName else "Tap to select category",
+                  style = MaterialTheme.typography.titleMedium,
+                  color =
+                      if (hasCategory) {
+                        MaterialTheme.colorScheme.onSurface
+                      } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                      },
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis,
+              )
+              Text(
+                  text =
+                      if (hasCategory) {
+                        "Auto-deduct transactions"
+                      } else {
+                        "Assign a category to this expense"
+                      },
+                  style = MaterialTheme.typography.bodySmall,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis,
               )
             }
           }
 
-          Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = selectedCategoryName,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = "Auto-deduct transactions",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+          if (hasCategory) {
+            IconButton(onClick = onClearCategoryClick) {
+              Icon(
+                  imageVector = Icons.Default.Close,
+                  contentDescription = "Clear category",
+                  tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                  modifier = Modifier.size(20.dp),
+              )
+            }
           }
         }
       }
@@ -435,12 +469,15 @@ fun DescriptionSection(
 
 @Composable
 fun PocketSelectorCard(
+    pocketName: String?,
     modifier: Modifier = Modifier,
-    pocketName: String = "Coffee Pocket",
     pocketBalance: String = "400,000 T",
     pocketIcon: ImageVector = Icons.Default.LocalCafe,
-    onUnlinkClick: () -> Unit = {},
+    onPocketClick: () -> Unit = {},
+    onClearPocketClick: () -> Unit = {},
 ) {
+  val hasPocket = !pocketName.isNullOrBlank()
+
   Surface(
       modifier = modifier.fillMaxWidth(),
       shape = RoundedCornerShape(24.dp),
@@ -472,14 +509,6 @@ fun PocketSelectorCard(
               color = MaterialTheme.colorScheme.onSurface,
           )
         }
-        TextButton(onClick = onUnlinkClick) {
-          Text(
-              text = "Unlink",
-              style = MaterialTheme.typography.labelMedium,
-              fontWeight = FontWeight.SemiBold,
-              color = MaterialTheme.colorScheme.error,
-          )
-        }
       }
 
       Surface(
@@ -487,37 +516,79 @@ fun PocketSelectorCard(
           shape = RoundedCornerShape(16.dp),
           color = MaterialTheme.colorScheme.surfaceContainerLowest,
           shadowElevation = 1.dp,
+          onClick = onPocketClick,
       ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-          Surface(
-              shape = CircleShape,
-              color = MaterialTheme.colorScheme.secondaryContainer,
-              contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-              modifier = Modifier.size(48.dp),
+          Row(
+              modifier = Modifier.weight(1f),
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.spacedBy(12.dp),
           ) {
-            Box(contentAlignment = Alignment.Center) {
-              Icon(
-                  imageVector = pocketIcon,
-                  contentDescription = pocketName,
-                  modifier = Modifier.size(24.dp),
+            Surface(
+                shape = CircleShape,
+                color =
+                    if (hasPocket) {
+                      MaterialTheme.colorScheme.secondaryContainer
+                    } else {
+                      MaterialTheme.colorScheme.surfaceContainerHigh
+                    },
+                contentColor =
+                    if (hasPocket) {
+                      MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                      MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                modifier = Modifier.size(48.dp),
+            ) {
+              Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = if (hasPocket) pocketIcon else Icons.Default.AccountBalanceWallet,
+                    contentDescription = pocketName,
+                    modifier = Modifier.size(24.dp),
+                )
+              }
+            }
+            Column(modifier = Modifier.weight(1f)) {
+              Text(
+                  text = if (hasPocket) pocketName else "Tap to link a pocket",
+                  style = MaterialTheme.typography.titleMedium,
+                  color =
+                      if (hasPocket) {
+                        MaterialTheme.colorScheme.onSurface
+                      } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                      },
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis,
+              )
+              Text(
+                  text =
+                      if (hasPocket) {
+                        "Balance: $pocketBalance"
+                      } else {
+                        "Auto-deduct from pocket budget"
+                      },
+                  style = MaterialTheme.typography.bodySmall,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis,
               )
             }
           }
-          Column {
-            Text(
-                text = pocketName,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                text = "Balance: $pocketBalance",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+
+          if (hasPocket) {
+            IconButton(onClick = onClearPocketClick) {
+              Icon(
+                  imageVector = Icons.Default.Close,
+                  contentDescription = "Unlink pocket",
+                  tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                  modifier = Modifier.size(20.dp),
+              )
+            }
           }
         }
       }
@@ -754,6 +825,15 @@ private fun CategorySelectorSectionPreview() {
 
 @ComponentPreviews
 @Composable
+private fun CategorySelectorSectionUncategorizedPreview() {
+  CategorySelectorSection(
+      selectedCategoryName = null,
+      selectedChipId = null,
+  )
+}
+
+@ComponentPreviews
+@Composable
 private fun CategorySelectorSectionGroceriesPreview() {
   CategorySelectorSection(
       selectedCategoryName = "Groceries",
@@ -786,6 +866,14 @@ private fun PocketSelectorCardPreview() {
   PocketSelectorCard(
       pocketName = "Coffee Pocket",
       pocketBalance = "400,000 T",
+  )
+}
+
+@ComponentPreviews
+@Composable
+private fun PocketSelectorCardUnlinkedPreview() {
+  PocketSelectorCard(
+      pocketName = null,
   )
 }
 

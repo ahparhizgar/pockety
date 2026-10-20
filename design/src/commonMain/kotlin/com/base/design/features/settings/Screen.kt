@@ -49,14 +49,22 @@ fun SettingsScreen(
     onTabSelected: (PocketyTab) -> Unit = {},
     onNotificationsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onBackClick: (() -> Unit)? = null,
 ) {
   Scaffold(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
-        PocketyTopAppBar(
-            title = "Settings",
-        )
+        if (onBackClick != null) {
+          PocketyTopAppBar(
+              title = "Settings",
+              onBackClick = onBackClick,
+          )
+        } else {
+          PocketyTopAppBar(
+              title = "Settings",
+          )
+        }
       },
       bottomBar = {
         PocketyBottomBar(

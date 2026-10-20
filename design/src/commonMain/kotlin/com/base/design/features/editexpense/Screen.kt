@@ -40,13 +40,13 @@ fun EditExpenseScreen(
     modifier: Modifier = Modifier,
     amount: String = "320,000",
     currency: String = "T",
-    selectedCategoryName: String = "Cafe & Dining",
+    selectedCategoryName: String? = "Cafe & Dining",
     selectedCategoryIcon: ImageVector = Icons.Default.LocalCafe,
     quickChips: List<CategoryQuickChip> = defaultQuickCategories,
     selectedChipId: String? = "cafe",
     description: String = "Latte & Croissant at Sam Cafe",
     labels: List<String> = listOf("#WorkMeeting", "#Personal"),
-    pocketName: String = "Coffee Pocket",
+    pocketName: String? = "Coffee Pocket",
     pocketBalance: String = "400,000 T",
     expenseTimeText: String = "October 16, 2026 • 14:32",
     smsSender: String = "+9820000",
@@ -57,11 +57,13 @@ fun EditExpenseScreen(
     onCloseClick: () -> Unit = {},
     onAmountChange: (String) -> Unit = {},
     onChangeCategoryClick: () -> Unit = {},
+    onClearCategoryClick: () -> Unit = {},
     onQuickChipClick: (CategoryQuickChip) -> Unit = {},
     onDescriptionChange: (String) -> Unit = {},
     onRemoveLabel: (String) -> Unit = {},
     onAddLabelClick: () -> Unit = {},
-    onUnlinkPocketClick: () -> Unit = {},
+    onPocketClick: () -> Unit = {},
+    onClearPocketClick: () -> Unit = {},
     onEditTimeClick: () -> Unit = {},
     onSaveExpense: () -> Unit = {},
     onDismissSms: () -> Unit = {},
@@ -105,7 +107,8 @@ fun EditExpenseScreen(
             selectedCategoryIcon = selectedCategoryIcon,
             quickChips = quickChips,
             selectedChipId = selectedChipId,
-            onChangeClick = onChangeCategoryClick,
+            onCategoryClick = onChangeCategoryClick,
+            onClearCategoryClick = onClearCategoryClick,
             onQuickChipClick = onQuickChipClick,
         )
 
@@ -126,7 +129,8 @@ fun EditExpenseScreen(
         PocketSelectorCard(
             pocketName = pocketName,
             pocketBalance = pocketBalance,
-            onUnlinkClick = onUnlinkPocketClick,
+            onPocketClick = onPocketClick,
+            onClearPocketClick = onClearPocketClick,
         )
 
         ExpenseTimeCard(
@@ -162,16 +166,28 @@ fun EditExpenseScreen(
 private fun EditExpenseScreenPreview() {
   var amount by remember { mutableStateOf("320,000") }
   var description by remember { mutableStateOf("Latte & Croissant at Sam Cafe") }
-  var selectedChip by remember { mutableStateOf("cafe") }
+  var selectedChip by remember { mutableStateOf<String?>("cafe") }
+  var selectedCategory by remember { mutableStateOf<String?>("Cafe & Dining") }
+  var selectedPocket by remember { mutableStateOf<String?>("Coffee Pocket") }
   var labels by remember { mutableStateOf(listOf("#WorkMeeting", "#Personal")) }
 
   EditExpenseScreen(
       amount = amount,
       onAmountChange = { amount = it },
+      selectedCategoryName = selectedCategory,
       description = description,
       onDescriptionChange = { description = it },
       selectedChipId = selectedChip,
-      onQuickChipClick = { selectedChip = it.id },
+      onQuickChipClick = {
+        selectedChip = it.id
+        selectedCategory = it.name
+      },
+      onClearCategoryClick = {
+        selectedCategory = null
+        selectedChip = null
+      },
+      pocketName = selectedPocket,
+      onClearPocketClick = { selectedPocket = null },
       labels = labels,
       onRemoveLabel = { labels = labels - it },
       onAddLabelClick = { labels = labels + "#New" },

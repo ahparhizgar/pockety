@@ -118,6 +118,7 @@ fun PrototypeAppScreen(
   var selectedExpenseCategory by remember { mutableStateOf("Cafe & Dining") }
   var selectedExpenseIcon by remember { mutableStateOf<ImageVector>(Icons.Default.LocalCafe) }
   var selectedExpenseLabels by remember { mutableStateOf(listOf("#WorkMeeting", "#Personal")) }
+  var selectedExpensePocket by remember { mutableStateOf<String?>("Coffee Pocket") }
 
   Box(modifier = modifier.fillMaxSize()) {
     AnimatedContent(
@@ -219,6 +220,7 @@ fun PrototypeAppScreen(
 
         is PrototypeDestination.Settings -> {
           SettingsScreen(
+              onBackClick = if (backStack.size > 1) ::navigateBack else null,
               onTabSelected = ::switchTab,
               onCategoriesClick = { navigateTo(PrototypeDestination.CategoryList) },
               onLabelsClick = { navigateTo(PrototypeDestination.SelectLabels) },
@@ -260,11 +262,15 @@ fun PrototypeAppScreen(
               selectedCategoryIcon = selectedExpenseIcon,
               description = editDesc,
               labels = selectedExpenseLabels,
+              pocketName = selectedExpensePocket,
               onAmountChange = { editAmount = it },
               onDescriptionChange = { editDesc = it },
               onBackClick = ::navigateBack,
               onCloseClick = ::navigateBack,
               onChangeCategoryClick = { navigateTo(PrototypeDestination.SelectCategory) },
+              onClearCategoryClick = { selectedExpenseCategory = "" },
+              onPocketClick = { navigateTo(PrototypeDestination.Pockets) },
+              onClearPocketClick = { selectedExpensePocket = null },
               onAddLabelClick = { navigateTo(PrototypeDestination.SelectLabels) },
               onRemoveLabel = { label ->
                 selectedExpenseLabels = selectedExpenseLabels.filter { it != label }

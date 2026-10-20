@@ -51,7 +51,7 @@ fun PocketSettingsScreen(
     initialColor: ItemColorOption = defaultItemColors.first(),
     initialAllocatedAmount: String = "1,500,000",
     initialCurrentBalance: String = "850,000",
-    initialCategoryName: String = "Cafe & Dining",
+    initialCategoryName: String? = "Cafe & Dining",
     initialCategorySubtitle: String = "Auto-deduct transactions",
     currencySymbol: String = "T",
     isNewPocket: Boolean = false,
@@ -63,6 +63,8 @@ fun PocketSettingsScreen(
   var selectedIconFilter by remember { mutableStateOf("All") }
   var autoRefillEnabled by remember { mutableStateOf(true) }
   var topUpAmount by remember { mutableStateOf("") }
+  var categoryName by remember { mutableStateOf(initialCategoryName) }
+  var categorySubtitle by remember { mutableStateOf(initialCategorySubtitle) }
 
   PocketSettingsScreenContent(
       pocketName = pocketName,
@@ -80,14 +82,17 @@ fun PocketSettingsScreen(
       currentBalance = initialCurrentBalance,
       topUpAmount = topUpAmount,
       onTopUpAmountChange = { topUpAmount = it },
-      categoryName = initialCategoryName,
-      categorySubtitle = initialCategorySubtitle,
+      categoryName = categoryName,
+      categorySubtitle = categorySubtitle,
       isNewPocket = isNewPocket,
       onBackClick = onBackClick,
       onSaveChangesClick = { onSaveChangesClick(pocketName, selectedIcon, selectedColor) },
       onDeletePocketClick = onDeletePocketClick,
-      onChangeCategoryClick = onChangeCategoryClick,
-      onClearCategoryClick = onClearCategoryClick,
+      onCategoryClick = onChangeCategoryClick,
+      onClearCategoryClick = {
+        categoryName = null
+        onClearCategoryClick()
+      },
       onTuneClick = onTuneClick,
       onConfirmTopUp = {
         onConfirmTopUp(topUpAmount)
@@ -114,14 +119,14 @@ fun PocketSettingsScreenContent(
     currentBalance: String,
     topUpAmount: String,
     onTopUpAmountChange: (String) -> Unit,
-    categoryName: String,
+    categoryName: String?,
     categorySubtitle: String,
     modifier: Modifier = Modifier,
     isNewPocket: Boolean = false,
     onBackClick: () -> Unit = {},
     onSaveChangesClick: () -> Unit = {},
     onDeletePocketClick: () -> Unit = {},
-    onChangeCategoryClick: () -> Unit = {},
+    onCategoryClick: () -> Unit = {},
     onClearCategoryClick: () -> Unit = {},
     onTuneClick: () -> Unit = {},
     onConfirmTopUp: () -> Unit = {},
@@ -191,7 +196,7 @@ fun PocketSettingsScreenContent(
         AssociatedCategoryCard(
             categoryName = categoryName,
             categorySubtitle = categorySubtitle,
-            onChangeCategoryClick = onChangeCategoryClick,
+            onCategoryClick = onCategoryClick,
             onClearCategoryClick = onClearCategoryClick,
         )
 

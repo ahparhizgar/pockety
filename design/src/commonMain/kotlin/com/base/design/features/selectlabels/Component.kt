@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -25,8 +23,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -412,67 +408,6 @@ fun SelectLabelsCardHeader(
   )
 }
 
-@Composable
-fun SelectLabelsBottomBar(
-    selectedCount: Int,
-    onCancel: () -> Unit,
-    onApply: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  Surface(
-      color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
-      modifier = modifier.fillMaxWidth(),
-  ) {
-    Box(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-      Row(
-          modifier = Modifier.fillMaxWidth().widthIn(max = 640.dp),
-          horizontalArrangement = Arrangement.spacedBy(16.dp),
-          verticalAlignment = Alignment.CenterVertically,
-      ) {
-        Button(
-            onClick = onCancel,
-            modifier = Modifier.weight(1f).height(48.dp),
-            shape = CircleShape,
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
-        ) {
-          Text(
-              text = "Cancel",
-              style = MaterialTheme.typography.labelLarge,
-          )
-        }
-        Button(
-            onClick = onApply,
-            modifier = Modifier.weight(1f).height(48.dp),
-            shape = CircleShape,
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-        ) {
-          Icon(
-              imageVector = Icons.Default.Check,
-              contentDescription = null,
-              modifier = Modifier.size(18.dp),
-          )
-          Spacer(modifier = Modifier.width(6.dp))
-          Text(
-              text = "Apply ($selectedCount)",
-              style = MaterialTheme.typography.labelLarge,
-          )
-        }
-      }
-    }
-  }
-}
-
 object FakeLabelsFactory {
   fun create(
       id: String = "work",
@@ -578,15 +513,5 @@ private fun SelectLabelsHeaderPreview() {
   SelectLabelsHeader(
       selectedCount = 4,
       onClearAll = {},
-  )
-}
-
-@ComponentPreviews
-@Composable
-private fun SelectLabelsBottomBarPreview() {
-  SelectLabelsBottomBar(
-      selectedCount = 4,
-      onCancel = {},
-      onApply = {},
   )
 }
