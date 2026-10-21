@@ -14,15 +14,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.LocalOffer
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,13 +39,12 @@ import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.associated_category_subtitle
 import pockety.app.shared.generated.resources.associated_category_title
-import pockety.app.shared.generated.resources.change_category_action
-import pockety.app.shared.generated.resources.choose_category_action
+import pockety.app.shared.generated.resources.associated_category_unlinked_subtitle
 import pockety.app.shared.generated.resources.clear_association_action
-import pockety.app.shared.generated.resources.no_category_associated
 import pockety.app.shared.generated.resources.pocket_danger_zone_delete_action
 import pockety.app.shared.generated.resources.pocket_danger_zone_desc
 import pockety.app.shared.generated.resources.pocket_danger_zone_title
+import pockety.app.shared.generated.resources.tap_to_select_category
 
 @Composable
 fun PocketAssociatedCategoryCard(
@@ -62,43 +62,19 @@ fun PocketAssociatedCategoryCard(
         modifier = Modifier.padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-      PocketCategoryCardHeader(
-          hasSelectedCategory = state.selectedCategory != null,
-          onSelectCategory = component::onSelectCategoryClicked,
-      )
+      PocketAssociatedCategoryHeader()
 
-      Surface(
-          modifier = Modifier.fillMaxWidth(),
-          shape = RoundedCornerShape(16.dp),
-          color = MaterialTheme.colorScheme.surfaceContainerLowest,
-          shadowElevation = 1.dp,
-      ) {
-        if (state.selectedCategory != null) {
-          PocketSelectedCategoryRow(
-              category = state.selectedCategory,
-              onClear = component::onCategoryCleared,
-          )
-        } else {
-          Row(
-              modifier = Modifier.fillMaxWidth().padding(16.dp),
-              verticalAlignment = Alignment.CenterVertically,
-          ) {
-            Text(
-                text = stringResource(Res.string.no_category_associated),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-          }
-        }
-      }
+      PocketAssociatedCategoryItemSurface(
+          category = state.selectedCategory,
+          onSelectCategory = component::onSelectCategoryClicked,
+          onClearCategory = component::onCategoryCleared,
+      )
     }
   }
 }
 
 @Composable
-private fun PocketCategoryCardHeader(
-    hasSelectedCategory: Boolean,
-    onSelectCategory: () -> Unit,
+private fun PocketAssociatedCategoryHeader(
     modifier: Modifier = Modifier,
 ) {
   Row(
@@ -106,89 +82,140 @@ private fun PocketCategoryCardHeader(
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically,
   ) {
-    Text(
-        text = stringResource(Res.string.associated_category_title),
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurface,
-    )
-    TextButton(
-        onClick = onSelectCategory,
-        modifier = Modifier.testTag("change-category-btn"),
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+      Icon(
+          imageVector = Icons.Default.LocalOffer,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.primary,
+          modifier = Modifier.size(20.dp),
+      )
       Text(
-          text =
-              if (hasSelectedCategory) {
-                stringResource(Res.string.change_category_action)
-              } else {
-                stringResource(Res.string.choose_category_action)
-              },
-          style = MaterialTheme.typography.labelMedium,
-          color = MaterialTheme.colorScheme.primary,
+          text = stringResource(Res.string.associated_category_title),
+          style = MaterialTheme.typography.titleMedium,
+          color = MaterialTheme.colorScheme.onSurface,
       )
     }
   }
 }
 
 @Composable
-private fun PocketSelectedCategoryRow(
-    category: CategoryEntity,
-    onClear: () -> Unit,
+private fun PocketAssociatedCategoryItemSurface(
+    category: CategoryEntity?,
+    onSelectCategory: () -> Unit,
+    onClearCategory: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-  Row(
-      modifier = modifier.fillMaxWidth().padding(16.dp),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically,
+  val hasCategory = category != null
+
+  Surface(
+      modifier = modifier.fillMaxWidth(),
+      shape = RoundedCornerShape(16.dp),
+      color = MaterialTheme.colorScheme.surfaceContainerLowest,
+      shadowElevation = 1.dp,
+      onClick = onSelectCategory,
   ) {
     Row(
-        modifier = Modifier.weight(1f),
+        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-      Surface(
-          modifier = Modifier.size(48.dp),
-          shape = CircleShape,
-          color = MaterialTheme.colorScheme.secondaryContainer,
-          contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+      Row(
+          modifier = Modifier.weight(1f),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(12.dp),
       ) {
-        Box(contentAlignment = Alignment.Center) {
+        PocketCategoryIconBadge(category = category)
+        PocketCategoryTextDetails(category = category)
+      }
+
+      if (hasCategory) {
+        IconButton(
+            onClick = onClearCategory,
+            modifier = Modifier.testTag("clear-category-btn"),
+        ) {
           Icon(
-              imageVector = resolveCategoryIcon(category.icon),
-              contentDescription = null,
-              modifier = Modifier.size(24.dp),
+              imageVector = Icons.Default.Close,
+              contentDescription = stringResource(Res.string.clear_association_action),
+              tint = MaterialTheme.colorScheme.onSurfaceVariant,
+              modifier = Modifier.size(20.dp),
           )
         }
       }
-
-      Column(modifier = Modifier.weight(1f)) {
-        Text(
-            text = category.name,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-            text = stringResource(Res.string.associated_category_subtitle),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-      }
     }
+  }
+}
 
-    IconButton(
-        onClick = onClear,
-        modifier = Modifier.testTag("clear-category-btn"),
-    ) {
+@Composable
+private fun PocketCategoryIconBadge(
+    category: CategoryEntity?,
+    modifier: Modifier = Modifier,
+) {
+  val hasCategory = category != null
+  Surface(
+      modifier = modifier.size(48.dp),
+      shape = CircleShape,
+      color =
+          if (hasCategory) {
+            MaterialTheme.colorScheme.secondaryContainer
+          } else {
+            MaterialTheme.colorScheme.surfaceContainerHigh
+          },
+      contentColor =
+          if (hasCategory) {
+            MaterialTheme.colorScheme.onSecondaryContainer
+          } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+          },
+  ) {
+    Box(contentAlignment = Alignment.Center) {
       Icon(
-          imageVector = Icons.Default.Close,
-          contentDescription = stringResource(Res.string.clear_association_action),
-          tint = MaterialTheme.colorScheme.onSurfaceVariant,
-          modifier = Modifier.size(20.dp),
+          imageVector =
+              if (hasCategory) {
+                resolveCategoryIcon(category.icon)
+              } else {
+                Icons.Default.Category
+              },
+          contentDescription = null,
+          modifier = Modifier.size(24.dp),
       )
     }
+  }
+}
+
+@Composable
+private fun PocketCategoryTextDetails(
+    category: CategoryEntity?,
+    modifier: Modifier = Modifier,
+) {
+  val hasCategory = category != null
+  Column(modifier = modifier) {
+    Text(
+        text = category?.name ?: stringResource(Res.string.tap_to_select_category),
+        style = MaterialTheme.typography.titleMedium,
+        color =
+            if (hasCategory) {
+              MaterialTheme.colorScheme.onSurface
+            } else {
+              MaterialTheme.colorScheme.onSurfaceVariant
+            },
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
+    Text(
+        text =
+            if (hasCategory) {
+              stringResource(Res.string.associated_category_subtitle)
+            } else {
+              stringResource(Res.string.associated_category_unlinked_subtitle)
+            },
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
   }
 }
 
@@ -200,6 +227,18 @@ private fun PocketAssociatedCategoryCardPreview() {
       state =
           FakePocketSettingsStateFactory.create(
               selectedCategory = FakeCategoryFactory.create(name = "Cafe & Dining"),
+          ),
+  )
+}
+
+@ComponentPreviews
+@Composable
+private fun PocketAssociatedCategoryCardUnlinkedPreview() {
+  PocketAssociatedCategoryCard(
+      component = FakePocketSettingsComponent(),
+      state =
+          FakePocketSettingsStateFactory.create(
+              selectedCategory = null,
           ),
   )
 }

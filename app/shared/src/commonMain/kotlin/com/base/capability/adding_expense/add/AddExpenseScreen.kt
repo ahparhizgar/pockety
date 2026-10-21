@@ -21,9 +21,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Label
-import androidx.compose.material.icons.automirrored.filled.LabelOff
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EditNote
@@ -56,8 +53,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.base.capability.category_management.resolveCategoryIcon
-import com.base.db.CategoryEntity
 import com.base.db.FakeCategoryFactory
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
@@ -66,16 +61,12 @@ import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.add_expense_title
 import pockety.app.shared.generated.resources.cancel_action
-import pockety.app.shared.generated.resources.category_label
-import pockety.app.shared.generated.resources.change_category_action
-import pockety.app.shared.generated.resources.choose_category_action
 import pockety.app.shared.generated.resources.currency_symbol
 import pockety.app.shared.generated.resources.description_label
 import pockety.app.shared.generated.resources.description_placeholder
 import pockety.app.shared.generated.resources.error_empty_description
 import pockety.app.shared.generated.resources.error_invalid_amount
 import pockety.app.shared.generated.resources.save_action
-import pockety.app.shared.generated.resources.uncategorized_title
 
 @Composable
 fun AddExpenseScreen(
@@ -390,156 +381,6 @@ private fun DescriptionInputField(
           style = MaterialTheme.typography.bodySmall,
           modifier = Modifier.padding(start = 16.dp).testTag("description-error"),
       )
-    }
-  }
-}
-
-@Composable
-private fun CategorySelectorCard(
-    component: AddExpenseComponent,
-    selectedCategory: CategoryEntity?,
-    modifier: Modifier = Modifier,
-) {
-  Column(
-      modifier = modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(8.dp),
-  ) {
-    CategoryHeader(
-        hasSelectedCategory = selectedCategory != null,
-        onSelectCategory = component::onSelectCategoryClicked,
-    )
-
-    Surface(
-        onClick = component::onSelectCategoryClicked,
-        modifier = Modifier.fillMaxWidth().testTag("selected-category-card"),
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.7f),
-    ) {
-      CategoryContentRow(
-          selectedCategory = selectedCategory,
-          onClear = component::onCategoryCleared,
-      )
-    }
-  }
-}
-
-@Composable
-private fun CategoryHeader(
-    hasSelectedCategory: Boolean,
-    onSelectCategory: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  Row(
-      modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-      Icon(
-          imageVector = Icons.AutoMirrored.Filled.Label,
-          contentDescription = null,
-          tint = MaterialTheme.colorScheme.primary,
-          modifier = Modifier.size(18.dp),
-      )
-      Text(
-          text = stringResource(Res.string.category_label),
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.SemiBold,
-          color = MaterialTheme.colorScheme.onSurface,
-      )
-    }
-
-    TextButton(
-        onClick = onSelectCategory,
-        modifier = Modifier.testTag("change-category-button"),
-    ) {
-      Text(
-          text =
-              if (hasSelectedCategory) {
-                stringResource(Res.string.change_category_action)
-              } else {
-                stringResource(Res.string.choose_category_action)
-              },
-          style = MaterialTheme.typography.labelMedium,
-          fontWeight = FontWeight.SemiBold,
-          color = MaterialTheme.colorScheme.primary,
-      )
-      Spacer(modifier = Modifier.width(2.dp))
-      Icon(
-          imageVector = Icons.Default.ArrowDropDown,
-          contentDescription = null,
-          tint = MaterialTheme.colorScheme.primary,
-          modifier = Modifier.size(16.dp),
-      )
-    }
-  }
-}
-
-@Composable
-private fun CategoryContentRow(
-    selectedCategory: CategoryEntity?,
-    onClear: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  Row(
-      modifier = modifier.fillMaxWidth().padding(14.dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceBetween,
-  ) {
-    Row(
-        modifier = Modifier.weight(1f),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-      val isCategorySelected = selectedCategory != null
-      Surface(
-          shape = RoundedCornerShape(12.dp),
-          color =
-              if (isCategorySelected) {
-                MaterialTheme.colorScheme.primary
-              } else {
-                MaterialTheme.colorScheme.surfaceContainerHighest
-              },
-          contentColor =
-              if (isCategorySelected) {
-                MaterialTheme.colorScheme.onPrimary
-              } else {
-                MaterialTheme.colorScheme.outline
-              },
-          modifier = Modifier.size(40.dp),
-      ) {
-        Box(contentAlignment = Alignment.Center) {
-          val icon =
-              if (selectedCategory != null) {
-                resolveCategoryIcon(selectedCategory.icon)
-              } else {
-                Icons.AutoMirrored.Filled.LabelOff
-              }
-          Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(20.dp))
-        }
-      }
-
-      Text(
-          text = selectedCategory?.name ?: stringResource(Res.string.uncategorized_title),
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onSurface,
-          modifier = Modifier.testTag("selected-category-name"),
-      )
-    }
-
-    if (selectedCategory != null) {
-      IconButton(onClick = onClear, modifier = Modifier.testTag("clear-category-btn")) {
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(20.dp),
-        )
-      }
     }
   }
 }
