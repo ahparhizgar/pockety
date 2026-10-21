@@ -7,6 +7,7 @@ import com.base.capability.home.HomeComponentFactory
 import com.base.component.TestCContext
 import com.base.db.CandidateExpenseRepository
 import com.base.db.CategoryRepository
+import com.base.db.FakeCategoryFactory
 import com.base.notification.ExpenseNotificationManager
 import com.base.notification.FakeExpenseNotificationManager
 import com.base.testValue
@@ -19,6 +20,7 @@ import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.flow.first
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.error_empty_description
 import pockety.app.shared.generated.resources.error_invalid_amount
@@ -158,9 +160,11 @@ class AddExpenseTest : BehaviorSpec() {
         beforeEach {
           val categoryRepo = koin.get<CategoryRepository>()
           categoryId = categoryRepo.addCategory("Dining", "restaurant", 0xFFE57373)
+          val categories = categoryRepo.observeCategories().first()
+          val category = categories.first { cat -> cat.id == categoryId }
           component.onAmountChanged("75000")
           component.onDescriptionChanged("Dinner with colleagues")
-          component.onCategoryChanged(categoryId)
+          component.onCategorySelected(category)
           component.onSaveClicked()
           testCoroutineScheduler.advanceUntilIdle()
         }
@@ -171,6 +175,33 @@ class AddExpenseTest : BehaviorSpec() {
           expenses[0].amount shouldBe 75000L
           expenses[0].description shouldBe "Dinner with colleagues"
           expenses[0].categoryId shouldBe categoryId
+        }
+      }
+
+      When("user selects an associated category directly") {
+        val category = FakeCategoryFactory.create(id = 10, name = "Dining Out", icon = "restaurant")
+
+        beforeEach { component.onCategorySelected(category) }
+
+        Then("selectedCategory is updated in state") {
+          val state = component.state.value
+          state.selectedCategory?.id shouldBe 10L
+          state.selectedCategory?.name shouldBe "Dining Out"
+          state.selectedCategory?.icon shouldBe "restaurant"
+        }
+      }
+
+      When("user clears the selected category") {
+        val category = FakeCategoryFactory.create(id = 10, name = "Dining Out")
+
+        beforeEach {
+          component.onCategorySelected(category)
+          component.onCategoryCleared()
+        }
+
+        Then("selectedCategory becomes null") {
+          val state = component.state.value
+          state.selectedCategory.shouldBeNull()
         }
       }
 

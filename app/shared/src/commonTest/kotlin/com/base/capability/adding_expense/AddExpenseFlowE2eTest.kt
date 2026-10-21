@@ -78,7 +78,8 @@ class AddExpenseFlowE2eTest : BehaviorSpec() {
               Then("category is saved, and flow pops back with Coffee category available") {
                 val flow = root.assertAddExpenseFlow()
                 val addExpense = flow.assertAddExpenseComponent()
-                addExpense.state.value.selectedCategoryId shouldBe 1L
+                addExpense.state.value.selectedCategory?.id shouldBe 1L
+                addExpense.state.value.selectedCategory?.name shouldBe "Coffee"
               }
 
               And("user enters amount and description, and taps save") {

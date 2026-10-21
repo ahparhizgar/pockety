@@ -1,6 +1,7 @@
 package com.base.capability.category_management
 
 import com.base.component.TestCContext
+import com.base.db.CategoryEntity
 import com.base.db.CategoryRepository
 import com.base.testValue
 import com.base.util.FakeCallback
@@ -20,7 +21,7 @@ class AddCategoryTest : BehaviorSpec() {
 
     Given("AddCategoryComponent") {
       val koin by integrationKoin()
-      val completedCallback by testValue { FakeCallback1<Long>() }
+      val completedCallback by testValue { FakeCallback1<CategoryEntity>() }
       val cancelledCallback by testValue { FakeCallback<Unit>() }
       val categoryRepository by testValue { koin.get<CategoryRepository>() }
 

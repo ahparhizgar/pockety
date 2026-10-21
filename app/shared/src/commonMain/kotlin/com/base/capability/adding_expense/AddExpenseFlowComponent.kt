@@ -118,7 +118,7 @@ class DefaultAddExpenseFlowComponent(
                         candidateExpenseId = childConfig.candidateExpenseId,
                     ),
                 onSelectCategory = {
-                  val currentCatId = addExpenseComponent?.state?.value?.selectedCategoryId
+                  val currentCatId = addExpenseComponent?.state?.value?.selectedCategory?.id
                   flowNavigation.pushNew(
                       AddExpenseFlowChildConfig.CategorySelection(currentCategoryId = currentCatId)
                   )
@@ -136,7 +136,7 @@ class DefaultAddExpenseFlowComponent(
                   cContext = context,
                   initialSelectedCategoryId = childConfig.currentCategoryId,
                   onCategorySelected = { category ->
-                    addExpenseComponent?.onCategoryChanged(category?.id)
+                    addExpenseComponent?.onCategorySelected(category)
                     flowNavigation.pop()
                   },
                   onCreateCategoryClicked = {
@@ -150,8 +150,8 @@ class DefaultAddExpenseFlowComponent(
           AddExpenseFlowComponent.Child.AddCategory(
               factories.addCategoryComponentFactory.create(
                   cContext = context,
-                  onCompleted = { newCategoryId ->
-                    addExpenseComponent?.onCategoryChanged(newCategoryId)
+                  onCompleted = { newCategory ->
+                    addExpenseComponent?.onCategorySelected(newCategory)
                     flowNavigation.pop()
                     flowNavigation.pop()
                   },

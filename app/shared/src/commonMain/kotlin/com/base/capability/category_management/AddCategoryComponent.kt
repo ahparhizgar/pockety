@@ -6,9 +6,12 @@ import com.arkivanov.decompose.value.update
 import com.base.Fake
 import com.base.component.CContext
 import com.base.component.componentScope
+import com.base.db.CategoryEntity
 import com.base.db.CategoryRepository
 import com.base.usermessage.UiString
+import kotlin.time.Clock
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.error_empty_category_name
@@ -38,7 +41,7 @@ interface AddCategoryComponent {
 interface AddCategoryComponentFactory {
   fun create(
       cContext: CContext,
-      onCompleted: (Long) -> Unit = {},
+      onCompleted: (CategoryEntity) -> Unit = {},
       onCancelled: () -> Unit,
   ): AddCategoryComponent
 }
@@ -46,7 +49,7 @@ interface AddCategoryComponentFactory {
 class DefaultAddCategoryComponent(
     cContext: CContext,
     private val categoryRepository: CategoryRepository,
-    private val onCompleted: (Long) -> Unit,
+    private val onCompleted: (CategoryEntity) -> Unit,
     private val onCancelled: () -> Unit,
 ) : AddCategoryComponent, CContext by cContext {
   private val scope = componentScope()
@@ -86,7 +89,16 @@ class DefaultAddCategoryComponent(
               icon = currentState.selectedIcon,
               color = currentState.selectedColor,
           )
-      onCompleted(newId)
+      val createdCategory =
+          categoryRepository.observeCategories().first().firstOrNull { it.id == newId }
+              ?: CategoryEntity(
+                  id = newId,
+                  name = trimmedName,
+                  icon = currentState.selectedIcon,
+                  color = currentState.selectedColor,
+                  createdAt = Clock.System.now(),
+              )
+      onCompleted(createdCategory)
     } finally {
       _state.update { it.copy(isSaving = false) }
     }
@@ -102,7 +114,7 @@ class DefaultAddCategoryComponentFactory(
 ) : AddCategoryComponentFactory {
   override fun create(
       cContext: CContext,
-      onCompleted: (Long) -> Unit,
+      onCompleted: (CategoryEntity) -> Unit,
       onCancelled: () -> Unit,
   ): AddCategoryComponent =
       DefaultAddCategoryComponent(
@@ -141,7 +153,7 @@ class FakeAddCategoryComponent(
 class FakeAddCategoryComponentFactory : AddCategoryComponentFactory {
   override fun create(
       cContext: CContext,
-      onCompleted: (Long) -> Unit,
+      onCompleted: (CategoryEntity) -> Unit,
       onCancelled: () -> Unit,
   ): AddCategoryComponent = FakeAddCategoryComponent()
 }

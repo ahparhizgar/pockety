@@ -146,8 +146,8 @@ class DefaultPocketSettingsFlowComponent(
           PocketSettingsFlowComponent.Child.AddCategory(
               factories.addCategoryComponentFactory.create(
                   cContext = context,
-                  onCompleted = { newCategoryId ->
-                    pocketSettingsComponent?.onCategoryChanged(newCategoryId)
+                  onCompleted = { newCategory ->
+                    pocketSettingsComponent?.onCategorySelected(newCategory)
                     flowNavigation.pop()
                     flowNavigation.pop()
                   },
