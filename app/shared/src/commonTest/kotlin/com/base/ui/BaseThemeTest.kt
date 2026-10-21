@@ -18,9 +18,7 @@ class BaseThemeTest {
     var actualPrimary = Color.Unspecified
 
     setContent {
-      BaseTheme(colorScheme = customScheme) {
-        actualPrimary = MaterialTheme.colorScheme.primary
-      }
+      BaseTheme(colorScheme = customScheme) { actualPrimary = MaterialTheme.colorScheme.primary }
     }
 
     assertEquals(customPrimary, actualPrimary)

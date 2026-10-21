@@ -13,11 +13,7 @@ class Application : Application() {
     startKoin {
       androidContext(this@Application)
       modules(appModule())
-      modules(
-          module {
-            single { DataDir(".") }
-          }
-      )
+      modules(module { single { DataDir(".") } })
     }
   }
 }
