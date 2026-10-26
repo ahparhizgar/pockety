@@ -5,7 +5,6 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
 import com.base.component.CContext
-import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.PocketRepository
 import kotlin.time.Instant
@@ -15,7 +14,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.Serializable
 
 data class PocketTransactionUiModel(
     val id: String,
@@ -60,11 +58,6 @@ interface PocketDetailsComponent {
   fun onDismissConfirmation()
 
   fun onDeleteTransaction(id: String)
-
-  @Serializable
-  data class Config(
-      val pocketId: Long,
-  ) : TopLevelDestination
 }
 
 interface PocketDetailsComponentFactory {

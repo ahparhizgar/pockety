@@ -5,7 +5,6 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
 import com.base.component.CContext
-import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.FakePocketItemModelFactory
 import com.base.db.PocketItemModel
@@ -13,7 +12,6 @@ import com.base.db.PocketRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.serialization.Serializable
 
 data class PocketsState(
     val pockets: List<PocketItemModel> = emptyList(),
@@ -26,8 +24,6 @@ interface PocketsComponent {
   fun onPocketClick(pocketId: Long)
 
   fun onAddPocketClick()
-
-  @Serializable data object Config : TopLevelDestination
 }
 
 interface PocketsComponentFactory {

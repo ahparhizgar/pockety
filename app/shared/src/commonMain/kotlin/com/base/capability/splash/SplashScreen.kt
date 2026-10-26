@@ -11,8 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.base.component.TopLevelChild
-import com.base.component.TopLevelDestination
 import com.base.ui.ScreenPreviews
 
 @Composable
@@ -26,10 +24,6 @@ fun SplashScreen(modifier: Modifier = Modifier) {
     }
   }
 }
-
-data object SplashDestination : TopLevelDestination
-
-data object SplashChild : TopLevelChild
 
 @ScreenPreviews
 @Composable

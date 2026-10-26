@@ -18,8 +18,8 @@ import com.base.capability.category_management.AddCategoryComponent
 import com.base.capability.category_management.AddCategoryComponentFactory
 import com.base.capability.category_management.CategorySelectionComponent
 import com.base.capability.category_management.CategorySelectionComponentFactory
+import com.base.capability.root_navigation.RootFlowDestination
 import com.base.component.CContext
-import com.base.component.TopLevelDestination
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -51,18 +51,12 @@ interface AddExpenseFlowComponent {
 
     class AddCategory(val component: AddCategoryComponent) : Child
   }
-
-  @Serializable
-  data class Config(
-      val initialAmount: String = "",
-      val candidateExpenseId: Long? = null,
-  ) : TopLevelDestination
 }
 
 interface AddExpenseFlowComponentFactory {
   fun create(
       cContext: CContext,
-      config: AddExpenseFlowComponent.Config = AddExpenseFlowComponent.Config(),
+      config: RootFlowDestination.AddExpenseFlow = RootFlowDestination.AddExpenseFlow(),
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseFlowComponent
@@ -77,7 +71,7 @@ data class AddExpenseFlowChildFactories(
 class DefaultAddExpenseFlowComponent(
     cContext: CContext,
     private val factories: AddExpenseFlowChildFactories,
-    private val config: AddExpenseFlowComponent.Config = AddExpenseFlowComponent.Config(),
+    private val config: RootFlowDestination.AddExpenseFlow = RootFlowDestination.AddExpenseFlow(),
     private val onCompleted: () -> Unit,
     private val onCancelled: () -> Unit,
 ) : AddExpenseFlowComponent, CContext by cContext {
@@ -169,7 +163,7 @@ class DefaultAddExpenseFlowComponentFactory(
 ) : AddExpenseFlowComponentFactory {
   override fun create(
       cContext: CContext,
-      config: AddExpenseFlowComponent.Config,
+      config: RootFlowDestination.AddExpenseFlow,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseFlowComponent =
@@ -211,7 +205,7 @@ class FakeAddExpenseFlowComponent(
 class FakeAddExpenseFlowComponentFactory : AddExpenseFlowComponentFactory {
   override fun create(
       cContext: CContext,
-      config: AddExpenseFlowComponent.Config,
+      config: RootFlowDestination.AddExpenseFlow,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseFlowComponent = FakeAddExpenseFlowComponent()

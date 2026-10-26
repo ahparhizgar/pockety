@@ -6,8 +6,8 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
 import com.base.capability.adding_expense.AddExpenseFlowComponent
+import com.base.capability.root_navigation.RootFlowDestination
 import com.base.component.CContext
-import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
 import com.base.db.ExpenseEntity
@@ -35,8 +35,6 @@ interface HomeComponent {
   fun onUndecidedExpensesClicked()
 
   fun onEnableSmsTrackingClicked(): Job
-
-  @Serializable data object Config : TopLevelDestination
 }
 
 interface HomeComponentFactory {
@@ -102,7 +100,7 @@ class DefaultHomeComponent(
           .launchIn(scope)
 
   override fun onAddExpenseClicked() {
-    navigation.pushNew(AddExpenseFlowComponent.Config())
+    navigation.pushNew(RootFlowDestination.AddExpenseFlow())
     onAddExpense()
   }
 

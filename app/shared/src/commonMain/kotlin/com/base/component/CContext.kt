@@ -19,6 +19,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.lifecycle.resume
 import com.arkivanov.essenty.statekeeper.StateKeeper
 import com.arkivanov.essenty.statekeeper.StateKeeperDispatcher
+import com.base.capability.root_navigation.RootFlowDestination
 import com.base.permission.FakePermissionController
 import com.base.permission.PermissionController
 import com.base.remote.userMessage
@@ -48,7 +49,7 @@ class WindowSizeHolder(
 }
 
 interface CContext : GenericComponentContext<CContext> {
-  var navigation: StackNavigation<TopLevelDestination>
+  var navigation: StackNavigation<RootFlowDestination>
   var messageShower: MessageShower
   var windowSizeHolder: WindowSizeHolder
   var permissionController: PermissionController
@@ -61,7 +62,7 @@ class DefaultCContext(
     override val instanceKeeper: InstanceKeeper =
         InstanceKeeperDispatcher().also { lifecycle.doOnDestroy(it::destroy) },
     override val backHandler: BackHandler = BackDispatcher(),
-    override var navigation: StackNavigation<TopLevelDestination> = NoopStackNavigation(),
+    override var navigation: StackNavigation<RootFlowDestination> = NoopStackNavigation(),
     override var messageShower: MessageShower = MessageHolder(),
     override var windowSizeHolder: WindowSizeHolder = WindowSizeHolder(),
     override var permissionController: PermissionController = FakePermissionController(),
@@ -80,8 +81,6 @@ class DefaultCContext(
         )
       }
 }
-
-object InitialTestDestination : TopLevelDestination
 
 fun CContext.componentScope(): CoroutineScope {
   return CoroutineScope(
@@ -165,17 +164,13 @@ class NoopStackNavigation<C : Any> : StackNavigation<C> {
   }
 }
 
-interface TopLevelDestination
-
-interface TopLevelChild
-
 fun CContext.fakeStack() =
-    (navigation as? FakeStackNavigation<TopLevelDestination>)?.stack
+    (navigation as? FakeStackNavigation<RootFlowDestination>)?.stack
         ?: error("navigation by default has a FakeStackNavigation unless is set by specific test!")
 
 class TestCContext : CContext {
   val lifecycleRegistry = LifecycleRegistry()
-  val fakeStackNavigation = FakeStackNavigation<TopLevelDestination>(InitialTestDestination)
+  val fakeStackNavigation = FakeStackNavigation<RootFlowDestination>(RootFlowDestination.Splash)
   val backDispatcher = BackDispatcher()
   val messageHolder = MessageHolder()
   val testWindowSizeHolder = WindowSizeHolder()
@@ -204,7 +199,7 @@ class TestCContext : CContext {
             permissionController = permissionController,
         )
       }
-  override var navigation: StackNavigation<TopLevelDestination> = fakeStackNavigation
+  override var navigation: StackNavigation<RootFlowDestination> = fakeStackNavigation
   override var messageShower: MessageShower = messageHolder
   override var windowSizeHolder: WindowSizeHolder = testWindowSizeHolder
   override var permissionController: PermissionController = fakePermissionController

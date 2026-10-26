@@ -15,8 +15,8 @@ import com.base.capability.category_management.AddCategoryComponent
 import com.base.capability.category_management.AddCategoryComponentFactory
 import com.base.capability.category_management.CategorySelectionComponent
 import com.base.capability.category_management.CategorySelectionComponentFactory
+import com.base.capability.root_navigation.RootFlowDestination
 import com.base.component.CContext
-import com.base.component.TopLevelDestination
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -47,17 +47,12 @@ interface PocketSettingsFlowComponent {
 
     class AddCategory(val component: AddCategoryComponent) : Child
   }
-
-  @Serializable
-  data class Config(
-      val pocketId: Long? = null,
-  ) : TopLevelDestination
 }
 
 interface PocketSettingsFlowComponentFactory {
   fun create(
       cContext: CContext,
-      config: PocketSettingsFlowComponent.Config = PocketSettingsFlowComponent.Config(),
+      config: RootFlowDestination.PocketSettingsFlow = RootFlowDestination.PocketSettingsFlow(),
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
       onDeleted: () -> Unit,
@@ -73,7 +68,7 @@ data class PocketSettingsFlowChildFactories(
 class DefaultPocketSettingsFlowComponent(
     cContext: CContext,
     private val factories: PocketSettingsFlowChildFactories,
-    private val config: PocketSettingsFlowComponent.Config = PocketSettingsFlowComponent.Config(),
+    private val config: RootFlowDestination.PocketSettingsFlow = RootFlowDestination.PocketSettingsFlow(),
     private val onCompleted: () -> Unit,
     private val onCancelled: () -> Unit,
     private val onDeleted: () -> Unit,
@@ -165,7 +160,7 @@ class DefaultPocketSettingsFlowComponentFactory(
 ) : PocketSettingsFlowComponentFactory {
   override fun create(
       cContext: CContext,
-      config: PocketSettingsFlowComponent.Config,
+      config: RootFlowDestination.PocketSettingsFlow,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
       onDeleted: () -> Unit,
@@ -211,7 +206,7 @@ class FakePocketSettingsFlowComponent(
 class FakePocketSettingsFlowComponentFactory : PocketSettingsFlowComponentFactory {
   override fun create(
       cContext: CContext,
-      config: PocketSettingsFlowComponent.Config,
+      config: RootFlowDestination.PocketSettingsFlow,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
       onDeleted: () -> Unit,

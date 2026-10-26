@@ -16,23 +16,17 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.adding_expense.AddExpenseFlowScreen
-import com.base.capability.adding_expense.add.AddExpenseComponent
-import com.base.capability.adding_expense.add.AddExpenseScreen
-import com.base.capability.main.MainComponent
+import com.base.capability.home.HomeScreen
 import com.base.capability.main.MainScreen
-import com.base.capability.pocket_management.PocketDetailsComponent
 import com.base.capability.pocket_management.PocketDetailsScreen
-import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketSettingsFlowScreen
+import com.base.capability.pocket_management.PocketsScreen
 import com.base.capability.root_navigation.FakeRootComponent
 import com.base.capability.root_navigation.RootComponent
-import com.base.capability.sms_inbox.InboxComponent
+import com.base.capability.root_navigation.RootFlowDestination
 import com.base.capability.sms_inbox.InboxScreen
-import com.base.capability.splash.SplashDestination
 import com.base.capability.splash.SplashScreen
-import com.base.component.TopLevelChild
 import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 import com.base.usermessage.CustomSnackbar
@@ -72,49 +66,52 @@ fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun RootChildContent(child: TopLevelChild) {
+private fun RootChildContent(child: RootFlowDestination.Instance) {
   when (child) {
-    is SplashDestination -> {
+    is RootFlowDestination.Splash.Instance -> {
       SplashScreen(modifier = Modifier.testTag("splash-screen"))
     }
-    is MainComponent -> {
+    is RootFlowDestination.Main.Instance -> {
       MainScreen(
-          component = child,
+          component = child.component,
           modifier = Modifier.testTag("main-screen"),
       )
     }
-    is InboxComponent -> {
+    is RootFlowDestination.Home.Instance -> {
+      HomeScreen(
+          component = child.component,
+          modifier = Modifier.testTag("home-screen"),
+      )
+    }
+    is RootFlowDestination.Inbox.Instance -> {
       InboxScreen(
-          component = child,
+          component = child.component,
           modifier = Modifier.testTag("inbox-screen"),
       )
     }
-    is AddExpenseComponent -> {
-      AddExpenseScreen(
-          component = child,
-          modifier = Modifier.testTag("add-expense-screen"),
+    is RootFlowDestination.Pockets.Instance -> {
+      PocketsScreen(
+          component = child.component,
+          modifier = Modifier.testTag("pockets-screen"),
       )
     }
-    is AddExpenseFlowComponent -> {
+    is RootFlowDestination.AddExpenseFlow.Instance -> {
       AddExpenseFlowScreen(
-          component = child,
+          component = child.component,
           modifier = Modifier.testTag("add-expense-flow-screen"),
       )
     }
-    is PocketSettingsFlowComponent -> {
+    is RootFlowDestination.PocketSettingsFlow.Instance -> {
       PocketSettingsFlowScreen(
-          component = child,
+          component = child.component,
           modifier = Modifier.testTag("pocket-settings-flow-screen"),
       )
     }
-    is PocketDetailsComponent -> {
+    is RootFlowDestination.PocketDetails.Instance -> {
       PocketDetailsScreen(
-          component = child,
+          component = child.component,
           modifier = Modifier.testTag("pocket-details-screen"),
       )
-    }
-    else -> {
-      error("Unknown child: $child")
     }
   }
 }

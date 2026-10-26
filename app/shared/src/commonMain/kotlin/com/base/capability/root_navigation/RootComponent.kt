@@ -12,21 +12,15 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.backhandler.BackHandler
-import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.adding_expense.AddExpenseFlowComponentFactory
+import com.base.capability.home.HomeComponentFactory
 import com.base.capability.main.MainComponent
 import com.base.capability.main.MainComponentFactory
-import com.base.capability.pocket_management.PocketDetailsComponent
 import com.base.capability.pocket_management.PocketDetailsComponentFactory
-import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketSettingsFlowComponentFactory
-import com.base.capability.sms_inbox.InboxComponent
+import com.base.capability.pocket_management.PocketsComponentFactory
 import com.base.capability.sms_inbox.InboxComponentFactory
-import com.base.capability.splash.SplashChild
-import com.base.capability.splash.SplashDestination
 import com.base.component.CContext
-import com.base.component.TopLevelChild
-import com.base.component.TopLevelDestination
 import com.base.component.WindowSizeHolder
 import com.base.component.componentScope
 import com.base.navigation.NavigationAction
@@ -38,7 +32,7 @@ import org.koin.core.scope.Scope
 
 interface RootComponent {
   val backHandler: BackHandler
-  val childStack: Value<ChildStack<TopLevelDestination, TopLevelChild>>
+  val childStack: Value<ChildStack<RootFlowDestination, RootFlowDestination.Instance>>
   val messageHolder: MessageHolder
   val windowSizeHolder: WindowSizeHolder
 
@@ -56,7 +50,7 @@ class DefaultRootComponent(
 ) : RootComponent, CContext by cContext {
   val scope = componentScope()
 
-  private val rootNavigation = StackNavigation<TopLevelDestination>()
+  private val rootNavigation = StackNavigation<RootFlowDestination>()
   override val backHandler: BackHandler = cContext.backHandler
   override val messageHolder: MessageHolder = MessageHolder()
 
@@ -69,14 +63,14 @@ class DefaultRootComponent(
     cContext.navigation = rootNavigation
     messageShower = messageHolder
 
-    scope.launch { rootNavigation.replaceAll(MainComponent.Config) }
+    scope.launch { rootNavigation.replaceAll(RootFlowDestination.Main) }
 
     scope.launch {
       navigationActionBus.events.collect { action ->
         when (action) {
           is NavigationAction.OpenAddExpense -> {
             rootNavigation.pushNew(
-                AddExpenseFlowComponent.Config(
+                RootFlowDestination.AddExpenseFlow(
                     initialAmount = action.initialAmount,
                     candidateExpenseId = action.candidateExpenseId,
                 )
@@ -87,69 +81,94 @@ class DefaultRootComponent(
     }
   }
 
-  override val childStack: Value<ChildStack<TopLevelDestination, TopLevelChild>> =
+  override val childStack: Value<ChildStack<RootFlowDestination, RootFlowDestination.Instance>> =
       cContext.childStack(
           source = rootNavigation,
           serializer = null,
-          initialConfiguration = SplashDestination,
+          initialConfiguration = RootFlowDestination.Splash,
           handleBackButton = true,
           childFactory = ::createChild,
       )
 
   @Suppress("LongMethod")
-  private fun createChild(config: TopLevelDestination, cContext: CContext): TopLevelChild {
+  private fun createChild(
+      config: RootFlowDestination,
+      cContext: CContext,
+  ): RootFlowDestination.Instance {
     return when (config) {
-      is SplashDestination -> SplashDestination
-      is MainComponent.Config ->
-          componentProvider.provide(MainComponentFactory::class).create(cContext)
-      is InboxComponent.Config ->
-          componentProvider
-              .provide(InboxComponentFactory::class)
-              .create(
+      is RootFlowDestination.Splash -> RootFlowDestination.Splash.Instance
+      is RootFlowDestination.Main ->
+          RootFlowDestination.Main.Instance(
+              componentProvider.provide(MainComponentFactory::class).create(cContext)
+          )
+      is RootFlowDestination.Home ->
+          RootFlowDestination.Home.Instance(
+              componentProvider.provide(HomeComponentFactory::class).create(
                   cContext = cContext,
-                  onSelectCandidate = { candidate ->
-                    rootNavigation.pop()
-                    rootNavigation.pushNew(
-                        AddExpenseFlowComponent.Config(
-                            initialAmount = candidate.amount.toString(),
-                            candidateExpenseId = candidate.id,
+                  onAddExpense = {},
+                  onOpenInbox = {},
+              )
+          )
+      is RootFlowDestination.Inbox ->
+          RootFlowDestination.Inbox.Instance(
+              componentProvider
+                  .provide(InboxComponentFactory::class)
+                  .create(
+                      cContext = cContext,
+                      onSelectCandidate = { candidate ->
+                        rootNavigation.pop()
+                        rootNavigation.pushNew(
+                            RootFlowDestination.AddExpenseFlow(
+                                initialAmount = candidate.amount.toString(),
+                                candidateExpenseId = candidate.id,
+                            )
                         )
-                    )
-                  },
-                  onBack = { rootNavigation.pop() },
-              )
-      is AddExpenseFlowComponent.Config ->
-          componentProvider
-              .provide(AddExpenseFlowComponentFactory::class)
-              .create(
+                      },
+                      onBack = { rootNavigation.pop() },
+                  )
+          )
+      is RootFlowDestination.Pockets ->
+          RootFlowDestination.Pockets.Instance(
+              componentProvider.provide(PocketsComponentFactory::class).create(
                   cContext = cContext,
-                  config = config,
-                  onCompleted = { rootNavigation.pop() },
-                  onCancelled = { rootNavigation.pop() },
               )
-      is PocketSettingsFlowComponent.Config ->
-          componentProvider
-              .provide(PocketSettingsFlowComponentFactory::class)
-              .create(
-                  cContext = cContext,
-                  config = config,
-                  onCompleted = { rootNavigation.pop() },
-                  onCancelled = { rootNavigation.pop() },
-                  onDeleted = { rootNavigation.popWhile { it !is MainComponent.Config } },
-              )
-      is PocketDetailsComponent.Config ->
-          componentProvider
-              .provide(PocketDetailsComponentFactory::class)
-              .create(
-                  cContext = cContext,
-                  pocketId = config.pocketId,
-                  onBack = { rootNavigation.pop() },
-                  onConfigure = { pocketId ->
-                    rootNavigation.pushNew(PocketSettingsFlowComponent.Config(pocketId = pocketId))
-                  },
-              )
-
-      else -> error("Destination not defined in createChild")
+          )
+      is RootFlowDestination.AddExpenseFlow ->
+          RootFlowDestination.AddExpenseFlow.Instance(
+              componentProvider
+                  .provide(AddExpenseFlowComponentFactory::class)
+                  .create(
+                      cContext = cContext,
+                      config = config,
+                      onCompleted = { rootNavigation.pop() },
+                      onCancelled = { rootNavigation.pop() },
+                  )
+          )
+      is RootFlowDestination.PocketSettingsFlow ->
+          RootFlowDestination.PocketSettingsFlow.Instance(
+              componentProvider
+                  .provide(PocketSettingsFlowComponentFactory::class)
+                  .create(
+                      cContext = cContext,
+                      config = config,
+                      onCompleted = { rootNavigation.pop() },
+                      onCancelled = { rootNavigation.pop() },
+                      onDeleted = { rootNavigation.popWhile { it !is RootFlowDestination.Main } },
+                  )
+          )
+      is RootFlowDestination.PocketDetails ->
+          RootFlowDestination.PocketDetails.Instance(
+              componentProvider
+                  .provide(PocketDetailsComponentFactory::class)
+                  .create(
+                      cContext = cContext,
+                      pocketId = config.pocketId,
+                      onBack = { rootNavigation.pop() },
+                      onConfigure = { pocketId ->
+                        rootNavigation.pushNew(RootFlowDestination.PocketSettingsFlow(pocketId = pocketId))
+                      },
+                  )
+          )
     }
   }
 }
@@ -173,10 +192,10 @@ class FakeRootComponent : RootComponent {
 
   override fun onBack() {}
 
-  override val childStack: Value<ChildStack<TopLevelDestination, TopLevelChild>> =
+  override val childStack: Value<ChildStack<RootFlowDestination, RootFlowDestination.Instance>> =
       MutableValue(
           ChildStack(
-              active = Child.Created(SplashDestination, SplashChild),
+              active = Child.Created(RootFlowDestination.Splash, RootFlowDestination.Splash.Instance),
               backStack = emptyList(),
           )
       )

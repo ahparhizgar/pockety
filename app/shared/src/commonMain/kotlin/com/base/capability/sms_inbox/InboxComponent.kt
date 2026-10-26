@@ -5,7 +5,6 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
 import com.base.component.CContext
-import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseEntity
 import com.base.db.CandidateExpenseRepository
@@ -16,7 +15,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 
 data class InboxState(
     val candidates: List<CandidateExpenseEntity> = emptyList(),
@@ -31,8 +29,6 @@ interface InboxComponent {
   fun onSelectCandidate(candidate: CandidateExpenseEntity)
 
   fun onBackClicked()
-
-  @Serializable data object Config : TopLevelDestination
 }
 
 interface InboxComponentFactory {

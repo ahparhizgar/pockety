@@ -13,20 +13,17 @@ import com.arkivanov.decompose.value.update
 import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.Fake
-import com.base.capability.adding_expense.AddExpenseFlowComponent
 import com.base.capability.home.FakeHomeComponent
 import com.base.capability.home.HomeComponent
 import com.base.capability.home.HomeComponentFactory
 import com.base.capability.pocket_management.FakePocketsComponent
-import com.base.capability.pocket_management.PocketDetailsComponent
-import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketsComponent
 import com.base.capability.pocket_management.PocketsComponentFactory
 import com.base.capability.sms_inbox.FakeInboxComponent
 import com.base.capability.sms_inbox.InboxComponent
 import com.base.capability.sms_inbox.InboxComponentFactory
+import com.base.capability.root_navigation.RootFlowDestination
 import com.base.component.CContext
-import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
 import com.base.ui.components.PocketyTab
@@ -51,7 +48,7 @@ data class MainState(
     val inboxBadgeCount: Int = 0,
 )
 
-interface MainComponent : TopLevelDestination {
+interface MainComponent {
   val stack: Value<ChildStack<MainChildConfig, Child>>
   val state: Value<MainState>
   val backHandler: BackHandler
@@ -73,8 +70,6 @@ interface MainComponent : TopLevelDestination {
 
     data object Settings : Child
   }
-
-  @Serializable data object Config : TopLevelDestination
 }
 
 interface MainComponentFactory {
@@ -151,7 +146,7 @@ class DefaultMainComponent(
                   onSelectCandidate = { candidate ->
                     mainNavigation.replaceAll(MainChildConfig.Home)
                     navigation.pushNew(
-                        AddExpenseFlowComponent.Config(
+                        RootFlowDestination.AddExpenseFlow(
                             initialAmount = candidate.amount.toString(),
                             candidateExpenseId = candidate.id,
                         )
@@ -172,9 +167,9 @@ class DefaultMainComponent(
               pocketsComponentFactory.create(
                   cContext = context,
                   onPocketClick = { pocketId ->
-                    navigation.pushNew(PocketDetailsComponent.Config(pocketId = pocketId))
+                    navigation.pushNew(RootFlowDestination.PocketDetails(pocketId = pocketId))
                   },
-                  onAddPocketClick = { navigation.pushNew(PocketSettingsFlowComponent.Config()) },
+                  onAddPocketClick = { navigation.pushNew(RootFlowDestination.PocketSettingsFlow()) },
               )
           )
       MainChildConfig.Analytics -> MainComponent.Child.Analytics
