@@ -105,4 +105,17 @@
     <string name="pocket_danger_zone_title">Danger Zone</string>
     <string name="pocket_danger_zone_desc">Deleting this pocket will unlink all associated expenses. Expense history will be preserved in your general transactions.</string>
     <string name="pocket_danger_zone_delete_action">Delete Pocket</string>
+    <string name="select_pocket_title">Select Pocket</string>
+    <string name="search_pockets_placeholder">Search pockets...</string>
+    <string name="no_pocket_title">No Pocket</string>
+    <string name="no_pocket_desc">Clear pocket assignment</string>
+    <string name="create_new_pocket_action">Create New Pocket</string>
+    <string name="no_pockets_found">No pockets found matching your search.</string>
+    <string name="frequent_pockets_title">Frequent Pockets</string>
+    <string name="all_pockets_title">All Pockets</string>
+    <string name="pocket_label">Pocket</string>
+    <string name="tap_to_link_pocket">Tap to link a pocket</string>
+    <string name="auto_deduct_pocket_budget">Auto-deduct from pocket budget</string>
+    <string name="unlink_pocket_action">Unlink pocket</string>
+    <string name="active_badge">Active</string>
 </resources>

@@ -2,8 +2,11 @@ package com.base.feature.expense
 
 import com.base.component.TestCContext
 import com.base.db.CandidateExpenseRepository
+import com.base.db.CategoryEntity
 import com.base.db.CategoryRepository
 import com.base.db.FakeCategoryFactory
+import com.base.db.FakePocketItemModelFactory
+import com.base.db.PocketRepository
 import com.base.feature.expense.add.AddExpenseComponent
 import com.base.feature.expense.add.DefaultAddExpenseComponentFactory
 import com.base.feature.home.HomeComponent
@@ -33,12 +36,14 @@ class AddExpenseTest : BehaviorSpec() {
       val koin by integrationKoin()
       val completedCallback by testValue { FakeCallback<Unit>() }
       val cancelledCallback by testValue { FakeCallback<Unit>() }
+      val selectPocketCallback by testValue { FakeCallback<Unit>() }
       val component: AddExpenseComponent by testValue {
         koin
             .get<DefaultAddExpenseComponentFactory>()
             .create(
                 cContext = TestCContext(),
                 onSelectCategory = {},
+                onSelectPocket = selectPocketCallback,
                 onCompleted = completedCallback,
                 onCancelled = cancelledCallback,
             )
@@ -137,6 +142,7 @@ class AddExpenseTest : BehaviorSpec() {
                           candidateExpenseId = candidateId,
                       ),
                   onSelectCategory = {},
+                  onSelectPocket = {},
                   onCompleted = completedCallback,
                   onCancelled = cancelledCallback,
               )
@@ -209,6 +215,132 @@ class AddExpenseTest : BehaviorSpec() {
         beforeEach { component.onCancelClicked() }
 
         Then("calls onCancelled") { cancelledCallback.shouldBeCalled() }
+      }
+
+      When("selecting category associated with a pocket") {
+        val pocketRepo by testValue { koin.get<PocketRepository>() }
+        val categoryRepo by testValue { koin.get<CategoryRepository>() }
+        var pocketAId = 0L
+        var category: CategoryEntity by testValue { FakeCategoryFactory.create() }
+
+        beforeEach {
+          val categoryId = categoryRepo.addCategory("Dining Out", "restaurant", 0xFFE57373)
+          category = categoryRepo.observeCategories().first().first { cat -> cat.id == categoryId }
+          pocketAId =
+              pocketRepo.addPocket(
+                  name = "Dining Pocket",
+                  categoryTag = "Dining",
+                  budgetAmount = 500_000,
+                  icon = "restaurant",
+                  categoryId = categoryId,
+              )
+          testCoroutineScheduler.advanceUntilIdle()
+          component.onCategorySelected(category)
+        }
+
+        Then("selectedPocket is automatically assigned in state") {
+          val state = component.state.value
+          state.selectedCategory?.id shouldBe category.id
+          state.selectedPocket?.id shouldBe pocketAId
+          state.selectedPocket?.name shouldBe "Dining Pocket"
+        }
+      }
+
+      When("selecting category with no associated pocket") {
+        val category = FakeCategoryFactory.create(id = 99, name = "Other", icon = "other")
+
+        beforeEach { component.onCategorySelected(category) }
+
+        Then("selectedPocket remains null") {
+          val state = component.state.value
+          state.selectedCategory?.id shouldBe 99L
+          state.selectedPocket.shouldBeNull()
+        }
+      }
+
+      When("pocket is assigned and user taps unlink") {
+        val pocket = FakePocketItemModelFactory.create(id = 5, name = "Pocket 5", categoryId = 10L)
+        val category = FakeCategoryFactory.create(id = 10, name = "Dining Out")
+
+        beforeEach {
+          component.onCategorySelected(category)
+          component.onPocketSelected(pocket)
+          component.onPocketCleared()
+        }
+
+        Then("selectedPocket is updated to null and selectedCategory remains unchanged") {
+          val state = component.state.value
+          state.selectedPocket.shouldBeNull()
+          state.selectedCategory?.id shouldBe 10L
+        }
+      }
+
+      When("pocket is auto-assigned and user manually selects another pocket") {
+        val pocketB = FakePocketItemModelFactory.create(id = 2, name = "General Pocket")
+        val category = FakeCategoryFactory.create(id = 10, name = "Dining Out")
+
+        beforeEach {
+          component.onCategorySelected(category)
+          component.onPocketSelected(pocketB)
+        }
+
+        Then("selectedPocket is updated to the manually selected pocket") {
+          val state = component.state.value
+          state.selectedPocket?.id shouldBe 2L
+          state.selectedPocket?.name shouldBe "General Pocket"
+        }
+      }
+
+      When("saving an expense with an assigned pocket") {
+        val pocketRepo by testValue { koin.get<PocketRepository>() }
+        var pocketId = 0L
+
+        beforeEach {
+          pocketId =
+              pocketRepo.addPocket(
+                  name = "My Pocket",
+                  categoryTag = "General",
+                  budgetAmount = 500_000,
+                  icon = "wallet",
+              )
+          testCoroutineScheduler.advanceUntilIdle()
+          val pocket = pocketRepo.observePockets().first().first { p -> p.id == pocketId }
+          component.onAmountChanged("50000")
+          component.onDescriptionChanged("Coffee")
+          component.onPocketSelected(pocket)
+          component.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("expense is persisted in repository with pocketId") {
+          completedCallback.shouldBeCalled()
+          val expenses = homeComponent.state.value.expenses
+          expenses shouldHaveSize 1
+          expenses[0].pocketId shouldBe pocketId
+        }
+      }
+
+      When("saving an expense with unlinked pocket") {
+        beforeEach {
+          component.onAmountChanged("50000")
+          component.onDescriptionChanged("Coffee")
+          component.onPocketCleared()
+          component.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("expense is persisted in repository with null pocketId") {
+          completedCallback.shouldBeCalled()
+          val expenses = homeComponent.state.value.expenses
+          expenses shouldHaveSize 1
+          expenses[0].pocketId.shouldBeNull()
+        }
+      }
+
+      When("user clicks select pocket") {
+        beforeEach { component.onSelectPocketClicked() }
+
+        Then("calls onSelectPocket") { selectPocketCallback.shouldBeCalled() }
       }
     }
   }

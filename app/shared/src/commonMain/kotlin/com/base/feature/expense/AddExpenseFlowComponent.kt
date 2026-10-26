@@ -19,6 +19,8 @@ import com.base.feature.category.selection.CategorySelectionComponentFactory
 import com.base.feature.expense.add.AddExpenseComponent
 import com.base.feature.expense.add.AddExpenseComponentFactory
 import com.base.feature.expense.add.FakeAddExpenseComponent
+import com.base.feature.pocket.selection.SelectPocketComponent
+import com.base.feature.pocket.selection.SelectPocketComponentFactory
 import com.base.feature.root.RootFlowDestination
 import kotlinx.serialization.Serializable
 
@@ -33,6 +35,11 @@ sealed interface AddExpenseFlowChildConfig {
   @Serializable
   data class CategorySelection(
       val currentCategoryId: Long? = null,
+  ) : AddExpenseFlowChildConfig
+
+  @Serializable
+  data class PocketSelection(
+      val currentPocketId: Long? = null,
   ) : AddExpenseFlowChildConfig
 
   @Serializable data object AddCategory : AddExpenseFlowChildConfig
@@ -50,6 +57,8 @@ interface AddExpenseFlowComponent {
     class CategorySelection(val component: CategorySelectionComponent) : Child
 
     class AddCategory(val component: AddCategoryComponent) : Child
+
+    class PocketSelection(val component: SelectPocketComponent) : Child
   }
 }
 
@@ -66,6 +75,7 @@ data class AddExpenseFlowChildFactories(
     val addExpenseComponentFactory: AddExpenseComponentFactory,
     val categorySelectionComponentFactory: CategorySelectionComponentFactory,
     val addCategoryComponentFactory: AddCategoryComponentFactory,
+    val selectPocketComponentFactory: SelectPocketComponentFactory,
 )
 
 class DefaultAddExpenseFlowComponent(
@@ -100,66 +110,104 @@ class DefaultAddExpenseFlowComponent(
   private fun createChild(
       childConfig: AddExpenseFlowChildConfig,
       context: CContext,
-  ): AddExpenseFlowComponent.Child {
-    return when (childConfig) {
-      is AddExpenseFlowChildConfig.AddExpense -> {
-        val expenseComp =
-            factories.addExpenseComponentFactory.create(
-                cContext = context,
-                config =
-                    AddExpenseComponent.Config(
-                        initialAmount = childConfig.initialAmount,
-                        candidateExpenseId = childConfig.candidateExpenseId,
-                    ),
-                onSelectCategory = {
-                  val currentCatId = addExpenseComponent?.state?.value?.selectedCategory?.id
-                  flowNavigation.pushNew(
-                      AddExpenseFlowChildConfig.CategorySelection(currentCategoryId = currentCatId)
-                  )
-                },
-                onCompleted = onCompleted,
-                onCancelled = onCancelled,
-            )
-        addExpenseComponent = expenseComp
-        AddExpenseFlowComponent.Child.AddExpense(expenseComp)
+  ): AddExpenseFlowComponent.Child =
+      when (childConfig) {
+        is AddExpenseFlowChildConfig.AddExpense -> createAddExpenseChild(childConfig, context)
+        is AddExpenseFlowChildConfig.PocketSelection ->
+            createPocketSelectionChild(childConfig, context)
+        is AddExpenseFlowChildConfig.CategorySelection ->
+            createCategorySelectionChild(childConfig, context)
+        is AddExpenseFlowChildConfig.AddCategory -> createAddCategoryChild(context)
       }
 
-      is AddExpenseFlowChildConfig.CategorySelection ->
-          AddExpenseFlowComponent.Child.CategorySelection(
-              factories.categorySelectionComponentFactory.create(
-                  cContext = context,
-                  initialSelectedCategoryId = childConfig.currentCategoryId,
-                  onCategorySelected = { category ->
-                    addExpenseComponent?.onCategorySelected(category)
-                    flowNavigation.pop()
-                  },
-                  onCreateCategoryClicked = {
-                    flowNavigation.pushNew(AddExpenseFlowChildConfig.AddCategory)
-                  },
-                  onBack = { flowNavigation.pop() },
+  private fun createAddExpenseChild(
+      childConfig: AddExpenseFlowChildConfig.AddExpense,
+      context: CContext,
+  ): AddExpenseFlowComponent.Child {
+    val expenseComp =
+        factories.addExpenseComponentFactory.create(
+            cContext = context,
+            config =
+                AddExpenseComponent.Config(
+                    initialAmount = childConfig.initialAmount,
+                    candidateExpenseId = childConfig.candidateExpenseId,
+                ),
+            onSelectCategory = {
+              val currentCatId = addExpenseComponent?.state?.value?.selectedCategory?.id
+              flowNavigation.pushNew(
+                  AddExpenseFlowChildConfig.CategorySelection(currentCategoryId = currentCatId)
               )
-          )
-
-      is AddExpenseFlowChildConfig.AddCategory ->
-          AddExpenseFlowComponent.Child.AddCategory(
-              factories.addCategoryComponentFactory.create(
-                  cContext = context,
-                  onCompleted = { newCategory ->
-                    addExpenseComponent?.onCategorySelected(newCategory)
-                    flowNavigation.pop()
-                    flowNavigation.pop()
-                  },
-                  onCancelled = { flowNavigation.pop() },
+            },
+            onSelectPocket = {
+              val currentPocketId = addExpenseComponent?.state?.value?.selectedPocket?.id
+              flowNavigation.pushNew(
+                  AddExpenseFlowChildConfig.PocketSelection(currentPocketId = currentPocketId)
               )
-          )
-    }
+            },
+            onCompleted = onCompleted,
+            onCancelled = onCancelled,
+        )
+    addExpenseComponent = expenseComp
+    return AddExpenseFlowComponent.Child.AddExpense(expenseComp)
   }
+
+  private fun createPocketSelectionChild(
+      childConfig: AddExpenseFlowChildConfig.PocketSelection,
+      context: CContext,
+  ): AddExpenseFlowComponent.Child =
+      AddExpenseFlowComponent.Child.PocketSelection(
+          factories.selectPocketComponentFactory.create(
+              cContext = context,
+              initialSelectedPocketId = childConfig.currentPocketId,
+              onPocketSelected = { pocket ->
+                addExpenseComponent?.onPocketSelected(pocket)
+                flowNavigation.pop()
+              },
+              onCreatePocketClicked = { flowNavigation.pop() },
+              onBack = { flowNavigation.pop() },
+          )
+      )
+
+  private fun createCategorySelectionChild(
+      childConfig: AddExpenseFlowChildConfig.CategorySelection,
+      context: CContext,
+  ): AddExpenseFlowComponent.Child =
+      AddExpenseFlowComponent.Child.CategorySelection(
+          factories.categorySelectionComponentFactory.create(
+              cContext = context,
+              initialSelectedCategoryId = childConfig.currentCategoryId,
+              onCategorySelected = { category ->
+                addExpenseComponent?.onCategorySelected(category)
+                flowNavigation.pop()
+              },
+              onCreateCategoryClicked = {
+                flowNavigation.pushNew(AddExpenseFlowChildConfig.AddCategory)
+              },
+              onBack = { flowNavigation.pop() },
+          )
+      )
+
+  private fun createAddCategoryChild(
+      context: CContext,
+  ): AddExpenseFlowComponent.Child =
+      AddExpenseFlowComponent.Child.AddCategory(
+          factories.addCategoryComponentFactory.create(
+              cContext = context,
+              onCompleted = { newCategory ->
+                addExpenseComponent?.onCategorySelected(newCategory)
+                flowNavigation.pop()
+                flowNavigation.pop()
+              },
+              onCancelled = { flowNavigation.pop() },
+          )
+      )
 }
 
 class DefaultAddExpenseFlowComponentFactory(
     private val addExpenseComponentFactory: AddExpenseComponentFactory,
     private val categorySelectionComponentFactory: CategorySelectionComponentFactory,
     private val addCategoryComponentFactory: AddCategoryComponentFactory,
+    private val selectPocketComponentFactory: SelectPocketComponentFactory,
 ) : AddExpenseFlowComponentFactory {
   override fun create(
       cContext: CContext,
@@ -174,6 +222,7 @@ class DefaultAddExpenseFlowComponentFactory(
                   addExpenseComponentFactory = addExpenseComponentFactory,
                   categorySelectionComponentFactory = categorySelectionComponentFactory,
                   addCategoryComponentFactory = addCategoryComponentFactory,
+                  selectPocketComponentFactory = selectPocketComponentFactory,
               ),
           config = config,
           onCompleted = onCompleted,

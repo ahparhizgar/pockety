@@ -13,10 +13,15 @@ import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.RootScreen
 import com.base.component.TestCContext
+import com.base.db.FakePocketItemModelFactory
+import com.base.feature.expense.add.AddExpenseScreen
+import com.base.feature.expense.add.AddExpenseState
+import com.base.feature.expense.add.FakeAddExpenseComponent
 import com.base.util.injectUiRoot
 import com.base.util.uiKoin
 import com.base.util.waitForExistence
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalTestApi::class)
 class AddViewExpenseE2eUiTest {
@@ -51,5 +56,49 @@ class AddViewExpenseE2eUiTest {
     onNode(hasTestTag("expense-list")).waitForExistence().assertExists()
     onNode(hasText("Dinner with friends")).waitForExistence().assertExists()
     onNode(hasText("120000 T")).assertExists()
+  }
+
+  @Test
+  fun testPocketCardRenderingAndUnlink() = runComposeUiTest {
+    val pocket =
+        FakePocketItemModelFactory.create(
+            name = "Daily Cafe & Coffee",
+            remainingBalance = 400_000,
+        )
+    val component =
+        FakeAddExpenseComponent(
+            initialState =
+                AddExpenseState(
+                    amountText = "50000",
+                    selectedPocket = pocket,
+                )
+        )
+
+    setContent { AddExpenseScreen(component) }
+
+    onNode(hasTestTag("pocket-selector-section")).waitForExistence().assertExists()
+    onNode(hasText("Daily Cafe & Coffee")).assertExists()
+    onNode(hasText("Balance: 400,000 T")).assertExists()
+    onNode(hasTestTag("clear-pocket-btn")).assertExists()
+
+    onNode(hasTestTag("clear-pocket-btn")).performClick()
+
+    onNode(hasText("Tap to link a pocket")).assertExists()
+    onNode(hasText("Auto-deduct from pocket budget")).assertExists()
+  }
+
+  @Test
+  fun testPocketCardKeyboardAccessibility() = runComposeUiTest {
+    var selectPocketClicked = false
+    val component =
+        FakeAddExpenseComponent(
+            initialState = AddExpenseState(amountText = "10000"),
+            onSelectPocket = { selectPocketClicked = true },
+        )
+
+    setContent { AddExpenseScreen(component) }
+
+    onNode(hasTestTag("selected-pocket-card")).waitForExistence().assertExists().performClick()
+    assertTrue(selectPocketClicked)
   }
 }

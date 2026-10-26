@@ -10,9 +10,13 @@ import com.base.db.CandidateExpenseRepository
 import com.base.db.CandidateExpenseStatus
 import com.base.db.CategoryEntity
 import com.base.db.ExpenseRepository
+import com.base.db.PocketItemModel
+import com.base.db.PocketRepository
 import com.base.notification.ExpenseNotificationManager
 import com.base.usermessage.UiString
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import pockety.app.shared.generated.resources.Res
@@ -23,6 +27,7 @@ data class AddExpenseState(
     val amountText: String = "",
     val descriptionText: String = "",
     val selectedCategory: CategoryEntity? = null,
+    val selectedPocket: PocketItemModel? = null,
     val amountError: UiString? = null,
     val descriptionError: UiString? = null,
     val isSaving: Boolean = false,
@@ -41,6 +46,12 @@ interface AddExpenseComponent {
 
   fun onSelectCategoryClicked()
 
+  fun onPocketSelected(pocket: PocketItemModel?)
+
+  fun onPocketCleared()
+
+  fun onSelectPocketClicked()
+
   fun onSaveClicked(): Job
 
   fun onCancelClicked()
@@ -53,10 +64,12 @@ interface AddExpenseComponent {
 }
 
 interface AddExpenseComponentFactory {
+  @Suppress("LongParameterList")
   fun create(
       cContext: CContext,
       config: AddExpenseComponent.Config = AddExpenseComponent.Config(),
       onSelectCategory: () -> Unit,
+      onSelectPocket: () -> Unit,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseComponent
@@ -68,14 +81,42 @@ class DefaultAddExpenseComponent(
     private val expenseRepository: ExpenseRepository,
     private val candidateExpenseRepository: CandidateExpenseRepository,
     private val expenseNotificationManager: ExpenseNotificationManager,
+    private val pocketRepository: PocketRepository,
     private val config: AddExpenseComponent.Config = AddExpenseComponent.Config(),
-    private val onSelectCategory: () -> Unit = {},
+    private val onSelectCategory: () -> Unit,
+    private val onSelectPocket: () -> Unit,
     private val onCompleted: () -> Unit,
     private val onCancelled: () -> Unit,
 ) : AddExpenseComponent, CContext by cContext {
   private val scope = componentScope()
   private val _state = MutableValue(AddExpenseState(amountText = config.initialAmount))
   override val state: Value<AddExpenseState> = _state
+
+  private var availablePockets: List<PocketItemModel> = emptyList()
+
+  init {
+    pocketRepository
+        .observePockets()
+        .onEach { pockets ->
+          val previousPockets = availablePockets
+          availablePockets = pockets
+          _state.update { currentState ->
+            val currentSelectedPocket = currentState.selectedPocket
+            if (currentSelectedPocket != null) {
+              val updatedPocket = pockets.find { it.id == currentSelectedPocket.id }
+              currentState.copy(selectedPocket = updatedPocket)
+            } else if (previousPockets.isEmpty() && currentState.selectedCategory != null) {
+              val matchingPocket = pockets.firstOrNull {
+                it.categoryId == currentState.selectedCategory.id
+              }
+              currentState.copy(selectedPocket = matchingPocket)
+            } else {
+              currentState
+            }
+          }
+        }
+        .launchIn(scope)
+  }
 
   override fun onAmountChanged(amount: String) {
     _state.update {
@@ -96,7 +137,18 @@ class DefaultAddExpenseComponent(
   }
 
   override fun onCategorySelected(category: CategoryEntity?) {
-    _state.update { it.copy(selectedCategory = category) }
+    val matchingPocket =
+        if (category != null) {
+          availablePockets.firstOrNull { it.categoryId == category.id }
+        } else {
+          null
+        }
+    _state.update {
+      it.copy(
+          selectedCategory = category,
+          selectedPocket = matchingPocket,
+      )
+    }
   }
 
   override fun onCategoryCleared() {
@@ -105,6 +157,18 @@ class DefaultAddExpenseComponent(
 
   override fun onSelectCategoryClicked() {
     onSelectCategory.invoke()
+  }
+
+  override fun onPocketSelected(pocket: PocketItemModel?) {
+    _state.update { it.copy(selectedPocket = pocket) }
+  }
+
+  override fun onPocketCleared() {
+    _state.update { it.copy(selectedPocket = null) }
+  }
+
+  override fun onSelectPocketClicked() {
+    onSelectPocket.invoke()
   }
 
   override fun onSaveClicked(): Job = scope.launch {
@@ -139,6 +203,7 @@ class DefaultAddExpenseComponent(
           amount = amountNumber,
           description = currentState.descriptionText.trim(),
           categoryId = currentState.selectedCategory?.id,
+          pocketId = currentState.selectedPocket?.id,
       )
       config.candidateExpenseId?.let { id ->
         candidateExpenseRepository.updateStatus(id, CandidateExpenseStatus.ACCEPTED)
@@ -159,11 +224,14 @@ class DefaultAddExpenseComponentFactory(
     private val expenseRepository: ExpenseRepository,
     private val candidateExpenseRepository: CandidateExpenseRepository,
     private val expenseNotificationManager: ExpenseNotificationManager,
+    private val pocketRepository: PocketRepository,
 ) : AddExpenseComponentFactory {
+  @Suppress("LongParameterList")
   override fun create(
       cContext: CContext,
       config: AddExpenseComponent.Config,
       onSelectCategory: () -> Unit,
+      onSelectPocket: () -> Unit,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseComponent =
@@ -172,8 +240,10 @@ class DefaultAddExpenseComponentFactory(
           expenseRepository = expenseRepository,
           candidateExpenseRepository = candidateExpenseRepository,
           expenseNotificationManager = expenseNotificationManager,
+          pocketRepository = pocketRepository,
           config = config,
           onSelectCategory = onSelectCategory,
+          onSelectPocket = onSelectPocket,
           onCompleted = onCompleted,
           onCancelled = onCancelled,
       )
@@ -185,6 +255,7 @@ object FakeAddExpenseStateFactory {
       amountText: String = "",
       descriptionText: String = "",
       selectedCategory: CategoryEntity? = null,
+      selectedPocket: PocketItemModel? = null,
       amountError: UiString? = null,
       descriptionError: UiString? = null,
       isSaving: Boolean = false,
@@ -193,6 +264,7 @@ object FakeAddExpenseStateFactory {
           amountText = amountText,
           descriptionText = descriptionText,
           selectedCategory = selectedCategory,
+          selectedPocket = selectedPocket,
           amountError = amountError,
           descriptionError = descriptionError,
           isSaving = isSaving,
@@ -203,6 +275,7 @@ object FakeAddExpenseStateFactory {
 class FakeAddExpenseComponent(
     initialState: AddExpenseState = FakeAddExpenseStateFactory.create(),
     private val onSelectCategory: () -> Unit = {},
+    private val onSelectPocket: () -> Unit = {},
 ) : AddExpenseComponent {
   private val _state = MutableValue(initialState)
   override val state: Value<AddExpenseState> = _state
@@ -227,6 +300,18 @@ class FakeAddExpenseComponent(
     onSelectCategory.invoke()
   }
 
+  override fun onPocketSelected(pocket: PocketItemModel?) {
+    _state.update { it.copy(selectedPocket = pocket) }
+  }
+
+  override fun onPocketCleared() {
+    _state.update { it.copy(selectedPocket = null) }
+  }
+
+  override fun onSelectPocketClicked() {
+    onSelectPocket.invoke()
+  }
+
   override fun onSaveClicked(): Job = Job().apply { complete() }
 
   override fun onCancelClicked() {}
@@ -234,15 +319,18 @@ class FakeAddExpenseComponent(
 
 @Fake
 class FakeAddExpenseComponentFactory : AddExpenseComponentFactory {
+  @Suppress("LongParameterList")
   override fun create(
       cContext: CContext,
       config: AddExpenseComponent.Config,
       onSelectCategory: () -> Unit,
+      onSelectPocket: () -> Unit,
       onCompleted: () -> Unit,
       onCancelled: () -> Unit,
   ): AddExpenseComponent =
       FakeAddExpenseComponent(
           initialState = FakeAddExpenseStateFactory.create(amountText = config.initialAmount),
           onSelectCategory = onSelectCategory,
+          onSelectPocket = onSelectPocket,
       )
 }

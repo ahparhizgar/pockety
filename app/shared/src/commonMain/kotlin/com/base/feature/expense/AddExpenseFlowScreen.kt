@@ -13,6 +13,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.base.feature.category.add.AddCategoryScreen
 import com.base.feature.category.selection.CategorySelectionScreen
 import com.base.feature.expense.add.AddExpenseScreen
+import com.base.feature.pocket.selection.SelectPocketScreen
 import com.base.ui.ScreenPreviews
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -50,6 +51,13 @@ fun AddExpenseFlowScreen(
         AddCategoryScreen(
             component = child.component,
             modifier = Modifier.testTag("add-category-screen"),
+        )
+      }
+
+      is AddExpenseFlowComponent.Child.PocketSelection -> {
+        SelectPocketScreen(
+            component = child.component,
+            modifier = Modifier.testTag("select-pocket-screen"),
         )
       }
     }

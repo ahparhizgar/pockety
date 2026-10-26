@@ -74,4 +74,17 @@
     <string name="assign_category_expense_subtitle">انتخاب دسته‌بندی برای این هزینه</string>
     <string name="associated_category_unlinked_subtitle">کسر خودکار تراکنش‌ها برای این جیب</string>
     <string name="clear_category_action">حذف دسته‌بندی</string>
+    <string name="select_pocket_title">انتخاب جیب</string>
+    <string name="search_pockets_placeholder">جستجوی جیب‌ها...</string>
+    <string name="no_pocket_title">بدون جیب</string>
+    <string name="no_pocket_desc">حذف انتساب جیب</string>
+    <string name="create_new_pocket_action">ایجاد جیب جدید</string>
+    <string name="no_pockets_found">جیبی مطابق با جستجوی شما یافت نشد.</string>
+    <string name="frequent_pockets_title">جیب‌های پرکاربرد</string>
+    <string name="all_pockets_title">همه جیب‌ها</string>
+    <string name="pocket_label">جیب</string>
+    <string name="tap_to_link_pocket">برای اتصال جیب ضربه بزنید</string>
+    <string name="auto_deduct_pocket_budget">کسر خودکار از بودجه جیب</string>
+    <string name="unlink_pocket_action">قطع اتصال جیب</string>
+    <string name="active_badge">فعال</string>
 </resources>

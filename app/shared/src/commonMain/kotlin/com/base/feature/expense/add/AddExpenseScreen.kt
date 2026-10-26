@@ -54,6 +54,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.db.FakeCategoryFactory
+import com.base.db.FakePocketItemModelFactory
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import com.base.usermessage.UiString
@@ -148,6 +149,11 @@ private fun AddExpenseForm(
     CategorySelectorCard(
         component = component,
         selectedCategory = state.selectedCategory,
+    )
+
+    PocketSelectorSection(
+        component = component,
+        selectedPocket = state.selectedPocket,
     )
 
     DescriptionInputField(
@@ -397,6 +403,24 @@ private fun AddExpenseScreenDefaultPreview() {
                       descriptionText = "Groceries",
                       selectedCategory =
                           FakeCategoryFactory.create(name = "Groceries", icon = "shopping_basket"),
+                  ),
+          ),
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun AddExpenseScreenWithPocketPreview() {
+  AddExpenseScreen(
+      component =
+          FakeAddExpenseComponent(
+              initialState =
+                  AddExpenseState(
+                      amountText = "75000",
+                      descriptionText = "Dinner",
+                      selectedCategory =
+                          FakeCategoryFactory.create(name = "Dining Out", icon = "restaurant"),
+                      selectedPocket = FakePocketItemModelFactory.create(name = "Dining Pocket"),
                   ),
           ),
   )

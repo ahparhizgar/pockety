@@ -31,9 +31,7 @@ fun main(vararg args: String) {
 
   val backDispatcher = BackDispatcher()
   val context = DefaultCContext(lifecycle = lifecycle, backHandler = backDispatcher)
-  val root = runOnUiThread {
-    koin.get<RootComponentFactory>().create(context)
-  }
+  val root = runOnUiThread { koin.get<RootComponentFactory>().create(context) }
   DecomposeSettings.settings = DecomposeSettings(duplicateConfigurationsEnabled = true)
 
   application {
