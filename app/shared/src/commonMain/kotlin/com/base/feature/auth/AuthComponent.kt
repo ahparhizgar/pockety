@@ -18,8 +18,7 @@ import com.base.feature.auth.signup.SignUpComponentFactory
 import com.base.feature.auth.welcome.FakeWelcomeComponent
 import com.base.feature.auth.welcome.WelcomeComponent
 import com.base.feature.auth.welcome.WelcomeComponentFactory
-import com.base.feature.main.MainComponent
-import com.base.feature.root.TopLevelDestinationConfig
+import com.base.feature.root.RootFlowDestination
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -31,7 +30,7 @@ sealed interface AuthConfig {
   @Serializable data object SignUp : AuthConfig
 }
 
-interface AuthComponent : TopLevelDestinationConfig {
+interface AuthComponent {
   val stack: Value<ChildStack<AuthConfig, Child>>
   val backHandler: BackHandler
 
@@ -44,8 +43,6 @@ interface AuthComponent : TopLevelDestinationConfig {
 
     class SignUp(val component: SignUpComponent) : Child
   }
-
-  @Serializable data object Config : TopLevelDestinationConfig
 }
 
 interface AuthComponentFactory {
@@ -86,7 +83,7 @@ class DefaultAuthComponent(
   }
 
   private fun onAuthenticated() {
-    navigation.replaceAll(MainComponent.Config)
+    navigation.replaceAll(RootFlowDestination.Main)
   }
 }
 

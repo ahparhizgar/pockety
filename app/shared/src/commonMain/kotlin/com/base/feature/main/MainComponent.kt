@@ -4,13 +4,9 @@ import com.base.component.CContext
 import com.base.feature.item.FakeItemListComponent
 import com.base.feature.item.ItemListComponent
 import com.base.feature.item.ItemListComponentFactory
-import com.base.feature.root.TopLevelDestinationConfig
-import kotlinx.serialization.Serializable
 
-interface MainComponent : TopLevelDestinationConfig {
+interface MainComponent {
   val itemListComponent: ItemListComponent
-
-  @Serializable data object Config : TopLevelDestinationConfig
 }
 
 interface MainComponentFactory {

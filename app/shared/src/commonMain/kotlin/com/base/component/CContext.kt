@@ -19,7 +19,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.lifecycle.resume
 import com.arkivanov.essenty.statekeeper.StateKeeper
 import com.arkivanov.essenty.statekeeper.StateKeeperDispatcher
-import com.base.feature.root.TopLevelDestinationConfig
+import com.base.feature.root.RootFlowDestination
 import com.base.remote.userMessage
 import com.base.usermessage.MessageHolder
 import com.base.usermessage.MessageShower
@@ -47,7 +47,7 @@ class WindowSizeHolder(
 }
 
 interface CContext : GenericComponentContext<CContext> {
-  var navigation: StackNavigation<TopLevelDestinationConfig>
+  var navigation: StackNavigation<RootFlowDestination>
   var messageShower: MessageShower
   var windowSizeHolder: WindowSizeHolder
 }
@@ -59,7 +59,7 @@ class DefaultCContext(
     override val instanceKeeper: InstanceKeeper =
         InstanceKeeperDispatcher().also { lifecycle.doOnDestroy(it::destroy) },
     override val backHandler: BackHandler = BackDispatcher(),
-    override var navigation: StackNavigation<TopLevelDestinationConfig> = NoopStackNavigation(),
+    override var navigation: StackNavigation<RootFlowDestination> = NoopStackNavigation(),
     override var messageShower: MessageShower = MessageHolder(),
     override var windowSizeHolder: WindowSizeHolder = WindowSizeHolder(),
 ) : CContext {
@@ -76,8 +76,6 @@ class DefaultCContext(
         )
       }
 }
-
-object InitialTestDestination : TopLevelDestinationConfig
 
 fun CContext.componentScope(): CoroutineScope {
   return CoroutineScope(
@@ -158,12 +156,12 @@ class NoopStackNavigation<C : Any> : StackNavigation<C> {
 }
 
 fun CContext.fakeStack() =
-    (navigation as? FakeStackNavigation<TopLevelDestinationConfig>)?.stack
+    (navigation as? FakeStackNavigation<RootFlowDestination>)?.stack
         ?: error("navigation by default has a FakeStackNavigation unless is set by specific test!")
 
 class TestCContext : CContext {
   val lifecycleRegistry = LifecycleRegistry()
-  val fakeStackNavigation = FakeStackNavigation<TopLevelDestinationConfig>(InitialTestDestination)
+  val fakeStackNavigation = FakeStackNavigation<RootFlowDestination>(RootFlowDestination.Splash)
   val backDispatcher = BackDispatcher()
   val messageHolder = MessageHolder()
   val testWindowSizeHolder = WindowSizeHolder()
@@ -189,7 +187,7 @@ class TestCContext : CContext {
             windowSizeHolder = windowSizeHolder,
         )
       }
-  override var navigation: StackNavigation<TopLevelDestinationConfig> = fakeStackNavigation
+  override var navigation: StackNavigation<RootFlowDestination> = fakeStackNavigation
   override var messageShower: MessageShower = messageHolder
   override var windowSizeHolder: WindowSizeHolder = testWindowSizeHolder
 

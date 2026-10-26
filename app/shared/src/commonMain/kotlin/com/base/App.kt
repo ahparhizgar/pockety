@@ -16,13 +16,12 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.base.feature.auth.AuthComponent
 import com.base.feature.auth.AuthRootScreen
-import com.base.feature.main.MainComponent
+import com.base.feature.item.ItemListScreen
 import com.base.feature.main.MainScreen
 import com.base.feature.root.FakeRootComponent
 import com.base.feature.root.RootComponent
-import com.base.feature.splash.SplashDestination
+import com.base.feature.root.RootFlowDestination
 import com.base.feature.splash.SplashScreen
 import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
@@ -56,27 +55,34 @@ fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
                 fallbackAnimation = stackAnimation(fade() + scale()),
             ),
     ) {
-      when (val child = it.instance) {
-        is SplashDestination -> {
+      when (val instance = it.instance) {
+        is RootFlowDestination.Splash.Instance -> {
           SplashScreen(modifier = Modifier.testTag("splash-screen"))
         }
 
-        is AuthComponent -> {
+        is RootFlowDestination.Auth.Instance -> {
           AuthRootScreen(
-              component = child,
+              component = instance.component,
               modifier = Modifier.testTag("auth-screen"),
           )
         }
 
-        is MainComponent -> {
+        is RootFlowDestination.Main.Instance -> {
           MainScreen(
-              component = child,
+              component = instance.component,
               modifier = Modifier.testTag("main-screen"),
           )
         }
 
+        is RootFlowDestination.ItemList.Instance -> {
+          ItemListScreen(
+              component = instance.component,
+              modifier = Modifier.testTag("item-list-screen"),
+          )
+        }
+
         else -> {
-          error("Unknown child: $child")
+          error("Unknown child: $instance")
         }
       }
     }

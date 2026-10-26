@@ -9,19 +9,15 @@ import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.dto.FakeItemDtoFactory
 import com.base.dto.ItemDto
-import com.base.feature.root.TopLevelDestinationConfig
 import com.base.remote.userMessage
 import com.base.usermessage.UiString
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 
-interface ItemListComponent : TopLevelDestinationConfig {
+interface ItemListComponent {
   val state: Value<ItemListState>
 
   fun loadItems(): Job
-
-  @Serializable data object Config : TopLevelDestinationConfig
 }
 
 interface ItemListComponentFactory {
