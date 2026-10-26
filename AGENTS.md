@@ -79,23 +79,22 @@ source set.
 ## Structuring tests into files
 
 Don't structure tests based on screens/components.  
-Instead, structure tests into capability packages (`com.base.capability.<capability_name>`).  
-Capabilities represent cohesive functional capabilities (e.g. `adding_expense`, `sms_inbox`,
-`sms_parsing`, `grant_sms_permission`, `central_user_messages`, `root_navigation`).  
-Within each capability package, structure tests into files based on specific requirements and test
+Instead, structure tests into nested feature packages (`com.base.feature.<feature>` or `com.base.feature.<feature>.<sub_feature>`).  
+Features represent cohesive functional modules (e.g. `expense.add`, `pocket.details`, `pocket.settings`, `category.add`, `category.selection`, `sms.inbox`, `root`, `notification`, `sms`, `usermessage`).  
+Within each feature package, structure tests into files based on specific requirements and test
 levels:
 
-- `<Capability>Test.kt` / `<Requirement>Test.kt` for component / unit behavior (e.g.,
+- `<Feature>Test.kt` / `<Requirement>Test.kt` for component / unit behavior (e.g.,
   `AddExpenseTest.kt`, `SmsExpenseParserTest.kt`).
-- `<Capability>FlowE2eTest.kt` for end-to-end component / flow integration (e.g.,
+- `<Feature>FlowE2eTest.kt` for end-to-end component / flow integration (e.g.,
   `AddViewExpenseFlowE2eTest.kt`, `InboxFlowE2eTest.kt`).
-- `<Capability>E2eUiTest.kt` for UI end-to-end tests (e.g., `AddViewExpenseE2eUiTest.kt`,
+- `<Feature>E2eUiTest.kt` for UI end-to-end tests (e.g., `AddViewExpenseE2eUiTest.kt`,
   `InboxE2eUiTest.kt`).
 - `<Target>RepositoryTest.kt` for repository integration tests.
 
-Capabilities and requirements are additive. For testing a capability that navigates from home to
-adding an expense, the tests belong to `com.base.capability.adding_expense`, not `home`.  
-Add tests in the corresponding capability package so test architecture remains open-closed as we
+Features and requirements are additive. For testing a feature that navigates from home to
+adding an expense, the tests belong to `com.base.feature.expense`, not `home`.  
+Add tests in the corresponding feature package so test architecture remains open-closed as we
 practice spec-driven development.
 
 ## Behavioral testing

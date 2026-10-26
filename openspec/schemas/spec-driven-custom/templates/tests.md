@@ -2,7 +2,7 @@
 
 ## Unit Tests (single component / class / function)
 
-### `<name>/<Capability>Test`
+### `<feature>/<sub_feature>/<name>Test`
 
 **Target**: <!-- Component / business logic under test -->
 
@@ -14,7 +14,7 @@
 
 ## E2E Flow Tests
 
-### `<name>/<Capability>FlowE2eTest`
+### `<feature>/<sub_feature>/<name>FlowE2eTest`
 
 **Flow**: <!-- Navigation and integration flow from root component -->
 
@@ -29,9 +29,19 @@
     - When <!-- user navigates and performs actions -->
         - [ ] Then <!-- end-to-end verified state -->
 
+## Repository & Data Tests
+
+### `<feature>/<sub_feature>/<name>RepositoryTest`
+
+- Given <!-- initial state/context -->
+    - When <!-- user navigates and performs actions -->
+        - [ ] Then <!-- end-to-end verified state -->
+        - And <!-- user performs another action -->
+            - [ ] Then <!-- end-to-end verified state -->
+
 ## UI & Accessibility Tests
 
-### `<name>.<Capability>E2eUiTest`
+### `<feature>/<sub_feature>/<name>E2eUiTest`
 
 **Scenarios**:
 
