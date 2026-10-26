@@ -1,22 +1,22 @@
 package com.base.util
 
-import com.base.capability.home.HomeComponent
-import com.base.capability.main.MainComponent
-import com.base.capability.pocket_management.PocketsComponent
-import com.base.capability.sms_inbox.InboxComponent
+import com.base.feature.home.HomeComponent
+import com.base.feature.main.MainComponent
+import com.base.feature.pocket.PocketsComponent
+import com.base.feature.sms.inbox.InboxComponent
 import io.kotest.matchers.types.shouldBeInstanceOf
 
-val MainComponent.activeInstance
+private val MainComponent.mainActiveInstance
   get() = stack.value.active.instance
 
 fun MainComponent.assertHomeComponent(): HomeComponent {
-  return activeInstance.shouldBeInstanceOf<MainComponent.Child.Home>().component
+  return mainActiveInstance.shouldBeInstanceOf<MainComponent.Child.Home>().component
 }
 
 fun MainComponent.assertInboxComponent(): InboxComponent {
-  return activeInstance.shouldBeInstanceOf<MainComponent.Child.Inbox>().component
+  return mainActiveInstance.shouldBeInstanceOf<MainComponent.Child.Inbox>().component
 }
 
 fun MainComponent.assertPocketsComponent(): PocketsComponent {
-  return activeInstance.shouldBeInstanceOf<MainComponent.Child.Pockets>().component
+  return mainActiveInstance.shouldBeInstanceOf<MainComponent.Child.Pockets>().component
 }

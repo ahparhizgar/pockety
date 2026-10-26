@@ -1,16 +1,16 @@
 package com.base.util
 
-import com.base.capability.adding_expense.AddExpenseFlowComponent
-import com.base.capability.category_management.AddCategoryComponent
-import com.base.capability.category_management.CategorySelectionComponent
-import com.base.capability.main.MainComponent
-import com.base.capability.pocket_management.PocketDetailsComponent
-import com.base.capability.pocket_management.PocketSettingsComponent
-import com.base.capability.pocket_management.PocketSettingsFlowComponent
-import com.base.capability.pocket_management.PocketsComponent
-import com.base.capability.root_navigation.RootComponent
-import com.base.capability.root_navigation.RootFlowDestination
-import com.base.capability.sms_inbox.InboxComponent
+import com.base.feature.category.add.AddCategoryComponent
+import com.base.feature.category.selection.CategorySelectionComponent
+import com.base.feature.expense.AddExpenseFlowComponent
+import com.base.feature.main.MainComponent
+import com.base.feature.pocket.PocketsComponent
+import com.base.feature.pocket.details.PocketDetailsComponent
+import com.base.feature.pocket.settings.PocketSettingsComponent
+import com.base.feature.pocket.settings.PocketSettingsFlowComponent
+import com.base.feature.root.RootComponent
+import com.base.feature.root.RootFlowDestination
+import com.base.feature.sms.inbox.InboxComponent
 import io.kotest.matchers.types.shouldBeInstanceOf
 
 val RootComponent.activeConfig

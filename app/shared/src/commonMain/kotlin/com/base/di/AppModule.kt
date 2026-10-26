@@ -1,7 +1,5 @@
 package com.base.di
 
-import com.base.capability.auth.DataStoreTokenStorage
-import com.base.capability.auth.TokenStorage
 import com.base.datastore.createDataStore
 import com.base.db.AppDatabase
 import com.base.db.AppDatabaseBuilderFactory
@@ -14,6 +12,8 @@ import com.base.db.DefaultPocketRepository
 import com.base.db.ExpenseRepository
 import com.base.db.PocketRepository
 import com.base.db.getRoomDatabase
+import com.base.feature.auth.DataStoreTokenStorage
+import com.base.feature.auth.TokenStorage
 import com.base.ktor.createHttpClient
 import com.base.navigation.DefaultNavigationActionBus
 import com.base.navigation.NavigationActionBus

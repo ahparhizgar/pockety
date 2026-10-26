@@ -19,7 +19,7 @@ import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.arkivanov.essenty.lifecycle.resume
 import com.arkivanov.essenty.statekeeper.StateKeeper
 import com.arkivanov.essenty.statekeeper.StateKeeperDispatcher
-import com.base.capability.root_navigation.RootFlowDestination
+import com.base.feature.root.RootFlowDestination
 import com.base.permission.FakePermissionController
 import com.base.permission.PermissionController
 import com.base.remote.userMessage

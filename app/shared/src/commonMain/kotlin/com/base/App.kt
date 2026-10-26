@@ -16,17 +16,17 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.plus
 import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import com.base.capability.adding_expense.AddExpenseFlowScreen
-import com.base.capability.home.HomeScreen
-import com.base.capability.main.MainScreen
-import com.base.capability.pocket_management.PocketDetailsScreen
-import com.base.capability.pocket_management.PocketSettingsFlowScreen
-import com.base.capability.pocket_management.PocketsScreen
-import com.base.capability.root_navigation.FakeRootComponent
-import com.base.capability.root_navigation.RootComponent
-import com.base.capability.root_navigation.RootFlowDestination
-import com.base.capability.sms_inbox.InboxScreen
-import com.base.capability.splash.SplashScreen
+import com.base.feature.expense.AddExpenseFlowScreen
+import com.base.feature.home.HomeScreen
+import com.base.feature.main.MainScreen
+import com.base.feature.pocket.PocketsScreen
+import com.base.feature.pocket.details.PocketDetailsScreen
+import com.base.feature.pocket.settings.PocketSettingsFlowScreen
+import com.base.feature.root.FakeRootComponent
+import com.base.feature.root.RootComponent
+import com.base.feature.root.RootFlowDestination
+import com.base.feature.sms.inbox.InboxScreen
+import com.base.feature.splash.SplashScreen
 import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 import com.base.usermessage.CustomSnackbar
@@ -35,7 +35,10 @@ import com.base.usermessage.SnackbarHostState
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
-fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
+fun RootScreen(
+    root: RootComponent,
+    modifier: Modifier = Modifier,
+) {
   val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
   SideEffect { root.windowSizeHolder.update(windowSizeClass) }
 

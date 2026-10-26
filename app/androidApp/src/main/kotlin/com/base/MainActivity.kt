@@ -8,9 +8,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.retainedComponent
-import com.base.capability.root_navigation.FakeRootComponent
-import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.defaultCContext
+import com.base.feature.root.FakeRootComponent
+import com.base.feature.root.RootComponentFactory
 import com.base.navigation.NavigationAction
 import com.base.navigation.NavigationActionBus
 import com.base.permission.AndroidPermissionController

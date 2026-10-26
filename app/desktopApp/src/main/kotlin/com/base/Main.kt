@@ -13,9 +13,9 @@ import com.arkivanov.decompose.DecomposeSettings
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
 import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
-import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.DefaultCContext
 import com.base.di.appModule
+import com.base.feature.root.RootComponentFactory
 import javax.swing.SwingUtilities
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
@@ -31,7 +31,9 @@ fun main(vararg args: String) {
 
   val backDispatcher = BackDispatcher()
   val context = DefaultCContext(lifecycle = lifecycle, backHandler = backDispatcher)
-  val root = runOnUiThread { koin.get<RootComponentFactory>().create(context) }
+  val root = runOnUiThread {
+    koin.get<RootComponentFactory>().create(context)
+  }
   DecomposeSettings.settings = DecomposeSettings(duplicateConfigurationsEnabled = true)
 
   application {

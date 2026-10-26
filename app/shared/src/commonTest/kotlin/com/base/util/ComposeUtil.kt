@@ -8,10 +8,10 @@ import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.printToLog
 import com.arkivanov.decompose.DecomposeSettings
 import com.arkivanov.essenty.lifecycle.resume
-import com.base.capability.root_navigation.RootComponent
-import com.base.capability.root_navigation.RootComponentFactory
 import com.base.component.TestCContext
 import com.base.component.TestDecomposeSettings
+import com.base.feature.root.RootComponent
+import com.base.feature.root.RootComponentFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.Koin

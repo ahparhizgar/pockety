@@ -24,9 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.base.capability.category_management.CategoryColorOption
-import com.base.capability.category_management.CategoryColorsWrapper
-import com.base.capability.category_management.defaultCategoryColors
+import com.base.feature.category.add.CategoryColorOption
+import com.base.feature.category.add.CategoryColorsWrapper
+import com.base.feature.category.add.defaultCategoryColors
 import com.base.ui.ComponentPreviews
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res

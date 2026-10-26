@@ -42,9 +42,7 @@ room3 { schemaDirectory("$projectDir/schemas") }
 @OptIn(ExperimentalRoborazziApi::class)
 roborazzi {
   outputDir.set(rootProject.file(".screenshots"))
-  compare {
-    outputDir.set(rootProject.file(".screenshots/compare"))
-  }
+  compare { outputDir.set(rootProject.file(".screenshots/compare")) }
   generateComposePreviewDesktopTests {
     enable = false
     roborazzi.generateComposePreviewDesktopTests.packages.add("com.base")
