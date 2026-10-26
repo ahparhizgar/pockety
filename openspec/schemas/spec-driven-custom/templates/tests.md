@@ -2,7 +2,7 @@
 
 ## Unit Tests (single component / class / function)
 
-### `<feature>/<sub_feature>/<name>Test`
+### `<feature>[/<sub_feature>]/<name>Test`
 
 **Target**: <!-- Component / business logic under test -->
 
@@ -14,7 +14,7 @@
 
 ## E2E Flow Tests
 
-### `<feature>/<sub_feature>/<name>FlowE2eTest`
+### `<feature>[/<sub_feature>]/<name>FlowE2eTest`
 
 **Flow**: <!-- Navigation and integration flow from root component -->
 
@@ -31,7 +31,7 @@
 
 ## Repository & Data Tests
 
-### `<feature>/<sub_feature>/<name>RepositoryTest`
+### `<feature>[/<sub_feature>]/<name>RepositoryTest`
 
 - Given <!-- initial state/context -->
     - When <!-- user navigates and performs actions -->
@@ -41,7 +41,7 @@
 
 ## UI & Accessibility Tests
 
-### `<feature>/<sub_feature>/<name>E2eUiTest`
+### `<feature>[/<sub_feature>]/<name>E2eUiTest`
 
 **Scenarios**:
 
