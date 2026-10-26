@@ -22,11 +22,11 @@ import com.base.capability.pocket_management.PocketDetailsComponent
 import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketsComponent
 import com.base.capability.pocket_management.PocketsComponentFactory
-import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.capability.sms_inbox.FakeInboxComponent
 import com.base.capability.sms_inbox.InboxComponent
 import com.base.capability.sms_inbox.InboxComponentFactory
 import com.base.component.CContext
+import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
 import com.base.ui.components.PocketyTab
@@ -51,7 +51,7 @@ data class MainState(
     val inboxBadgeCount: Int = 0,
 )
 
-interface MainComponent : TopLevelDestinationConfig {
+interface MainComponent : TopLevelDestination {
   val stack: Value<ChildStack<MainChildConfig, Child>>
   val state: Value<MainState>
   val backHandler: BackHandler
@@ -74,7 +74,7 @@ interface MainComponent : TopLevelDestinationConfig {
     data object Settings : Child
   }
 
-  @Serializable data object Config : TopLevelDestinationConfig
+  @Serializable data object Config : TopLevelDestination
 }
 
 interface MainComponentFactory {

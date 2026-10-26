@@ -15,8 +15,8 @@ import com.base.capability.category_management.AddCategoryComponent
 import com.base.capability.category_management.AddCategoryComponentFactory
 import com.base.capability.category_management.CategorySelectionComponent
 import com.base.capability.category_management.CategorySelectionComponentFactory
-import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.component.CContext
+import com.base.component.TopLevelDestination
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -34,7 +34,7 @@ sealed interface PocketSettingsFlowChildConfig {
   @Serializable data object AddCategory : PocketSettingsFlowChildConfig
 }
 
-interface PocketSettingsFlowComponent : TopLevelDestinationConfig {
+interface PocketSettingsFlowComponent {
   val stack: Value<ChildStack<PocketSettingsFlowChildConfig, Child>>
   val backHandler: BackHandler
 
@@ -51,7 +51,7 @@ interface PocketSettingsFlowComponent : TopLevelDestinationConfig {
   @Serializable
   data class Config(
       val pocketId: Long? = null,
-  ) : TopLevelDestinationConfig
+  ) : TopLevelDestination
 }
 
 interface PocketSettingsFlowComponentFactory {

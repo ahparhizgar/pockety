@@ -4,8 +4,8 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
-import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.component.CContext
+import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseEntity
 import com.base.db.CandidateExpenseRepository
@@ -23,7 +23,7 @@ data class InboxState(
     val isLoading: Boolean = false,
 )
 
-interface InboxComponent : TopLevelDestinationConfig {
+interface InboxComponent {
   val state: Value<InboxState>
 
   fun onDismiss(candidateId: Long): Job
@@ -32,7 +32,7 @@ interface InboxComponent : TopLevelDestinationConfig {
 
   fun onBackClicked()
 
-  @Serializable data object Config : TopLevelDestinationConfig
+  @Serializable data object Config : TopLevelDestination
 }
 
 interface InboxComponentFactory {

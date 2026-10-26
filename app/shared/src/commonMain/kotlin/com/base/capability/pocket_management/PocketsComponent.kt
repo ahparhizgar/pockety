@@ -4,8 +4,8 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
-import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.component.CContext
+import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.FakePocketItemModelFactory
 import com.base.db.PocketItemModel
@@ -20,14 +20,14 @@ data class PocketsState(
     val isLoading: Boolean = false,
 )
 
-interface PocketsComponent : TopLevelDestinationConfig {
+interface PocketsComponent {
   val state: Value<PocketsState>
 
   fun onPocketClick(pocketId: Long)
 
   fun onAddPocketClick()
 
-  @Serializable data object Config : TopLevelDestinationConfig
+  @Serializable data object Config : TopLevelDestination
 }
 
 interface PocketsComponentFactory {

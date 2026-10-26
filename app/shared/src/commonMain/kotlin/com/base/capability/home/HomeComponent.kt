@@ -6,8 +6,8 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
 import com.base.capability.adding_expense.AddExpenseFlowComponent
-import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.component.CContext
+import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
 import com.base.db.ExpenseEntity
@@ -27,7 +27,7 @@ data class HomeState(
     val pendingCandidateSum: Long = 0L,
 )
 
-interface HomeComponent : TopLevelDestinationConfig {
+interface HomeComponent {
   val state: Value<HomeState>
 
   fun onAddExpenseClicked()
@@ -36,7 +36,7 @@ interface HomeComponent : TopLevelDestinationConfig {
 
   fun onEnableSmsTrackingClicked(): Job
 
-  @Serializable data object Config : TopLevelDestinationConfig
+  @Serializable data object Config : TopLevelDestination
 }
 
 interface HomeComponentFactory {

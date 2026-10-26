@@ -4,8 +4,8 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
-import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.component.CContext
+import com.base.component.TopLevelDestination
 import com.base.component.componentScope
 import com.base.db.PocketRepository
 import kotlin.time.Instant
@@ -40,7 +40,7 @@ data class PocketDetailsState(
     val transactions: List<PocketTransactionUiModel> = emptyList(),
 )
 
-interface PocketDetailsComponent : TopLevelDestinationConfig {
+interface PocketDetailsComponent {
   val state: Value<PocketDetailsState>
 
   fun onBackClicked()
@@ -64,7 +64,7 @@ interface PocketDetailsComponent : TopLevelDestinationConfig {
   @Serializable
   data class Config(
       val pocketId: Long,
-  ) : TopLevelDestinationConfig
+  ) : TopLevelDestination
 }
 
 interface PocketDetailsComponentFactory {

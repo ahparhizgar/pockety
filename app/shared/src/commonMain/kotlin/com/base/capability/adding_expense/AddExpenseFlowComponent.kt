@@ -18,8 +18,8 @@ import com.base.capability.category_management.AddCategoryComponent
 import com.base.capability.category_management.AddCategoryComponentFactory
 import com.base.capability.category_management.CategorySelectionComponent
 import com.base.capability.category_management.CategorySelectionComponentFactory
-import com.base.capability.root_navigation.TopLevelDestinationConfig
 import com.base.component.CContext
+import com.base.component.TopLevelDestination
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -38,7 +38,7 @@ sealed interface AddExpenseFlowChildConfig {
   @Serializable data object AddCategory : AddExpenseFlowChildConfig
 }
 
-interface AddExpenseFlowComponent : TopLevelDestinationConfig {
+interface AddExpenseFlowComponent {
   val stack: Value<ChildStack<AddExpenseFlowChildConfig, Child>>
   val backHandler: BackHandler
 
@@ -56,7 +56,7 @@ interface AddExpenseFlowComponent : TopLevelDestinationConfig {
   data class Config(
       val initialAmount: String = "",
       val candidateExpenseId: Long? = null,
-  ) : TopLevelDestinationConfig
+  ) : TopLevelDestination
 }
 
 interface AddExpenseFlowComponentFactory {

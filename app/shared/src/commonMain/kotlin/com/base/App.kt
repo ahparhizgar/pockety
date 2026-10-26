@@ -32,6 +32,7 @@ import com.base.capability.sms_inbox.InboxComponent
 import com.base.capability.sms_inbox.InboxScreen
 import com.base.capability.splash.SplashDestination
 import com.base.capability.splash.SplashScreen
+import com.base.component.TopLevelChild
 import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 import com.base.usermessage.CustomSnackbar
@@ -71,7 +72,7 @@ fun RootScreen(root: RootComponent, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun RootChildContent(child: Any) {
+private fun RootChildContent(child: TopLevelChild) {
   when (child) {
     is SplashDestination -> {
       SplashScreen(modifier = Modifier.testTag("splash-screen"))

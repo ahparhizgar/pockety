@@ -22,8 +22,11 @@ import com.base.capability.pocket_management.PocketSettingsFlowComponent
 import com.base.capability.pocket_management.PocketSettingsFlowComponentFactory
 import com.base.capability.sms_inbox.InboxComponent
 import com.base.capability.sms_inbox.InboxComponentFactory
+import com.base.capability.splash.SplashChild
 import com.base.capability.splash.SplashDestination
 import com.base.component.CContext
+import com.base.component.TopLevelChild
+import com.base.component.TopLevelDestination
 import com.base.component.WindowSizeHolder
 import com.base.component.componentScope
 import com.base.navigation.NavigationAction
@@ -35,7 +38,7 @@ import org.koin.core.scope.Scope
 
 interface RootComponent {
   val backHandler: BackHandler
-  val childStack: Value<ChildStack<TopLevelDestinationConfig, Any>>
+  val childStack: Value<ChildStack<TopLevelDestination, TopLevelChild>>
   val messageHolder: MessageHolder
   val windowSizeHolder: WindowSizeHolder
 
@@ -53,7 +56,7 @@ class DefaultRootComponent(
 ) : RootComponent, CContext by cContext {
   val scope = componentScope()
 
-  private val rootNavigation = StackNavigation<TopLevelDestinationConfig>()
+  private val rootNavigation = StackNavigation<TopLevelDestination>()
   override val backHandler: BackHandler = cContext.backHandler
   override val messageHolder: MessageHolder = MessageHolder()
 
@@ -84,7 +87,7 @@ class DefaultRootComponent(
     }
   }
 
-  override val childStack: Value<ChildStack<TopLevelDestinationConfig, Any>> =
+  override val childStack: Value<ChildStack<TopLevelDestination, TopLevelChild>> =
       cContext.childStack(
           source = rootNavigation,
           serializer = null,
@@ -94,7 +97,7 @@ class DefaultRootComponent(
       )
 
   @Suppress("LongMethod")
-  private fun createChild(config: TopLevelDestinationConfig, cContext: CContext): Any {
+  private fun createChild(config: TopLevelDestination, cContext: CContext): TopLevelChild {
     return when (config) {
       is SplashDestination -> SplashDestination
       is MainComponent.Config ->
@@ -170,16 +173,14 @@ class FakeRootComponent : RootComponent {
 
   override fun onBack() {}
 
-  override val childStack: Value<ChildStack<TopLevelDestinationConfig, Any>> =
+  override val childStack: Value<ChildStack<TopLevelDestination, TopLevelChild>> =
       MutableValue(
           ChildStack(
-              active = Child.Created(SplashDestination, SplashDestination),
+              active = Child.Created(SplashDestination, SplashChild),
               backStack = emptyList(),
           )
       )
 }
-
-interface TopLevelDestinationConfig
 
 interface ComponentProvider {
   fun <T : Any> provide(kClass: KClass<T>): T
