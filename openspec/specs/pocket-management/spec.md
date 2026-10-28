@@ -166,3 +166,29 @@ The system SHALL display an integrated chronological activity list in pocket det
 #### Scenario: Pocket details with no transactions
 - **WHEN** a pocket has no top-ups and no linked expenses
 - **THEN** the system displays an empty transactions placeholder
+
+### Requirement: Pocket Deletion Danger Zone
+The system SHALL provide a danger zone card in pocket settings allowing users to delete an existing pocket. The danger zone card SHALL NOT be displayed when creating a new pocket.
+
+#### Scenario: Danger zone visible in edit mode
+- **WHEN** user opens pocket settings for an existing pocket (`pocketId != null`)
+- **THEN** the system displays the Danger Zone card with a "Delete Pocket" action
+
+#### Scenario: Danger zone hidden in create mode
+- **WHEN** user opens pocket settings in creation mode (`pocketId == null`)
+- **THEN** the system does not display the Danger Zone card
+
+#### Scenario: Delete pocket confirmation and completion
+- **WHEN** user clicks "Delete Pocket" in the Danger Zone card
+- **THEN** the system deletes the pocket from storage, unlinks any associated expenses (setting their pocket reference to null), removes associated top-ups, and finishes the pocket settings flow
+
+### Requirement: Unlink Expense Transaction from Pocket Details
+The system SHALL allow users to unlink an expense transaction from a pocket within pocket details, disconnecting the transaction from the pocket and restoring the pocket's balance without deleting the underlying transaction from the database.
+
+#### Scenario: User unlinks expense transaction
+- **WHEN** the user activates the unlink action on an expense transaction in pocket details
+- **THEN** the transaction's pocket assignment is cleared (pocket ID set to null), the pocket's balance increases by the unlinked transaction amount, and the transaction remains recorded in the user's expense history
+
+#### Scenario: Top-up transactions cannot be unlinked
+- **WHEN** the user views a top-up transaction entry in pocket details
+- **THEN** no unlink action is displayed for top-up transactions
