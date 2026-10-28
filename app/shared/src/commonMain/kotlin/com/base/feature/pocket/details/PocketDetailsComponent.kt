@@ -57,7 +57,7 @@ interface PocketDetailsComponent {
 
   fun onDismissConfirmation()
 
-  fun onDeleteTransaction(id: String)
+  fun onUnlinkTransaction(id: String)
 }
 
 interface PocketDetailsComponentFactory {
@@ -186,13 +186,13 @@ class DefaultPocketDetailsComponent(
     _state.update { it.copy(confirmationMessage = null) }
   }
 
-  override fun onDeleteTransaction(id: String) {
+  override fun onUnlinkTransaction(id: String) {
     val tx = _state.value.transactions.firstOrNull { it.id == id }
     if (tx != null) {
       if (id.startsWith("expense-")) {
         val expenseId = id.removePrefix("expense-").toLongOrNull()
         if (expenseId != null) {
-          scope.launch { pocketRepository.deleteExpense(expenseId) }
+          scope.launch { pocketRepository.unlinkExpense(expenseId) }
         }
       } else {
         _state.update {
@@ -201,7 +201,7 @@ class DefaultPocketDetailsComponent(
       }
       _state.update {
         it.copy(
-            confirmationMessage = "Deleted ${tx.title}. +${formatAmount(tx.amount)} T restored!",
+            confirmationMessage = "Unlinked ${tx.title}. +${formatAmount(tx.amount)} T restored!",
         )
       }
     }
@@ -267,7 +267,7 @@ class FakePocketDetailsComponent(
     _state.update { it.copy(confirmationMessage = null) }
   }
 
-  override fun onDeleteTransaction(id: String) {
+  override fun onUnlinkTransaction(id: String) {
     _state.update { it.copy(transactions = it.transactions.filterNot { item -> item.id == id }) }
   }
 }

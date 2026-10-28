@@ -17,6 +17,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.flow.first
 
 class PocketDetailsFlowE2eTest : BehaviorSpec() {
   init {
@@ -68,6 +69,26 @@ class PocketDetailsFlowE2eTest : BehaviorSpec() {
           details.state.value.transactions[0].amount shouldBe 50000L
           details.state.value.transactions[1].isTopUp shouldBe true
           details.state.value.transactions[1].amount shouldBe 850000L
+        }
+
+        And("user unlinks an expense transaction") {
+          beforeEach {
+            val details = root.assertPocketDetails()
+            val expenseTx = details.state.value.transactions.first { tx -> !tx.isTopUp }
+            details.onUnlinkTransaction(expenseTx.id)
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then(
+              "pocket details updates transactions and balance, and expense remains in repository unlinked"
+          ) {
+            val details = root.assertPocketDetails()
+            details.state.value.balanceAmount shouldBe 850000L
+            details.state.value.transactions.none { tx -> !tx.isTopUp } shouldBe true
+            val expenses = expenseRepository.observeExpenses().first()
+            expenses shouldHaveSize 1
+            expenses[0].pocketId shouldBe null
+          }
         }
 
         And("user opens quick top-up and confirms an addition of 100,000 T") {

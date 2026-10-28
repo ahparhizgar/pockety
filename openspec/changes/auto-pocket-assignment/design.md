@@ -50,6 +50,10 @@ In `app/shared`, `DefaultAddExpenseComponent` currently only passes `categoryId`
   - "No Pocket" option at the top to clear the selection.
   - Sectioned list displaying pockets with icon, background color, category tag badge, remaining balance (with over-budget indicator if negative), and active checkmark.
 
+### 5. Pocket Details Transaction Unlinking vs Deletion
+- **Decision**: In `PocketDetailsComponent` and `PocketDetailsScreen`, update the action on expense rows to unlink the transaction (`pocketRepository.unlinkExpense(id)` resetting `pocketId = null`) and change the icon to `Icons.Default.Close` (X icon).
+- **Rationale**: Deleting a transaction from pocket details was destructive and confusing to users who only wanted to remove an expense from an envelope/pocket budget without deleting the underlying financial transaction. Setting `pocketId = null` keeps transaction history intact while dynamically updating the pocket ledger and restoring the remaining balance.
+
 ## Risks / Trade-offs
 
 - **[Multiple pockets mapped to same category]** → In `DefaultAddExpenseComponent`, pick the first matching pocket (`firstOrNull { it.categoryId == category.id }`).

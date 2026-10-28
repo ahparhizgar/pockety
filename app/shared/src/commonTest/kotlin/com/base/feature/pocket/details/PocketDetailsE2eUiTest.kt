@@ -195,4 +195,46 @@ class PocketDetailsE2eUiTest {
 
     onNode(hasText("No expenses recorded yet")).assertExists()
   }
+
+  @Test
+  fun testUnlinkExpenseFromPocketDetails() = runComposeUiTest {
+    val context = TestCContext()
+    val koin = uiKoin()
+    var pocketId = 0L
+    var expenseId = 0L
+
+    runTest {
+      val repository = koin.get<PocketRepository>()
+      val expenseRepository = koin.get<ExpenseRepository>()
+      pocketId =
+          repository.addPocket(
+              name = "Daily Cafe & Coffee",
+              categoryTag = "Drinks",
+              budgetAmount = 850000,
+              icon = "coffee",
+              color = 0xFF4A7C59,
+          )
+      expenseId =
+          expenseRepository.addExpense(
+              amount = 50000,
+              description = "Sam Cafe",
+              pocketId = pocketId,
+          )
+    }
+
+    val root = koin.injectUiRoot(context)
+    setContent { RootScreen(root) }
+
+    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
+    onNode(hasTestTag("pocket-card-$pocketId")).waitForExistence().performClick()
+    onNode(hasTestTag("pocket-details-screen")).waitForExistence().assertExists()
+    onNode(hasText("800,000")).assertExists()
+    onNode(hasText("Sam Cafe")).assertExists()
+
+    onNode(hasTestTag("unlink-tx-expense-$expenseId")).performClick()
+
+    onNode(hasText("850,000")).waitForExistence().assertExists()
+    onNode(hasTestTag("feedback-banner")).assertExists()
+    onNode(hasText("Unlinked Sam Cafe. +50,000 T restored!")).assertExists()
+  }
 }

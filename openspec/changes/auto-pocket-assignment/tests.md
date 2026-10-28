@@ -38,6 +38,29 @@
     - When tapping back,
         - [ ] Then `onBack` callback is invoked
 
+### `pocket/details/PocketDetailsTest`
+
+**Target**: `DefaultPocketDetailsComponent`
+
+**Scenarios**:
+
+- Given `PocketDetailsComponent` with linked expenses and top-ups
+    - When user unlinks a linked expense transaction (`onUnlinkTransaction`),
+        - [ ] Then expense is removed from pocket view and pocket balance reflects restored amount
+        - [ ] Then confirmation banner displays unlinked feedback message
+        - [ ] Then expense remains in `ExpenseRepository` with `pocketId = null`
+
+### `pocket/PocketRepositoryTest`
+
+**Target**: `PocketRepository`
+
+**Scenarios**:
+
+- Given a pocket with a linked expense
+    - When `unlinkExpense(id)` is executed,
+        - [ ] Then `transactions.pocketId` is updated to null and pocket balance increases by expense amount
+        - [ ] Then general expense record remains in the database
+
 ## E2E Flow Tests
 
 ### `expense/AddExpenseFlowE2eTest`
@@ -64,6 +87,16 @@
         - And user saves the expense,
             - [ ] Then expense is saved with `pocketId = null` and no pocket balance is altered
 
+### `pocket/details/PocketDetailsFlowE2eTest`
+
+**Flow**: Pocket details navigation and unlinking
+
+**Scenarios**:
+
+- Given user in pocket details with a linked expense
+    - When user unlinks an expense transaction,
+        - [ ] Then pocket details updates transactions and balance, and expense remains in repository unlinked
+
 ## UI & Accessibility Tests
 
 ### `expense/AddViewExpenseE2eUiTest`
@@ -77,3 +110,12 @@
 2. **Keyboard Accessibility**:
    - Traverse input focus using keyboard ImeActions and Tab navigation through amount field, category card, pocket card, description field, and save action.
    - Verify pocket selector card and unlink button are keyboard-focusable and activate with keyboard click/enter.
+
+### `pocket/details/PocketDetailsE2eUiTest`
+
+**Scenarios**:
+
+1. **Unlink Expense from Pocket Details**:
+   - Render `PocketDetailsScreen` with a linked expense.
+   - Click the "X" close/unlink button (`unlink-tx-expense-<id>`).
+   - Verify balance restores to full amount and feedback banner is displayed.

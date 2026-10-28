@@ -89,18 +89,25 @@ class PocketDetailsTest : BehaviorSpec() {
           state.transactions[1].amount shouldBe 850000L
         }
 
-        And("user deletes a linked expense transaction") {
+        And("user unlinks a linked expense transaction") {
           beforeEach {
             val expenseTx = component.state.value.transactions.first { tx -> !tx.isTopUp }
-            component.onDeleteTransaction(expenseTx.id)
+            component.onUnlinkTransaction(expenseTx.id)
             testCoroutineScheduler.advanceUntilIdle()
           }
 
-          Then("the expense is removed and pocket balance reflects the restored amount") {
+          Then(
+              "the expense is removed from pocket, balance reflects the restored amount, and expense remains unlinked"
+          ) {
             val state = component.state.value
             state.transactions.none { tx -> !tx.isTopUp } shouldBe true
             state.balanceAmount shouldBe 850000L
-            state.confirmationMessage.shouldNotBeNull()
+            state.confirmationMessage shouldBe "Unlinked Sam Cafe. +50,000 T restored!"
+
+            val expenses = expenseRepository.observeExpenses().first()
+            expenses shouldHaveSize 1
+            expenses[0].pocketId shouldBe null
+            expenses[0].description shouldBe "Sam Cafe"
           }
         }
       }

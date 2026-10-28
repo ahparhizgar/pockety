@@ -161,7 +161,7 @@ fun PocketDetailInteractiveScreen(
         val numericAmount = expense.amount.filter { it.isDigit() }.toIntOrNull() ?: 0
         balance += numericAmount
         feedbackMessage =
-            "Deleted ${expense.title}. +${formatThousandSeparator(numericAmount)} T restored!"
+            "Unlinked ${expense.title}. +${formatThousandSeparator(numericAmount)} T restored!"
       },
   )
 }

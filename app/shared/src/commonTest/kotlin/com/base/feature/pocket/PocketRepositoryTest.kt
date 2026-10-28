@@ -204,6 +204,44 @@ class PocketRepositoryTest : BehaviorSpec() {
           expense.pocketId shouldBe null
         }
       }
+
+      When("unlinking an expense from a pocket") {
+        var pocketId: Long by testValue { 0 }
+        var expenseId: Long by testValue { 0 }
+
+        beforeEach {
+          pocketId =
+              pocketRepository.addPocket(
+                  name = "Cafe",
+                  categoryTag = "Drinks",
+                  budgetAmount = 1000,
+                  icon = "coffee",
+              )
+          expenseId =
+              expenseRepository.addExpense(
+                  amount = 300,
+                  description = "Latte",
+                  pocketId = pocketId,
+              )
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the expense is unlinked from the pocket but remains in repository") {
+          pocketRepository.unlinkExpense(expenseId)
+          testCoroutineScheduler.advanceUntilIdle()
+
+          val pocketExpenses = pocketRepository.observePocketExpenses(pocketId).first()
+          pocketExpenses shouldHaveSize 0
+
+          val pocket = pocketRepository.observePockets().first().first { p -> p.id == pocketId }
+          pocket.remainingBalance shouldBe 1000L
+
+          val generalExpense =
+              expenseRepository.observeExpenses().first().first { exp -> exp.id == expenseId }
+          generalExpense.pocketId shouldBe null
+          generalExpense.description shouldBe "Latte"
+        }
+      }
     }
   }
 }

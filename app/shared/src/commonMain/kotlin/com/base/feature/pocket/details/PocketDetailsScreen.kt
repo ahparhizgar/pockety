@@ -147,7 +147,7 @@ private fun PocketDetailsContent(
       items(state.transactions, key = { it.id }) { tx ->
         PocketTransactionRow(
             item = tx,
-            onDelete = { component.onDeleteTransaction(tx.id) },
+            onUnlink = { component.onUnlinkTransaction(tx.id) },
         )
         HorizontalDivider(
             color = MaterialTheme.colorScheme.surfaceContainerHigh,

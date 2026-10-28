@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Coffee
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -408,8 +407,8 @@ fun PocketTransactionRow(
               modifier = Modifier.size(36.dp),
           ) {
             Icon(
-                imageVector = Icons.Outlined.DeleteOutline,
-                contentDescription = "Delete expense",
+                imageVector = Icons.Default.Close,
+                contentDescription = "Unlink expense",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(18.dp),
             )

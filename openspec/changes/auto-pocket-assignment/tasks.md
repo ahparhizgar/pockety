@@ -18,3 +18,10 @@
 ## 4. Verification Gate
 
 - [x] 4.1 Run Level 1-4 verification gates (`compileKotlinJvm`, `jvmTest`, `koverVerify`, `detektMain`, `ktfmtFormat`) and confirm all checks pass.
+
+## 5. Pocket Details Transaction Unlinking
+
+- [x] 5.1 Implement `unlinkExpense(id)` in `PocketDao` and `PocketRepository` (`UPDATE transactions SET pocketId = NULL WHERE id = :id`).
+- [x] 5.2 Update `PocketDetailsComponent` and `PocketDetailsScreen` with `onUnlinkTransaction`, "X" close icon, and feedback banner.
+- [x] 5.3 Update `:design` module `PocketTransactionRow` and `PocketDetailScreen` with close/X icon and unlink feedback.
+- [x] 5.4 Update and verify unit, flow, and UI tests across `PocketDetailsTest`, `PocketDetailsFlowE2eTest`, `PocketDetailsE2eUiTest`, and `PocketRepositoryTest`.

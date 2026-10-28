@@ -21,9 +21,7 @@ fun AddExpenseFlowComponent.assertCategorySelectionComponent(): CategorySelectio
 }
 
 fun AddExpenseFlowComponent.assertAddCategoryComponent(): AddCategoryComponent {
-  return activeInstance
-      .shouldBeInstanceOf<AddExpenseFlowComponent.Child.AddCategory>()
-      .component
+  return activeInstance.shouldBeInstanceOf<AddExpenseFlowComponent.Child.AddCategory>().component
 }
 
 fun AddExpenseFlowComponent.assertSelectPocketComponent(): SelectPocketComponent {

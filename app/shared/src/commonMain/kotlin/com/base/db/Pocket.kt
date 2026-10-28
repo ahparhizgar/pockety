@@ -149,7 +149,8 @@ interface PocketDao {
       categoryId: Long?,
   )
 
-  @Query("DELETE FROM transactions WHERE id = :id") suspend fun deleteExpense(id: Long)
+  @Query("UPDATE transactions SET pocketId = NULL WHERE id = :id")
+  suspend fun unlinkExpense(id: Long)
 
   @Query("DELETE FROM pockets WHERE id = :id") suspend fun deletePocket(id: Long)
 }
@@ -185,7 +186,7 @@ interface PocketRepository {
 
   suspend fun topUpPocket(id: Long, amount: Long, description: String? = null)
 
-  suspend fun deleteExpense(id: Long)
+  suspend fun unlinkExpense(id: Long)
 
   suspend fun deletePocket(id: Long)
 }
@@ -292,8 +293,8 @@ class DefaultPocketRepository(
     pocketDao.insertTopUp(topUp)
   }
 
-  override suspend fun deleteExpense(id: Long) {
-    pocketDao.deleteExpense(id)
+  override suspend fun unlinkExpense(id: Long) {
+    pocketDao.unlinkExpense(id)
   }
 
   override suspend fun deletePocket(id: Long) {
@@ -443,8 +444,16 @@ class FakePocketRepository(
     topUpsFlow.update { listOf(topUp) + it }
   }
 
-  override suspend fun deleteExpense(id: Long) {
-    expensesFlow.update { list -> list.filterNot { it.id == id } }
+  override suspend fun unlinkExpense(id: Long) {
+    expensesFlow.update { list ->
+      list.map { expense ->
+        if (expense.id == id) {
+          expense.copy(pocketId = null)
+        } else {
+          expense
+        }
+      }
+    }
   }
 
   override suspend fun deletePocket(id: Long) {

@@ -86,5 +86,7 @@
     <string name="tap_to_link_pocket">برای اتصال جیب ضربه بزنید</string>
     <string name="auto_deduct_pocket_budget">کسر خودکار از بودجه جیب</string>
     <string name="unlink_pocket_action">قطع اتصال جیب</string>
+    <string name="pocket_details_tx_unlinked_format">اتصال %s قطع شد. %s+ تومان به جیب بازگشت!</string>
+    <string name="pocket_details_tx_unlink_action">قطع ارتباط با جیب</string>
     <string name="active_badge">فعال</string>
 </resources>

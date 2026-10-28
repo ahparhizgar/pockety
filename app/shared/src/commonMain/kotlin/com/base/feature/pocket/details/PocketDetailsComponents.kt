@@ -16,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -41,6 +40,7 @@ import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.pocket_details_balance_label
 import pockety.app.shared.generated.resources.pocket_details_configure_button
 import pockety.app.shared.generated.resources.pocket_details_top_up_button
+import pockety.app.shared.generated.resources.pocket_details_tx_unlink_action
 
 @Composable
 fun PocketDetailsHeaderSection(
@@ -220,7 +220,7 @@ fun PocketFeedbackBanner(
 @Composable
 fun PocketTransactionRow(
     item: PocketTransactionUiModel,
-    onDelete: () -> Unit,
+    onUnlink: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
   Row(
@@ -230,7 +230,7 @@ fun PocketTransactionRow(
       horizontalArrangement = Arrangement.SpaceBetween,
   ) {
     PocketTransactionLeading(item = item, modifier = Modifier.weight(1f))
-    PocketTransactionTrailing(item = item, onDelete = onDelete)
+    PocketTransactionTrailing(item = item, onUnlink = onUnlink)
   }
 }
 
@@ -291,7 +291,7 @@ private fun PocketTransactionLeading(
 @Composable
 private fun PocketTransactionTrailing(
     item: PocketTransactionUiModel,
-    onDelete: () -> Unit,
+    onUnlink: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
   Row(
@@ -312,12 +312,12 @@ private fun PocketTransactionTrailing(
     )
     if (!item.isTopUp) {
       IconButton(
-          onClick = onDelete,
-          modifier = Modifier.size(36.dp).testTag("delete-tx-${item.id}"),
+          onClick = onUnlink,
+          modifier = Modifier.size(36.dp).testTag("unlink-tx-${item.id}"),
       ) {
         Icon(
-            imageVector = Icons.Default.DeleteOutline,
-            contentDescription = "Delete and restore",
+            imageVector = Icons.Default.Close,
+            contentDescription = stringResource(Res.string.pocket_details_tx_unlink_action),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(18.dp),
         )
@@ -357,6 +357,6 @@ private fun PocketDetailsActionBarPreview() {
 private fun PocketTransactionRowPreview() {
   PocketTransactionRow(
       item = FakePocketTransactionUiModelFactory.create(),
-      onDelete = {},
+      onUnlink = {},
   )
 }
