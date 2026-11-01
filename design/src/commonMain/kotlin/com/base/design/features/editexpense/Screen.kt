@@ -14,8 +14,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocalCafe
 import androidx.compose.material.icons.filled.ShoppingBasket
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -55,6 +59,7 @@ fun EditExpenseScreen(
         "Withdrawal from acct: 3,200,000 Rials | Card: 1234****6104 | Terminal: Sam Cafe Fereshteh | Remaining: 18,450,000 Rials",
     onBackClick: () -> Unit = {},
     onCloseClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
     onAmountChange: (String) -> Unit = {},
     onChangeCategoryClick: () -> Unit = {},
     onClearCategoryClick: () -> Unit = {},
@@ -75,6 +80,22 @@ fun EditExpenseScreen(
         PocketyTopAppBar(
             title = "Edit Expense",
             onBackClick = onBackClick,
+            actions = {
+              IconButton(onClick = onDeleteClick) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete expense",
+                    tint = MaterialTheme.colorScheme.error,
+                )
+              }
+              IconButton(onClick = onCloseClick) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+              }
+            },
         )
       },
       bottomBar = {

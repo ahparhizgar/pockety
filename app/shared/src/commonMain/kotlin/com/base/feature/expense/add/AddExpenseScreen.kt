@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -63,8 +64,10 @@ import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.add_expense_title
 import pockety.app.shared.generated.resources.cancel_action
 import pockety.app.shared.generated.resources.currency_symbol
+import pockety.app.shared.generated.resources.delete_expense_action
 import pockety.app.shared.generated.resources.description_label
 import pockety.app.shared.generated.resources.description_placeholder
+import pockety.app.shared.generated.resources.edit_expense_title
 import pockety.app.shared.generated.resources.error_empty_description
 import pockety.app.shared.generated.resources.error_invalid_amount
 import pockety.app.shared.generated.resources.save_action
@@ -78,33 +81,7 @@ fun AddExpenseScreen(
 
   Scaffold(
       modifier = modifier.testTag("add-expense-screen"),
-      topBar = {
-        PocketyTopAppBar(
-            title = stringResource(Res.string.add_expense_title),
-            navigationIcon = {
-              IconButton(
-                  onClick = component::onCancelClicked,
-                  modifier = Modifier.testTag("back-button"),
-              ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(Res.string.cancel_action),
-                )
-              }
-            },
-            actions = {
-              IconButton(
-                  onClick = component::onCancelClicked,
-              ) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(Res.string.cancel_action),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-              }
-            },
-        )
-      },
+      topBar = { AddExpenseTopAppBar(component = component) },
   ) { paddingValues ->
     Box(
         modifier =
@@ -125,6 +102,56 @@ fun AddExpenseScreen(
       }
     }
   }
+}
+
+@Composable
+private fun AddExpenseTopAppBar(
+    component: AddExpenseComponent,
+) {
+  val state by component.state.subscribeAsState()
+  val titleText =
+      if (state.isEditMode) {
+        stringResource(Res.string.edit_expense_title)
+      } else {
+        stringResource(Res.string.add_expense_title)
+      }
+  PocketyTopAppBar(
+      title = titleText,
+      navigationIcon = {
+        IconButton(
+            onClick = component::onCancelClicked,
+            modifier = Modifier.testTag("back-button"),
+        ) {
+          Icon(
+              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+              contentDescription = stringResource(Res.string.cancel_action),
+          )
+        }
+      },
+      actions = {
+        if (state.isEditMode) {
+          IconButton(
+              onClick = { component.onDeleteClicked() },
+              modifier = Modifier.testTag("delete-button"),
+          ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(Res.string.delete_expense_action),
+                tint = MaterialTheme.colorScheme.error,
+            )
+          }
+        }
+        IconButton(
+            onClick = component::onCancelClicked,
+        ) {
+          Icon(
+              imageVector = Icons.Default.Close,
+              contentDescription = stringResource(Res.string.cancel_action),
+              tint = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+      },
+  )
 }
 
 @Composable
@@ -416,6 +443,25 @@ private fun AddExpenseScreenWithPocketPreview() {
           FakeAddExpenseComponent(
               initialState =
                   AddExpenseState(
+                      amountText = "75000",
+                      descriptionText = "Dinner",
+                      selectedCategory =
+                          FakeCategoryFactory.create(name = "Dining Out", icon = "restaurant"),
+                      selectedPocket = FakePocketItemModelFactory.create(name = "Dining Pocket"),
+                  ),
+          ),
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun EditExpenseScreenPreview() {
+  AddExpenseScreen(
+      component =
+          FakeAddExpenseComponent(
+              initialState =
+                  AddExpenseState(
+                      isEditMode = true,
                       amountText = "75000",
                       descriptionText = "Dinner",
                       selectedCategory =

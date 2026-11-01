@@ -42,6 +42,7 @@ sealed interface RootFlowDestination {
   data class AddExpenseFlow(
       val initialAmount: String = "",
       val candidateExpenseId: Long? = null,
+      val expenseId: Long? = null,
   ) : RootFlowDestination {
     data class Instance(val component: AddExpenseFlowComponent) : RootFlowDestination.Instance
   }

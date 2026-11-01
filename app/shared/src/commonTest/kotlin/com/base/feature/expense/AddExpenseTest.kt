@@ -4,13 +4,12 @@ import com.base.component.TestCContext
 import com.base.db.CandidateExpenseRepository
 import com.base.db.CategoryEntity
 import com.base.db.CategoryRepository
+import com.base.db.ExpenseRepository
 import com.base.db.FakeCategoryFactory
 import com.base.db.FakePocketItemModelFactory
 import com.base.db.PocketRepository
 import com.base.feature.expense.add.AddExpenseComponent
 import com.base.feature.expense.add.DefaultAddExpenseComponentFactory
-import com.base.feature.home.HomeComponent
-import com.base.feature.home.HomeComponentFactory
 import com.base.notification.ExpenseNotificationManager
 import com.base.notification.FakeExpenseNotificationManager
 import com.base.testValue
@@ -46,14 +45,6 @@ class AddExpenseTest : BehaviorSpec() {
                 onSelectPocket = selectPocketCallback,
                 onCompleted = completedCallback,
                 onCancelled = cancelledCallback,
-            )
-      }
-      val homeComponent: HomeComponent by testValue {
-        koin
-            .get<HomeComponentFactory>()
-            .create(
-                cContext = TestCContext(),
-                onAddExpense = {},
             )
       }
 
@@ -110,13 +101,14 @@ class AddExpenseTest : BehaviorSpec() {
           testCoroutineScheduler.advanceUntilIdle()
         }
 
-        Then("saves expense and reflects on home screen while calling onCompleted") {
+        Then("saves expense and reflects in repository while calling onCompleted") {
           val state = component.state.value
           state.amountError.shouldBeNull()
           state.descriptionError.shouldBeNull()
           completedCallback.shouldBeCalled()
 
-          val expenses = homeComponent.state.value.expenses
+          val expenseRepo = koin.get<ExpenseRepository>()
+          val expenses = expenseRepo.observeExpenses().first()
           expenses shouldHaveSize 1
           expenses[0].amount shouldBe 15000
           expenses[0].description shouldBe "Groceries"
@@ -176,7 +168,8 @@ class AddExpenseTest : BehaviorSpec() {
         }
 
         Then("expense is persisted in repository with categoryId") {
-          val expenses = homeComponent.state.value.expenses
+          val expenseRepo = koin.get<ExpenseRepository>()
+          val expenses = expenseRepo.observeExpenses().first()
           expenses shouldHaveSize 1
           expenses[0].amount shouldBe 75000L
           expenses[0].description shouldBe "Dinner with colleagues"
@@ -314,7 +307,8 @@ class AddExpenseTest : BehaviorSpec() {
 
         Then("expense is persisted in repository with pocketId") {
           completedCallback.shouldBeCalled()
-          val expenses = homeComponent.state.value.expenses
+          val expenseRepo = koin.get<ExpenseRepository>()
+          val expenses = expenseRepo.observeExpenses().first()
           expenses shouldHaveSize 1
           expenses[0].pocketId shouldBe pocketId
         }
@@ -331,7 +325,8 @@ class AddExpenseTest : BehaviorSpec() {
 
         Then("expense is persisted in repository with null pocketId") {
           completedCallback.shouldBeCalled()
-          val expenses = homeComponent.state.value.expenses
+          val expenseRepo = koin.get<ExpenseRepository>()
+          val expenses = expenseRepo.observeExpenses().first()
           expenses shouldHaveSize 1
           expenses[0].pocketId.shouldBeNull()
         }
@@ -341,6 +336,138 @@ class AddExpenseTest : BehaviorSpec() {
         beforeEach { component.onSelectPocketClicked() }
 
         Then("calls onSelectPocket") { selectPocketCallback.shouldBeCalled() }
+      }
+
+      When("component is initialized in add mode") {
+        Then("isEditMode is false and delete action is unavailable") {
+          component.state.value.isEditMode shouldBe false
+          completedCallback.shouldNotBeCalled()
+          component.onDeleteClicked()
+          completedCallback.shouldNotBeCalled()
+        }
+      }
+
+      When("AddExpenseComponent is created with existing expenseId") {
+        val expenseRepo by testValue { koin.get<ExpenseRepository>() }
+        val categoryRepo by testValue { koin.get<CategoryRepository>() }
+        val pocketRepo by testValue { koin.get<PocketRepository>() }
+        val catId by testValue { categoryRepo.addCategory("Food", "fastfood", 0xFF123456) }
+        val pockId by testValue {
+          pocketRepo.addPocket(
+              name = "Food Pocket",
+              categoryTag = "Food",
+              budgetAmount = 100_000,
+              icon = "fastfood",
+              categoryId = catId,
+          )
+        }
+        val existingExpenseId by testValue {
+          expenseRepo.addExpense(
+              amount = 45000,
+              description = "Burger",
+              categoryId = catId,
+              pocketId = pockId,
+          )
+        }
+        val editCompletedCallback by testValue { FakeCallback<Unit>() }
+        val editComponent: AddExpenseComponent by testValue {
+          koin
+              .get<DefaultAddExpenseComponentFactory>()
+              .create(
+                  cContext = TestCContext(),
+                  config = AddExpenseComponent.Config(expenseId = existingExpenseId),
+                  onSelectCategory = {},
+                  onSelectPocket = {},
+                  onCompleted = editCompletedCallback,
+                  onCancelled = {},
+              )
+        }
+
+        beforeEach { testCoroutineScheduler.advanceUntilIdle() }
+
+        Then("isEditMode is true and fields are pre-populated with existing expense data") {
+          val state = editComponent.state.value
+          state.isEditMode shouldBe true
+          state.amountText shouldBe "45000"
+          state.descriptionText shouldBe "Burger"
+          state.selectedCategory?.id shouldBe catId
+          state.selectedPocket?.id shouldBe pockId
+        }
+      }
+
+      When("modifying amount and description in edit mode and saving") {
+        val expenseRepo by testValue { koin.get<ExpenseRepository>() }
+        val existingExpenseId by testValue {
+          expenseRepo.addExpense(
+              amount = 10000,
+              description = "Initial Description",
+          )
+        }
+        val editCompletedCallback by testValue { FakeCallback<Unit>() }
+        val editComponent: AddExpenseComponent by testValue {
+          koin
+              .get<DefaultAddExpenseComponentFactory>()
+              .create(
+                  cContext = TestCContext(),
+                  config = AddExpenseComponent.Config(expenseId = existingExpenseId),
+                  onSelectCategory = {},
+                  onSelectPocket = {},
+                  onCompleted = editCompletedCallback,
+                  onCancelled = {},
+              )
+        }
+
+        beforeEach {
+          testCoroutineScheduler.advanceUntilIdle()
+          editComponent.onAmountChanged("25000")
+          editComponent.onDescriptionChanged("Updated Description")
+          editComponent.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then(
+            "updateExpense is called on repository with modified fields and onCompleted is invoked"
+        ) {
+          editCompletedCallback.shouldBeCalled()
+          val updatedExpense = expenseRepo.getExpenseById(existingExpenseId)
+          updatedExpense?.amount shouldBe 25000
+          updatedExpense?.description shouldBe "Updated Description"
+        }
+      }
+
+      When("user clicks Delete action in edit mode") {
+        val expenseRepo by testValue { koin.get<ExpenseRepository>() }
+        val existingExpenseId by testValue {
+          expenseRepo.addExpense(
+              amount = 15000,
+              description = "To Delete",
+          )
+        }
+        val deleteCompletedCallback by testValue { FakeCallback<Unit>() }
+        val editComponent: AddExpenseComponent by testValue {
+          koin
+              .get<DefaultAddExpenseComponentFactory>()
+              .create(
+                  cContext = TestCContext(),
+                  config = AddExpenseComponent.Config(expenseId = existingExpenseId),
+                  onSelectCategory = {},
+                  onSelectPocket = {},
+                  onCompleted = deleteCompletedCallback,
+                  onCancelled = {},
+              )
+        }
+
+        beforeEach {
+          testCoroutineScheduler.advanceUntilIdle()
+          editComponent.onDeleteClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("deleteExpense is called on repository and onCompleted is invoked") {
+          deleteCompletedCallback.shouldBeCalled()
+          val deletedExpense = expenseRepo.getExpenseById(existingExpenseId)
+          deletedExpense.shouldBeNull()
+        }
       }
     }
   }

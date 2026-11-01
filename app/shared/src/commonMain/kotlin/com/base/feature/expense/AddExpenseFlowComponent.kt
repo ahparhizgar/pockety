@@ -30,6 +30,7 @@ sealed interface AddExpenseFlowChildConfig {
   data class AddExpense(
       val initialAmount: String = "",
       val candidateExpenseId: Long? = null,
+      val expenseId: Long? = null,
   ) : AddExpenseFlowChildConfig
 
   @Serializable
@@ -100,6 +101,7 @@ class DefaultAddExpenseFlowComponent(
               AddExpenseFlowChildConfig.AddExpense(
                   initialAmount = config.initialAmount,
                   candidateExpenseId = config.candidateExpenseId,
+                  expenseId = config.expenseId,
               ),
           handleBackButton = true,
           childFactory = ::createChild,
@@ -131,6 +133,7 @@ class DefaultAddExpenseFlowComponent(
                 AddExpenseComponent.Config(
                     initialAmount = childConfig.initialAmount,
                     candidateExpenseId = childConfig.candidateExpenseId,
+                    expenseId = childConfig.expenseId,
                 ),
             onSelectCategory = {
               val currentCatId = addExpenseComponent?.state?.value?.selectedCategory?.id

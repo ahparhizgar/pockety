@@ -1,5 +1,6 @@
 package com.base.util
 
+import com.base.feature.analytics.AnalyticsComponent
 import com.base.feature.home.HomeComponent
 import com.base.feature.main.MainComponent
 import com.base.feature.pocket.PocketsComponent
@@ -19,4 +20,8 @@ fun MainComponent.assertInboxComponent(): InboxComponent {
 
 fun MainComponent.assertPocketsComponent(): PocketsComponent {
   return mainActiveInstance.shouldBeInstanceOf<MainComponent.Child.Pockets>().component
+}
+
+fun MainComponent.assertAnalyticsComponent(): AnalyticsComponent {
+  return mainActiveInstance.shouldBeInstanceOf<MainComponent.Child.Analytics>().component
 }

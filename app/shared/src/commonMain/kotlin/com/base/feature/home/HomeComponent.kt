@@ -8,9 +8,6 @@ import com.base.Fake
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
-import com.base.db.ExpenseEntity
-import com.base.db.ExpenseRepository
-import com.base.db.FakeExpenseFactory
 import com.base.feature.root.RootFlowDestination
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
@@ -18,8 +15,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 data class HomeState(
-    val expenses: List<ExpenseEntity> = emptyList(),
-    val isLoading: Boolean = false,
     val isSmsPermissionGranted: Boolean = false,
     val pendingCandidateCount: Int = 0,
     val pendingCandidateSum: Long = 0L,
@@ -45,7 +40,6 @@ interface HomeComponentFactory {
 
 class DefaultHomeComponent(
     cContext: CContext,
-    private val expenseRepository: ExpenseRepository,
     private val candidateExpenseRepository: CandidateExpenseRepository,
     private val onAddExpense: () -> Unit,
     private val onOpenInbox: () -> Unit = {},
@@ -54,30 +48,15 @@ class DefaultHomeComponent(
   private val _state =
       MutableValue(
           HomeState(
-              isLoading = true,
               isSmsPermissionGranted = permissionController.isSmsPermissionGranted.value,
           )
       )
   override val state: Value<HomeState> = _state
 
   init {
-    observeExpenses()
     observePermission()
     observePendingCandidates()
   }
-
-  private fun observeExpenses(): Job =
-      expenseRepository
-          .observeExpenses()
-          .onEach { items ->
-            _state.update {
-              it.copy(
-                  expenses = items,
-                  isLoading = false,
-              )
-            }
-          }
-          .launchIn(scope)
 
   private fun observePermission(): Job =
       permissionController.isSmsPermissionGranted
@@ -115,7 +94,6 @@ class DefaultHomeComponent(
 }
 
 class DefaultHomeComponentFactory(
-    private val expenseRepository: ExpenseRepository,
     private val candidateExpenseRepository: CandidateExpenseRepository,
 ) : HomeComponentFactory {
   override fun create(
@@ -125,7 +103,6 @@ class DefaultHomeComponentFactory(
   ): HomeComponent =
       DefaultHomeComponent(
           cContext = cContext,
-          expenseRepository = expenseRepository,
           candidateExpenseRepository = candidateExpenseRepository,
           onAddExpense = onAddExpense,
           onOpenInbox = onOpenInbox,
@@ -134,7 +111,7 @@ class DefaultHomeComponentFactory(
 
 @Fake
 class FakeHomeComponent(
-    initialState: HomeState = HomeState(expenses = FakeExpenseFactory.createList(3)),
+    initialState: HomeState = HomeState(),
 ) : HomeComponent {
   private val _state = MutableValue(initialState)
   override val state: Value<HomeState> = _state

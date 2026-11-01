@@ -2,6 +2,7 @@ package com.base.feature.notification
 
 import com.base.component.TestCContext
 import com.base.db.CandidateExpenseRepository
+import com.base.db.ExpenseRepository
 import com.base.feature.root.RootComponentFactory
 import com.base.navigation.NavigationAction
 import com.base.navigation.NavigationActionBus
@@ -88,10 +89,12 @@ class SmsExpenseNotificationFlowE2eTest : BehaviorSpec() {
           }
 
           Then("expense is saved and user returns to home screen") {
-            val home = root.assertMainComponent().assertHomeComponent()
-            home.state.value.expenses shouldHaveSize 1
-            home.state.value.expenses[0].amount shouldBe 75000L
-            home.state.value.expenses[0].description shouldBe "Coffee"
+            root.assertMainComponent().assertHomeComponent()
+            val expenseRepo = koin.get<ExpenseRepository>()
+            val expenses = expenseRepo.observeExpenses().first()
+            expenses shouldHaveSize 1
+            expenses[0].amount shouldBe 75000L
+            expenses[0].description shouldBe "Coffee"
           }
         }
       }

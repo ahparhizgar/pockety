@@ -9,9 +9,13 @@ import androidx.room3.OnConflictStrategy
 import androidx.room3.PrimaryKey
 import androidx.room3.Query
 import androidx.room3.Transaction
+import androidx.room3.Update
+import com.base.Fake
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 @Entity(
     tableName = "transactions",
@@ -47,12 +51,21 @@ interface ExpenseDao {
   @Query("SELECT * FROM transactions ORDER BY createdAt DESC")
   fun observeExpenses(): Flow<List<ExpenseEntity>>
 
+  @Query("SELECT * FROM transactions WHERE id = :id LIMIT 1")
+  suspend fun getExpenseById(id: Long): ExpenseEntity?
+
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun insertExpense(expense: ExpenseEntity): Long
+
+  @Update suspend fun updateExpense(expense: ExpenseEntity)
+
+  @Query("DELETE FROM transactions WHERE id = :id") suspend fun deleteExpense(id: Long)
 }
 
 interface ExpenseRepository {
   fun observeExpenses(): Flow<List<ExpenseEntity>>
+
+  suspend fun getExpenseById(id: Long): ExpenseEntity?
 
   suspend fun addExpense(
       amount: Long,
@@ -60,12 +73,18 @@ interface ExpenseRepository {
       categoryId: Long? = null,
       pocketId: Long? = null,
   ): Long
+
+  suspend fun updateExpense(expense: ExpenseEntity)
+
+  suspend fun deleteExpense(id: Long)
 }
 
 class DefaultExpenseRepository(
     private val expenseDao: ExpenseDao,
 ) : ExpenseRepository {
   override fun observeExpenses(): Flow<List<ExpenseEntity>> = expenseDao.observeExpenses()
+
+  override suspend fun getExpenseById(id: Long): ExpenseEntity? = expenseDao.getExpenseById(id)
 
   override suspend fun addExpense(
       amount: Long,
@@ -82,6 +101,55 @@ class DefaultExpenseRepository(
             pocketId = pocketId,
         )
     return expenseDao.insertExpense(expense)
+  }
+
+  override suspend fun updateExpense(expense: ExpenseEntity) {
+    expenseDao.updateExpense(expense)
+  }
+
+  override suspend fun deleteExpense(id: Long) {
+    expenseDao.deleteExpense(id)
+  }
+}
+
+@Fake
+class FakeExpenseRepository(
+    initialExpenses: List<ExpenseEntity> = emptyList(),
+) : ExpenseRepository {
+  private val expensesFlow = MutableStateFlow(initialExpenses)
+  private var nextId = (initialExpenses.maxOfOrNull { it.id } ?: 0L) + 1L
+
+  override fun observeExpenses(): Flow<List<ExpenseEntity>> = expensesFlow
+
+  override suspend fun getExpenseById(id: Long): ExpenseEntity? =
+      expensesFlow.value.firstOrNull { it.id == id }
+
+  override suspend fun addExpense(
+      amount: Long,
+      description: String,
+      categoryId: Long?,
+      pocketId: Long?,
+  ): Long {
+    val id = nextId++
+    val newExpense =
+        ExpenseEntity(
+            id = id,
+            amount = amount,
+            description = description,
+            createdAt = Clock.System.now(),
+            categoryId = categoryId,
+            pocketId = pocketId,
+        )
+    expensesFlow.update { listOf(newExpense) + it }
+    return id
+  }
+
+  override suspend fun updateExpense(expense: ExpenseEntity) {
+    expensesFlow.update { list -> list.map { if (it.id == expense.id) expense else it } }
+  }
+
+  override suspend fun deleteExpense(id: Long) {
+    expensesFlow.update { list -> list.filterNot { it.id == id } }
   }
 }
 

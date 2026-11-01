@@ -2,6 +2,7 @@ package com.base.feature.sms.inbox
 
 import com.base.component.TestCContext
 import com.base.db.CandidateExpenseRepository
+import com.base.db.ExpenseRepository
 import com.base.feature.root.RootComponentFactory
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
@@ -15,6 +16,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.flow.first
 
 class InboxFlowE2eTest : BehaviorSpec() {
   init {
@@ -71,12 +73,14 @@ class InboxFlowE2eTest : BehaviorSpec() {
               testCoroutineScheduler.advanceUntilIdle()
             }
 
-            Then("navigates back to Home screen and shows the saved expense") {
+            Then("navigates back to Home screen and persists the saved expense") {
               val home = root.assertMainComponent().assertHomeComponent()
-              home.state.value.expenses shouldHaveSize 1
-              home.state.value.expenses[0].amount shouldBe 45000L
-              home.state.value.expenses[0].description shouldBe "Groceries"
               home.state.value.pendingCandidateCount shouldBe 0
+              val expenseRepo = koin.get<ExpenseRepository>()
+              val expenses = expenseRepo.observeExpenses().first()
+              expenses shouldHaveSize 1
+              expenses[0].amount shouldBe 45000L
+              expenses[0].description shouldBe "Groceries"
             }
           }
         }
@@ -104,7 +108,6 @@ class InboxFlowE2eTest : BehaviorSpec() {
             Then("navigates back to Home screen with zero pending candidates") {
               val home = root.assertMainComponent().assertHomeComponent()
               home.state.value.pendingCandidateCount shouldBe 0
-              home.state.value.expenses shouldHaveSize 0
             }
           }
         }

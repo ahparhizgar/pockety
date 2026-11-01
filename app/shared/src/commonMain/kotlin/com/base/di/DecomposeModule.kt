@@ -1,5 +1,7 @@
 package com.base.di
 
+import com.base.feature.analytics.AnalyticsComponentFactory
+import com.base.feature.analytics.DefaultAnalyticsComponentFactory
 import com.base.feature.category.add.AddCategoryComponentFactory
 import com.base.feature.category.add.DefaultAddCategoryComponentFactory
 import com.base.feature.category.selection.CategorySelectionComponentFactory
@@ -47,4 +49,5 @@ fun decomposeModule() = module {
   factoryOf(::DefaultAddExpenseFlowComponentFactory).bind<AddExpenseFlowComponentFactory>()
   factoryOf(::DefaultPocketSettingsComponentFactory).bind<PocketSettingsComponentFactory>()
   factoryOf(::DefaultPocketSettingsFlowComponentFactory).bind<PocketSettingsFlowComponentFactory>()
+  factoryOf(::DefaultAnalyticsComponentFactory).bind<AnalyticsComponentFactory>()
 }

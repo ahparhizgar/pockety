@@ -61,10 +61,8 @@ class InboxE2eUiTest {
     onNode(isFocused()).performTextInput("Groceries")
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
 
-    // Navigates back to Home screen and displays recorded expense
+    // Navigates back to Home screen
     onNode(hasTestTag("main-home-screen")).waitForExistence().assertExists()
-    onNode(hasText("Groceries")).waitForExistence().assertExists()
-    onNode(hasText("45000 T")).assertExists()
   }
 
   @Test
@@ -100,6 +98,6 @@ class InboxE2eUiTest {
 
     // Returns to Home screen
     onNode(hasTestTag("main-home-screen")).waitForExistence().assertExists()
-    onNode(hasTestTag("empty-expenses-message")).assertExists()
+    onNode(hasTestTag("undecided-expenses-banner")).assertExists()
   }
 }

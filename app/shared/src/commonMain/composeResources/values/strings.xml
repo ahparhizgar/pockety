@@ -120,4 +120,10 @@
     <string name="auto_deduct_pocket_budget">Auto-deduct from pocket budget</string>
     <string name="unlink_pocket_action">Unlink pocket</string>
     <string name="active_badge">Active</string>
+    <string name="edit_expense_title">Edit Expense</string>
+    <string name="delete_expense_action">Delete Expense</string>
+    <string name="monthly_outflow_label">Monthly Outflow</string>
+    <string name="no_expenses_month">No expenses recorded for this month</string>
+    <string name="previous_month_action">Previous month</string>
+    <string name="next_month_action">Next month</string>
 </resources>

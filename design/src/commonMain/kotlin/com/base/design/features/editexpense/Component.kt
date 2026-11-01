@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.LocalCafe
@@ -61,6 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ComponentPreviews
 
 data class CategoryQuickChip(
@@ -802,6 +804,36 @@ fun EditExpenseActionButtons(
   }
 }
 
+@Composable
+fun EditExpenseTopAppBar(
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onCloseClick: () -> Unit = {},
+) {
+  PocketyTopAppBar(
+      title = "Edit Expense",
+      onBackClick = onBackClick,
+      modifier = modifier,
+      actions = {
+        IconButton(onClick = onDeleteClick) {
+          Icon(
+              imageVector = Icons.Default.Delete,
+              contentDescription = "Delete expense",
+              tint = MaterialTheme.colorScheme.error,
+          )
+        }
+        IconButton(onClick = onCloseClick) {
+          Icon(
+              imageVector = Icons.Default.Close,
+              contentDescription = "Close",
+              tint = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+      },
+  )
+}
+
 @ComponentPreviews
 @Composable
 private fun AmountHeroSectionPreview() {
@@ -892,4 +924,10 @@ private fun SourceSmsCardPreview() {
 @Composable
 private fun EditExpenseActionButtonsPreview() {
   EditExpenseActionButtons()
+}
+
+@ComponentPreviews
+@Composable
+private fun EditExpenseTopAppBarPreview() {
+  EditExpenseTopAppBar()
 }

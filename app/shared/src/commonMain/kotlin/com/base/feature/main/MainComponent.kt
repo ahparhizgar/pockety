@@ -16,6 +16,9 @@ import com.base.Fake
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
+import com.base.feature.analytics.AnalyticsComponent
+import com.base.feature.analytics.AnalyticsComponentFactory
+import com.base.feature.analytics.FakeAnalyticsComponent
 import com.base.feature.home.FakeHomeComponent
 import com.base.feature.home.HomeComponent
 import com.base.feature.home.HomeComponentFactory
@@ -66,7 +69,7 @@ interface MainComponent {
 
     class Pockets(val component: PocketsComponent) : Child
 
-    data object Analytics : Child
+    class Analytics(val component: AnalyticsComponent) : Child
 
     data object Settings : Child
   }
@@ -81,6 +84,7 @@ class DefaultMainComponent(
     private val homeComponentFactory: HomeComponentFactory,
     private val inboxComponentFactory: InboxComponentFactory,
     private val pocketsComponentFactory: PocketsComponentFactory,
+    private val analyticsComponentFactory: AnalyticsComponentFactory,
     private val candidateExpenseRepository: CandidateExpenseRepository,
 ) : MainComponent, CContext by cContext {
   private val scope = componentScope()
@@ -126,64 +130,80 @@ class DefaultMainComponent(
           childFactory = ::createChild,
       )
 
-  private fun createChild(config: MainChildConfig, context: CContext): MainComponent.Child {
-    return when (config) {
-      MainChildConfig.Home ->
-          MainComponent.Child.Home(
-              homeComponentFactory.create(
-                  cContext = context,
-                  onAddExpense = {},
-                  onOpenInbox = {
-                    mainNavigation.replaceAll(MainChildConfig.Home, MainChildConfig.Inbox)
-                  },
-              )
-          )
+  private fun createChild(config: MainChildConfig, context: CContext): MainComponent.Child =
+      when (config) {
+        MainChildConfig.Home -> createHomeChild(context)
+        MainChildConfig.Inbox -> createInboxChild(context)
+        MainChildConfig.Pockets -> createPocketsChild(context)
+        MainChildConfig.Analytics -> createAnalyticsChild(context)
+        MainChildConfig.Settings -> MainComponent.Child.Settings
+      }
 
-      MainChildConfig.Inbox ->
-          MainComponent.Child.Inbox(
-              inboxComponentFactory.create(
-                  cContext = context,
-                  onSelectCandidate = { candidate ->
-                    mainNavigation.replaceAll(MainChildConfig.Home)
-                    navigation.pushNew(
-                        RootFlowDestination.AddExpenseFlow(
-                            initialAmount = candidate.amount.toString(),
-                            candidateExpenseId = candidate.id,
-                        )
+  private fun createHomeChild(context: CContext): MainComponent.Child =
+      MainComponent.Child.Home(
+          homeComponentFactory.create(
+              cContext = context,
+              onAddExpense = {},
+              onOpenInbox = {
+                mainNavigation.replaceAll(MainChildConfig.Home, MainChildConfig.Inbox)
+              },
+          )
+      )
+
+  private fun createInboxChild(context: CContext): MainComponent.Child =
+      MainComponent.Child.Inbox(
+          inboxComponentFactory.create(
+              cContext = context,
+              onSelectCandidate = { candidate ->
+                mainNavigation.replaceAll(MainChildConfig.Home)
+                navigation.pushNew(
+                    RootFlowDestination.AddExpenseFlow(
+                        initialAmount = candidate.amount.toString(),
+                        candidateExpenseId = candidate.id,
                     )
-                  },
-                  onBack = {
-                    mainNavigation.pop { success ->
-                      if (!success) {
-                        mainNavigation.replaceAll(MainChildConfig.Home)
-                      }
-                    }
-                  },
-              )
+                )
+              },
+              onBack = {
+                mainNavigation.pop { success ->
+                  if (!success) {
+                    mainNavigation.replaceAll(MainChildConfig.Home)
+                  }
+                }
+              },
           )
+      )
 
-      MainChildConfig.Pockets ->
-          MainComponent.Child.Pockets(
-              pocketsComponentFactory.create(
-                  cContext = context,
-                  onPocketClick = { pocketId ->
-                    navigation.pushNew(RootFlowDestination.PocketDetails(pocketId = pocketId))
-                  },
-                  onAddPocketClick = {
-                    navigation.pushNew(RootFlowDestination.PocketSettingsFlow())
-                  },
-              )
+  private fun createPocketsChild(context: CContext): MainComponent.Child =
+      MainComponent.Child.Pockets(
+          pocketsComponentFactory.create(
+              cContext = context,
+              onPocketClick = { pocketId ->
+                navigation.pushNew(RootFlowDestination.PocketDetails(pocketId = pocketId))
+              },
+              onAddPocketClick = { navigation.pushNew(RootFlowDestination.PocketSettingsFlow()) },
           )
-      MainChildConfig.Analytics -> MainComponent.Child.Analytics
-      MainChildConfig.Settings -> MainComponent.Child.Settings
-    }
-  }
+      )
+
+  private fun createAnalyticsChild(context: CContext): MainComponent.Child =
+      MainComponent.Child.Analytics(
+          analyticsComponentFactory.create(
+              cContext = context,
+              onExpenseClick = { expenseId ->
+                navigation.pushNew(
+                    RootFlowDestination.AddExpenseFlow(
+                        expenseId = expenseId,
+                    )
+                )
+              },
+          )
+      )
 }
 
 class DefaultMainComponentFactory(
     private val homeComponentFactory: HomeComponentFactory,
     private val inboxComponentFactory: InboxComponentFactory,
     private val pocketsComponentFactory: PocketsComponentFactory,
+    private val analyticsComponentFactory: AnalyticsComponentFactory,
     private val candidateExpenseRepository: CandidateExpenseRepository,
 ) : MainComponentFactory {
   override fun create(cContext: CContext): MainComponent =
@@ -192,6 +212,7 @@ class DefaultMainComponentFactory(
           homeComponentFactory = homeComponentFactory,
           inboxComponentFactory = inboxComponentFactory,
           pocketsComponentFactory = pocketsComponentFactory,
+          analyticsComponentFactory = analyticsComponentFactory,
           candidateExpenseRepository = candidateExpenseRepository,
       )
 }
@@ -239,7 +260,7 @@ class FakeMainComponent(
           PocketyTab.Home -> MainComponent.Child.Home(FakeHomeComponent())
           PocketyTab.Inbox -> MainComponent.Child.Inbox(FakeInboxComponent())
           PocketyTab.Pockets -> MainComponent.Child.Pockets(FakePocketsComponent())
-          PocketyTab.Analytics -> MainComponent.Child.Analytics
+          PocketyTab.Analytics -> MainComponent.Child.Analytics(FakeAnalyticsComponent())
           PocketyTab.Settings -> MainComponent.Child.Settings
         }
     val config =

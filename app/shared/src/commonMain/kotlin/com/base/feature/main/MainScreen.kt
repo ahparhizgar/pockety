@@ -18,6 +18,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.base.feature.analytics.AnalyticsScreen
 import com.base.feature.home.HomeScreen
 import com.base.feature.pocket.PocketsScreen
 import com.base.feature.sms.inbox.InboxScreen
@@ -100,7 +101,10 @@ private fun MainNavigationContent(
       }
 
       is MainComponent.Child.Analytics -> {
-        Box(modifier = Modifier.fillMaxSize().testTag("analytics-screen"))
+        AnalyticsScreen(
+            component = child.component,
+            modifier = Modifier.fillMaxSize(),
+        )
       }
 
       is MainComponent.Child.Settings -> {

@@ -2,6 +2,7 @@ package com.base.feature.expense
 
 import com.base.component.TestCContext
 import com.base.db.CategoryRepository
+import com.base.db.ExpenseRepository
 import com.base.db.PocketRepository
 import com.base.feature.root.RootComponentFactory
 import com.base.testValue
@@ -100,8 +101,9 @@ class AddExpenseFlowE2eTest : BehaviorSpec() {
                 Then(
                     "expense is saved with Coffee category, flow completes, and Root displays the expense"
                 ) {
-                  val home = root.assertMainComponent().assertHomeComponent()
-                  val expenses = home.state.value.expenses
+                  root.assertMainComponent().assertHomeComponent()
+                  val expenseRepo = koin.get<ExpenseRepository>()
+                  val expenses = expenseRepo.observeExpenses().first()
 
                   expenses shouldHaveSize 1
                   expenses[0].amount shouldBe 45000L
@@ -182,8 +184,9 @@ class AddExpenseFlowE2eTest : BehaviorSpec() {
           }
 
           Then("expense is recorded with Coffee Pocket ID and pocket balance is deducted") {
-            val home = root.assertMainComponent().assertHomeComponent()
-            val expenses = home.state.value.expenses
+            root.assertMainComponent().assertHomeComponent()
+            val expenseRepo = koin.get<ExpenseRepository>()
+            val expenses = expenseRepo.observeExpenses().first()
             expenses shouldHaveSize 1
             expenses[0].pocketId shouldBe coffeePocketId
 
@@ -233,8 +236,9 @@ class AddExpenseFlowE2eTest : BehaviorSpec() {
           }
 
           Then("expense is recorded with General Pocket ID") {
-            val home = root.assertMainComponent().assertHomeComponent()
-            val expenses = home.state.value.expenses
+            root.assertMainComponent().assertHomeComponent()
+            val expenseRepo = koin.get<ExpenseRepository>()
+            val expenses = expenseRepo.observeExpenses().first()
             expenses shouldHaveSize 1
             expenses[0].pocketId shouldBe generalPocketId
           }
@@ -262,8 +266,9 @@ class AddExpenseFlowE2eTest : BehaviorSpec() {
         }
 
         Then("expense is saved with null pocketId and pocket balance remains intact") {
-          val home = root.assertMainComponent().assertHomeComponent()
-          val expenses = home.state.value.expenses
+          root.assertMainComponent().assertHomeComponent()
+          val expenseRepo = koin.get<ExpenseRepository>()
+          val expenses = expenseRepo.observeExpenses().first()
           expenses shouldHaveSize 1
           expenses[0].pocketId.shouldBeNull()
 
