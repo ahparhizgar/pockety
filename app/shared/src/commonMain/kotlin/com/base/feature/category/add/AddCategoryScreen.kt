@@ -32,11 +32,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.base.ui.RequestFocusOnce
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.AccentColorPicker
 import com.base.ui.components.PocketyTopAppBar
@@ -88,6 +90,8 @@ private fun AddCategoryFormContent(
 ) {
   var selectedFilter by remember { mutableStateOf("All") }
   val focusManager = LocalFocusManager.current
+  val nameFocusRequester = remember { FocusRequester() }
+  RequestFocusOnce(nameFocusRequester)
 
   val iconOption =
       defaultCategoryIcons.find { it.id == state.selectedIcon } ?: defaultCategoryIcons[0]
@@ -103,6 +107,7 @@ private fun AddCategoryFormContent(
                     name = state.nameText,
                     nameError = state.nameError?.content(),
                     onNameChange = component::onNameChanged,
+                    focusRequester = nameFocusRequester,
                     onDone = {
                       focusManager.clearFocus()
                       component.onSaveClicked()

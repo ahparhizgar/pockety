@@ -39,10 +39,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -56,6 +59,7 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.db.FakeCategoryFactory
 import com.base.db.FakePocketItemModelFactory
+import com.base.ui.RequestFocusOnce
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import com.base.usermessage.UiString
@@ -161,6 +165,8 @@ private fun AddExpenseForm(
     modifier: Modifier = Modifier,
 ) {
   val focusManager = LocalFocusManager.current
+  val amountFocusRequester = remember { FocusRequester() }
+  RequestFocusOnce(amountFocusRequester)
 
   Column(
       modifier = modifier.fillMaxWidth(),
@@ -171,6 +177,7 @@ private fun AddExpenseForm(
         amountError = state.amountError,
         onAmountChange = component::onAmountChanged,
         onNext = { focusManager.moveFocus(FocusDirection.Down) },
+        focusRequester = amountFocusRequester,
     )
 
     CategorySelectorCard(
@@ -265,16 +272,17 @@ private fun AmountInputField(
     amountError: UiString?,
     onAmountChange: (String) -> Unit,
     onNext: () -> Unit,
-    modifier: Modifier = Modifier,
+    focusRequester: FocusRequester,
 ) {
   Column(
-      modifier = modifier.fillMaxWidth(),
+      modifier = Modifier.fillMaxWidth(),
       verticalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     AmountHeroSurface(
         amountText = amountText,
         onAmountChange = onAmountChange,
         onNext = onNext,
+        focusRequester = focusRequester,
     )
 
     amountError?.let {
@@ -293,6 +301,7 @@ private fun AmountHeroSurface(
     amountText: String,
     onAmountChange: (String) -> Unit,
     onNext: () -> Unit,
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
   val glowColor1 = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)
@@ -323,7 +332,10 @@ private fun AmountHeroSurface(
       BasicTextField(
           value = amountText,
           onValueChange = onAmountChange,
-          modifier = Modifier.widthIn(min = 60.dp, max = 280.dp).testTag("amount-field"),
+          modifier =
+              Modifier.widthIn(min = 60.dp, max = 280.dp)
+                  .focusRequester(focusRequester)
+                  .testTag("amount-field"),
           textStyle =
               MaterialTheme.typography.displayLarge.copy(
                   fontWeight = FontWeight.Bold,

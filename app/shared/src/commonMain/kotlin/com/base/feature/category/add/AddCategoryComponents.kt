@@ -34,6 +34,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
@@ -109,24 +111,18 @@ internal fun CategoryLivePreviewCard(
 
 @Composable
 internal fun CategoryNameInputField(
-    name: String,
-    nameError: String?,
-    onNameChange: (String) -> Unit,
-    onDone: () -> Unit,
-    modifier: Modifier = Modifier,
+    nameData: CategoryNameFieldData,
 ) {
-  Column(modifier = modifier.fillMaxWidth()) {
-    Text(
-        text = stringResource(Res.string.category_name_label),
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.padding(start = 4.dp, bottom = 8.dp),
-    )
+  Column(modifier = Modifier.fillMaxWidth()) {
+    CategoryNameLabel()
 
     OutlinedTextField(
-        value = name,
-        onValueChange = onNameChange,
-        modifier = Modifier.fillMaxWidth().testTag("category-name-field"),
+        value = nameData.name,
+        onValueChange = nameData.onNameChange,
+        modifier =
+            Modifier.fillMaxWidth()
+                .focusRequester(nameData.focusRequester)
+                .testTag("category-name-field"),
         placeholder = {
           Text(
               text = stringResource(Res.string.category_name_placeholder),
@@ -142,9 +138,9 @@ internal fun CategoryNameInputField(
               modifier = Modifier.size(20.dp),
           )
         },
-        isError = nameError != null,
+        isError = nameData.nameError != null,
         supportingText =
-            nameError?.let {
+            nameData.nameError?.let {
               {
                 Text(
                     text = it,
@@ -170,9 +166,19 @@ internal fun CategoryNameInputField(
                 capitalization = KeyboardCapitalization.Words,
                 keyboardType = KeyboardType.Text,
             ),
-        keyboardActions = KeyboardActions(onDone = { onDone() }),
+        keyboardActions = KeyboardActions(onDone = { nameData.onDone() }),
     )
   }
+}
+
+@Composable
+private fun CategoryNameLabel() {
+  Text(
+      text = stringResource(Res.string.category_name_label),
+      style = MaterialTheme.typography.labelLarge,
+      color = MaterialTheme.colorScheme.onSurface,
+      modifier = Modifier.padding(start = 4.dp, bottom = 8.dp),
+  )
 }
 
 @Immutable
@@ -187,6 +193,7 @@ internal data class CategoryNameFieldData(
     val nameError: String?,
     val onNameChange: (String) -> Unit,
     val onDone: () -> Unit,
+    val focusRequester: FocusRequester,
 )
 
 @Composable
@@ -206,12 +213,7 @@ internal fun CategoryLivePreviewAndNameFields(
         onColor = visualSelection.colorOption.onColor,
     )
 
-    CategoryNameInputField(
-        name = nameData.name,
-        nameError = nameData.nameError,
-        onNameChange = nameData.onNameChange,
-        onDone = nameData.onDone,
-    )
+    CategoryNameInputField(nameData = nameData)
   }
 }
 

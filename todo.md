@@ -1,3 +1,2 @@
-- auto show keyboard in add expense screen and new category screen and new pocket screen
 - add notification permission to permission card (multiple permissions if possible)
 - top up button doesn't work in pocket card
