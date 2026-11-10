@@ -24,7 +24,6 @@ import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.first
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.error_empty_description
 import pockety.app.shared.generated.resources.error_invalid_amount
 
 class AddExpenseTest : BehaviorSpec() {
@@ -54,11 +53,55 @@ class AddExpenseTest : BehaviorSpec() {
           testCoroutineScheduler.advanceUntilIdle()
         }
 
-        Then("shows amount and description validation errors") {
+        Then("shows amount validation error only and descriptionError remains null") {
           val state = component.state.value
           state.amountError shouldBe UiString(Res.string.error_invalid_amount)
-          state.descriptionError shouldBe UiString(Res.string.error_empty_description)
+          state.descriptionError.shouldBeNull()
           completedCallback.shouldNotBeCalled()
+        }
+      }
+
+      When("submitting with valid amount and empty description") {
+        beforeEach {
+          component.onAmountChanged("30000")
+          component.onDescriptionChanged("")
+          component.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("saves expense with empty description and calls onCompleted without errors") {
+          val state = component.state.value
+          state.amountError.shouldBeNull()
+          state.descriptionError.shouldBeNull()
+          completedCallback.shouldBeCalled()
+
+          val expenseRepo = koin.get<ExpenseRepository>()
+          val expenses = expenseRepo.observeExpenses().first()
+          expenses shouldHaveSize 1
+          expenses[0].amount shouldBe 30000
+          expenses[0].description shouldBe ""
+        }
+      }
+
+      When("submitting with valid amount and whitespace description") {
+        beforeEach {
+          component.onAmountChanged("40000")
+          component.onDescriptionChanged("   ")
+          component.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("saves expense with trimmed empty description without validation errors") {
+          val state = component.state.value
+          state.amountError.shouldBeNull()
+          state.descriptionError.shouldBeNull()
+          completedCallback.shouldBeCalled()
+
+          val expenseRepo = koin.get<ExpenseRepository>()
+          val expenses = expenseRepo.observeExpenses().first()
+          expenses shouldHaveSize 1
+          expenses[0].amount shouldBe 40000
+          expenses[0].description shouldBe ""
         }
       }
 
@@ -432,6 +475,43 @@ class AddExpenseTest : BehaviorSpec() {
           val updatedExpense = expenseRepo.getExpenseById(existingExpenseId)
           updatedExpense?.amount shouldBe 25000
           updatedExpense?.description shouldBe "Updated Description"
+        }
+      }
+
+      When("clearing description in edit mode and saving") {
+        val expenseRepo by testValue { koin.get<ExpenseRepository>() }
+        val existingExpenseId by testValue {
+          expenseRepo.addExpense(
+              amount = 10000,
+              description = "Initial Description",
+          )
+        }
+        val editCompletedCallback by testValue { FakeCallback<Unit>() }
+        val editComponent: AddExpenseComponent by testValue {
+          koin
+              .get<DefaultAddExpenseComponentFactory>()
+              .create(
+                  cContext = TestCContext(),
+                  config = AddExpenseComponent.Config(expenseId = existingExpenseId),
+                  onSelectCategory = {},
+                  onSelectPocket = {},
+                  onCompleted = editCompletedCallback,
+                  onCancelled = {},
+              )
+        }
+
+        beforeEach {
+          testCoroutineScheduler.advanceUntilIdle()
+          editComponent.onDescriptionChanged("")
+          editComponent.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("updates expense successfully with empty description") {
+          editCompletedCallback.shouldBeCalled()
+          val updatedExpense = expenseRepo.getExpenseById(existingExpenseId)
+          updatedExpense?.amount shouldBe 10000
+          updatedExpense?.description shouldBe ""
         }
       }
 

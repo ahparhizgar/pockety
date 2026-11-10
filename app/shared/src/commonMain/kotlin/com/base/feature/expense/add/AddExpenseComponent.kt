@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.error_empty_description
 import pockety.app.shared.generated.resources.error_invalid_amount
 
 data class AddExpenseState(
@@ -216,10 +215,9 @@ class DefaultAddExpenseComponent(
     val currentState = _state.value
     val amountNumber = currentState.amountText.trim().replace(",", "").toLongOrNull()
     val isAmountValid = amountNumber != null && amountNumber > 0
-    val isDescriptionValid = currentState.descriptionText.trim().isNotEmpty()
 
-    if (!isAmountValid || !isDescriptionValid) {
-      applyValidationErrors(isAmountValid, isDescriptionValid)
+    if (!isAmountValid) {
+      applyValidationErrors(isAmountValid)
       return@launch
     }
 
@@ -232,7 +230,7 @@ class DefaultAddExpenseComponent(
     }
   }
 
-  private fun applyValidationErrors(isAmountValid: Boolean, isDescriptionValid: Boolean) {
+  private fun applyValidationErrors(isAmountValid: Boolean) {
     _state.update {
       it.copy(
           amountError =
@@ -241,12 +239,7 @@ class DefaultAddExpenseComponent(
               } else {
                 null
               },
-          descriptionError =
-              if (!isDescriptionValid) {
-                UiString(Res.string.error_empty_description)
-              } else {
-                null
-              },
+          descriptionError = null,
       )
     }
   }

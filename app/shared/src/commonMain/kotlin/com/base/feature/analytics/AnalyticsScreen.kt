@@ -259,7 +259,7 @@ private fun DateGroupHeader(
 }
 
 @Composable
-private fun AnalyticsExpenseItem(
+fun AnalyticsExpenseItem(
     expense: AnalyticsExpenseUiModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -278,21 +278,34 @@ private fun AnalyticsExpenseItem(
 
       Spacer(modifier = Modifier.width(16.dp))
 
-      Column(modifier = Modifier.weight(1f)) {
-        Text(
-            text = expense.description,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.testTag("expense-description"),
-        )
-        if (expense.formattedTime.isNotEmpty()) {
-          Text(
-              text = expense.formattedTime,
-              style = MaterialTheme.typography.bodySmall,
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
+      val titleText =
+          if (expense.description.isNotBlank()) {
+            expense.description
+          } else {
+            expense.categoryName
+          }
+
+      if (titleText != null || expense.formattedTime.isNotEmpty()) {
+        Column(modifier = Modifier.weight(1f)) {
+          if (titleText != null) {
+            Text(
+                text = titleText,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.testTag("expense-description"),
+            )
+          }
+          if (expense.formattedTime.isNotEmpty()) {
+            Text(
+                text = expense.formattedTime,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+          }
         }
+      } else {
+        Spacer(modifier = Modifier.weight(1f))
       }
 
       Spacer(modifier = Modifier.width(16.dp))
@@ -349,6 +362,20 @@ private fun MonthSwitcherCardPreview() {
   MonthSwitcherCard(
       component = FakeAnalyticsComponent(),
       state = FakeAnalyticsStateFactory.create(),
+  )
+}
+
+@ComponentPreviews
+@Composable
+private fun AnalyticsExpenseItemPreview() {
+  AnalyticsExpenseItem(
+      expense =
+          FakeAnalyticsExpenseUiModelFactory.create(
+              description = "",
+              categoryName = null,
+              amount = 25_000,
+          ),
+      onClick = {},
   )
 }
 

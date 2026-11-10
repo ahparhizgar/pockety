@@ -129,6 +129,46 @@ class AddViewExpenseFlowE2eTest : BehaviorSpec() {
           }
         }
       }
+
+      When("user adds an expense with valid amount and empty description") {
+        beforeEach {
+          testCoroutineScheduler.advanceUntilIdle()
+          val main = root.assertMainComponent()
+          val home = main.assertHomeComponent()
+          home.onAddExpenseClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+
+          val flow = root.assertAddExpenseFlow()
+          val addExpense = flow.assertAddExpenseComponent()
+          addExpense.onAmountChanged("25000")
+          addExpense.onDescriptionChanged("")
+          addExpense.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("expense is saved with empty description and user returns to Main screen") {
+          root.assertMainComponent()
+        }
+
+        And("user selects the Analytics tab") {
+          beforeEach {
+            val main = root.assertMainComponent()
+            main.onTabSelect(PocketyTab.Analytics)
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then("Analyze screen displays the expense with empty description and correct amount") {
+            val analytics = root.assertMainComponent().assertAnalyticsComponent()
+            val state = analytics.state.value
+
+            state.monthlyOutflow shouldBe 25000L
+            state.dateGroups shouldHaveSize 1
+            state.dateGroups[0].expenses shouldHaveSize 1
+            state.dateGroups[0].expenses[0].description shouldBe ""
+            state.dateGroups[0].expenses[0].amount shouldBe 25000L
+          }
+        }
+      }
     }
   }
 }
