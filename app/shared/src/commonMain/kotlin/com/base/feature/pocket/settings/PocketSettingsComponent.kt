@@ -25,9 +25,12 @@ data class PocketSettingsState(
     val selectedCategory: CategoryEntity? = null,
     val balanceAmount: Long = 0,
     val topUpAmountText: String = "",
+    val monthlyTopUpAmount: Long = 0L,
+    val autoTopUpEnabled: Boolean = false,
     val isSaving: Boolean = false,
 )
 
+@Suppress("TooManyFunctions")
 interface PocketSettingsComponent {
   val state: Value<PocketSettingsState>
 
@@ -44,6 +47,10 @@ interface PocketSettingsComponent {
   fun onCategoryCleared()
 
   fun onTopUpAmountChanged(amount: String)
+
+  fun onMonthlyTopUpAmountChanged(amount: Long)
+
+  fun onAutoTopUpEnabledChanged(enabled: Boolean)
 
   fun onSelectCategoryClicked()
 
@@ -66,7 +73,7 @@ interface PocketSettingsComponentFactory {
   ): PocketSettingsComponent
 }
 
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions")
 class DefaultPocketSettingsComponent(
     cContext: CContext,
     private val pocketRepository: PocketRepository,
@@ -97,6 +104,8 @@ class DefaultPocketSettingsComponent(
                 selectedColor = pocket.color,
                 selectedIcon = pocket.icon,
                 selectedCategory = category,
+                monthlyTopUpAmount = pocket.monthlyTopUpAmount,
+                autoTopUpEnabled = pocket.autoTopUpEnabled,
             )
           }
         }
@@ -145,6 +154,14 @@ class DefaultPocketSettingsComponent(
     _state.update { it.copy(topUpAmountText = amount) }
   }
 
+  override fun onMonthlyTopUpAmountChanged(amount: Long) {
+    _state.update { it.copy(monthlyTopUpAmount = amount) }
+  }
+
+  override fun onAutoTopUpEnabledChanged(enabled: Boolean) {
+    _state.update { it.copy(autoTopUpEnabled = enabled) }
+  }
+
   override fun onSelectCategoryClicked() {
     onSelectCategory()
   }
@@ -169,6 +186,8 @@ class DefaultPocketSettingsComponent(
             icon = currentState.selectedIcon,
             color = currentState.selectedColor,
             categoryId = currentState.selectedCategory?.id,
+            monthlyTopUpAmount = currentState.monthlyTopUpAmount,
+            autoTopUpEnabled = currentState.autoTopUpEnabled,
         )
         onCompleted(existingId)
       } else {
@@ -180,6 +199,8 @@ class DefaultPocketSettingsComponent(
                 icon = currentState.selectedIcon,
                 color = currentState.selectedColor,
                 categoryId = currentState.selectedCategory?.id,
+                monthlyTopUpAmount = currentState.monthlyTopUpAmount,
+                autoTopUpEnabled = currentState.autoTopUpEnabled,
             )
         onCompleted(newId)
       }
@@ -234,6 +255,8 @@ object FakePocketSettingsStateFactory {
       selectedCategory: CategoryEntity? = null,
       balanceAmount: Long = 0,
       topUpAmountText: String = "",
+      monthlyTopUpAmount: Long = 0L,
+      autoTopUpEnabled: Boolean = false,
       isSaving: Boolean = false,
   ): PocketSettingsState =
       PocketSettingsState(
@@ -245,11 +268,14 @@ object FakePocketSettingsStateFactory {
           selectedCategory = selectedCategory,
           balanceAmount = balanceAmount,
           topUpAmountText = topUpAmountText,
+          monthlyTopUpAmount = monthlyTopUpAmount,
+          autoTopUpEnabled = autoTopUpEnabled,
           isSaving = isSaving,
       )
 }
 
 @Fake
+@Suppress("TooManyFunctions")
 class FakePocketSettingsComponent(
     initialState: PocketSettingsState = FakePocketSettingsStateFactory.create(),
 ) : PocketSettingsComponent {
@@ -280,6 +306,14 @@ class FakePocketSettingsComponent(
 
   override fun onTopUpAmountChanged(amount: String) {
     _state.update { it.copy(topUpAmountText = amount) }
+  }
+
+  override fun onMonthlyTopUpAmountChanged(amount: Long) {
+    _state.update { it.copy(monthlyTopUpAmount = amount) }
+  }
+
+  override fun onAutoTopUpEnabledChanged(enabled: Boolean) {
+    _state.update { it.copy(autoTopUpEnabled = enabled) }
   }
 
   override fun onSelectCategoryClicked() {}

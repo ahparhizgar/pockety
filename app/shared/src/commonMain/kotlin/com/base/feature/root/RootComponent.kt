@@ -15,6 +15,7 @@ import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.component.CContext
 import com.base.component.WindowSizeHolder
 import com.base.component.componentScope
+import com.base.db.PocketRepository
 import com.base.feature.expense.AddExpenseFlowComponentFactory
 import com.base.feature.home.HomeComponentFactory
 import com.base.feature.main.MainComponentFactory
@@ -26,7 +27,10 @@ import com.base.navigation.NavigationAction
 import com.base.navigation.NavigationActionBus
 import com.base.usermessage.MessageHolder
 import kotlin.reflect.KClass
+import kotlin.time.Clock
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.koin.core.scope.Scope
 
 interface RootComponent {
@@ -63,6 +67,14 @@ class DefaultRootComponent(
     messageShower = messageHolder
 
     scope.launch { rootNavigation.replaceAll(RootFlowDestination.Main) }
+
+    scope.launch {
+      val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+      val monthNumber = now.month.ordinal + 1
+      val currentYearMonth = "${now.year}-${monthNumber.toString().padStart(2, '0')}"
+      val pocketRepository = componentProvider.provide(PocketRepository::class)
+      pocketRepository.processMonthlyTopUps(currentYearMonth)
+    }
 
     scope.launch {
       navigationActionBus.events.collect { action ->

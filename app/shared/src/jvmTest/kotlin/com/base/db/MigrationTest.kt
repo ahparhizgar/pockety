@@ -296,6 +296,48 @@ class MigrationTest : BehaviorSpec() {
         }
       }
 
+      When("MIGRATION_8_9 is executed") {
+        MIGRATION_8_9.migrate(connection)
+
+        Then(
+            "pockets table includes monthlyTopUpAmount, autoTopUpEnabled, and lastTopUpMonth columns with defaults"
+        ) {
+          val statement =
+              connection.prepare(
+                  "SELECT monthlyTopUpAmount, autoTopUpEnabled, lastTopUpMonth FROM pockets WHERE id = 1"
+              )
+          val hasRow = statement.step()
+          hasRow shouldBe true
+          statement.getLong(0) shouldBe 0L
+          statement.getLong(1) shouldBe 0L
+          statement.isNull(2) shouldBe true
+          statement.close()
+        }
+
+        Then(
+            "pockets table allows setting monthlyTopUpAmount, autoTopUpEnabled, and lastTopUpMonth"
+        ) {
+          connection.execSQL(
+              """
+              INSERT INTO `pockets` (`id`, `name`, `categoryTag`, `icon`, `createdAt`, `color`, `categoryId`, `monthlyTopUpAmount`, `autoTopUpEnabled`, `lastTopUpMonth`)
+              VALUES (3, 'Travel', 'Trip', 'flight', 1700000000000, 4281426754, NULL, 500000, 1, '2026-11')
+              """
+                  .trimIndent()
+          )
+
+          val statement =
+              connection.prepare(
+                  "SELECT monthlyTopUpAmount, autoTopUpEnabled, lastTopUpMonth FROM pockets WHERE id = 3"
+              )
+          val hasRow = statement.step()
+          hasRow shouldBe true
+          statement.getLong(0) shouldBe 500000L
+          statement.getLong(1) shouldBe 1L
+          statement.getText(2) shouldBe "2026-11"
+          statement.close()
+        }
+      }
+
       afterSpec { connection.close() }
     }
   }

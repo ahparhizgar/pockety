@@ -176,4 +176,35 @@ class PocketSettingsE2eUiTest {
     onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
     onNode(hasText("Pocket To Be Deleted")).assertDoesNotExist()
   }
+
+  @Test
+  fun testMonthlyAllocationCardAdjustmentAndAutoRefillSwitch() = runComposeUiTest {
+    val context = TestCContext()
+    val koin = uiKoin()
+    val root = koin.injectUiRoot(context)
+    setContent { RootScreen(root) }
+
+    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
+    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
+    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+
+    // Scroll to monthly allocation card
+    onNode(hasTestTag("monthly-allocation-card"))
+        .waitForExistence()
+        .performScrollTo()
+        .assertExists()
+    onNode(hasTestTag("allocated-refill-amount")).assertExists()
+
+    // Toggle auto-refill switch
+    onNode(hasTestTag("auto-refill-switch")).performClick()
+
+    // Click adjust allocation button to open dialog
+    onNode(hasTestTag("adjust-allocation-btn")).performClick()
+    // Focus input and type via keyboard
+    onNode(hasTestTag("adjust-allocation-input")).waitForExistence().performTextInput("250000")
+    onNode(hasTestTag("confirm-allocation-btn")).performClick()
+
+    // Verify updated amount is displayed in allocation card
+    onNode(hasText("250,000")).waitForExistence().assertExists()
+  }
 }

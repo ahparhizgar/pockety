@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
             PocketEntity::class,
             PocketTopUpEntity::class,
         ],
-    version = 8,
+    version = 9,
 )
 @ColumnTypeConverters(InstantConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -329,6 +329,25 @@ val MIGRATION_7_8 =
       }
     }
 
+val MIGRATION_8_9 =
+    object : Migration(8, 9) {
+      override suspend fun migrate(connection: SQLiteConnection) {
+        connection
+            .prepare(
+                "ALTER TABLE `pockets` ADD COLUMN `monthlyTopUpAmount` INTEGER NOT NULL DEFAULT 0"
+            )
+            .use { it.step() }
+        connection
+            .prepare(
+                "ALTER TABLE `pockets` ADD COLUMN `autoTopUpEnabled` INTEGER NOT NULL DEFAULT 0"
+            )
+            .use { it.step() }
+        connection
+            .prepare("ALTER TABLE `pockets` ADD COLUMN `lastTopUpMonth` TEXT DEFAULT NULL")
+            .use { it.step() }
+      }
+    }
+
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
     queryContext: CoroutineContext = Dispatchers.Default,
@@ -342,6 +361,7 @@ fun getRoomDatabase(
           MIGRATION_5_6,
           MIGRATION_6_7,
           MIGRATION_7_8,
+          MIGRATION_8_9,
       )
       .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
       .setQueryCoroutineContext(queryContext)

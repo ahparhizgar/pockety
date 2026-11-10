@@ -106,6 +106,13 @@
     <string name="pocket_danger_zone_title">Danger Zone</string>
     <string name="pocket_danger_zone_desc">Deleting this pocket will unlink all associated expenses. Expense history will be preserved in your general transactions.</string>
     <string name="pocket_danger_zone_delete_action">Delete Pocket</string>
+    <string name="pocket_monthly_top_up_title">Monthly Top-Up Allocation</string>
+    <string name="pocket_allocated_refill_label">Allocated refill</string>
+    <string name="pocket_adjust_allocation_action">Adjust allocation</string>
+    <string name="pocket_auto_refill_title">Auto-refill on 1st of month</string>
+    <string name="pocket_auto_refill_desc">This amount is automatically allocated to this pocket at the start of each month.</string>
+    <string name="pocket_adjust_allocation_dialog_title">Monthly Allocation Amount</string>
+    <string name="pocket_adjust_allocation_confirm">Confirm</string>
     <string name="select_pocket_title">Select Pocket</string>
     <string name="search_pockets_placeholder">Search pockets...</string>
     <string name="no_pocket_title">No Pocket</string>

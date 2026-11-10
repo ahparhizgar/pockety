@@ -39,6 +39,9 @@ data class PocketEntity(
     val createdAt: Instant,
     val color: Long = 0xFF316342,
     val categoryId: Long? = null,
+    val monthlyTopUpAmount: Long = 0L,
+    val autoTopUpEnabled: Boolean = false,
+    val lastTopUpMonth: String? = null,
 )
 
 @Entity(
@@ -88,6 +91,7 @@ data class PocketItemModel(
 )
 
 @Dao
+@Suppress("TooManyFunctions")
 interface PocketDao {
   @Transaction
   @Query(
@@ -136,7 +140,8 @@ interface PocketDao {
   @Query(
       """
       UPDATE pockets 
-      SET name = :name, categoryTag = :categoryTag, icon = :icon, color = :color, categoryId = :categoryId 
+      SET name = :name, categoryTag = :categoryTag, icon = :icon, color = :color, categoryId = :categoryId,
+          monthlyTopUpAmount = :monthlyTopUpAmount, autoTopUpEnabled = :autoTopUpEnabled
       WHERE id = :id
       """
   )
@@ -147,7 +152,42 @@ interface PocketDao {
       icon: String,
       color: Long,
       categoryId: Long?,
+      monthlyTopUpAmount: Long = 0L,
+      autoTopUpEnabled: Boolean = false,
   )
+
+  @Query(
+      """
+      SELECT * FROM pockets 
+      WHERE autoTopUpEnabled = 1 
+        AND monthlyTopUpAmount > 0 
+        AND (lastTopUpMonth IS NULL OR lastTopUpMonth != :currentYearMonth)
+      """
+  )
+  suspend fun getDueMonthlyTopUpPockets(currentYearMonth: String): List<PocketEntity>
+
+  @Query("UPDATE pockets SET lastTopUpMonth = :month WHERE id = :id")
+  suspend fun updateLastTopUpMonth(id: Long, month: String)
+
+  @Transaction
+  suspend fun processMonthlyTopUps(currentYearMonth: String): List<PocketTopUpEntity> {
+    val duePockets = getDueMonthlyTopUpPockets(currentYearMonth)
+    val now = Clock.System.now()
+    val topUps = mutableListOf<PocketTopUpEntity>()
+    for (pocket in duePockets) {
+      val topUp =
+          PocketTopUpEntity(
+              pocketId = pocket.id,
+              amount = pocket.monthlyTopUpAmount,
+              description = "Monthly Top-Up",
+              createdAt = now,
+          )
+      val insertedId = insertTopUp(topUp)
+      updateLastTopUpMonth(pocket.id, currentYearMonth)
+      topUps.add(topUp.copy(id = insertedId))
+    }
+    return topUps
+  }
 
   @Query("UPDATE transactions SET pocketId = NULL WHERE id = :id")
   suspend fun unlinkExpense(id: Long)
@@ -170,6 +210,8 @@ interface PocketRepository {
       icon: String,
       color: Long = 0xFF316342,
       categoryId: Long? = null,
+      monthlyTopUpAmount: Long = 0L,
+      autoTopUpEnabled: Boolean = false,
   ): Long
 
   @Suppress("LongParameterList")
@@ -180,7 +222,11 @@ interface PocketRepository {
       icon: String,
       color: Long = 0xFF316342,
       categoryId: Long? = null,
+      monthlyTopUpAmount: Long = 0L,
+      autoTopUpEnabled: Boolean = false,
   )
+
+  suspend fun processMonthlyTopUps(currentYearMonth: String): List<PocketTopUpEntity>
 
   suspend fun getPocketById(id: Long): PocketEntity?
 
@@ -234,6 +280,8 @@ class DefaultPocketRepository(
       icon: String,
       color: Long,
       categoryId: Long?,
+      monthlyTopUpAmount: Long,
+      autoTopUpEnabled: Boolean,
   ): Long {
     val now = Clock.System.now()
     val pocket =
@@ -243,6 +291,8 @@ class DefaultPocketRepository(
             icon = icon,
             color = color,
             categoryId = categoryId,
+            monthlyTopUpAmount = monthlyTopUpAmount,
+            autoTopUpEnabled = autoTopUpEnabled,
             createdAt = now,
         )
     val pocketId = pocketDao.insertPocket(pocket)
@@ -267,6 +317,8 @@ class DefaultPocketRepository(
       icon: String,
       color: Long,
       categoryId: Long?,
+      monthlyTopUpAmount: Long,
+      autoTopUpEnabled: Boolean,
   ) {
     pocketDao.updatePocket(
         id = id,
@@ -275,7 +327,13 @@ class DefaultPocketRepository(
         icon = icon,
         color = color,
         categoryId = categoryId,
+        monthlyTopUpAmount = monthlyTopUpAmount,
+        autoTopUpEnabled = autoTopUpEnabled,
     )
+  }
+
+  override suspend fun processMonthlyTopUps(currentYearMonth: String): List<PocketTopUpEntity> {
+    return pocketDao.processMonthlyTopUps(currentYearMonth)
   }
 
   override suspend fun getPocketById(id: Long): PocketEntity? {
@@ -374,6 +432,8 @@ class FakePocketRepository(
       icon: String,
       color: Long,
       categoryId: Long?,
+      monthlyTopUpAmount: Long,
+      autoTopUpEnabled: Boolean,
   ): Long {
     val id = nextPocketId++
     val now = Clock.System.now()
@@ -385,6 +445,8 @@ class FakePocketRepository(
             icon = icon,
             color = color,
             categoryId = categoryId,
+            monthlyTopUpAmount = monthlyTopUpAmount,
+            autoTopUpEnabled = autoTopUpEnabled,
             createdAt = now,
         )
     pocketsFlow.update { listOf(newPocket) + it }
@@ -410,6 +472,8 @@ class FakePocketRepository(
       icon: String,
       color: Long,
       categoryId: Long?,
+      monthlyTopUpAmount: Long,
+      autoTopUpEnabled: Boolean,
   ) {
     pocketsFlow.update { list ->
       list.map { pocket ->
@@ -420,12 +484,45 @@ class FakePocketRepository(
               icon = icon,
               color = color,
               categoryId = categoryId,
+              monthlyTopUpAmount = monthlyTopUpAmount,
+              autoTopUpEnabled = autoTopUpEnabled,
           )
         } else {
           pocket
         }
       }
     }
+  }
+
+  override suspend fun processMonthlyTopUps(currentYearMonth: String): List<PocketTopUpEntity> {
+    val duePockets =
+        pocketsFlow.value.filter {
+          it.autoTopUpEnabled && it.monthlyTopUpAmount > 0L && it.lastTopUpMonth != currentYearMonth
+        }
+    val now = Clock.System.now()
+    val createdTopUps = mutableListOf<PocketTopUpEntity>()
+    for (pocket in duePockets) {
+      val topUp =
+          PocketTopUpEntity(
+              id = nextTopUpId++,
+              pocketId = pocket.id,
+              amount = pocket.monthlyTopUpAmount,
+              description = "Monthly Top-Up",
+              createdAt = now,
+          )
+      createdTopUps.add(topUp)
+      topUpsFlow.update { listOf(topUp) + it }
+      pocketsFlow.update { list ->
+        list.map { p ->
+          if (p.id == pocket.id) {
+            p.copy(lastTopUpMonth = currentYearMonth)
+          } else {
+            p
+          }
+        }
+      }
+    }
+    return createdTopUps
   }
 
   override suspend fun getPocketById(id: Long): PocketEntity? {

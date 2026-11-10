@@ -242,6 +242,69 @@ class PocketRepositoryTest : BehaviorSpec() {
           generalExpense.description shouldBe "Latte"
         }
       }
+
+      When("processing monthly top ups") {
+        var autoPocketId: Long by testValue { 0 }
+        var disabledPocketId: Long by testValue { 0 }
+        var zeroAmountPocketId: Long by testValue { 0 }
+
+        beforeEach {
+          autoPocketId =
+              pocketRepository.addPocket(
+                  name = "Subscriptions",
+                  categoryTag = "Services",
+                  budgetAmount = 0,
+                  icon = "card",
+                  monthlyTopUpAmount = 50000,
+                  autoTopUpEnabled = true,
+              )
+          disabledPocketId =
+              pocketRepository.addPocket(
+                  name = "Savings",
+                  categoryTag = "Money",
+                  budgetAmount = 0,
+                  icon = "savings",
+                  monthlyTopUpAmount = 100000,
+                  autoTopUpEnabled = false,
+              )
+          zeroAmountPocketId =
+              pocketRepository.addPocket(
+                  name = "Gym",
+                  categoryTag = "Health",
+                  budgetAmount = 0,
+                  icon = "fitness",
+                  monthlyTopUpAmount = 0,
+                  autoTopUpEnabled = true,
+              )
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("only eligible pocket is topped up and lastTopUpMonth is updated") {
+          val generated = pocketRepository.processMonthlyTopUps("2026-11")
+          testCoroutineScheduler.advanceUntilIdle()
+
+          generated shouldHaveSize 1
+          generated[0].pocketId shouldBe autoPocketId
+          generated[0].amount shouldBe 50000L
+          generated[0].description shouldBe "Monthly Top-Up"
+
+          val autoPocket = pocketRepository.getPocketById(autoPocketId)
+          autoPocket.shouldNotBeNull()
+          autoPocket.lastTopUpMonth shouldBe "2026-11"
+
+          val disabledPocket = pocketRepository.getPocketById(disabledPocketId)
+          disabledPocket.shouldNotBeNull()
+          disabledPocket.lastTopUpMonth shouldBe null
+
+          // Second execution in the same month is idempotent
+          val secondRun = pocketRepository.processMonthlyTopUps("2026-11")
+          testCoroutineScheduler.advanceUntilIdle()
+          secondRun shouldHaveSize 0
+
+          val topUps = pocketRepository.observePocketTopUps(autoPocketId).first()
+          topUps shouldHaveSize 1
+        }
+      }
     }
   }
 }

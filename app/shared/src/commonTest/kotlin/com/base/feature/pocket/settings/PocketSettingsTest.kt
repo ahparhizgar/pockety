@@ -116,6 +116,40 @@ class PocketSettingsTest : BehaviorSpec() {
         }
       }
 
+      When("user configures monthly allocation and auto-refill") {
+        beforeEach {
+          component.onMonthlyTopUpAmountChanged(300_000L)
+          component.onAutoTopUpEnabledChanged(true)
+        }
+
+        Then("state updates with monthlyTopUpAmount and autoTopUpEnabled = true") {
+          val state = component.state.value
+          state.monthlyTopUpAmount shouldBe 300_000L
+          state.autoTopUpEnabled shouldBe true
+        }
+
+        And("user taps save action with valid name, icon, and color") {
+          beforeEach {
+            component.onNameChanged("Groceries")
+            component.onColorSelected(0xFF4A7C59)
+            component.onIconSelected("shopping_bag")
+            component.onSaveClicked()
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then("pocket is saved in repository with monthly allocation settings preserved") {
+            completedCallback.shouldBeCalled()
+
+            val pockets = pocketRepository.observePockets().first()
+            pockets shouldHaveSize 1
+            val savedEntity = pocketRepository.getPocketById(pockets[0].id)
+            savedEntity.shouldNotBeNull()
+            savedEntity.monthlyTopUpAmount shouldBe 300_000L
+            savedEntity.autoTopUpEnabled shouldBe true
+          }
+        }
+      }
+
       When("user taps save action with valid name, icon, and color") {
         beforeEach {
           component.onNameChanged("Groceries")
@@ -216,6 +250,59 @@ class PocketSettingsTest : BehaviorSpec() {
 
           val pockets = pocketRepository.observePockets().first()
           pockets.none { it.id == pocketId } shouldBe true
+        }
+      }
+
+      When("pocket has monthly top up settings configured") {
+        var configuredPocketId: Long by testValue { 0 }
+
+        beforeEach {
+          configuredPocketId =
+              pocketRepository.addPocket(
+                  name = "Subscriptions",
+                  categoryTag = "Services",
+                  budgetAmount = 0L,
+                  icon = "card",
+                  monthlyTopUpAmount = 300_000L,
+                  autoTopUpEnabled = true,
+              )
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        val autoTopUpComponent: PocketSettingsComponent by testValue {
+          koin
+              .get<PocketSettingsComponentFactory>()
+              .create(
+                  cContext = TestCContext(),
+                  pocketId = configuredPocketId,
+                  onCompleted = completedCallback,
+                  onCancelled = cancelledCallback,
+              )
+        }
+
+        Then("state displays existing monthly top-up amount and toggle enabled") {
+          testCoroutineScheduler.advanceUntilIdle()
+          val state = autoTopUpComponent.state.value
+          state.monthlyTopUpAmount shouldBe 300_000L
+          state.autoTopUpEnabled shouldBe true
+        }
+
+        And("user toggles off auto-refill and saves") {
+          beforeEach {
+            testCoroutineScheduler.advanceUntilIdle()
+            autoTopUpComponent.onAutoTopUpEnabledChanged(false)
+            autoTopUpComponent.onSaveClicked()
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then("pocket repository updates pocket with autoTopUpEnabled = false") {
+            completedCallback.shouldBeCalled()
+
+            val pocket = pocketRepository.getPocketById(configuredPocketId)
+            pocket.shouldNotBeNull()
+            pocket.autoTopUpEnabled shouldBe false
+            pocket.monthlyTopUpAmount shouldBe 300_000L
+          }
         }
       }
     }
