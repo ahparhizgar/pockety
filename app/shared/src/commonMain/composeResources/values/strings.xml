@@ -65,7 +65,6 @@
     <string name="pockets_empty_title">No Budget Pockets Yet</string>
     <string name="pockets_empty_desc">Create your first budget pocket to manage spending by category and track remaining balances.</string>
     <string name="pockets_add_pocket_action">Add Pocket</string>
-    <string name="pockets_top_up_action">Top-up</string>
     <string name="pockets_dynamic_sync_title">Dynamic Balance Sync</string>
     <string name="pockets_dynamic_sync_desc">Deleting or editing an expense linked to a pocket automatically restores its balance in real time.</string>
     <string name="pocket_settings_title">Pocket Settings</string>

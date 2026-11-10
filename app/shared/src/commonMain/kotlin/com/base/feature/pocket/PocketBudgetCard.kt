@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Icon
@@ -32,7 +31,6 @@ import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.pockets_dynamic_sync_desc
 import pockety.app.shared.generated.resources.pockets_dynamic_sync_title
-import pockety.app.shared.generated.resources.pockets_top_up_action
 
 @Composable
 fun PocketWarningHeader(
@@ -71,7 +69,6 @@ fun PocketBudgetCard(
     pocket: PocketItemModel,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    onTopUpClick: () -> Unit = {},
 ) {
   Surface(
       modifier = modifier.fillMaxWidth().testTag("pocket-card-${pocket.id}"),
@@ -99,7 +96,6 @@ fun PocketBudgetCard(
                 MaterialTheme.colorScheme.onSurface
               },
       )
-      PocketCardActions(onTopUpClick = onTopUpClick)
     }
   }
 }
@@ -170,39 +166,6 @@ private fun PocketCardIconBadge(pocket: PocketItemModel) {
           tint = Color.White,
           modifier = Modifier.size(20.dp),
       )
-    }
-  }
-}
-
-@Composable
-private fun PocketCardActions(onTopUpClick: () -> Unit) {
-  Row(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Surface(
-        shape = CircleShape,
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
-        contentColor = MaterialTheme.colorScheme.primary,
-        onClick = onTopUpClick,
-    ) {
-      Row(
-          modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(6.dp),
-      ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = null,
-            modifier = Modifier.size(18.dp),
-        )
-        Text(
-            text = stringResource(Res.string.pockets_top_up_action),
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold,
-        )
-      }
     }
   }
 }

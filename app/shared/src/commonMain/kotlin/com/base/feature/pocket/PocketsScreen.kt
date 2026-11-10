@@ -132,7 +132,6 @@ private fun PocketsContent(
             PocketBudgetCard(
                 pocket = pocket,
                 onClick = { component.onPocketClick(pocket.id) },
-                onTopUpClick = {},
             )
           }
 

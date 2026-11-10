@@ -60,6 +60,9 @@ class PocketListE2eUiTest {
     onNode(hasText("Groceries")).assertExists()
     onNode(hasText("1,000,000 T")).assertExists()
 
+    // Verify pocket budget card does not render top-up button
+    onNode(hasText("Top-up")).assertDoesNotExist()
+
     // Verify Add Pocket extended FAB is displayed and can be clicked
     onNode(hasTestTag("add-pocket-fab")).waitForExistence().assertExists().performClick()
   }
