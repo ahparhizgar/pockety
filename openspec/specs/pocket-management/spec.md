@@ -33,7 +33,7 @@ The system SHALL calculate and display the remaining balance for each pocket as 
 - **THEN** the pocket indicates an over-budget status and warning
 
 ### Requirement: Pocket Action Handlers
-The system SHALL handle user interactions on pocket cards and list controls gracefully.
+The system SHALL handle user interactions on pocket cards and list controls gracefully, delegating card taps to pocket detail navigation and avoiding non-functional card-level actions.
 
 #### Scenario: User clicks pocket card
 - **WHEN** user taps a pocket budget card
