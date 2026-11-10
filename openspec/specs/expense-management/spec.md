@@ -13,6 +13,10 @@ The system SHALL allow users to record a new expense with an amount, an optional
 - **WHEN** user enters a valid positive amount and a description and confirms saving
 - **THEN** the expense is saved locally and displayed in the expense list
 
+#### Scenario: Successfully record an expense without description
+- **WHEN** user enters a valid positive amount, leaves the description blank or empty, and confirms saving
+- **THEN** the expense is saved locally without validation error and displayed in the expense list
+
 #### Scenario: Successfully record an expense with a category
 - **WHEN** user enters a valid positive amount, a description, selects a category, and confirms saving
 - **THEN** the expense is saved locally with the assigned category ID and displayed in the expense list
@@ -39,6 +43,10 @@ The system SHALL display the recorded expenses in reverse-chronological order on
 #### Scenario: Display recorded expenses
 - **WHEN** user opens the application with previously recorded expenses
 - **THEN** all expenses are shown with their amount and description
+
+#### Scenario: Display recorded expenses without category or description
+- **WHEN** an expense has no category assigned and no description (or blank description)
+- **THEN** the expense item displays only the amount without an empty description placeholder or title
 
 #### Scenario: Display empty state
 - **WHEN** no expenses have been recorded
@@ -91,4 +99,3 @@ The system SHALL allow users to manually reassign or clear the budget pocket ass
 #### Scenario: User chooses No Pocket in pocket selection
 - **WHEN** user selects the No Pocket option from the pocket selection screen
 - **THEN** the pocket assignment is cleared
-
