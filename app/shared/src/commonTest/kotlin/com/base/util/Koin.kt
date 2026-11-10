@@ -6,6 +6,8 @@ import com.base.db.getRoomDatabase
 import com.base.di.appModule
 import com.base.feature.auth.FakeTokenStorage
 import com.base.feature.auth.TokenStorage
+import com.base.feature.settings.FakeUserSettingsRepository
+import com.base.feature.settings.UserSettingsRepository
 import com.base.testValue
 import io.kotest.core.spec.Spec
 import kotlinx.coroutines.CoroutineDispatcher
@@ -47,6 +49,7 @@ fun integrationTestModule() = module {
     )
   }
   single { FakeTokenStorage() }.bind<TokenStorage>()
+  single { FakeUserSettingsRepository() }.bind<UserSettingsRepository>()
 
   // Everything is overridden to Main. Main should be set to StandardTestDispatcher.
   factory<CoroutineDispatcher>(named("default")) { Dispatchers.Main }

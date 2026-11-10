@@ -4,9 +4,14 @@ import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.base.Fake
+import com.base.calendar.CalendarType
+import com.base.calendar.GregorianCalendar
+import com.base.calendar.PersianCalendar
+import com.base.calendar.getMonthName
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.PocketRepository
+import com.base.feature.settings.UserSettingsRepository
 import kotlin.time.Instant
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.combine
@@ -72,6 +77,7 @@ interface PocketDetailsComponentFactory {
 class DefaultPocketDetailsComponent(
     cContext: CContext,
     private val pocketRepository: PocketRepository,
+    private val userSettingsRepository: UserSettingsRepository,
     private val pocketId: Long,
     private val onBack: () -> Unit = {},
     private val onConfigure: (Long) -> Unit = {},
@@ -96,7 +102,8 @@ class DefaultPocketDetailsComponent(
               pocketRepository.observePockets(),
               pocketRepository.observePocketTopUps(pocketId),
               pocketRepository.observePocketExpenses(pocketId),
-          ) { pockets, topUps, expenses ->
+              userSettingsRepository.calendarType,
+          ) { pockets, topUps, expenses, calendarType ->
             val pocket = pockets.firstOrNull { it.id == pocketId }
             if (pocket != null) {
               val topUpItems = topUps.map { topUp ->
@@ -104,7 +111,7 @@ class DefaultPocketDetailsComponent(
                     id = "topup-${topUp.id}",
                     title = topUp.description?.takeIf { it.isNotBlank() } ?: "Top-up",
                     icon = "arrow_downward_alt",
-                    timestamp = formatInstant(topUp.createdAt),
+                    timestamp = formatInstant(topUp.createdAt, calendarType),
                     note = "",
                     amount = topUp.amount,
                     isTopUp = true,
@@ -116,7 +123,7 @@ class DefaultPocketDetailsComponent(
                     id = "expense-${expense.id}",
                     title = expense.description.ifBlank { "Expense" },
                     icon = "shopping_bag",
-                    timestamp = formatInstant(expense.createdAt),
+                    timestamp = formatInstant(expense.createdAt, calendarType),
                     note = "",
                     amount = expense.amount,
                     isTopUp = false,
@@ -208,16 +215,28 @@ class DefaultPocketDetailsComponent(
   }
 }
 
-private fun formatInstant(instant: Instant): String {
-  val local = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+private fun formatInstant(
+    instant: Instant,
+    calendarType: CalendarType = CalendarType.GREGORIAN,
+): String {
+  val timeZone = TimeZone.currentSystemDefault()
+  val calendar =
+      when (calendarType) {
+        CalendarType.GREGORIAN -> GregorianCalendar
+        CalendarType.PERSIAN -> PersianCalendar
+      }
+  val date = calendar.toCalendarDate(instant.toEpochMilliseconds(), timeZone)
+  val local = instant.toLocalDateTime(timeZone)
   val hour = local.hour.toString().padStart(2, '0')
   val minute = local.minute.toString().padStart(2, '0')
-  val month = local.month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
-  return "${local.day} $month, $hour:$minute"
+  val monthName = getMonthName(date.month, calendarType)
+  val monthShort = monthName.take(3)
+  return "${date.day} $monthShort, $hour:$minute"
 }
 
 class DefaultPocketDetailsComponentFactory(
     private val pocketRepository: PocketRepository,
+    private val userSettingsRepository: UserSettingsRepository,
 ) : PocketDetailsComponentFactory {
   override fun create(
       cContext: CContext,
@@ -228,6 +247,7 @@ class DefaultPocketDetailsComponentFactory(
       DefaultPocketDetailsComponent(
           cContext = cContext,
           pocketRepository = pocketRepository,
+          userSettingsRepository = userSettingsRepository,
           pocketId = pocketId,
           onBack = onBack,
           onConfigure = onConfigure,

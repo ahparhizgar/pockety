@@ -88,4 +88,9 @@
     <string name="pocket_details_tx_unlinked_format">اتصال %s قطع شد. %s+ تومان به جیب بازگشت!</string>
     <string name="pocket_details_tx_unlink_action">قطع ارتباط با جیب</string>
     <string name="active_badge">فعال</string>
+    <string name="settings_title">تنظیمات</string>
+    <string name="calendar_system_title">تقویم</string>
+    <string name="calendar_system_desc">انتخاب گاه‌شمار مورد نظر برای نمایش تاریخ‌ها، ماه‌ها و شروع هفته.</string>
+    <string name="calendar_gregorian">تقویم میلادی</string>
+    <string name="calendar_persian">تقویم هجری شمسی (جلالی)</string>
 </resources>

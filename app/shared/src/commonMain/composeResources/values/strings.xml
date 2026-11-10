@@ -132,4 +132,9 @@
     <string name="no_expenses_month">No expenses recorded for this month</string>
     <string name="previous_month_action">Previous month</string>
     <string name="next_month_action">Next month</string>
+    <string name="settings_title">Settings</string>
+    <string name="calendar_system_title">Calendar System</string>
+    <string name="calendar_system_desc">Choose your preferred calendar system for dates, months, and week start.</string>
+    <string name="calendar_gregorian">Gregorian Calendar</string>
+    <string name="calendar_persian">Persian (Solar Hijri) Calendar</string>
 </resources>

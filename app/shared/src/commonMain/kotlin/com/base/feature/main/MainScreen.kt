@@ -1,6 +1,5 @@
 package com.base.feature.main
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,6 +20,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.feature.analytics.AnalyticsScreen
 import com.base.feature.home.HomeScreen
 import com.base.feature.pocket.PocketsScreen
+import com.base.feature.settings.SettingsScreen
 import com.base.feature.sms.inbox.InboxScreen
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyBottomBar
@@ -108,7 +108,10 @@ private fun MainNavigationContent(
       }
 
       is MainComponent.Child.Settings -> {
-        Box(modifier = Modifier.fillMaxSize().testTag("settings-screen"))
+        SettingsScreen(
+            component = child.component,
+            modifier = Modifier.fillMaxSize(),
+        )
       }
     }
   }

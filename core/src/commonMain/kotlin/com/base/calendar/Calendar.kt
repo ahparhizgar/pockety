@@ -1,5 +1,6 @@
 package com.base.calendar
 
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone
 
 enum class CalendarType {
@@ -50,6 +51,9 @@ data class CalendarDate(
 
 interface Calendar {
   val type: CalendarType
+  val firstDayOfWeek: DayOfWeek
+
+  fun getDayOfWeek(date: CalendarDate): DayOfWeek
 
   fun isLeapYear(year: Int): Boolean
 
@@ -68,6 +72,47 @@ interface Calendar {
   fun toGregorian(date: CalendarDate): CalendarDate
 
   fun fromGregorian(date: CalendarDate): CalendarDate
+}
+
+private val gregorianMonthNames =
+    listOf(
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    )
+
+private val persianMonthNames =
+    listOf(
+        "Farvardin",
+        "Ordibehesht",
+        "Khordad",
+        "Tir",
+        "Mordad",
+        "Shahrivar",
+        "Mehr",
+        "Aban",
+        "Azar",
+        "Dey",
+        "Bahman",
+        "Esfand",
+    )
+
+@Suppress("MagicNumber")
+fun getMonthName(month: Int, type: CalendarType): String {
+  require(month in 1..12) { "Month must be between 1 and 12, got $month" }
+  return when (type) {
+    CalendarType.GREGORIAN -> gregorianMonthNames[month - 1]
+    CalendarType.PERSIAN -> persianMonthNames[month - 1]
+  }
 }
 
 object FakeCalendarDateFactory {

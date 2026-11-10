@@ -3,15 +3,23 @@ package com.base.calendar
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 
-@Suppress("MagicNumber", "LongMethod")
+@Suppress("MagicNumber", "LongMethod", "TooManyFunctions")
 object PersianCalendar : Calendar {
   override val type: CalendarType = CalendarType.PERSIAN
+  override val firstDayOfWeek: DayOfWeek = DayOfWeek.SATURDAY
+
+  override fun getDayOfWeek(date: CalendarDate): DayOfWeek {
+    require(date.type == CalendarType.PERSIAN) { "Expected Persian date, got ${date.type}" }
+    val gregorianDate = toGregorian(date)
+    return GregorianCalendar.getDayOfWeek(gregorianDate)
+  }
 
   /**
    * Determines if a Persian year is a leap year (kabiseh).

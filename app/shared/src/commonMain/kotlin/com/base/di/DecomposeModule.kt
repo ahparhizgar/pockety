@@ -28,6 +28,8 @@ import com.base.feature.root.ComponentProvider
 import com.base.feature.root.DefaultRootComponentFactory
 import com.base.feature.root.KoinComponentProvider
 import com.base.feature.root.RootComponentFactory
+import com.base.feature.settings.DefaultSettingsComponentFactory
+import com.base.feature.settings.SettingsComponentFactory
 import com.base.feature.sms.inbox.DefaultInboxComponentFactory
 import com.base.feature.sms.inbox.InboxComponentFactory
 import org.koin.core.module.dsl.factoryOf
@@ -50,4 +52,5 @@ fun decomposeModule() = module {
   factoryOf(::DefaultPocketSettingsComponentFactory).bind<PocketSettingsComponentFactory>()
   factoryOf(::DefaultPocketSettingsFlowComponentFactory).bind<PocketSettingsFlowComponentFactory>()
   factoryOf(::DefaultAnalyticsComponentFactory).bind<AnalyticsComponentFactory>()
+  factoryOf(::DefaultSettingsComponentFactory).bind<SettingsComponentFactory>()
 }

@@ -2,8 +2,13 @@ package com.base.feature.analytics
 
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.decompose.value.update
 import com.base.Fake
+import com.base.calendar.Calendar
+import com.base.calendar.CalendarDate
+import com.base.calendar.CalendarType
+import com.base.calendar.GregorianCalendar
+import com.base.calendar.PersianCalendar
+import com.base.calendar.getMonthName
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.CategoryEntity
@@ -11,13 +16,12 @@ import com.base.db.CategoryRepository
 import com.base.db.ExpenseEntity
 import com.base.db.ExpenseRepository
 import com.base.feature.pocket.details.formatAmount
+import com.base.feature.settings.UserSettingsRepository
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -34,7 +38,7 @@ data class AnalyticsExpenseUiModel(
 )
 
 data class AnalyticsDateGroupUiModel(
-    val date: LocalDate,
+    val date: CalendarDate,
     val headerTitle: String,
     val totalAmount: Long,
     val formattedTotalAmount: String,
@@ -42,10 +46,8 @@ data class AnalyticsDateGroupUiModel(
 )
 
 data class AnalyticsState(
-    val selectedYear: Int =
-        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year,
-    val selectedMonth: Int =
-        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).month.ordinal + 1,
+    val selectedYear: Int = 2026,
+    val selectedMonth: Int = 1,
     val selectedMonthLabel: String = "",
     val canNavigateNext: Boolean = false,
     val monthlyOutflow: Long = 0L,
@@ -74,23 +76,23 @@ interface AnalyticsComponentFactory {
   ): AnalyticsComponent
 }
 
-private const val FIRST_MONTH = 1
-private const val MONTHS_IN_YEAR = 12
-
 class DefaultAnalyticsComponent(
     cContext: CContext,
     private val expenseRepository: ExpenseRepository,
     private val categoryRepository: CategoryRepository,
+    private val userSettingsRepository: UserSettingsRepository,
     private val onExpenseClick: (Long) -> Unit,
 ) : AnalyticsComponent, CContext by cContext {
   private val scope = componentScope()
 
-  private val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-  private val currentCalendarYear = now.year
-  private val currentCalendarMonth = now.month.ordinal + 1
+  private var calendarType: CalendarType = CalendarType.GREGORIAN
+  private var activeCalendar: Calendar = GregorianCalendar
 
-  private var currentYear = currentCalendarYear
-  private var currentMonth = currentCalendarMonth
+  private val timeZone = TimeZone.currentSystemDefault()
+  private var currentCalendarDate: CalendarDate =
+      activeCalendar.toCalendarDate(Clock.System.now().toEpochMilliseconds(), timeZone)
+  private var selectedYear: Int = currentCalendarDate.year
+  private var selectedMonth: Int = currentCalendarDate.month
 
   private var rawExpenses: List<ExpenseEntity> = emptyList()
   private var rawCategories: List<CategoryEntity> = emptyList()
@@ -102,9 +104,22 @@ class DefaultAnalyticsComponent(
     combine(
             expenseRepository.observeExpenses(),
             categoryRepository.observeCategories(),
-        ) { expenses, categories ->
+            userSettingsRepository.calendarType,
+        ) { expenses, categories, type ->
           rawExpenses = expenses
           rawCategories = categories
+          if (calendarType != type) {
+            calendarType = type
+            activeCalendar =
+                when (type) {
+                  CalendarType.GREGORIAN -> GregorianCalendar
+                  CalendarType.PERSIAN -> PersianCalendar
+                }
+            currentCalendarDate =
+                activeCalendar.toCalendarDate(Clock.System.now().toEpochMilliseconds(), timeZone)
+            selectedYear = currentCalendarDate.year
+            selectedMonth = currentCalendarDate.month
+          }
           buildState()
         }
         .onEach { newState -> _state.value = newState }
@@ -112,27 +127,23 @@ class DefaultAnalyticsComponent(
   }
 
   override fun onPreviousMonthClicked() {
-    if (currentMonth == FIRST_MONTH) {
-      currentMonth = MONTHS_IN_YEAR
-      currentYear -= 1
-    } else {
-      currentMonth -= 1
-    }
+    val tempDate = CalendarDate(selectedYear, selectedMonth, 1, calendarType)
+    val prevMonthDate = activeCalendar.addMonths(tempDate, -1)
+    selectedYear = prevMonthDate.year
+    selectedMonth = prevMonthDate.month
     _state.value = buildState()
   }
 
   override fun onNextMonthClicked() {
     val canNext =
-        currentYear < currentCalendarYear ||
-            (currentYear == currentCalendarYear && currentMonth < currentCalendarMonth)
+        selectedYear < currentCalendarDate.year ||
+            (selectedYear == currentCalendarDate.year && selectedMonth < currentCalendarDate.month)
     if (!canNext) return
 
-    if (currentMonth == MONTHS_IN_YEAR) {
-      currentMonth = FIRST_MONTH
-      currentYear += 1
-    } else {
-      currentMonth += 1
-    }
+    val tempDate = CalendarDate(selectedYear, selectedMonth, 1, calendarType)
+    val nextMonthDate = activeCalendar.addMonths(tempDate, 1)
+    selectedYear = nextMonthDate.year
+    selectedMonth = nextMonthDate.month
     _state.value = buildState()
   }
 
@@ -141,19 +152,17 @@ class DefaultAnalyticsComponent(
   }
 
   private fun buildState(): AnalyticsState {
-    val timeZone = TimeZone.currentSystemDefault()
-    val today = Clock.System.now().toLocalDateTime(timeZone).date
+    val today = activeCalendar.toCalendarDate(Clock.System.now().toEpochMilliseconds(), timeZone)
     val canNavigateNext =
-        currentYear < currentCalendarYear ||
-            (currentYear == currentCalendarYear && currentMonth < currentCalendarMonth)
+        selectedYear < currentCalendarDate.year ||
+            (selectedYear == currentCalendarDate.year && selectedMonth < currentCalendarDate.month)
 
-    val monthName =
-        Month.entries[currentMonth - 1].name.lowercase().replaceFirstChar { it.uppercase() }
-    val selectedMonthLabel = "$monthName $currentYear"
+    val monthName = getMonthName(selectedMonth, calendarType)
+    val selectedMonthLabel = "$monthName $selectedYear"
 
     val monthExpenses = rawExpenses.filter { expense ->
-      val local = expense.createdAt.toLocalDateTime(timeZone)
-      local.year == currentYear && local.month.ordinal + 1 == currentMonth
+      val date = activeCalendar.toCalendarDate(expense.createdAt.toEpochMilliseconds(), timeZone)
+      date.year == selectedYear && date.month == selectedMonth
     }
 
     val monthlyOutflow = monthExpenses.sumOf { it.amount }
@@ -163,8 +172,8 @@ class DefaultAnalyticsComponent(
     val dateGroups = buildDateGroups(monthExpenses, categoriesMap, timeZone, today)
 
     return AnalyticsState(
-        selectedYear = currentYear,
-        selectedMonth = currentMonth,
+        selectedYear = selectedYear,
+        selectedMonth = selectedMonth,
         selectedMonthLabel = selectedMonthLabel,
         canNavigateNext = canNavigateNext,
         monthlyOutflow = monthlyOutflow,
@@ -178,10 +187,10 @@ class DefaultAnalyticsComponent(
       monthExpenses: List<ExpenseEntity>,
       categoriesMap: Map<Long, CategoryEntity>,
       timeZone: TimeZone,
-      today: LocalDate,
+      today: CalendarDate,
   ): List<AnalyticsDateGroupUiModel> =
       monthExpenses
-          .groupBy { it.createdAt.toLocalDateTime(timeZone).date }
+          .groupBy { activeCalendar.toCalendarDate(it.createdAt.toEpochMilliseconds(), timeZone) }
           .entries
           .sortedByDescending { it.key }
           .map { (date, expensesForDate) ->
@@ -200,12 +209,17 @@ class DefaultAnalyticsComponent(
             )
           }
 
-  private fun formatGroupHeaderTitle(date: LocalDate, today: LocalDate): String {
-    val monthShort = date.month.name.take(3).lowercase().replaceFirstChar { it.uppercase() }
+  private fun formatGroupHeaderTitle(date: CalendarDate, today: CalendarDate): String {
+    val monthName = getMonthName(date.month, date.type)
+    val isToday = date.year == today.year && date.month == today.month && date.day == today.day
+    val yesterday = activeCalendar.addDays(today, -1)
+    val isYesterday =
+        date.year == yesterday.year && date.month == yesterday.month && date.day == yesterday.day
+
     return when {
-      date == today -> "Today, ${date.day} $monthShort"
-      date.toEpochDays() == today.toEpochDays() - 1 -> "Yesterday, ${date.day} $monthShort"
-      else -> "${date.day} $monthShort ${date.year}"
+      isToday -> "Today, ${date.day} $monthName"
+      isYesterday -> "Yesterday, ${date.day} $monthName"
+      else -> "${date.day} $monthName ${date.year}"
     }
   }
 
@@ -235,6 +249,7 @@ class DefaultAnalyticsComponent(
 class DefaultAnalyticsComponentFactory(
     private val expenseRepository: ExpenseRepository,
     private val categoryRepository: CategoryRepository,
+    private val userSettingsRepository: UserSettingsRepository,
 ) : AnalyticsComponentFactory {
   override fun create(
       cContext: CContext,
@@ -244,6 +259,7 @@ class DefaultAnalyticsComponentFactory(
           cContext = cContext,
           expenseRepository = expenseRepository,
           categoryRepository = categoryRepository,
+          userSettingsRepository = userSettingsRepository,
           onExpenseClick = onExpenseClick,
       )
 }
@@ -270,8 +286,9 @@ object FakeAnalyticsExpenseUiModelFactory {
 }
 
 object FakeAnalyticsDateGroupUiModelFactory {
+  @Suppress("MagicNumber")
   fun create(
-      date: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+      date: CalendarDate = CalendarDate(2026, 10, 24, CalendarType.GREGORIAN),
       headerTitle: String = "Today, 24 Oct",
       totalAmount: Long = 50_000,
       formattedTotalAmount: String = "50,000 T",
@@ -295,8 +312,7 @@ object FakeAnalyticsStateFactory {
       dateGroups: List<AnalyticsDateGroupUiModel> =
           listOf(FakeAnalyticsDateGroupUiModelFactory.create()),
   ): AnalyticsState {
-    val monthName =
-        Month.entries[selectedMonth - 1].name.lowercase().replaceFirstChar { it.uppercase() }
+    val monthName = getMonthName(selectedMonth, CalendarType.GREGORIAN)
     return AnalyticsState(
         selectedYear = selectedYear,
         selectedMonth = selectedMonth,
@@ -318,44 +334,15 @@ class FakeAnalyticsComponent(
   private val _state = MutableValue(initialState)
   override val state: Value<AnalyticsState> = _state
 
-  override fun onPreviousMonthClicked() {
-    val newMonth = if (_state.value.selectedMonth == 1) 12 else _state.value.selectedMonth - 1
-    val newYear =
-        if (_state.value.selectedMonth == 1) _state.value.selectedYear - 1
-        else _state.value.selectedYear
-    val monthName = Month.entries[newMonth - 1].name.lowercase().replaceFirstChar { it.uppercase() }
-    _state.update {
-      it.copy(
-          selectedMonth = newMonth,
-          selectedYear = newYear,
-          selectedMonthLabel = "$monthName $newYear",
-          canNavigateNext = true,
-      )
-    }
-  }
+  override fun onPreviousMonthClicked() {}
 
-  override fun onNextMonthClicked() {
-    val newMonth = if (_state.value.selectedMonth == 12) 1 else _state.value.selectedMonth + 1
-    val newYear =
-        if (_state.value.selectedMonth == 12) _state.value.selectedYear + 1
-        else _state.value.selectedYear
-    val monthName = Month.entries[newMonth - 1].name.lowercase().replaceFirstChar { it.uppercase() }
-    _state.update {
-      it.copy(
-          selectedMonth = newMonth,
-          selectedYear = newYear,
-          selectedMonthLabel = "$monthName $newYear",
-          canNavigateNext = false,
-      )
-    }
-  }
+  override fun onNextMonthClicked() {}
 
   override fun onExpenseClicked(id: Long) {
     onExpenseClick(id)
   }
 }
 
-@Fake
 class FakeAnalyticsComponentFactory : AnalyticsComponentFactory {
   override fun create(
       cContext: CContext,

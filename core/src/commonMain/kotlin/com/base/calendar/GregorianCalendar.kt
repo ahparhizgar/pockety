@@ -1,5 +1,6 @@
 package com.base.calendar
 
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -9,6 +10,12 @@ import kotlinx.datetime.toLocalDateTime
 @Suppress("MagicNumber")
 object GregorianCalendar : Calendar {
   override val type: CalendarType = CalendarType.GREGORIAN
+  override val firstDayOfWeek: DayOfWeek = DayOfWeek.MONDAY
+
+  override fun getDayOfWeek(date: CalendarDate): DayOfWeek {
+    require(date.type == CalendarType.GREGORIAN) { "Expected Gregorian date, got ${date.type}" }
+    return LocalDate(date.year, date.month, date.day).dayOfWeek
+  }
 
   override fun isLeapYear(year: Int): Boolean {
     return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)

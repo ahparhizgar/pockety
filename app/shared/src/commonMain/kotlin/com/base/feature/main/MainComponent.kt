@@ -26,6 +26,9 @@ import com.base.feature.pocket.FakePocketsComponent
 import com.base.feature.pocket.PocketsComponent
 import com.base.feature.pocket.PocketsComponentFactory
 import com.base.feature.root.RootFlowDestination
+import com.base.feature.settings.FakeSettingsComponent
+import com.base.feature.settings.SettingsComponent
+import com.base.feature.settings.SettingsComponentFactory
 import com.base.feature.sms.inbox.FakeInboxComponent
 import com.base.feature.sms.inbox.InboxComponent
 import com.base.feature.sms.inbox.InboxComponentFactory
@@ -71,7 +74,7 @@ interface MainComponent {
 
     class Analytics(val component: AnalyticsComponent) : Child
 
-    data object Settings : Child
+    class Settings(val component: SettingsComponent) : Child
   }
 }
 
@@ -79,12 +82,14 @@ interface MainComponentFactory {
   fun create(cContext: CContext): MainComponent
 }
 
+@Suppress("LongParameterList")
 class DefaultMainComponent(
     cContext: CContext,
     private val homeComponentFactory: HomeComponentFactory,
     private val inboxComponentFactory: InboxComponentFactory,
     private val pocketsComponentFactory: PocketsComponentFactory,
     private val analyticsComponentFactory: AnalyticsComponentFactory,
+    private val settingsComponentFactory: SettingsComponentFactory,
     private val candidateExpenseRepository: CandidateExpenseRepository,
 ) : MainComponent, CContext by cContext {
   private val scope = componentScope()
@@ -136,7 +141,7 @@ class DefaultMainComponent(
         MainChildConfig.Inbox -> createInboxChild(context)
         MainChildConfig.Pockets -> createPocketsChild(context)
         MainChildConfig.Analytics -> createAnalyticsChild(context)
-        MainChildConfig.Settings -> MainComponent.Child.Settings
+        MainChildConfig.Settings -> createSettingsChild(context)
       }
 
   private fun createHomeChild(context: CContext): MainComponent.Child =
@@ -197,13 +202,22 @@ class DefaultMainComponent(
               },
           )
       )
+
+  private fun createSettingsChild(context: CContext): MainComponent.Child =
+      MainComponent.Child.Settings(
+          settingsComponentFactory.create(
+              cContext = context,
+          )
+      )
 }
 
+@Suppress("LongParameterList")
 class DefaultMainComponentFactory(
     private val homeComponentFactory: HomeComponentFactory,
     private val inboxComponentFactory: InboxComponentFactory,
     private val pocketsComponentFactory: PocketsComponentFactory,
     private val analyticsComponentFactory: AnalyticsComponentFactory,
+    private val settingsComponentFactory: SettingsComponentFactory,
     private val candidateExpenseRepository: CandidateExpenseRepository,
 ) : MainComponentFactory {
   override fun create(cContext: CContext): MainComponent =
@@ -213,6 +227,7 @@ class DefaultMainComponentFactory(
           inboxComponentFactory = inboxComponentFactory,
           pocketsComponentFactory = pocketsComponentFactory,
           analyticsComponentFactory = analyticsComponentFactory,
+          settingsComponentFactory = settingsComponentFactory,
           candidateExpenseRepository = candidateExpenseRepository,
       )
 }
@@ -261,7 +276,7 @@ class FakeMainComponent(
           PocketyTab.Inbox -> MainComponent.Child.Inbox(FakeInboxComponent())
           PocketyTab.Pockets -> MainComponent.Child.Pockets(FakePocketsComponent())
           PocketyTab.Analytics -> MainComponent.Child.Analytics(FakeAnalyticsComponent())
-          PocketyTab.Settings -> MainComponent.Child.Settings
+          PocketyTab.Settings -> MainComponent.Child.Settings(FakeSettingsComponent())
         }
     val config =
         when (tab) {

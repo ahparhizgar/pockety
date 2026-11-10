@@ -4,6 +4,7 @@ import com.base.feature.analytics.AnalyticsComponent
 import com.base.feature.home.HomeComponent
 import com.base.feature.main.MainComponent
 import com.base.feature.pocket.PocketsComponent
+import com.base.feature.settings.SettingsComponent
 import com.base.feature.sms.inbox.InboxComponent
 import io.kotest.matchers.types.shouldBeInstanceOf
 
@@ -24,4 +25,8 @@ fun MainComponent.assertPocketsComponent(): PocketsComponent {
 
 fun MainComponent.assertAnalyticsComponent(): AnalyticsComponent {
   return mainActiveInstance.shouldBeInstanceOf<MainComponent.Child.Analytics>().component
+}
+
+fun MainComponent.assertSettingsComponent(): SettingsComponent {
+  return mainActiveInstance.shouldBeInstanceOf<MainComponent.Child.Settings>().component
 }

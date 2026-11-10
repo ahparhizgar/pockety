@@ -14,6 +14,8 @@ import com.base.db.PocketRepository
 import com.base.db.getRoomDatabase
 import com.base.feature.auth.DataStoreTokenStorage
 import com.base.feature.auth.TokenStorage
+import com.base.feature.settings.DataStoreUserSettingsRepository
+import com.base.feature.settings.UserSettingsRepository
 import com.base.ktor.createHttpClient
 import com.base.navigation.DefaultNavigationActionBus
 import com.base.navigation.NavigationActionBus
@@ -34,6 +36,7 @@ fun othersModule() = module {
   factoryOf(::createHttpClient)
   singleOf(::createDataStore)
   singleOf(::DataStoreTokenStorage).bind<TokenStorage>()
+  singleOf(::DataStoreUserSettingsRepository).bind<UserSettingsRepository>()
   single { CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>(named("default"))) }
 
   single {

@@ -3,6 +3,7 @@ package com.base.feature.pocket.details
 import com.base.component.TestCContext
 import com.base.db.ExpenseRepository
 import com.base.db.PocketRepository
+import com.base.feature.settings.UserSettingsRepository
 import com.base.testValue
 import com.base.util.FakeCallback
 import com.base.util.FakeCallback1
@@ -39,10 +40,13 @@ class PocketDetailsTest : BehaviorSpec() {
         testCoroutineScheduler.advanceUntilIdle()
       }
 
+      val userSettingsRepository by testValue { koin.get<UserSettingsRepository>() }
+
       val component: PocketDetailsComponent by testValue {
         DefaultPocketDetailsComponent(
             cContext = TestCContext(),
             pocketRepository = pocketRepository,
+            userSettingsRepository = userSettingsRepository,
             pocketId = pocketId,
             onBack = backCallback,
             onConfigure = configureCallback,
