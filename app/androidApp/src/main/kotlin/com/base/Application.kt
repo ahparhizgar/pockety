@@ -17,7 +17,9 @@ class Application : Application() {
       modules(appModule())
       modules(
           module {
-            single { DataDir("A") }
+            single {
+              DataDir("${applicationContext.filesDir.path}/A")
+            }
             single<ExpenseNotificationManager> {
               AndroidExpenseNotificationManager(androidContext())
             }
