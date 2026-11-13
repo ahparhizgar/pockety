@@ -6,6 +6,7 @@ import com.base.feature.main.MainComponent
 import com.base.feature.pocket.PocketsComponent
 import com.base.feature.pocket.details.PocketDetailsComponent
 import com.base.feature.pocket.settings.PocketSettingsFlowComponent
+import com.base.feature.privacypolicy.PrivacyPolicyComponent
 import com.base.feature.sms.inbox.InboxComponent
 import kotlinx.serialization.Serializable
 
@@ -21,6 +22,11 @@ sealed interface RootFlowDestination {
   @Serializable
   data object Main : RootFlowDestination {
     data class Instance(val component: MainComponent) : RootFlowDestination.Instance
+  }
+
+  @Serializable
+  data object PrivacyPolicy : RootFlowDestination {
+    data class Instance(val component: PrivacyPolicyComponent) : RootFlowDestination.Instance
   }
 
   @Serializable

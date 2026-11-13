@@ -22,6 +22,7 @@ import com.base.feature.main.MainScreen
 import com.base.feature.pocket.PocketsScreen
 import com.base.feature.pocket.details.PocketDetailsScreen
 import com.base.feature.pocket.settings.PocketSettingsFlowScreen
+import com.base.feature.privacypolicy.PrivacyPolicyScreen
 import com.base.feature.root.FakeRootComponent
 import com.base.feature.root.RootComponent
 import com.base.feature.root.RootFlowDestination
@@ -78,6 +79,12 @@ private fun RootChildContent(child: RootFlowDestination.Instance) {
       MainScreen(
           component = child.component,
           modifier = Modifier.testTag("main-screen"),
+      )
+    }
+    is RootFlowDestination.PrivacyPolicy.Instance -> {
+      PrivacyPolicyScreen(
+          component = child.component,
+          modifier = Modifier.testTag("privacy-policy-screen"),
       )
     }
     is RootFlowDestination.Home.Instance -> {

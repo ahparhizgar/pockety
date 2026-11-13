@@ -28,6 +28,8 @@ class SettingsE2eUiTest {
     onNode(hasTestTag("calendar-option-gregorian")).waitForExistence().assertExists()
     onNode(hasTestTag("calendar-option-persian")).waitForExistence().assertExists()
     onNode(hasTestTag("settings-switch-reminder")).waitForExistence().assertExists()
+    onNode(hasTestTag("settings-section-privacy")).waitForExistence().assertExists()
+    onNode(hasTestTag("settings-navigation-privacy-policy")).waitForExistence().assertExists()
 
     component.state.value.selectedCalendarType shouldBe CalendarType.GREGORIAN
     component.state.value.selectedCurrency shouldBe CurrencyType.TOMANS
@@ -85,5 +87,22 @@ class SettingsE2eUiTest {
         .performScrollTo()
         .performClick()
     categoriesClicked shouldBe true
+  }
+
+  @Test
+  fun testSettingsScreenPrivacyPolicyNavigation() = runComposeUiTest {
+    var privacyPolicyClicked = false
+    val component =
+        FakeSettingsComponent(
+            onPrivacyPolicyClick = { privacyPolicyClicked = true },
+        )
+
+    setContent { SettingsScreen(component = component) }
+
+    onNode(hasTestTag("settings-navigation-privacy-policy"))
+        .waitForExistence()
+        .performScrollTo()
+        .performClick()
+    privacyPolicyClicked shouldBe true
   }
 }

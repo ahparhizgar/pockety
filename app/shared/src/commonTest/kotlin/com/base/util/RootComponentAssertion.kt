@@ -8,6 +8,7 @@ import com.base.feature.pocket.PocketsComponent
 import com.base.feature.pocket.details.PocketDetailsComponent
 import com.base.feature.pocket.settings.PocketSettingsComponent
 import com.base.feature.pocket.settings.PocketSettingsFlowComponent
+import com.base.feature.privacypolicy.PrivacyPolicyComponent
 import com.base.feature.root.RootComponent
 import com.base.feature.root.RootFlowDestination
 import com.base.feature.sms.inbox.InboxComponent
@@ -61,4 +62,8 @@ fun PocketSettingsFlowComponent.assertAddCategory(): AddCategoryComponent {
 
 fun RootComponent.assertPocketDetails(): PocketDetailsComponent {
   return activeInstance.shouldBeInstanceOf<RootFlowDestination.PocketDetails.Instance>().component
+}
+
+fun RootComponent.assertPrivacyPolicy(): PrivacyPolicyComponent {
+  return activeInstance.shouldBeInstanceOf<RootFlowDestination.PrivacyPolicy.Instance>().component
 }

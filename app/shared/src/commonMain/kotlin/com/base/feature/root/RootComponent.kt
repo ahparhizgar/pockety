@@ -22,6 +22,7 @@ import com.base.feature.main.MainComponentFactory
 import com.base.feature.pocket.PocketsComponentFactory
 import com.base.feature.pocket.details.PocketDetailsComponentFactory
 import com.base.feature.pocket.settings.PocketSettingsFlowComponentFactory
+import com.base.feature.privacypolicy.PrivacyPolicyComponentFactory
 import com.base.feature.sms.inbox.InboxComponentFactory
 import com.base.navigation.NavigationAction
 import com.base.navigation.NavigationActionBus
@@ -111,6 +112,15 @@ class DefaultRootComponent(
       is RootFlowDestination.Main ->
           RootFlowDestination.Main.Instance(
               componentProvider.provide(MainComponentFactory::class).create(cContext)
+          )
+      is RootFlowDestination.PrivacyPolicy ->
+          RootFlowDestination.PrivacyPolicy.Instance(
+              componentProvider
+                  .provide(PrivacyPolicyComponentFactory::class)
+                  .create(
+                      cContext = cContext,
+                      onBack = { rootNavigation.pop() },
+                  )
           )
       is RootFlowDestination.Home ->
           RootFlowDestination.Home.Instance(

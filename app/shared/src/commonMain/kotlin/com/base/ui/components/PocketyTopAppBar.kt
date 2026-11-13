@@ -63,6 +63,7 @@ fun PocketyTopAppBar(
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    backActionTestTag: String = "back-button",
     actions: @Composable RowScope.() -> Unit = {},
 ) {
   PocketyTopAppBar(
@@ -71,7 +72,7 @@ fun PocketyTopAppBar(
       navigationIcon = {
         IconButton(
             onClick = onBackClick,
-            modifier = Modifier.testTag("back-button"),
+            modifier = Modifier.testTag(backActionTestTag),
         ) {
           Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,

@@ -69,5 +69,19 @@ class SettingsTest : BehaviorSpec() {
         }
       }
     }
+
+    Given("SettingsComponent initialized with onPrivacyPolicyClick callback") {
+      var privacyPolicyClicked = false
+      val component =
+          FakeSettingsComponent(
+              onPrivacyPolicyClick = { privacyPolicyClicked = true },
+          )
+
+      When("user clicks Privacy Policy via onPrivacyPolicyClicked()") {
+        component.onPrivacyPolicyClicked()
+
+        Then("the onPrivacyPolicyClick callback is executed") { privacyPolicyClicked shouldBe true }
+      }
+    }
   }
 }

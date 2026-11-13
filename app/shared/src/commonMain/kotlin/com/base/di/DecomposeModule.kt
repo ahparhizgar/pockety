@@ -24,6 +24,8 @@ import com.base.feature.pocket.settings.DefaultPocketSettingsComponentFactory
 import com.base.feature.pocket.settings.DefaultPocketSettingsFlowComponentFactory
 import com.base.feature.pocket.settings.PocketSettingsComponentFactory
 import com.base.feature.pocket.settings.PocketSettingsFlowComponentFactory
+import com.base.feature.privacypolicy.DefaultPrivacyPolicyComponentFactory
+import com.base.feature.privacypolicy.PrivacyPolicyComponentFactory
 import com.base.feature.root.ComponentProvider
 import com.base.feature.root.DefaultRootComponentFactory
 import com.base.feature.root.KoinComponentProvider
@@ -53,4 +55,5 @@ fun decomposeModule() = module {
   factoryOf(::DefaultPocketSettingsFlowComponentFactory).bind<PocketSettingsFlowComponentFactory>()
   factoryOf(::DefaultAnalyticsComponentFactory).bind<AnalyticsComponentFactory>()
   factoryOf(::DefaultSettingsComponentFactory).bind<SettingsComponentFactory>()
+  factoryOf(::DefaultPrivacyPolicyComponentFactory).bind<PrivacyPolicyComponentFactory>()
 }

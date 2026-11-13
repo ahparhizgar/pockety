@@ -35,6 +35,8 @@ interface SettingsComponent {
   fun onLabelsClicked()
 
   fun onLanguageClicked()
+
+  fun onPrivacyPolicyClicked()
 }
 
 interface SettingsComponentFactory {
@@ -43,9 +45,11 @@ interface SettingsComponentFactory {
       onCategoriesClick: () -> Unit = {},
       onLabelsClick: () -> Unit = {},
       onLanguageClick: () -> Unit = {},
+      onPrivacyPolicyClick: () -> Unit = {},
   ): SettingsComponent
 }
 
+@Suppress("LongParameterList")
 class DefaultSettingsComponent(
     cContext: CContext,
     private val userSettingsRepository: UserSettingsRepository,
@@ -53,6 +57,7 @@ class DefaultSettingsComponent(
     private val onCategoriesClick: () -> Unit = {},
     private val onLabelsClick: () -> Unit = {},
     private val onLanguageClick: () -> Unit = {},
+    private val onPrivacyPolicyClick: () -> Unit = {},
 ) : SettingsComponent, CContext by cContext {
   private val scope = componentScope()
   private val _state = MutableValue(SettingsState())
@@ -100,6 +105,10 @@ class DefaultSettingsComponent(
   override fun onLanguageClicked() {
     onLanguageClick()
   }
+
+  override fun onPrivacyPolicyClicked() {
+    onPrivacyPolicyClick()
+  }
 }
 
 class DefaultSettingsComponentFactory(
@@ -111,6 +120,7 @@ class DefaultSettingsComponentFactory(
       onCategoriesClick: () -> Unit,
       onLabelsClick: () -> Unit,
       onLanguageClick: () -> Unit,
+      onPrivacyPolicyClick: () -> Unit,
   ): SettingsComponent =
       DefaultSettingsComponent(
           cContext = cContext,
@@ -119,15 +129,18 @@ class DefaultSettingsComponentFactory(
           onCategoriesClick = onCategoriesClick,
           onLabelsClick = onLabelsClick,
           onLanguageClick = onLanguageClick,
+          onPrivacyPolicyClick = onPrivacyPolicyClick,
       )
 }
 
 @Fake
+@Suppress("LongParameterList")
 class FakeSettingsComponent(
     initialState: SettingsState = FakeSettingsStateFactory.create(),
     private val onCategoriesClick: () -> Unit = {},
     private val onLabelsClick: () -> Unit = {},
     private val onLanguageClick: () -> Unit = {},
+    private val onPrivacyPolicyClick: () -> Unit = {},
 ) : SettingsComponent {
   private val _state = MutableValue(initialState)
   override val state: Value<SettingsState> = _state
@@ -158,6 +171,10 @@ class FakeSettingsComponent(
   override fun onLanguageClicked() {
     onLanguageClick()
   }
+
+  override fun onPrivacyPolicyClicked() {
+    onPrivacyPolicyClick()
+  }
 }
 
 class FakeSettingsComponentFactory : SettingsComponentFactory {
@@ -166,11 +183,13 @@ class FakeSettingsComponentFactory : SettingsComponentFactory {
       onCategoriesClick: () -> Unit,
       onLabelsClick: () -> Unit,
       onLanguageClick: () -> Unit,
+      onPrivacyPolicyClick: () -> Unit,
   ): SettingsComponent =
       FakeSettingsComponent(
           onCategoriesClick = onCategoriesClick,
           onLabelsClick = onLabelsClick,
           onLanguageClick = onLanguageClick,
+          onPrivacyPolicyClick = onPrivacyPolicyClick,
       )
 }
 

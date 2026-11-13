@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.LocalOffer
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -37,11 +38,14 @@ import pockety.app.shared.generated.resources.settings_categories_title
 import pockety.app.shared.generated.resources.settings_labels_count_format
 import pockety.app.shared.generated.resources.settings_labels_subtitle
 import pockety.app.shared.generated.resources.settings_labels_title
+import pockety.app.shared.generated.resources.settings_privacy_policy_subtitle
+import pockety.app.shared.generated.resources.settings_privacy_policy_title
 import pockety.app.shared.generated.resources.settings_reminder_subtitle
 import pockety.app.shared.generated.resources.settings_reminder_title
 import pockety.app.shared.generated.resources.settings_section_notifications
 import pockety.app.shared.generated.resources.settings_section_organize
 import pockety.app.shared.generated.resources.settings_section_preferences
+import pockety.app.shared.generated.resources.settings_section_privacy
 import pockety.app.shared.generated.resources.settings_title
 import pockety.app.shared.generated.resources.settings_version_format
 
@@ -87,6 +91,9 @@ fun SettingsScreen(
           )
           SettingsNotificationsSection(
               state = state,
+              component = component,
+          )
+          SettingsPrivacySection(
               component = component,
           )
           SettingsVersionBadge(
@@ -218,6 +225,39 @@ private fun SettingsNotificationsSection(
               ),
           onCheckedChange = component::onReminderToggled,
           modifier = Modifier.testTag("settings-switch-reminder"),
+      )
+    }
+  }
+}
+
+@Composable
+private fun SettingsPrivacySection(
+    component: SettingsComponent,
+    modifier: Modifier = Modifier,
+) {
+  Column(
+      modifier = modifier.testTag("settings-section-privacy"),
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    SettingsSectionHeader(title = stringResource(Res.string.settings_section_privacy))
+    SettingsCardContainer(
+        contentPadding = PaddingValues(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+      SettingsNavigationRow(
+          data =
+              NavigationRowData(
+                  title = stringResource(Res.string.settings_privacy_policy_title),
+                  subtitle = stringResource(Res.string.settings_privacy_policy_subtitle),
+                  iconData =
+                      SettingsRowIconData(
+                          icon = Icons.Default.Lock,
+                          containerColor = MaterialTheme.colorScheme.primaryContainer,
+                          contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                      ),
+              ),
+          onClick = component::onPrivacyPolicyClicked,
+          modifier = Modifier.testTag("settings-navigation-privacy-policy"),
       )
     }
   }

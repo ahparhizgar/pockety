@@ -161,5 +161,23 @@
     <string name="settings_currency_rials_symbol">IRR</string>
     <string name="settings_reminder_title">End-of-day reminder</string>
     <string name="settings_reminder_subtitle">Notify at 21:00 to review pending SMS</string>
+    <string name="settings_section_privacy">Privacy &amp; Security</string>
+    <string name="settings_privacy_policy_title">Privacy Policy</string>
+    <string name="settings_privacy_policy_subtitle">Offline-first commitments &amp; anonymous telemetry</string>
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="privacy_policy_hero_title">Your Privacy is Respected</string>
+    <string name="privacy_policy_hero_subtitle">Pockety is designed with offline-first and strict privacy principles. Your personal financial information never leaves your device.</string>
+    <string name="privacy_policy_commitments_header">Our Core Commitments</string>
+    <string name="privacy_policy_pillar_personal_data_title">We do not send personal data</string>
+    <string name="privacy_policy_pillar_personal_data_desc">All your accounts, pockets, categories, transactions, and financial logs are saved locally on your device. We do not transmit or monetize personal financial data.</string>
+    <string name="privacy_policy_pillar_sms_data_title">We do not send SMS data</string>
+    <string name="privacy_policy_pillar_sms_data_desc">SMS reading and bank notification parsing run entirely on your device. Message contents, phone numbers, and bank details never reach any remote server.</string>
+    <string name="privacy_policy_pillar_telemetry_title">Anonymous usage data only</string>
+    <string name="privacy_policy_pillar_telemetry_desc">We only send and store anonymous aggregated usage metrics (such as crash diagnostics and performance stats) solely to improve stability and UX.</string>
+    <string name="privacy_policy_takeaways_title">Key Takeaways</string>
+    <string name="privacy_policy_takeaway_personal_data">Zero personal account or identity collection</string>
+    <string name="privacy_policy_takeaway_sms_data">SMS parsing is 100% on-device</string>
+    <string name="privacy_policy_takeaway_telemetry">Telemetry is strictly anonymous and opt-in</string>
+    <string name="privacy_policy_version_footer">Privacy Policy • Updated Nov 2026</string>
     <string name="settings_version_format">Pockety v%1$s</string>
 </resources>
