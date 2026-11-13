@@ -37,3 +37,26 @@ jobs:
 
       - name: Ktfmt check
         run: ./gradlew ktfmtCheck --console=plain
+
+  build-design-web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Design Web App
+        run: ./gradlew :design:wasmJsBrowserDistribution --console=plain
+
+      - name: Upload Design Web App Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-web-app
+          path: design/build/dist/wasmJs/productionExecutable/
+          if-no-files-found: error
