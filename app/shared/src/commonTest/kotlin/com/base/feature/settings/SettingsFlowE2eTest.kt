@@ -34,6 +34,8 @@ class SettingsFlowE2eTest : BehaviorSpec() {
         Then("active child in MainComponent is SettingsComponent") {
           val settings = root.assertMainComponent().assertSettingsComponent()
           settings.state.value.selectedCalendarType shouldBe CalendarType.GREGORIAN
+          settings.state.value.selectedCurrency shouldBe CurrencyType.TOMANS
+          settings.state.value.endOfDayReminderEnabled shouldBe true
         }
 
         And("user selects Persian calendar option") {
@@ -59,6 +61,32 @@ class SettingsFlowE2eTest : BehaviorSpec() {
               val analytics = root.assertMainComponent().assertAnalyticsComponent()
               analytics.state.value.selectedMonthLabel.isNotEmpty() shouldBe true
             }
+          }
+        }
+
+        And("user selects Rials currency option") {
+          beforeEach {
+            val settings = root.assertMainComponent().assertSettingsComponent()
+            settings.onCurrencySelected(CurrencyType.RIALS)
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then("SettingsComponent state reflects RIALS") {
+            val settings = root.assertMainComponent().assertSettingsComponent()
+            settings.state.value.selectedCurrency shouldBe CurrencyType.RIALS
+          }
+        }
+
+        And("user toggles reminder switch off") {
+          beforeEach {
+            val settings = root.assertMainComponent().assertSettingsComponent()
+            settings.onReminderToggled(false)
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then("SettingsComponent state reflects reminder disabled") {
+            val settings = root.assertMainComponent().assertSettingsComponent()
+            settings.state.value.endOfDayReminderEnabled shouldBe false
           }
         }
       }

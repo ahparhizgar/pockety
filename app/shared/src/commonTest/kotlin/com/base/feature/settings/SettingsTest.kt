@@ -22,8 +22,12 @@ class SettingsTest : BehaviorSpec() {
       val component by testValue { factory.create(TestCContext()) }
 
       When("state is observed") {
-        Then("selectedCalendarType is GREGORIAN") {
+        Then(
+            "selectedCalendarType is GREGORIAN, selectedCurrency is TOMANS, and reminder is enabled"
+        ) {
           component.state.value.selectedCalendarType shouldBe CalendarType.GREGORIAN
+          component.state.value.selectedCurrency shouldBe CurrencyType.TOMANS
+          component.state.value.endOfDayReminderEnabled shouldBe true
         }
       }
 
@@ -36,6 +40,32 @@ class SettingsTest : BehaviorSpec() {
         Then("selectedCalendarType updates to PERSIAN and is persisted in UserSettingsRepository") {
           repository.calendarType.first() shouldBe CalendarType.PERSIAN
           component.state.value.selectedCalendarType shouldBe CalendarType.PERSIAN
+        }
+      }
+
+      When("user selects Rials currency") {
+        beforeEach {
+          component.onCurrencySelected(CurrencyType.RIALS)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("selectedCurrency updates to RIALS and is persisted in UserSettingsRepository") {
+          repository.currencyType.first() shouldBe CurrencyType.RIALS
+          component.state.value.selectedCurrency shouldBe CurrencyType.RIALS
+        }
+      }
+
+      When("user toggles end-of-day reminder off") {
+        beforeEach {
+          component.onReminderToggled(false)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then(
+            "endOfDayReminderEnabled updates to false and is persisted in UserSettingsRepository"
+        ) {
+          repository.endOfDayReminderEnabled.first() shouldBe false
+          component.state.value.endOfDayReminderEnabled shouldBe false
         }
       }
     }

@@ -97,4 +97,25 @@
     <string name="calendar_persian">شمسی</string>
     <string name="calendar_persian_subtitle">هجری شمسی (فروردین - اسفند)</string>
     <string name="calendar_persian_symbol">P</string>
+    <string name="settings_section_organize">سازماندهی و طبقه‌بندی</string>
+    <string name="settings_section_preferences">ترجیحات و منطقه</string>
+    <string name="settings_section_notifications">اعلان‌ها و خودکارسازی</string>
+    <string name="settings_categories_title">دسته‌بندی‌ها</string>
+    <string name="settings_categories_subtitle">مدیریت دسته‌ها و آیکون‌های هزینه</string>
+    <string name="settings_categories_count_format">%1$d مورد</string>
+    <string name="settings_labels_title">برچسب‌ها</string>
+    <string name="settings_labels_subtitle">مدیریت برچسب‌های سفارشی تراکنش‌ها</string>
+    <string name="settings_labels_count_format">%1$d مورد</string>
+    <string name="settings_language_title">زبان برنامه</string>
+    <string name="settings_language_english">انگلیسی</string>
+    <string name="settings_currency_title">واحد پول نمایشی</string>
+    <string name="settings_currency_tomans_title">تومان</string>
+    <string name="settings_currency_tomans_subtitle">معمول (۱۰ ریال)</string>
+    <string name="settings_currency_tomans_symbol">ت</string>
+    <string name="settings_currency_rials_title">ریال</string>
+    <string name="settings_currency_rials_subtitle">رسمی بانکی</string>
+    <string name="settings_currency_rials_symbol">IRR</string>
+    <string name="settings_reminder_title">یادآور پایان روز</string>
+    <string name="settings_reminder_subtitle">اعلان در ساعت ۲۱:۰۰ برای بررسی پیامک‌های بررسی‌نشده</string>
+    <string name="settings_version_format">پاکتی نسخه %1$s</string>
 </resources>

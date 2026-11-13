@@ -141,4 +141,25 @@
     <string name="calendar_persian">Persian</string>
     <string name="calendar_persian_subtitle">Solar Hijri (Farvardin-Esfand)</string>
     <string name="calendar_persian_symbol">P</string>
+    <string name="settings_section_organize">Organize &amp; Taxonomy</string>
+    <string name="settings_section_preferences">Preferences &amp; Region</string>
+    <string name="settings_section_notifications">Notifications &amp; Automation</string>
+    <string name="settings_categories_title">Categories</string>
+    <string name="settings_categories_subtitle">Manage expense categories &amp; icons</string>
+    <string name="settings_categories_count_format">%1$d items</string>
+    <string name="settings_labels_title">Labels</string>
+    <string name="settings_labels_subtitle">Manage custom transaction tags &amp; labels</string>
+    <string name="settings_labels_count_format">%1$d items</string>
+    <string name="settings_language_title">App language</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_currency_title">Display Currency</string>
+    <string name="settings_currency_tomans_title">Tomans</string>
+    <string name="settings_currency_tomans_subtitle">Common (10 Rials)</string>
+    <string name="settings_currency_tomans_symbol">T</string>
+    <string name="settings_currency_rials_title">Rials</string>
+    <string name="settings_currency_rials_subtitle">Official Banking</string>
+    <string name="settings_currency_rials_symbol">IRR</string>
+    <string name="settings_reminder_title">End-of-day reminder</string>
+    <string name="settings_reminder_subtitle">Notify at 21:00 to review pending SMS</string>
+    <string name="settings_version_format">Pockety v%1$s</string>
 </resources>

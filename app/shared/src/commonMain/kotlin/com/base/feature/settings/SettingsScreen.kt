@@ -3,56 +3,47 @@ package com.base.feature.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.LocalOffer
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.calendar.CalendarType
-import com.base.ui.ComponentPreviews
 import com.base.ui.ScreenPreviews
+import com.base.ui.colorSchemeExtended
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.calendar_gregorian
-import pockety.app.shared.generated.resources.calendar_gregorian_subtitle
-import pockety.app.shared.generated.resources.calendar_gregorian_symbol
-import pockety.app.shared.generated.resources.calendar_persian
-import pockety.app.shared.generated.resources.calendar_persian_subtitle
-import pockety.app.shared.generated.resources.calendar_persian_symbol
-import pockety.app.shared.generated.resources.calendar_system_title
+import pockety.app.shared.generated.resources.settings_categories_count_format
+import pockety.app.shared.generated.resources.settings_categories_subtitle
+import pockety.app.shared.generated.resources.settings_categories_title
+import pockety.app.shared.generated.resources.settings_labels_count_format
+import pockety.app.shared.generated.resources.settings_labels_subtitle
+import pockety.app.shared.generated.resources.settings_labels_title
+import pockety.app.shared.generated.resources.settings_reminder_subtitle
+import pockety.app.shared.generated.resources.settings_reminder_title
+import pockety.app.shared.generated.resources.settings_section_notifications
+import pockety.app.shared.generated.resources.settings_section_organize
+import pockety.app.shared.generated.resources.settings_section_preferences
 import pockety.app.shared.generated.resources.settings_title
-
-private data class CalendarOptionData(
-    val title: String,
-    val subtitle: String,
-    val symbolText: String,
-    val isSelected: Boolean,
-)
+import pockety.app.shared.generated.resources.settings_version_format
 
 @Composable
 fun SettingsScreen(
@@ -62,237 +53,208 @@ fun SettingsScreen(
   val state by component.state.subscribeAsState()
 
   Scaffold(
-      modifier = modifier.testTag("settings-screen"),
+      modifier = modifier.fillMaxSize().testTag("settings-screen"),
+      containerColor = MaterialTheme.colorScheme.surface,
       topBar = {
         PocketyTopAppBar(
             title = stringResource(Res.string.settings_title),
         )
       },
   ) { paddingValues ->
-    Box(
-        modifier = Modifier.fillMaxSize().padding(paddingValues),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-      Column(
-          modifier = Modifier.widthIn(max = 640.dp).fillMaxWidth().padding(16.dp).selectableGroup(),
-          verticalArrangement = Arrangement.spacedBy(16.dp),
-      ) {
-        DisplayCalendarSystemCard(
-            selectedCalendarType = state.selectedCalendarType,
-            onCalendarTypeSelect = component::onCalendarTypeSelected,
-        )
-      }
-    }
-  }
-}
-
-@Composable
-fun DisplayCalendarSystemCard(
-    selectedCalendarType: CalendarType,
-    onCalendarTypeSelect: (CalendarType) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  Surface(
-      shape = RoundedCornerShape(16.dp),
-      color = MaterialTheme.colorScheme.surfaceContainerLow,
-      modifier = modifier.fillMaxWidth(),
-  ) {
-    Column(
-        modifier = Modifier.padding(14.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-      Row(
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(8.dp),
-      ) {
-        Icon(
-            imageVector = Icons.Default.CalendarMonth,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(20.dp),
-        )
-        Text(
-            text = stringResource(Res.string.calendar_system_title),
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-      }
-      Row(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.spacedBy(10.dp),
-      ) {
-        CalendarOptionCard(
-            data =
-                CalendarOptionData(
-                    title = stringResource(Res.string.calendar_gregorian),
-                    subtitle = stringResource(Res.string.calendar_gregorian_subtitle),
-                    symbolText = stringResource(Res.string.calendar_gregorian_symbol),
-                    isSelected = selectedCalendarType == CalendarType.GREGORIAN,
-                ),
-            onClick = { onCalendarTypeSelect(CalendarType.GREGORIAN) },
-            modifier = Modifier.weight(1f).testTag("calendar-option-gregorian"),
-        )
-        CalendarOptionCard(
-            data =
-                CalendarOptionData(
-                    title = stringResource(Res.string.calendar_persian),
-                    subtitle = stringResource(Res.string.calendar_persian_subtitle),
-                    symbolText = stringResource(Res.string.calendar_persian_symbol),
-                    isSelected = selectedCalendarType == CalendarType.PERSIAN,
-                ),
-            onClick = { onCalendarTypeSelect(CalendarType.PERSIAN) },
-            modifier = Modifier.weight(1f).testTag("calendar-option-persian"),
-        )
-      }
-    }
-  }
-}
-
-@Composable
-private fun CalendarOptionCard(
-    data: CalendarOptionData,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  val containerColor =
-      if (data.isSelected) {
-        MaterialTheme.colorScheme.surfaceContainerLowest
-      } else {
-        MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)
-      }
-  val shadowElevation = if (data.isSelected) 1.dp else 0.dp
-
-  Surface(
-      shape = RoundedCornerShape(16.dp),
-      color = containerColor,
-      shadowElevation = shadowElevation,
-      modifier =
-          modifier.selectable(
-              selected = data.isSelected,
-              onClick = onClick,
-              role = Role.RadioButton,
-          ),
-  ) {
-    Column(
-        modifier = Modifier.padding(12.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-    ) {
-      CalendarOptionHeader(
-          symbolText = data.symbolText,
-          isSelected = data.isSelected,
-      )
-      Column {
-        Text(
-            text = data.title,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-        Text(
-            text = data.subtitle,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.secondary,
-        )
-      }
-    }
-  }
-}
-
-@Composable
-private fun CalendarOptionHeader(
-    symbolText: String,
-    isSelected: Boolean,
-    modifier: Modifier = Modifier,
-) {
-  Row(
-      modifier = modifier.fillMaxWidth().padding(bottom = 12.dp),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceBetween,
-  ) {
     Surface(
-        shape = CircleShape,
-        color =
-            if (isSelected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.surfaceContainer,
-        contentColor =
-            if (isSelected) MaterialTheme.colorScheme.onPrimary
-            else MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.size(28.dp),
+        modifier = Modifier.fillMaxSize().padding(paddingValues),
+        color = MaterialTheme.colorScheme.surface,
     ) {
-      Box(contentAlignment = Alignment.Center) {
-        Text(
-            text = symbolText,
-            style =
-                MaterialTheme.typography.labelMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                ),
-        )
+      Box(
+          modifier = Modifier.fillMaxSize(),
+          contentAlignment = Alignment.TopCenter,
+      ) {
+        Column(
+            modifier =
+                Modifier.fillMaxWidth()
+                    .widthIn(max = 640.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+          SettingsOrganizeSection(
+              state = state,
+              component = component,
+          )
+          SettingsPreferencesSection(
+              state = state,
+              component = component,
+          )
+          SettingsNotificationsSection(
+              state = state,
+              component = component,
+          )
+          SettingsVersionBadge(
+              version = stringResource(Res.string.settings_version_format, state.appVersion),
+          )
+        }
       }
     }
-    Icon(
-        imageVector =
-            if (isSelected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
-        contentDescription = if (isSelected) "Selected" else "Unselected",
-        tint =
-            if (isSelected) MaterialTheme.colorScheme.primary
-            else MaterialTheme.colorScheme.outline,
-        modifier = Modifier.size(20.dp),
-    )
   }
 }
 
-@ComponentPreviews
 @Composable
-private fun CalendarOptionCardSelectedPreview() {
-  CalendarOptionCard(
-      data =
-          CalendarOptionData(
-              title = "Gregorian",
-              subtitle = "Standard Western (Jan-Dec)",
-              symbolText = "G",
-              isSelected = true,
-          ),
-      onClick = {},
-  )
+private fun SettingsOrganizeSection(
+    state: SettingsState,
+    component: SettingsComponent,
+    modifier: Modifier = Modifier,
+) {
+  Column(
+      modifier = modifier,
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    SettingsSectionHeader(title = stringResource(Res.string.settings_section_organize))
+    SettingsCardContainer(
+        contentPadding = PaddingValues(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+      SettingsNavigationRow(
+          data =
+              NavigationRowData(
+                  title = stringResource(Res.string.settings_categories_title),
+                  subtitle = stringResource(Res.string.settings_categories_subtitle),
+                  iconData =
+                      SettingsRowIconData(
+                          icon = Icons.Default.Category,
+                          containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                          contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                      ),
+                  countBadgeText =
+                      stringResource(
+                          Res.string.settings_categories_count_format,
+                          state.categoriesCount,
+                      ),
+              ),
+          onClick = component::onCategoriesClicked,
+          modifier = Modifier.testTag("settings-navigation-categories"),
+      )
+      HorizontalDivider(
+          modifier = Modifier.padding(horizontal = 16.dp),
+          color = MaterialTheme.colorScheme.surfaceContainer,
+          thickness = 1.dp,
+      )
+      SettingsNavigationRow(
+          data =
+              NavigationRowData(
+                  title = stringResource(Res.string.settings_labels_title),
+                  subtitle = stringResource(Res.string.settings_labels_subtitle),
+                  iconData =
+                      SettingsRowIconData(
+                          icon = Icons.Default.LocalOffer,
+                          containerColor = MaterialTheme.colorSchemeExtended.tertiaryFixed,
+                          contentColor = MaterialTheme.colorSchemeExtended.onTertiaryFixedVariant,
+                      ),
+                  countBadgeText =
+                      stringResource(
+                          Res.string.settings_labels_count_format,
+                          0,
+                      ),
+              ),
+          onClick = component::onLabelsClicked,
+          modifier = Modifier.testTag("settings-navigation-labels"),
+      )
+    }
+  }
 }
 
-@ComponentPreviews
 @Composable
-private fun CalendarOptionCardUnselectedPreview() {
-  CalendarOptionCard(
-      data =
-          CalendarOptionData(
-              title = "Persian",
-              subtitle = "Solar Hijri (Farvardin-Esfand)",
-              symbolText = "P",
-              isSelected = false,
-          ),
-      onClick = {},
-  )
+private fun SettingsPreferencesSection(
+    state: SettingsState,
+    component: SettingsComponent,
+    modifier: Modifier = Modifier,
+) {
+  Column(
+      modifier = modifier,
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    SettingsSectionHeader(title = stringResource(Res.string.settings_section_preferences))
+    SettingsCardContainer(
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+      SettingsLanguageRow(
+          onClick = component::onLanguageClicked,
+          modifier = Modifier.testTag("settings-row-language"),
+      )
+      DisplayCurrencyCard(
+          selectedCurrency = state.selectedCurrency,
+          onCurrencySelect = component::onCurrencySelected,
+      )
+      DisplayCalendarSystemCard(
+          selectedCalendarType = state.selectedCalendarType,
+          onCalendarTypeSelect = component::onCalendarTypeSelected,
+      )
+    }
+  }
 }
 
-@ComponentPreviews
 @Composable
-private fun DisplayCalendarSystemCardPreview() {
-  DisplayCalendarSystemCard(
-      selectedCalendarType = CalendarType.GREGORIAN,
-      onCalendarTypeSelect = {},
-  )
+private fun SettingsNotificationsSection(
+    state: SettingsState,
+    component: SettingsComponent,
+    modifier: Modifier = Modifier,
+) {
+  Column(
+      modifier = modifier,
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    SettingsSectionHeader(title = stringResource(Res.string.settings_section_notifications))
+    SettingsCardContainer(
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+      SwitchRow(
+          data =
+              SwitchRowData(
+                  title = stringResource(Res.string.settings_reminder_title),
+                  subtitle = stringResource(Res.string.settings_reminder_subtitle),
+                  icon = Icons.Default.Alarm,
+                  checked = state.endOfDayReminderEnabled,
+              ),
+          onCheckedChange = component::onReminderToggled,
+          modifier = Modifier.testTag("settings-switch-reminder"),
+      )
+    }
+  }
 }
 
-@Composable
 @ScreenPreviews
+@Composable
 private fun SettingsScreenPreview() {
-  SettingsScreen(component = FakeSettingsComponent())
+  SettingsScreen(
+      component =
+          FakeSettingsComponent(
+              initialState =
+                  FakeSettingsStateFactory.create(
+                      selectedCalendarType = CalendarType.GREGORIAN,
+                      selectedCurrency = CurrencyType.TOMANS,
+                      endOfDayReminderEnabled = true,
+                      categoriesCount = 18,
+                      appVersion = "1.2.0",
+                  ),
+          ),
+  )
 }
 
-@Composable
 @ScreenPreviews
+@Composable
 private fun SettingsScreenPersianPreview() {
   SettingsScreen(
       component =
           FakeSettingsComponent(
-              initialState = SettingsState(selectedCalendarType = CalendarType.PERSIAN),
+              initialState =
+                  FakeSettingsStateFactory.create(
+                      selectedCalendarType = CalendarType.PERSIAN,
+                      selectedCurrency = CurrencyType.RIALS,
+                      endOfDayReminderEnabled = false,
+                      categoriesCount = 5,
+                      appVersion = "1.2.0",
+                  ),
           ),
   )
 }
