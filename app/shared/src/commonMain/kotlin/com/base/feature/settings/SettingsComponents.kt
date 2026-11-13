@@ -279,6 +279,7 @@ fun SettingsLanguageRow(
         onClick = onClick,
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
+        modifier = Modifier.testTag("settings-language-picker-pill"),
     ) {
       Row(
           modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),

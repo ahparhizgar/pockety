@@ -38,6 +38,8 @@ import pockety.app.shared.generated.resources.settings_categories_title
 import pockety.app.shared.generated.resources.settings_labels_count_format
 import pockety.app.shared.generated.resources.settings_labels_subtitle
 import pockety.app.shared.generated.resources.settings_labels_title
+import pockety.app.shared.generated.resources.settings_language_english
+import pockety.app.shared.generated.resources.settings_language_persian
 import pockety.app.shared.generated.resources.settings_privacy_policy_subtitle
 import pockety.app.shared.generated.resources.settings_privacy_policy_title
 import pockety.app.shared.generated.resources.settings_reminder_subtitle
@@ -175,6 +177,12 @@ private fun SettingsPreferencesSection(
     component: SettingsComponent,
     modifier: Modifier = Modifier,
 ) {
+  val languageLabel =
+      when (state.selectedLanguage) {
+        AppLanguage.ENGLISH -> stringResource(Res.string.settings_language_english)
+        AppLanguage.PERSIAN -> stringResource(Res.string.settings_language_persian)
+      }
+
   Column(
       modifier = modifier,
       verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -186,6 +194,7 @@ private fun SettingsPreferencesSection(
     ) {
       SettingsLanguageRow(
           onClick = component::onLanguageClicked,
+          selectedLanguage = languageLabel,
           modifier = Modifier.testTag("settings-row-language"),
       )
       DisplayCurrencyCard(
@@ -197,6 +206,14 @@ private fun SettingsPreferencesSection(
           onCalendarTypeSelect = component::onCalendarTypeSelected,
       )
     }
+  }
+
+  if (state.isLanguageDialogVisible) {
+    LanguageSelectionDialog(
+        selectedLanguage = state.selectedLanguage,
+        onLanguageSelect = component::onLanguageSelected,
+        onDismissRequest = component::onDismissLanguageDialog,
+    )
   }
 }
 

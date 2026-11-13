@@ -108,6 +108,8 @@
     <string name="settings_labels_count_format">%1$d مورد</string>
     <string name="settings_language_title">زبان برنامه</string>
     <string name="settings_language_english">انگلیسی</string>
+    <string name="settings_language_persian">فارسی</string>
+    <string name="settings_language_dialog_title">انتخاب زبان برنامه</string>
     <string name="settings_currency_title">واحد پول نمایشی</string>
     <string name="settings_currency_tomans_title">تومان</string>
     <string name="settings_currency_tomans_subtitle">معمول (۱۰ ریال)</string>

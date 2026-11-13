@@ -2,10 +2,13 @@ package com.base
 
 import android.app.Application
 import com.base.di.appModule
+import com.base.feature.settings.AndroidLanguageSettingsHandler
+import com.base.feature.settings.LanguageSettingsHandler
 import com.base.notification.AndroidExpenseNotificationManager
 import com.base.notification.ExpenseNotificationManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 class Application : Application() {
@@ -21,6 +24,8 @@ class Application : Application() {
             single<ExpenseNotificationManager> {
               AndroidExpenseNotificationManager(androidContext())
             }
+            single { AndroidLanguageSettingsHandler(androidContext()) }
+                .bind<LanguageSettingsHandler>()
           }
       )
     }

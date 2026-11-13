@@ -23,6 +23,8 @@ import com.base.feature.pocket.PocketsComponentFactory
 import com.base.feature.pocket.details.PocketDetailsComponentFactory
 import com.base.feature.pocket.settings.PocketSettingsFlowComponentFactory
 import com.base.feature.privacypolicy.PrivacyPolicyComponentFactory
+import com.base.feature.settings.AppLanguage
+import com.base.feature.settings.UserSettingsRepository
 import com.base.feature.sms.inbox.InboxComponentFactory
 import com.base.navigation.NavigationAction
 import com.base.navigation.NavigationActionBus
@@ -39,6 +41,7 @@ interface RootComponent {
   val childStack: Value<ChildStack<RootFlowDestination, RootFlowDestination.Instance>>
   val messageHolder: MessageHolder
   val windowSizeHolder: WindowSizeHolder
+  val appLanguage: Value<AppLanguage>
 
   fun onBack()
 }
@@ -57,6 +60,8 @@ class DefaultRootComponent(
   private val rootNavigation = StackNavigation<RootFlowDestination>()
   override val backHandler: BackHandler = cContext.backHandler
   override val messageHolder: MessageHolder = MessageHolder()
+  private val _appLanguage = MutableValue(AppLanguage.ENGLISH)
+  override val appLanguage: Value<AppLanguage> = _appLanguage
 
   override fun onBack() {
     rootNavigation.pop()
@@ -68,6 +73,11 @@ class DefaultRootComponent(
     messageShower = messageHolder
 
     scope.launch { rootNavigation.replaceAll(RootFlowDestination.Main) }
+
+    scope.launch {
+      val userSettingsRepository = componentProvider.provide(UserSettingsRepository::class)
+      userSettingsRepository.appLanguage.collect { language -> _appLanguage.value = language }
+    }
 
     scope.launch {
       val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
@@ -212,10 +222,13 @@ class DefaultRootComponentFactory(
       )
 }
 
-class FakeRootComponent : RootComponent {
+class FakeRootComponent(
+    initialLanguage: AppLanguage = AppLanguage.ENGLISH,
+) : RootComponent {
   override val backHandler: BackHandler = BackDispatcher()
   override val messageHolder: MessageHolder = MessageHolder()
   override val windowSizeHolder: WindowSizeHolder = WindowSizeHolder()
+  override val appLanguage: Value<AppLanguage> = MutableValue(initialLanguage)
 
   override fun onBack() {}
 

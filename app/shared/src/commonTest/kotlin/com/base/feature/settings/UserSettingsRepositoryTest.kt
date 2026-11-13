@@ -14,6 +14,14 @@ class UserSettingsRepositoryTest {
     repository.calendarType.first() shouldBe CalendarType.GREGORIAN
     repository.currencyType.first() shouldBe CurrencyType.TOMANS
     repository.endOfDayReminderEnabled.first() shouldBe true
+    repository.appLanguage.first() shouldBe AppLanguage.ENGLISH
+  }
+
+  @Test
+  fun `setting language to persian updates flow`() = runTest {
+    val repository = FakeUserSettingsRepository()
+    repository.setAppLanguage(AppLanguage.PERSIAN)
+    repository.appLanguage.first() shouldBe AppLanguage.PERSIAN
   }
 
   @Test

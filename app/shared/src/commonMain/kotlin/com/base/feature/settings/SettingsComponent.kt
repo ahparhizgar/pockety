@@ -17,6 +17,8 @@ data class SettingsState(
     val selectedCalendarType: CalendarType = CalendarType.GREGORIAN,
     val selectedCurrency: CurrencyType = CurrencyType.TOMANS,
     val endOfDayReminderEnabled: Boolean = true,
+    val selectedLanguage: AppLanguage = AppLanguage.ENGLISH,
+    val isLanguageDialogVisible: Boolean = false,
     val categoriesCount: Int = 0,
     val appVersion: String = "1.2.0",
 )
@@ -29,6 +31,10 @@ interface SettingsComponent {
   fun onCurrencySelected(type: CurrencyType): Job
 
   fun onReminderToggled(enabled: Boolean): Job
+
+  fun onLanguageSelected(language: AppLanguage): Job
+
+  fun onDismissLanguageDialog()
 
   fun onCategoriesClicked()
 
@@ -54,6 +60,7 @@ class DefaultSettingsComponent(
     cContext: CContext,
     private val userSettingsRepository: UserSettingsRepository,
     private val categoryRepository: CategoryRepository,
+    private val languageSettingsHandler: LanguageSettingsHandler = DefaultLanguageSettingsHandler(),
     private val onCategoriesClick: () -> Unit = {},
     private val onLabelsClick: () -> Unit = {},
     private val onLanguageClick: () -> Unit = {},
@@ -76,6 +83,10 @@ class DefaultSettingsComponent(
         .onEach { reminder -> _state.update { it.copy(endOfDayReminderEnabled = reminder) } }
         .launchIn(scope)
 
+    userSettingsRepository.appLanguage
+        .onEach { language -> _state.update { it.copy(selectedLanguage = language) } }
+        .launchIn(scope)
+
     categoryRepository
         .observeCategories()
         .onEach { categories -> _state.update { it.copy(categoriesCount = categories.size) } }
@@ -94,6 +105,15 @@ class DefaultSettingsComponent(
     userSettingsRepository.setEndOfDayReminderEnabled(enabled)
   }
 
+  override fun onLanguageSelected(language: AppLanguage): Job = scope.launch {
+    userSettingsRepository.setAppLanguage(language)
+    _state.update { it.copy(isLanguageDialogVisible = false) }
+  }
+
+  override fun onDismissLanguageDialog() {
+    _state.update { it.copy(isLanguageDialogVisible = false) }
+  }
+
   override fun onCategoriesClicked() {
     onCategoriesClick()
   }
@@ -104,6 +124,11 @@ class DefaultSettingsComponent(
 
   override fun onLanguageClicked() {
     onLanguageClick()
+    if (languageSettingsHandler.supportsSystemLocaleSettings) {
+      languageSettingsHandler.openSystemLocaleSettings()
+    } else {
+      _state.update { it.copy(isLanguageDialogVisible = true) }
+    }
   }
 
   override fun onPrivacyPolicyClicked() {
@@ -114,6 +139,7 @@ class DefaultSettingsComponent(
 class DefaultSettingsComponentFactory(
     private val userSettingsRepository: UserSettingsRepository,
     private val categoryRepository: CategoryRepository,
+    private val languageSettingsHandler: LanguageSettingsHandler = DefaultLanguageSettingsHandler(),
 ) : SettingsComponentFactory {
   override fun create(
       cContext: CContext,
@@ -126,6 +152,7 @@ class DefaultSettingsComponentFactory(
           cContext = cContext,
           userSettingsRepository = userSettingsRepository,
           categoryRepository = categoryRepository,
+          languageSettingsHandler = languageSettingsHandler,
           onCategoriesClick = onCategoriesClick,
           onLabelsClick = onLabelsClick,
           onLanguageClick = onLanguageClick,
@@ -160,6 +187,15 @@ class FakeSettingsComponent(
     return Job().apply { complete() }
   }
 
+  override fun onLanguageSelected(language: AppLanguage): Job {
+    _state.update { it.copy(selectedLanguage = language, isLanguageDialogVisible = false) }
+    return Job().apply { complete() }
+  }
+
+  override fun onDismissLanguageDialog() {
+    _state.update { it.copy(isLanguageDialogVisible = false) }
+  }
+
   override fun onCategoriesClicked() {
     onCategoriesClick()
   }
@@ -170,6 +206,7 @@ class FakeSettingsComponent(
 
   override fun onLanguageClicked() {
     onLanguageClick()
+    _state.update { it.copy(isLanguageDialogVisible = true) }
   }
 
   override fun onPrivacyPolicyClicked() {
@@ -194,10 +231,13 @@ class FakeSettingsComponentFactory : SettingsComponentFactory {
 }
 
 object FakeSettingsStateFactory {
+  @Suppress("LongParameterList")
   fun create(
       selectedCalendarType: CalendarType = CalendarType.GREGORIAN,
       selectedCurrency: CurrencyType = CurrencyType.TOMANS,
       endOfDayReminderEnabled: Boolean = true,
+      selectedLanguage: AppLanguage = AppLanguage.ENGLISH,
+      isLanguageDialogVisible: Boolean = false,
       categoriesCount: Int = 0,
       appVersion: String = "1.2.0",
   ): SettingsState =
@@ -205,6 +245,8 @@ object FakeSettingsStateFactory {
           selectedCalendarType = selectedCalendarType,
           selectedCurrency = selectedCurrency,
           endOfDayReminderEnabled = endOfDayReminderEnabled,
+          selectedLanguage = selectedLanguage,
+          isLanguageDialogVisible = isLanguageDialogVisible,
           categoriesCount = categoriesCount,
           appVersion = appVersion,
       )

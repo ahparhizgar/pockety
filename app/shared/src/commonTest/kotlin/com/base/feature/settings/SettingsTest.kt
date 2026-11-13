@@ -23,11 +23,48 @@ class SettingsTest : BehaviorSpec() {
 
       When("state is observed") {
         Then(
-            "selectedCalendarType is GREGORIAN, selectedCurrency is TOMANS, and reminder is enabled"
+            "selectedCalendarType is GREGORIAN, selectedCurrency is TOMANS, reminder is enabled, and selectedLanguage is ENGLISH"
         ) {
           component.state.value.selectedCalendarType shouldBe CalendarType.GREGORIAN
           component.state.value.selectedCurrency shouldBe CurrencyType.TOMANS
           component.state.value.endOfDayReminderEnabled shouldBe true
+          component.state.value.selectedLanguage shouldBe AppLanguage.ENGLISH
+          component.state.value.isLanguageDialogVisible shouldBe false
+        }
+      }
+
+      When("user selects Persian language") {
+        beforeEach {
+          component.onLanguageSelected(AppLanguage.PERSIAN)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("selectedLanguage updates to PERSIAN and is persisted in UserSettingsRepository") {
+          repository.appLanguage.first() shouldBe AppLanguage.PERSIAN
+          component.state.value.selectedLanguage shouldBe AppLanguage.PERSIAN
+          component.state.value.isLanguageDialogVisible shouldBe false
+        }
+      }
+
+      When("user clicks language row on device without system locale settings") {
+        beforeEach {
+          component.onLanguageClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("isLanguageDialogVisible becomes true") {
+          component.state.value.isLanguageDialogVisible shouldBe true
+        }
+      }
+
+      When("user dismisses language dialog") {
+        beforeEach {
+          component.onDismissLanguageDialog()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("isLanguageDialogVisible becomes false") {
+          component.state.value.isLanguageDialogVisible shouldBe false
         }
       }
 

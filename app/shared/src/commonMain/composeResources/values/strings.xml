@@ -152,6 +152,8 @@
     <string name="settings_labels_count_format">%1$d items</string>
     <string name="settings_language_title">App language</string>
     <string name="settings_language_english">English</string>
+    <string name="settings_language_persian">Persian</string>
+    <string name="settings_language_dialog_title">Select App Language</string>
     <string name="settings_currency_title">Display Currency</string>
     <string name="settings_currency_tomans_title">Tomans</string>
     <string name="settings_currency_tomans_subtitle">Common (10 Rials)</string>
