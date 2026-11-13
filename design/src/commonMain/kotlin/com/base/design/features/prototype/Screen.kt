@@ -105,6 +105,7 @@ fun PrototypeAppScreen(
           PocketyTab.Inbox -> PrototypeDestination.Inbox
           PocketyTab.Pockets -> PrototypeDestination.Pockets
           PocketyTab.Analytics -> PrototypeDestination.Analytics
+          PocketyTab.Settings -> PrototypeDestination.Settings
         }
     backStack.setRoot(dest)
   }
@@ -225,6 +226,7 @@ fun PrototypeAppScreen(
 
             entry<PrototypeDestination.Settings> {
               SettingsScreen(
+                  selectedTab = PocketyTab.Settings,
                   onBackClick =
                       if (backStack.size > 1) {
                         { backStack.navigateBack() }

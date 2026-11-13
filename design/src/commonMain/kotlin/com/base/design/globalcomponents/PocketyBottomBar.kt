@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Insights
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -50,6 +51,7 @@ enum class PocketyTab(
   Inbox("Inbox", Icons.Default.Inbox),
   Pockets("Pockets", Icons.Default.AccountBalanceWallet),
   Analytics("Analytics", Icons.Default.Insights),
+  Settings("Settings", Icons.Default.Settings),
 }
 
 @Composable

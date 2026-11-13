@@ -39,13 +39,15 @@ fun SettingsScreen(
     labelsCount: Int = 7,
     selectedCurrency: CurrencyType = CurrencyType.Tomans,
     onCurrencySelected: (CurrencyType) -> Unit = {},
+    selectedCalendarSystem: CalendarSystemType = CalendarSystemType.Gregorian,
+    onCalendarSystemSelected: (CalendarSystemType) -> Unit = {},
     endOfDayReminderEnabled: Boolean = true,
     onEndOfDayReminderToggle: (Boolean) -> Unit = {},
     selectedLanguage: String = "English",
     onLanguageClick: () -> Unit = {},
     onCategoriesClick: () -> Unit = {},
     onLabelsClick: () -> Unit = {},
-    selectedTab: PocketyTab = PocketyTab.Home,
+    selectedTab: PocketyTab = PocketyTab.Settings,
     onTabSelected: (PocketyTab) -> Unit = {},
     onNotificationsClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
@@ -138,6 +140,10 @@ fun SettingsScreen(
                   selectedCurrency = selectedCurrency,
                   onCurrencySelected = onCurrencySelected,
               )
+              DisplayCalendarSystemCard(
+                  selectedCalendarSystem = selectedCalendarSystem,
+                  onCalendarSystemSelected = onCalendarSystemSelected,
+              )
             }
           }
 
@@ -170,12 +176,15 @@ fun SettingsScreen(
 @Composable
 fun SettingsScreenPreview() {
   var selectedCurrency by remember { mutableStateOf(CurrencyType.Tomans) }
+  var selectedCalendarSystem by remember { mutableStateOf(CalendarSystemType.Gregorian) }
   var reminderEnabled by remember { mutableStateOf(true) }
-  var selectedTab by remember { mutableStateOf(PocketyTab.Home) }
+  var selectedTab by remember { mutableStateOf(PocketyTab.Settings) }
 
   SettingsScreen(
       selectedCurrency = selectedCurrency,
       onCurrencySelected = { selectedCurrency = it },
+      selectedCalendarSystem = selectedCalendarSystem,
+      onCalendarSystemSelected = { selectedCalendarSystem = it },
       endOfDayReminderEnabled = reminderEnabled,
       onEndOfDayReminderToggle = { reminderEnabled = it },
       selectedTab = selectedTab,
@@ -185,9 +194,10 @@ fun SettingsScreenPreview() {
 
 @ScreenPreviews
 @Composable
-fun SettingsScreenRialsPreview() {
+fun SettingsScreenPersianPreview() {
   SettingsScreen(
       selectedCurrency = CurrencyType.Rials,
+      selectedCalendarSystem = CalendarSystemType.Persian,
       endOfDayReminderEnabled = false,
   )
 }

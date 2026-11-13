@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
@@ -38,6 +39,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.base.design.ui.ComponentPreviews
+
+enum class CalendarSystemType(
+    val title: String,
+    val subtitle: String,
+    val symbol: String,
+) {
+  Gregorian(
+      title = "Gregorian",
+      subtitle = "Standard Western (Jan-Dec)",
+      symbol = "G",
+  ),
+  Persian(
+      title = "Persian",
+      subtitle = "Solar Hijri (Farvardin-Esfand)",
+      symbol = "P",
+  ),
+}
 
 enum class CurrencyType(
     val title: String,
@@ -379,6 +397,142 @@ fun DisplayCurrencyCard(
 }
 
 @Composable
+fun CalendarOptionCard(
+    title: String,
+    subtitle: String,
+    symbolText: String,
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+) {
+  val containerColor =
+      if (isSelected) {
+        MaterialTheme.colorScheme.surfaceContainerLowest
+      } else {
+        MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f)
+      }
+  val shadowElevation = if (isSelected) 1.dp else 0.dp
+
+  Surface(
+      onClick = onClick,
+      shape = RoundedCornerShape(16.dp),
+      color = containerColor,
+      shadowElevation = shadowElevation,
+      modifier = modifier,
+  ) {
+    Column(
+        modifier = Modifier.padding(12.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+      Row(
+          modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.SpaceBetween,
+      ) {
+        Surface(
+            shape = CircleShape,
+            color =
+                if (isSelected) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.surfaceContainer,
+            contentColor =
+                if (isSelected) MaterialTheme.colorScheme.onPrimary
+                else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(28.dp),
+        ) {
+          Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = symbolText,
+                style =
+                    MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                    ),
+            )
+          }
+        }
+        Icon(
+            imageVector =
+                if (isSelected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+            contentDescription = if (isSelected) "Selected" else "Unselected",
+            tint =
+                if (isSelected) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.outline,
+            modifier = Modifier.size(20.dp),
+        )
+      }
+      Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Text(
+            text = subtitle,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.secondary,
+        )
+      }
+    }
+  }
+}
+
+@Composable
+fun DisplayCalendarSystemCard(
+    selectedCalendarSystem: CalendarSystemType,
+    modifier: Modifier = Modifier,
+    onCalendarSystemSelected: (CalendarSystemType) -> Unit = {},
+) {
+  Surface(
+      shape = RoundedCornerShape(16.dp),
+      color = MaterialTheme.colorScheme.surfaceContainerLow,
+      modifier = modifier.fillMaxWidth(),
+  ) {
+    Column(
+        modifier = Modifier.padding(14.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+      Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(8.dp),
+      ) {
+        Icon(
+            imageVector = Icons.Default.CalendarMonth,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(20.dp),
+        )
+        Text(
+            text = "Calendar System",
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+      }
+      Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.spacedBy(10.dp),
+      ) {
+        CalendarOptionCard(
+            title = CalendarSystemType.Gregorian.title,
+            subtitle = CalendarSystemType.Gregorian.subtitle,
+            symbolText = CalendarSystemType.Gregorian.symbol,
+            isSelected = selectedCalendarSystem == CalendarSystemType.Gregorian,
+            onClick = { onCalendarSystemSelected(CalendarSystemType.Gregorian) },
+            modifier = Modifier.weight(1f),
+        )
+        CalendarOptionCard(
+            title = CalendarSystemType.Persian.title,
+            subtitle = CalendarSystemType.Persian.subtitle,
+            symbolText = CalendarSystemType.Persian.symbol,
+            isSelected = selectedCalendarSystem == CalendarSystemType.Persian,
+            onClick = { onCalendarSystemSelected(CalendarSystemType.Persian) },
+            modifier = Modifier.weight(1f),
+        )
+      }
+    }
+  }
+}
+
+@Composable
 fun SwitchRow(
     title: String,
     subtitle: String,
@@ -543,6 +697,36 @@ fun CurrencyOptionCardUnselectedPreview() {
 fun DisplayCurrencyCardPreview() {
   DisplayCurrencyCard(
       selectedCurrency = CurrencyType.Tomans,
+  )
+}
+
+@ComponentPreviews
+@Composable
+fun CalendarOptionCardSelectedPreview() {
+  CalendarOptionCard(
+      title = "Gregorian",
+      subtitle = "Standard Western (Jan-Dec)",
+      symbolText = "G",
+      isSelected = true,
+  )
+}
+
+@ComponentPreviews
+@Composable
+fun CalendarOptionCardUnselectedPreview() {
+  CalendarOptionCard(
+      title = "Persian",
+      subtitle = "Solar Hijri (Farvardin-Esfand)",
+      symbolText = "P",
+      isSelected = false,
+  )
+}
+
+@ComponentPreviews
+@Composable
+fun DisplayCalendarSystemCardPreview() {
+  DisplayCalendarSystemCard(
+      selectedCalendarSystem = CalendarSystemType.Gregorian,
   )
 }
 
