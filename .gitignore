@@ -26,3 +26,12 @@ _bmad
 design/screenshots
 design-stitch/
 worktree/
+
+# Keystores and release secrets
+*.keystore
+!app/androidApp/debug.keystore
+*.jks
+*-signing.env
+android-release-signing.env
+*.credentials
+*-signing.properties
