@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.LocalOffer
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -47,6 +48,7 @@ fun SettingsScreen(
     onLanguageClick: () -> Unit = {},
     onCategoriesClick: () -> Unit = {},
     onLabelsClick: () -> Unit = {},
+    onPrivacyPolicyClick: () -> Unit = {},
     selectedTab: PocketyTab = PocketyTab.Settings,
     onTabSelected: (PocketyTab) -> Unit = {},
     onNotificationsClick: () -> Unit = {},
@@ -160,6 +162,24 @@ fun SettingsScreen(
                   icon = Icons.Default.Alarm,
                   checked = endOfDayReminderEnabled,
                   onCheckedChange = onEndOfDayReminderToggle,
+              )
+            }
+          }
+
+          // Section 4: Privacy & Security
+          Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            SettingsSectionHeader(title = "Privacy & Security")
+            SettingsCardContainer(
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+              SettingsNavigationRow(
+                  title = "Privacy Policy",
+                  subtitle = "Offline-first commitments & anonymous telemetry",
+                  icon = Icons.Default.Lock,
+                  iconContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                  iconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                  onClick = onPrivacyPolicyClick,
               )
             }
           }

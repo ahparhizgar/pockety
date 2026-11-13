@@ -29,6 +29,7 @@ import com.base.design.features.pockets.FakePocketFactory
 import com.base.design.features.pockets.PocketItem
 import com.base.design.features.pockets.PocketsScreen
 import com.base.design.features.pocketsettings.PocketSettingsScreen
+import com.base.design.features.privacypolicy.PrivacyPolicyScreen
 import com.base.design.features.selectcategory.SelectCategoryScreen
 import com.base.design.features.selectlabels.SelectLabelsScreen
 import com.base.design.features.selectpocket.SelectPocketScreen
@@ -69,6 +70,8 @@ sealed interface PrototypeDestination : NavKey {
       PrototypeDestination
 
   data object AddCategory : PrototypeDestination
+
+  data object PrivacyPolicy : PrototypeDestination
 }
 
 private fun <T : NavKey> SnapshotStateList<T>.navigateTo(key: T) {
@@ -236,6 +239,9 @@ fun PrototypeAppScreen(
                   onTabSelected = ::switchTab,
                   onCategoriesClick = { backStack.navigateTo(PrototypeDestination.CategoryList) },
                   onLabelsClick = { backStack.navigateTo(PrototypeDestination.SelectLabels) },
+                  onPrivacyPolicyClick = {
+                    backStack.navigateTo(PrototypeDestination.PrivacyPolicy)
+                  },
               )
             }
 
@@ -367,6 +373,12 @@ fun PrototypeAppScreen(
                   onBackClick = { backStack.navigateBack() },
                   onProfileClick = { backStack.navigateTo(PrototypeDestination.Settings) },
                   onSaveCategory = { _, _, _ -> backStack.navigateBack() },
+              )
+            }
+
+            entry<PrototypeDestination.PrivacyPolicy> {
+              PrivacyPolicyScreen(
+                  onBackClick = { backStack.navigateBack() },
               )
             }
           },

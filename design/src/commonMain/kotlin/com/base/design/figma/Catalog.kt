@@ -23,6 +23,7 @@ import com.base.design.features.monthdetail.MonthDetailScreen
 import com.base.design.features.pocketdetail.PocketDetailScreen
 import com.base.design.features.pockets.PocketsScreen
 import com.base.design.features.pocketsettings.PocketSettingsScreen
+import com.base.design.features.privacypolicy.PrivacyPolicyScreen
 import com.base.design.features.prototype.PrototypeAppScreen
 import com.base.design.features.selectcategory.SelectCategoryScreen
 import com.base.design.features.selectlabels.SelectLabelsScreen
@@ -109,6 +110,9 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                             },
                             FigmaScreenItem("06", "App Settings", "Preferences") {
                               SettingsScreen()
+                            },
+                            FigmaScreenItem("15", "Privacy Policy", "Legal & Security") {
+                              PrivacyPolicyScreen()
                             },
                         ),
                 ),
