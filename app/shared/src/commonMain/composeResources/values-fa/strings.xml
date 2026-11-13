@@ -91,6 +91,10 @@
     <string name="settings_title">تنظیمات</string>
     <string name="calendar_system_title">تقویم</string>
     <string name="calendar_system_desc">انتخاب گاه‌شمار مورد نظر برای نمایش تاریخ‌ها، ماه‌ها و شروع هفته.</string>
-    <string name="calendar_gregorian">تقویم میلادی</string>
-    <string name="calendar_persian">تقویم هجری شمسی (جلالی)</string>
+    <string name="calendar_gregorian">میلادی</string>
+    <string name="calendar_gregorian_subtitle">گاه‌شمار میلادی استاندارد (ژانویه - دسامبر)</string>
+    <string name="calendar_gregorian_symbol">G</string>
+    <string name="calendar_persian">شمسی</string>
+    <string name="calendar_persian_subtitle">هجری شمسی (فروردین - اسفند)</string>
+    <string name="calendar_persian_symbol">P</string>
 </resources>

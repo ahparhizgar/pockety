@@ -135,6 +135,10 @@
     <string name="settings_title">Settings</string>
     <string name="calendar_system_title">Calendar System</string>
     <string name="calendar_system_desc">Choose your preferred calendar system for dates, months, and week start.</string>
-    <string name="calendar_gregorian">Gregorian Calendar</string>
-    <string name="calendar_persian">Persian (Solar Hijri) Calendar</string>
+    <string name="calendar_gregorian">Gregorian</string>
+    <string name="calendar_gregorian_subtitle">Standard Western (Jan-Dec)</string>
+    <string name="calendar_gregorian_symbol">G</string>
+    <string name="calendar_persian">Persian</string>
+    <string name="calendar_persian_subtitle">Solar Hijri (Farvardin-Esfand)</string>
+    <string name="calendar_persian_symbol">P</string>
 </resources>
