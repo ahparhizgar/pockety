@@ -21,12 +21,12 @@ The system SHALL provide persistent storage for the user's preferred calendar sy
 - **THEN** all observing components and screens receive an update with the new PERSIAN calendar system
 
 ### Requirement: Settings UI for calendar system selection
-The system SHALL provide a settings screen accessible from the main navigation Settings tab that allows the user to inspect and select their preferred calendar system.
+The system SHALL provide a settings screen accessible from the main navigation Settings tab that allows the user to inspect and select their preferred calendar system using structured option cards displaying title, descriptive subtitle, and calendar symbol indicator.
 
 #### Scenario: Display current calendar preference in settings
 - **WHEN** the user navigates to the Settings tab
-- **THEN** the Settings screen displays the currently active calendar system preference
+- **THEN** the Settings screen displays the calendar system cards showing Gregorian and Persian options, with the active calendar system highlighted as selected
 
 #### Scenario: Select calendar system option
-- **WHEN** the user selects the Persian calendar option on the Settings screen
-- **THEN** the UI updates to show Persian calendar as selected and commits the change to persistent storage
+- **WHEN** the user selects the Persian calendar option card on the Settings screen
+- **THEN** the UI updates to show the Persian option card as selected and commits the change to persistent storage
