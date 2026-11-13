@@ -88,7 +88,8 @@ android {
   buildTypes {
     getByName("debug") { signingConfig = signingConfigs.getByName("debug") }
     getByName("release") {
-      isMinifyEnabled = false
+      isMinifyEnabled = true
+      isShrinkResources = true
       signingConfigs.findByName("release")?.let { releaseSigning -> signingConfig = releaseSigning }
     }
   }

@@ -1,2 +1,3 @@
 - add notification permission to permission card (multiple permissions if possible)
 - top up button doesn't work in pocket card
+- Report sms template
