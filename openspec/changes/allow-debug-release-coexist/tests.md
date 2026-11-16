@@ -39,3 +39,10 @@ No new UI or inputs. During available-device verification, launch each package's
 ## Regression gates
 
 Developer runs the AGENTS.md compilation, JVM tests, coverage, Detekt, and formatting gates and records failures or missing prerequisites. These supplement APK verification; they do not prove package identity or coexistence.
+
+## Implementation verification record
+
+- `./gradlew ktfmtFormat` completed successfully.
+- Local APK assembly and the compilation, test, coverage, and Detekt gates were not run because this task's execution instructions prohibit local builds; they require GitHub Actions CI.
+- APK application IDs and merged manifests have not been inspected. The `adb` command is unavailable in this environment, so device installation and launch checks were not run.
+- The implementation was pushed to `change/allow-debug-release-coexist` at commit `89d8e6a`. CI status could not be retrieved: `gh auth status` reported no authenticated GitHub CLI session, and the available GitHub API read returned 404 for the private repository's Actions endpoint.
