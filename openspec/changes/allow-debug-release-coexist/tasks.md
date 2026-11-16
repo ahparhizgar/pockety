@@ -2,7 +2,7 @@
 
 ## 1. Android variant identity
 
-- [ ] 1.1 Add `applicationIdSuffix = ".debug"` to the existing debug build type in `app/androidApp/build.gradle.kts`; verify the diff preserves namespace, Kotlin packages, base application ID, signing, release optimization, app names, and icons.
+- [x] 1.1 Add `applicationIdSuffix = ".debug"` to the existing debug build type in `app/androidApp/build.gradle.kts`; verify the diff preserves namespace, Kotlin packages, base application ID, signing, release optimization, app names, and icons.
 - [ ] 1.2 Build debug/release APKs and inspect packaged application IDs and merged manifests as specified in tests.md; record actual IDs and any authority/permission conflicts or build prerequisites preventing verification.
 
 ## 2. Integration verification

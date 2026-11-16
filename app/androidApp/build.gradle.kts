@@ -86,7 +86,10 @@ android {
   }
   packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
   buildTypes {
-    getByName("debug") { signingConfig = signingConfigs.getByName("debug") }
+    getByName("debug") {
+      applicationIdSuffix = ".debug"
+      signingConfig = signingConfigs.getByName("debug")
+    }
     getByName("release") {
       isMinifyEnabled = true
       isShrinkResources = true
