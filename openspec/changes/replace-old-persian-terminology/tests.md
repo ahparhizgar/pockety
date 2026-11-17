@@ -29,3 +29,9 @@ No repository changes or migrations. Review the diff to confirm only intended lo
     - [ ] Then their existing English copy and supplied version remain unchanged.
 
 These are explicit UI smoke checks; do not add automated tests that merely mirror the three replacement strings. Record checks performed and any environment limitation in the handoff.
+
+## Implementation verification record
+
+- XML parsing and branch-base comparison passed: resource keys and placeholder signatures are unchanged, and exactly the three scoped values differ.
+- Active source audit across `app`, `design`, `server`, and `core` found no remaining «پاکتی» or «پاکت» terms. The English locale and stored content were not edited.
+- Interactive settings/privacy-policy and keyboard smoke checks were unavailable because this environment has no `adb` executable or attached Android device. The formatter and GitHub Actions CI are being run as the available verification gates; the rendered UI checks remain unverified here.

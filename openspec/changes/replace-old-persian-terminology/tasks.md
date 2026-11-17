@@ -2,9 +2,9 @@
 
 ## 1. Persian terminology correction
 
-- [ ] 1.1 Update the three identified Persian resource values, replacing «پاکتی» with «جیبک» before «پاکت» with «جیب»; verify the diff preserves keys, `%1$s`, surrounding copy, and half-spaces, and XML remains valid.
-- [ ] 1.2 Audit current user-facing Persian sources for remaining old terminology and correct any occurrences within scope; verify no old terms remain in active source roots and English text and stored content are unchanged.
-- [ ] 1.3 Perform the settings version, privacy policy, English locale, and keyboard smoke checks in tests.md; record observed results or concrete environment limitations.
+- [x] 1.1 Update the three identified Persian resource values, replacing «پاکتی» with «جیبک» before «پاکت» with «جیب»; verify the diff preserves keys, `%1$s`, surrounding copy, and half-spaces, and XML remains valid.
+- [x] 1.2 Audit current user-facing Persian sources for remaining old terminology and correct any occurrences within scope; verify no old terms remain in active source roots and English text and stored content are unchanged.
+- [x] 1.3 Perform the settings version, privacy policy, English locale, and keyboard smoke checks in tests.md; record observed results or concrete environment limitations.
 
 ## 2. Integration verification
 

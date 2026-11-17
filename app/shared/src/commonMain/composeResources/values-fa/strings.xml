@@ -124,10 +124,10 @@
     <string name="settings_privacy_policy_subtitle">تعهدات آفلاین و تله‌متری ناشناس</string>
     <string name="privacy_policy_title">سیاست حفظ حریم خصوصی</string>
     <string name="privacy_policy_hero_title">حریم خصوصی شما محترم است</string>
-    <string name="privacy_policy_hero_subtitle">پاکتی با اصول آفلاین و رعایت دقیق حریم خصوصی طراحی شده است. اطلاعات مالی شخصی شما هرگز از دستگاه شما خارج نمی‌شود.</string>
+    <string name="privacy_policy_hero_subtitle">جیبک با اصول آفلاین و رعایت دقیق حریم خصوصی طراحی شده است. اطلاعات مالی شخصی شما هرگز از دستگاه شما خارج نمی‌شود.</string>
     <string name="privacy_policy_commitments_header">تعهدات اصلی ما</string>
     <string name="privacy_policy_pillar_personal_data_title">ما اطلاعات شخصی ارسال نمی‌کنیم</string>
-    <string name="privacy_policy_pillar_personal_data_desc">تمامی حساب‌ها، پاکت‌ها، دسته‌بندی‌ها، تراکنش‌ها و گزارش‌های مالی شما به صورت محلی در دستگاه ذخیره می‌شوند. ما داده‌های مالی شخصی را انتقال نداده و کسب درآمد نمی‌کنیم.</string>
+    <string name="privacy_policy_pillar_personal_data_desc">تمامی حساب‌ها، جیب‌ها، دسته‌بندی‌ها، تراکنش‌ها و گزارش‌های مالی شما به صورت محلی در دستگاه ذخیره می‌شوند. ما داده‌های مالی شخصی را انتقال نداده و کسب درآمد نمی‌کنیم.</string>
     <string name="privacy_policy_pillar_sms_data_title">ما اطلاعات پیامک ارسال نمی‌کنیم</string>
     <string name="privacy_policy_pillar_sms_data_desc">خواندن پیامک و تحلیل اعلان‌های بانکی کاملاً روی دستگاه شما انجام می‌شود. متن پیامک‌ها، شماره‌های تماس و جزئیات بانکی هرگز به هیچ سروری ارسال نمی‌شوند.</string>
     <string name="privacy_policy_pillar_telemetry_title">فقط اطلاعات مصرف ناشناس</string>
@@ -137,5 +137,5 @@
     <string name="privacy_policy_takeaway_sms_data">تحلیل پیامک ۱۰۰٪ روی دستگاه انجام می‌شود</string>
     <string name="privacy_policy_takeaway_telemetry">تله‌متری کاملاً ناشناس و اختیاری است</string>
     <string name="privacy_policy_version_footer">سیاست حریم خصوصی • به‌روزشده در آبان ۱۴۰۵</string>
-    <string name="settings_version_format">پاکتی نسخه %1$s</string>
+    <string name="settings_version_format">جیبک نسخه %1$s</string>
 </resources>
