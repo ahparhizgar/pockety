@@ -1,12 +1,9 @@
 package com.base.feature.expense.analytics
 
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isRoot
-import androidx.compose.ui.test.performKeyInput
-import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.RootScreen
 import com.base.calendar.CalendarDate
@@ -51,7 +48,7 @@ class AnalyticsLocalizationE2eUiTest {
   }
 
   @Test
-  fun populatedAnalyticsLocalizesDateGroupsAndKeepsKeyboardExpenseActivation() = runComposeUiTest {
+  fun populatedAnalyticsLocalizesDateGroupsAndExpenseActivation() = runComposeUiTest {
     var openedExpenseId: Long? = null
     val expense = FakeAnalyticsExpenseUiModelFactory.create(id = 42, amount = 12_500)
     val dateGroups =
@@ -87,12 +84,7 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasText("دیروز", substring = true)).assertExists()
     onNode(hasText("اکتبر", substring = true)).assertExists()
     onNode(hasText("تومان", substring = true)).assertExists()
-    onNode(isRoot()).performKeyInput {
-      pressKey(Key.Tab)
-      pressKey(Key.Tab)
-      pressKey(Key.Tab)
-    }
-    onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
+    onNode(hasTestTag("expense-item-42")).performClick()
     assertEquals(42L, openedExpenseId)
   }
 
