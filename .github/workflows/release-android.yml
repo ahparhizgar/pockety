@@ -20,6 +20,9 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      - name: Build Debug APK
+        run: ./gradlew :app:androidApp:assembleDebug --console=plain
+
       - name: Decode Release Keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -37,6 +40,13 @@ jobs:
       - name: Clean Keystore
         if: always()
         run: rm -f /tmp/android-release.keystore
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: pockety-debug-apk
+          path: app/androidApp/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
