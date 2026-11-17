@@ -1,5 +1,6 @@
 package com.base.feature.root
 
+import com.base.feature.category.management.CategoryManagementFlowComponent
 import com.base.feature.expense.AddExpenseFlowComponent
 import com.base.feature.home.HomeComponent
 import com.base.feature.main.MainComponent
@@ -27,6 +28,12 @@ sealed interface RootFlowDestination {
   @Serializable
   data object PrivacyPolicy : RootFlowDestination {
     data class Instance(val component: PrivacyPolicyComponent) : RootFlowDestination.Instance
+  }
+
+  @Serializable
+  data object CategoryManagementFlow : RootFlowDestination {
+    data class Instance(val component: CategoryManagementFlowComponent) :
+        RootFlowDestination.Instance
   }
 
   @Serializable

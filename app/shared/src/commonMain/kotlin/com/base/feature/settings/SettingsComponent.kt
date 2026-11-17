@@ -48,7 +48,7 @@ interface SettingsComponent {
 interface SettingsComponentFactory {
   fun create(
       cContext: CContext,
-      onCategoriesClick: () -> Unit = {},
+      onCategoriesClick: () -> Unit,
       onLabelsClick: () -> Unit = {},
       onLanguageClick: () -> Unit = {},
       onPrivacyPolicyClick: () -> Unit = {},
@@ -61,7 +61,7 @@ class DefaultSettingsComponent(
     private val userSettingsRepository: UserSettingsRepository,
     private val categoryRepository: CategoryRepository,
     private val languageSettingsHandler: LanguageSettingsHandler = DefaultLanguageSettingsHandler(),
-    private val onCategoriesClick: () -> Unit = {},
+    private val onCategoriesClick: () -> Unit,
     private val onLabelsClick: () -> Unit = {},
     private val onLanguageClick: () -> Unit = {},
     private val onPrivacyPolicyClick: () -> Unit = {},

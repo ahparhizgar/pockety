@@ -4,6 +4,10 @@ import com.base.feature.analytics.AnalyticsComponentFactory
 import com.base.feature.analytics.DefaultAnalyticsComponentFactory
 import com.base.feature.category.add.AddCategoryComponentFactory
 import com.base.feature.category.add.DefaultAddCategoryComponentFactory
+import com.base.feature.category.management.CategoryManagementComponentFactory
+import com.base.feature.category.management.CategoryManagementFlowComponentFactory
+import com.base.feature.category.management.DefaultCategoryManagementComponentFactory
+import com.base.feature.category.management.DefaultCategoryManagementFlowComponentFactory
 import com.base.feature.category.selection.CategorySelectionComponentFactory
 import com.base.feature.category.selection.DefaultCategorySelectionComponentFactory
 import com.base.feature.expense.AddExpenseFlowComponentFactory
@@ -49,6 +53,9 @@ fun decomposeModule() = module {
   factoryOf(::DefaultPocketDetailsComponentFactory).bind<PocketDetailsComponentFactory>()
   factoryOf(::DefaultAddCategoryComponentFactory).bind<AddCategoryComponentFactory>()
   factoryOf(::DefaultCategorySelectionComponentFactory).bind<CategorySelectionComponentFactory>()
+  factoryOf(::DefaultCategoryManagementComponentFactory).bind<CategoryManagementComponentFactory>()
+  factoryOf(::DefaultCategoryManagementFlowComponentFactory)
+      .bind<CategoryManagementFlowComponentFactory>()
   factoryOf(::DefaultSelectPocketComponentFactory).bind<SelectPocketComponentFactory>()
   factoryOf(::DefaultAddExpenseFlowComponentFactory).bind<AddExpenseFlowComponentFactory>()
   factoryOf(::DefaultPocketSettingsComponentFactory).bind<PocketSettingsComponentFactory>()

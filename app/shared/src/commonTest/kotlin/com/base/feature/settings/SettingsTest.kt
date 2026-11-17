@@ -19,7 +19,12 @@ class SettingsTest : BehaviorSpec() {
       val koin by integrationKoin()
       val repository by testValue { koin.get<UserSettingsRepository>() }
       val factory by testValue { koin.get<SettingsComponentFactory>() }
-      val component by testValue { factory.create(TestCContext()) }
+      val component by testValue {
+        factory.create(
+            cContext = TestCContext(),
+            onCategoriesClick = {},
+        )
+      }
 
       When("state is observed") {
         Then(

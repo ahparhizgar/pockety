@@ -22,6 +22,7 @@ import com.arkivanov.decompose.extensions.compose.stack.animation.predictiveback
 import com.arkivanov.decompose.extensions.compose.stack.animation.scale
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.base.feature.category.management.CategoryManagementFlowScreen
 import com.base.feature.expense.AddExpenseFlowScreen
 import com.base.feature.home.HomeScreen
 import com.base.feature.main.MainScreen
@@ -113,6 +114,9 @@ private fun RootChildContent(child: RootFlowDestination.Instance) {
           modifier = Modifier.testTag("privacy-policy-screen"),
       )
     }
+    is RootFlowDestination.CategoryManagementFlow.Instance -> {
+      CategoryManagementChildContent(child)
+    }
     is RootFlowDestination.Home.Instance -> {
       HomeScreen(
           component = child.component,
@@ -150,6 +154,16 @@ private fun RootChildContent(child: RootFlowDestination.Instance) {
       )
     }
   }
+}
+
+@Composable
+private fun CategoryManagementChildContent(
+    child: RootFlowDestination.CategoryManagementFlow.Instance,
+) {
+  CategoryManagementFlowScreen(
+      component = child.component,
+      modifier = Modifier.testTag("category-management-flow-screen"),
+  )
 }
 
 @ScreenPreviews

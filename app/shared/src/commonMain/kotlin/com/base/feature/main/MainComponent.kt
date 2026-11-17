@@ -207,6 +207,9 @@ class DefaultMainComponent(
       MainComponent.Child.Settings(
           settingsComponentFactory.create(
               cContext = context,
+              onCategoriesClick = {
+                navigation.pushNew(RootFlowDestination.CategoryManagementFlow)
+              },
               onPrivacyPolicyClick = { navigation.pushNew(RootFlowDestination.PrivacyPolicy) },
           )
       )

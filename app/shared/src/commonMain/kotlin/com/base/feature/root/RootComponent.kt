@@ -16,6 +16,7 @@ import com.base.component.CContext
 import com.base.component.WindowSizeHolder
 import com.base.component.componentScope
 import com.base.db.PocketRepository
+import com.base.feature.category.management.CategoryManagementFlowComponentFactory
 import com.base.feature.expense.AddExpenseFlowComponentFactory
 import com.base.feature.home.HomeComponentFactory
 import com.base.feature.main.MainComponentFactory
@@ -131,6 +132,12 @@ class DefaultRootComponent(
                       cContext = cContext,
                       onBack = { rootNavigation.pop() },
                   )
+          )
+      is RootFlowDestination.CategoryManagementFlow ->
+          RootFlowDestination.CategoryManagementFlow.Instance(
+              componentProvider
+                  .provide(CategoryManagementFlowComponentFactory::class)
+                  .create(cContext, onBack = { rootNavigation.pop() })
           )
       is RootFlowDestination.Home ->
           RootFlowDestination.Home.Instance(

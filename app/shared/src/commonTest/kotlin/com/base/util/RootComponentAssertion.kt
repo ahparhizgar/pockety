@@ -1,6 +1,8 @@
 package com.base.util
 
 import com.base.feature.category.add.AddCategoryComponent
+import com.base.feature.category.management.CategoryManagementComponent
+import com.base.feature.category.management.CategoryManagementFlowComponent
 import com.base.feature.category.selection.CategorySelectionComponent
 import com.base.feature.expense.AddExpenseFlowComponent
 import com.base.feature.main.MainComponent
@@ -39,6 +41,24 @@ fun RootComponent.assertAddExpenseFlow(): AddExpenseFlowComponent {
 fun RootComponent.assertPocketSettingsFlow(): PocketSettingsFlowComponent {
   return activeInstance
       .shouldBeInstanceOf<RootFlowDestination.PocketSettingsFlow.Instance>()
+      .component
+}
+
+fun RootComponent.assertCategoryManagementFlow(): CategoryManagementFlowComponent {
+  return activeInstance
+      .shouldBeInstanceOf<RootFlowDestination.CategoryManagementFlow.Instance>()
+      .component
+}
+
+fun CategoryManagementFlowComponent.assertBrowse(): CategoryManagementComponent {
+  return stack.value.active.instance
+      .shouldBeInstanceOf<CategoryManagementFlowComponent.Child.Browse>()
+      .component
+}
+
+fun CategoryManagementFlowComponent.assertAddCategory(): AddCategoryComponent {
+  return stack.value.active.instance
+      .shouldBeInstanceOf<CategoryManagementFlowComponent.Child.Add>()
       .component
 }
 

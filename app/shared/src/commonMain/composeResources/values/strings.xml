@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="categories_title">Categories</string>
+    <string name="category_add">Add category</string>
+    <string name="category_empty">No categories yet. Add a category to organize your expenses.</string>
     <string name="error_invalid_request">Invalid request</string>
     <string name="error_unauthorized">Unauthorized access</string>
     <string name="error_forbidden">Access denied</string>
