@@ -297,7 +297,6 @@ object FakeAnalyticsDateGroupUiModelFactory {
 object FakeAnalyticsStateFactory {
   fun create(
       calendarType: CalendarType = CalendarType.GREGORIAN,
-      selectedYear: Int = 2026,
       selectedMonth: Int = 10,
       canNavigateNext: Boolean = false,
       monthlyOutflow: Long = 50_000,
@@ -306,7 +305,6 @@ object FakeAnalyticsStateFactory {
   ): AnalyticsState {
     return AnalyticsState(
         calendarType = calendarType,
-        selectedYear = selectedYear,
         selectedMonth = selectedMonth,
         canNavigateNext = canNavigateNext,
         monthlyOutflow = monthlyOutflow,

@@ -3,6 +3,7 @@ package com.base.feature.expense.analytics
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -67,10 +68,12 @@ class AnalyticsLocalizationE2eUiTest {
             FakeAnalyticsDateGroupUiModelFactory.create(
                 date = CalendarDate(2026, 10, 23, CalendarType.GREGORIAN),
                 relativeDate = AnalyticsRelativeDate.YESTERDAY,
+                expenses = emptyList(),
             ),
             FakeAnalyticsDateGroupUiModelFactory.create(
                 date = CalendarDate(2026, 10, 22, CalendarType.GREGORIAN),
                 relativeDate = AnalyticsRelativeDate.OTHER,
+                expenses = emptyList(),
             ),
         )
     val component =
@@ -88,8 +91,9 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasText("اکتبر 2026")).waitForExistence().assertExists()
     onNode(hasText("امروز", substring = true)).assertExists()
     onNode(hasText("دیروز", substring = true)).assertExists()
-    onNode(hasText("اکتبر", substring = true)).assertExists()
-    onNode(hasText("تومان", substring = true)).assertExists()
+    onNode(hasText("22 اکتبر 2026")).assertExists()
+    onNode(hasTestTag("expense-amount"), useUnmergedTree = true)
+        .assertTextContains("تومان", substring = true)
     onNode(hasTestTag("expense-item-42")).performSemanticsAction(SemanticsActions.RequestFocus) {
       it()
     }
@@ -112,11 +116,11 @@ class AnalyticsLocalizationE2eUiTest {
                 FakeAnalyticsComponent(
                     initialState =
                         FakeAnalyticsStateFactory.create(
-                            calendarType = CalendarType.PERSIAN,
-                            selectedYear = 1405,
-                            selectedMonth = 7,
-                            dateGroups = listOf(group),
-                        )
+                                calendarType = CalendarType.PERSIAN,
+                                selectedMonth = 7,
+                                dateGroups = listOf(group),
+                            )
+                            .copy(selectedYear = 1405)
                 )
         )
       }
@@ -141,11 +145,11 @@ class AnalyticsLocalizationE2eUiTest {
                 FakeAnalyticsComponent(
                     initialState =
                         FakeAnalyticsStateFactory.create(
-                            calendarType = CalendarType.PERSIAN,
-                            selectedYear = 1405,
-                            selectedMonth = 7,
-                            dateGroups = listOf(group),
-                        )
+                                calendarType = CalendarType.PERSIAN,
+                                selectedMonth = 7,
+                                dateGroups = listOf(group),
+                            )
+                            .copy(selectedYear = 1405)
                 )
         )
       }
