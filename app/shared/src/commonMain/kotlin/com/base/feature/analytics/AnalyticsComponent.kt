@@ -8,14 +8,12 @@ import com.base.calendar.CalendarDate
 import com.base.calendar.CalendarType
 import com.base.calendar.GregorianCalendar
 import com.base.calendar.PersianCalendar
-import com.base.calendar.getMonthName
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.CategoryEntity
 import com.base.db.CategoryRepository
 import com.base.db.ExpenseEntity
 import com.base.db.ExpenseRepository
-import com.base.feature.pocket.details.formatAmount
 import com.base.feature.settings.UserSettingsRepository
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -25,10 +23,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
+enum class AnalyticsRelativeDate {
+  TODAY,
+  YESTERDAY,
+  OTHER,
+}
+
 data class AnalyticsExpenseUiModel(
     val id: Long,
     val amount: Long,
-    val formattedAmount: String,
     val description: String,
     val categoryName: String? = null,
     val categoryIcon: String? = null,
@@ -39,19 +42,17 @@ data class AnalyticsExpenseUiModel(
 
 data class AnalyticsDateGroupUiModel(
     val date: CalendarDate,
-    val headerTitle: String,
+    val relativeDate: AnalyticsRelativeDate,
     val totalAmount: Long,
-    val formattedTotalAmount: String,
     val expenses: List<AnalyticsExpenseUiModel>,
 )
 
 data class AnalyticsState(
+    val calendarType: CalendarType = CalendarType.GREGORIAN,
     val selectedYear: Int = 2026,
     val selectedMonth: Int = 1,
-    val selectedMonthLabel: String = "",
     val canNavigateNext: Boolean = false,
     val monthlyOutflow: Long = 0L,
-    val formattedMonthlyOutflow: String = "0 T",
     val dateGroups: List<AnalyticsDateGroupUiModel> = emptyList(),
     val isLoading: Boolean = false,
 ) {
@@ -157,27 +158,22 @@ class DefaultAnalyticsComponent(
         selectedYear < currentCalendarDate.year ||
             (selectedYear == currentCalendarDate.year && selectedMonth < currentCalendarDate.month)
 
-    val monthName = getMonthName(selectedMonth, calendarType)
-    val selectedMonthLabel = "$monthName $selectedYear"
-
     val monthExpenses = rawExpenses.filter { expense ->
       val date = activeCalendar.toCalendarDate(expense.createdAt.toEpochMilliseconds(), timeZone)
       date.year == selectedYear && date.month == selectedMonth
     }
 
     val monthlyOutflow = monthExpenses.sumOf { it.amount }
-    val formattedMonthlyOutflow = "${formatAmount(monthlyOutflow)} T"
 
     val categoriesMap = rawCategories.associateBy { it.id }
     val dateGroups = buildDateGroups(monthExpenses, categoriesMap, timeZone, today)
 
     return AnalyticsState(
+        calendarType = calendarType,
         selectedYear = selectedYear,
         selectedMonth = selectedMonth,
-        selectedMonthLabel = selectedMonthLabel,
         canNavigateNext = canNavigateNext,
         monthlyOutflow = monthlyOutflow,
-        formattedMonthlyOutflow = formattedMonthlyOutflow,
         dateGroups = dateGroups,
         isLoading = false,
     )
@@ -196,12 +192,11 @@ class DefaultAnalyticsComponent(
           .map { (date, expensesForDate) ->
             val sortedExpenses = expensesForDate.sortedByDescending { it.createdAt }
             val groupTotal = sortedExpenses.sumOf { it.amount }
-            val headerTitle = formatGroupHeaderTitle(date, today)
+            val relativeDate = classifyRelativeDate(date, today)
             AnalyticsDateGroupUiModel(
                 date = date,
-                headerTitle = headerTitle,
+                relativeDate = relativeDate,
                 totalAmount = groupTotal,
-                formattedTotalAmount = "${formatAmount(groupTotal)} T",
                 expenses =
                     sortedExpenses.map { expense ->
                       toExpenseUiModel(expense, categoriesMap, timeZone)
@@ -209,17 +204,17 @@ class DefaultAnalyticsComponent(
             )
           }
 
-  private fun formatGroupHeaderTitle(date: CalendarDate, today: CalendarDate): String {
-    val monthName = getMonthName(date.month, date.type)
-    val isToday = date.year == today.year && date.month == today.month && date.day == today.day
+  private fun classifyRelativeDate(date: CalendarDate, today: CalendarDate): AnalyticsRelativeDate {
+    if (date.year == today.year && date.month == today.month && date.day == today.day) {
+      return AnalyticsRelativeDate.TODAY
+    }
     val yesterday = activeCalendar.addDays(today, -1)
-    val isYesterday =
+    return if (
         date.year == yesterday.year && date.month == yesterday.month && date.day == yesterday.day
-
-    return when {
-      isToday -> "Today, ${date.day} $monthName"
-      isYesterday -> "Yesterday, ${date.day} $monthName"
-      else -> "${date.day} $monthName ${date.year}"
+    ) {
+      AnalyticsRelativeDate.YESTERDAY
+    } else {
+      AnalyticsRelativeDate.OTHER
     }
   }
 
@@ -235,7 +230,6 @@ class DefaultAnalyticsComponent(
     return AnalyticsExpenseUiModel(
         id = expense.id,
         amount = expense.amount,
-        formattedAmount = "-${formatAmount(expense.amount)} T",
         description = expense.description,
         categoryName = category?.name,
         categoryIcon = category?.icon,
@@ -275,7 +269,6 @@ object FakeAnalyticsExpenseUiModelFactory {
       AnalyticsExpenseUiModel(
           id = id,
           amount = amount,
-          formattedAmount = "-${formatAmount(amount)} T",
           description = description,
           categoryName = categoryName,
           categoryIcon = "local_cafe",
@@ -289,22 +282,21 @@ object FakeAnalyticsDateGroupUiModelFactory {
   @Suppress("MagicNumber")
   fun create(
       date: CalendarDate = CalendarDate(2026, 10, 24, CalendarType.GREGORIAN),
-      headerTitle: String = "Today, 24 Oct",
+      relativeDate: AnalyticsRelativeDate = AnalyticsRelativeDate.TODAY,
       totalAmount: Long = 50_000,
-      formattedTotalAmount: String = "50,000 T",
       expenses: List<AnalyticsExpenseUiModel> = listOf(FakeAnalyticsExpenseUiModelFactory.create()),
   ): AnalyticsDateGroupUiModel =
       AnalyticsDateGroupUiModel(
           date = date,
-          headerTitle = headerTitle,
+          relativeDate = relativeDate,
           totalAmount = totalAmount,
-          formattedTotalAmount = formattedTotalAmount,
           expenses = expenses,
       )
 }
 
 object FakeAnalyticsStateFactory {
   fun create(
+      calendarType: CalendarType = CalendarType.GREGORIAN,
       selectedYear: Int = 2026,
       selectedMonth: Int = 10,
       canNavigateNext: Boolean = false,
@@ -312,14 +304,12 @@ object FakeAnalyticsStateFactory {
       dateGroups: List<AnalyticsDateGroupUiModel> =
           listOf(FakeAnalyticsDateGroupUiModelFactory.create()),
   ): AnalyticsState {
-    val monthName = getMonthName(selectedMonth, CalendarType.GREGORIAN)
     return AnalyticsState(
+        calendarType = calendarType,
         selectedYear = selectedYear,
         selectedMonth = selectedMonth,
-        selectedMonthLabel = "$monthName $selectedYear",
         canNavigateNext = canNavigateNext,
         monthlyOutflow = monthlyOutflow,
-        formattedMonthlyOutflow = "${formatAmount(monthlyOutflow)} T",
         dateGroups = dateGroups,
         isLoading = false,
     )

@@ -59,7 +59,32 @@ class SettingsFlowE2eTest : BehaviorSpec() {
 
             Then("AnalyticsComponent displays active month in Persian calendar") {
               val analytics = root.assertMainComponent().assertAnalyticsComponent()
-              analytics.state.value.selectedMonthLabel.isNotEmpty() shouldBe true
+              analytics.state.value.calendarType shouldBe CalendarType.PERSIAN
+            }
+
+            And("user changes app language while Analytics is visited") {
+              var selectedMonth = 0
+              var selectedYear = 0
+              beforeEach {
+                val analytics = root.assertMainComponent().assertAnalyticsComponent()
+                selectedMonth = analytics.state.value.selectedMonth
+                selectedYear = analytics.state.value.selectedYear
+                val main = root.assertMainComponent()
+                main.onTabSelect(PocketyTab.Settings)
+                testCoroutineScheduler.advanceUntilIdle()
+                main.assertSettingsComponent().onLanguageSelected(AppLanguage.PERSIAN)
+                testCoroutineScheduler.advanceUntilIdle()
+                main.onTabSelect(PocketyTab.Analytics)
+                testCoroutineScheduler.advanceUntilIdle()
+              }
+
+              Then("language changes without changing the selected calendar or month") {
+                root.appLanguage.value shouldBe AppLanguage.PERSIAN
+                val analytics = root.assertMainComponent().assertAnalyticsComponent()
+                analytics.state.value.calendarType shouldBe CalendarType.PERSIAN
+                analytics.state.value.selectedMonth shouldBe selectedMonth
+                analytics.state.value.selectedYear shouldBe selectedYear
+              }
             }
           }
         }

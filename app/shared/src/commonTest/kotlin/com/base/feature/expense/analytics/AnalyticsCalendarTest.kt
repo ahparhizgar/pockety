@@ -14,7 +14,6 @@ import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.string.shouldContain
 import kotlin.time.Instant
 
 class AnalyticsCalendarTest : BehaviorSpec() {
@@ -54,7 +53,7 @@ class AnalyticsCalendarTest : BehaviorSpec() {
 
       When("component loads expenses") {
         Then("component state reflects Persian calendar navigation") {
-          component.state.value.selectedMonthLabel.isNotEmpty() shouldBe true
+          component.state.value.calendarType shouldBe CalendarType.PERSIAN
         }
       }
 
@@ -73,7 +72,6 @@ class AnalyticsCalendarTest : BehaviorSpec() {
           if (initialMonth == 1) {
             component.state.value.selectedMonth shouldBe 12
             component.state.value.selectedYear shouldBe initialYear - 1
-            component.state.value.selectedMonthLabel shouldContain "Esfand"
           } else {
             component.state.value.selectedMonth shouldBe initialMonth - 1
           }

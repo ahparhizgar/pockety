@@ -36,12 +36,81 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.base.LocalAppLanguage
+import com.base.calendar.CalendarDate
+import com.base.calendar.CalendarType
 import com.base.feature.category.add.resolveCategoryIcon
+import com.base.feature.pocket.details.formatAmount
+import com.base.feature.settings.AppLanguage
 import com.base.ui.ComponentPreviews
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.analytics_aban
+import pockety.app.shared.generated.resources.analytics_aban_fa
+import pockety.app.shared.generated.resources.analytics_april
+import pockety.app.shared.generated.resources.analytics_april_fa
+import pockety.app.shared.generated.resources.analytics_august
+import pockety.app.shared.generated.resources.analytics_august_fa
+import pockety.app.shared.generated.resources.analytics_azar
+import pockety.app.shared.generated.resources.analytics_azar_fa
+import pockety.app.shared.generated.resources.analytics_bahman
+import pockety.app.shared.generated.resources.analytics_bahman_fa
+import pockety.app.shared.generated.resources.analytics_currency_symbol_fa
+import pockety.app.shared.generated.resources.analytics_december
+import pockety.app.shared.generated.resources.analytics_december_fa
+import pockety.app.shared.generated.resources.analytics_dey
+import pockety.app.shared.generated.resources.analytics_dey_fa
+import pockety.app.shared.generated.resources.analytics_esfand
+import pockety.app.shared.generated.resources.analytics_esfand_fa
+import pockety.app.shared.generated.resources.analytics_farvardin
+import pockety.app.shared.generated.resources.analytics_farvardin_fa
+import pockety.app.shared.generated.resources.analytics_february
+import pockety.app.shared.generated.resources.analytics_february_fa
+import pockety.app.shared.generated.resources.analytics_january
+import pockety.app.shared.generated.resources.analytics_january_fa
+import pockety.app.shared.generated.resources.analytics_july
+import pockety.app.shared.generated.resources.analytics_july_fa
+import pockety.app.shared.generated.resources.analytics_june
+import pockety.app.shared.generated.resources.analytics_june_fa
+import pockety.app.shared.generated.resources.analytics_khordad
+import pockety.app.shared.generated.resources.analytics_khordad_fa
+import pockety.app.shared.generated.resources.analytics_march
+import pockety.app.shared.generated.resources.analytics_march_fa
+import pockety.app.shared.generated.resources.analytics_may
+import pockety.app.shared.generated.resources.analytics_may_fa
+import pockety.app.shared.generated.resources.analytics_mehr
+import pockety.app.shared.generated.resources.analytics_mehr_fa
+import pockety.app.shared.generated.resources.analytics_month_year
+import pockety.app.shared.generated.resources.analytics_month_year_fa
+import pockety.app.shared.generated.resources.analytics_monthly_outflow_label_fa
+import pockety.app.shared.generated.resources.analytics_mordad
+import pockety.app.shared.generated.resources.analytics_mordad_fa
+import pockety.app.shared.generated.resources.analytics_next_month_action_fa
+import pockety.app.shared.generated.resources.analytics_no_expenses_month_fa
+import pockety.app.shared.generated.resources.analytics_november
+import pockety.app.shared.generated.resources.analytics_november_fa
+import pockety.app.shared.generated.resources.analytics_october
+import pockety.app.shared.generated.resources.analytics_october_fa
+import pockety.app.shared.generated.resources.analytics_ordibehesht
+import pockety.app.shared.generated.resources.analytics_ordibehesht_fa
+import pockety.app.shared.generated.resources.analytics_other_date
+import pockety.app.shared.generated.resources.analytics_other_date_fa
+import pockety.app.shared.generated.resources.analytics_previous_month_action_fa
+import pockety.app.shared.generated.resources.analytics_september
+import pockety.app.shared.generated.resources.analytics_september_fa
+import pockety.app.shared.generated.resources.analytics_shahrivar
+import pockety.app.shared.generated.resources.analytics_shahrivar_fa
+import pockety.app.shared.generated.resources.analytics_tir
+import pockety.app.shared.generated.resources.analytics_tir_fa
+import pockety.app.shared.generated.resources.analytics_title_fa
+import pockety.app.shared.generated.resources.analytics_today
+import pockety.app.shared.generated.resources.analytics_today_fa
+import pockety.app.shared.generated.resources.analytics_yesterday
+import pockety.app.shared.generated.resources.analytics_yesterday_fa
+import pockety.app.shared.generated.resources.currency_symbol
 import pockety.app.shared.generated.resources.monthly_outflow_label
 import pockety.app.shared.generated.resources.next_month_action
 import pockety.app.shared.generated.resources.no_expenses_month
@@ -59,7 +128,7 @@ fun AnalyticsScreen(
       modifier = modifier.testTag("analytics-screen"),
       topBar = {
         PocketyTopAppBar(
-            title = stringResource(Res.string.tab_analytics),
+            title = analyticsStaticText(Res.string.tab_analytics, Res.string.analytics_title_fa),
         )
       },
   ) { paddingValues ->
@@ -111,7 +180,11 @@ private fun AnalyticsContent(
             contentAlignment = Alignment.Center,
         ) {
           Text(
-              text = stringResource(Res.string.no_expenses_month),
+              text =
+                  analyticsStaticText(
+                      Res.string.no_expenses_month,
+                      Res.string.analytics_no_expenses_month_fa,
+                  ),
               style = MaterialTheme.typography.bodyLarge,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
               modifier = Modifier.testTag("empty-expenses-message"),
@@ -122,8 +195,9 @@ private fun AnalyticsContent(
       state.dateGroups.forEach { group ->
         item(key = "group-header-${group.date}") {
           DateGroupHeader(
-              headerTitle = group.headerTitle,
-              formattedTotalAmount = group.formattedTotalAmount,
+              date = group.date,
+              relativeDate = group.relativeDate,
+              totalAmount = group.totalAmount,
           )
         }
         items(group.expenses, key = { it.id }) { expense ->
@@ -174,13 +248,17 @@ private fun MonthNavigationRow(
     ) {
       Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-          contentDescription = stringResource(Res.string.previous_month_action),
+          contentDescription =
+              analyticsStaticText(
+                  Res.string.previous_month_action,
+                  Res.string.analytics_previous_month_action_fa,
+              ),
           tint = MaterialTheme.colorScheme.onSurface,
       )
     }
 
     Text(
-        text = state.selectedMonthLabel,
+        text = analyticsMonthLabel(state),
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.onSurface,
@@ -194,7 +272,11 @@ private fun MonthNavigationRow(
     ) {
       Icon(
           imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-          contentDescription = stringResource(Res.string.next_month_action),
+          contentDescription =
+              analyticsStaticText(
+                  Res.string.next_month_action,
+                  Res.string.analytics_next_month_action_fa,
+              ),
           tint =
               if (state.canNavigateNext) {
                 MaterialTheme.colorScheme.onSurface
@@ -216,12 +298,16 @@ private fun MonthlyOutflowSummary(
       verticalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     Text(
-        text = stringResource(Res.string.monthly_outflow_label),
+        text =
+            analyticsStaticText(
+                Res.string.monthly_outflow_label,
+                Res.string.analytics_monthly_outflow_label_fa,
+            ),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
     Text(
-        text = state.formattedMonthlyOutflow,
+        text = "${formatAmount(state.monthlyOutflow)} ${analyticsCurrencySymbol()}",
         style = MaterialTheme.typography.headlineLarge,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.primary,
@@ -231,11 +317,137 @@ private fun MonthlyOutflowSummary(
 }
 
 @Composable
+private fun analyticsStaticText(
+    english: StringResource,
+    persian: StringResource,
+): String =
+    stringResource(if (LocalAppLanguage.current == AppLanguage.PERSIAN) persian else english)
+
+@Composable
+private fun analyticsCurrencySymbol(): String =
+    stringResource(
+        if (LocalAppLanguage.current == AppLanguage.PERSIAN) Res.string.analytics_currency_symbol_fa
+        else Res.string.currency_symbol
+    )
+
+@Composable
+private fun analyticsMonthLabel(state: AnalyticsState): String {
+  val month = analyticsMonthName(state.selectedMonth, state.calendarType)
+  val isPersian = LocalAppLanguage.current == AppLanguage.PERSIAN
+  return stringResource(
+      if (isPersian) Res.string.analytics_month_year_fa else Res.string.analytics_month_year,
+      month,
+      state.selectedYear,
+  )
+}
+
+@Composable
+private fun analyticsMonthName(month: Int, calendarType: CalendarType): String {
+  val isPersian = LocalAppLanguage.current == AppLanguage.PERSIAN
+  val names =
+      when (calendarType) {
+        CalendarType.PERSIAN -> if (isPersian) persianMonthsFa else persianMonths
+        CalendarType.GREGORIAN -> if (isPersian) gregorianMonthsFa else gregorianMonths
+      }
+  val key = names.getOrElse(month - 1) { names.first() }
+  return stringResource(key)
+}
+
+private val gregorianMonths =
+    listOf(
+        Res.string.analytics_january,
+        Res.string.analytics_february,
+        Res.string.analytics_march,
+        Res.string.analytics_april,
+        Res.string.analytics_may,
+        Res.string.analytics_june,
+        Res.string.analytics_july,
+        Res.string.analytics_august,
+        Res.string.analytics_september,
+        Res.string.analytics_october,
+        Res.string.analytics_november,
+        Res.string.analytics_december,
+    )
+private val gregorianMonthsFa =
+    listOf(
+        Res.string.analytics_january_fa,
+        Res.string.analytics_february_fa,
+        Res.string.analytics_march_fa,
+        Res.string.analytics_april_fa,
+        Res.string.analytics_may_fa,
+        Res.string.analytics_june_fa,
+        Res.string.analytics_july_fa,
+        Res.string.analytics_august_fa,
+        Res.string.analytics_september_fa,
+        Res.string.analytics_october_fa,
+        Res.string.analytics_november_fa,
+        Res.string.analytics_december_fa,
+    )
+private val persianMonths =
+    listOf(
+        Res.string.analytics_farvardin,
+        Res.string.analytics_ordibehesht,
+        Res.string.analytics_khordad,
+        Res.string.analytics_tir,
+        Res.string.analytics_mordad,
+        Res.string.analytics_shahrivar,
+        Res.string.analytics_mehr,
+        Res.string.analytics_aban,
+        Res.string.analytics_azar,
+        Res.string.analytics_dey,
+        Res.string.analytics_bahman,
+        Res.string.analytics_esfand,
+    )
+private val persianMonthsFa =
+    listOf(
+        Res.string.analytics_farvardin_fa,
+        Res.string.analytics_ordibehesht_fa,
+        Res.string.analytics_khordad_fa,
+        Res.string.analytics_tir_fa,
+        Res.string.analytics_mordad_fa,
+        Res.string.analytics_shahrivar_fa,
+        Res.string.analytics_mehr_fa,
+        Res.string.analytics_aban_fa,
+        Res.string.analytics_azar_fa,
+        Res.string.analytics_dey_fa,
+        Res.string.analytics_bahman_fa,
+        Res.string.analytics_esfand_fa,
+    )
+
+@Composable
 private fun DateGroupHeader(
-    headerTitle: String,
-    formattedTotalAmount: String,
+    date: CalendarDate,
+    relativeDate: AnalyticsRelativeDate,
+    totalAmount: Long,
     modifier: Modifier = Modifier,
 ) {
+  val isPersian = LocalAppLanguage.current == AppLanguage.PERSIAN
+  val month = analyticsMonthName(date.month, date.type)
+  val headerTitle =
+      when (relativeDate) {
+        AnalyticsRelativeDate.TODAY ->
+            stringResource(
+                if (isPersian) Res.string.analytics_today_fa else Res.string.analytics_today,
+                date.day,
+                month,
+            )
+        AnalyticsRelativeDate.YESTERDAY ->
+            stringResource(
+                if (isPersian) Res.string.analytics_yesterday_fa
+                else Res.string.analytics_yesterday,
+                date.day,
+                month,
+            )
+        AnalyticsRelativeDate.OTHER ->
+            stringResource(
+                if (isPersian) Res.string.analytics_other_date_fa
+                else Res.string.analytics_other_date,
+                date.day,
+                month,
+                date.year,
+            )
+      }
+  val formattedTotalAmount = "${formatAmount(totalAmount)} ${analyticsCurrencySymbol()}"
   Row(
       modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp),
       horizontalArrangement = Arrangement.SpaceBetween,
@@ -311,7 +523,7 @@ fun AnalyticsExpenseItem(
       Spacer(modifier = Modifier.width(16.dp))
 
       Text(
-          text = expense.formattedAmount,
+          text = "-${formatAmount(expense.amount)} ${analyticsCurrencySymbol()}",
           style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
           color = MaterialTheme.colorScheme.primary,
           modifier = Modifier.testTag("expense-amount"),

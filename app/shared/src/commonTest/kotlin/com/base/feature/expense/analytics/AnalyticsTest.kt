@@ -5,6 +5,7 @@ import com.base.db.ExpenseDao
 import com.base.db.FakeExpenseFactory
 import com.base.feature.analytics.AnalyticsComponent
 import com.base.feature.analytics.AnalyticsComponentFactory
+import com.base.feature.analytics.AnalyticsRelativeDate
 import com.base.testValue
 import com.base.util.FakeCallback1
 import com.base.util.MainDispatcherExtension
@@ -105,7 +106,7 @@ class AnalyticsTest : BehaviorSpec() {
           val group = state.dateGroups[0]
           group.totalAmount shouldBe 120_000
           group.expenses shouldHaveSize 2
-          group.headerTitle.startsWith("Today") shouldBe true
+          group.relativeDate shouldBe AnalyticsRelativeDate.TODAY
         }
       }
 

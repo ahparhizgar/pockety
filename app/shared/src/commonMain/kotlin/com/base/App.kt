@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -40,6 +41,8 @@ import com.base.usermessage.CustomSnackbar
 import com.base.usermessage.SnackbarHost
 import com.base.usermessage.SnackbarHostState
 
+val LocalAppLanguage = staticCompositionLocalOf { AppLanguage.ENGLISH }
+
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun RootScreen(
@@ -57,7 +60,10 @@ fun RootScreen(
         AppLanguage.ENGLISH -> LayoutDirection.Ltr
       }
 
-  CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+  CompositionLocalProvider(
+      LocalLayoutDirection provides layoutDirection,
+      LocalAppLanguage provides appLanguage,
+  ) {
     BaseTheme {
       if (content != null) {
         content()
