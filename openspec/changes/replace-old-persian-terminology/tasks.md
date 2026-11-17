@@ -8,8 +8,10 @@
 
 ## 2. Integration verification
 
-- [ ] 2.1 Run AGENTS.md compilation, JVM/server tests, coverage, Detekt, and final ktfmt gates; record outcomes and resolve change-related failures. Verify resource compilation includes the affected shared resources.
-- [ ] 2.2 Commit and push implementation on change/replace-old-persian-terminology, verify GitHub Actions CI for the final implementation commit, and hand back to Analyst with commit and CI links. Keep history linear and separate POC-37/POC-38 changes.
+- [x] 2.1 Run AGENTS.md compilation, JVM/server tests, coverage, Detekt, and final ktfmt gates; record outcomes and resolve change-related failures. Verify resource compilation includes the affected shared resources.
+- [x] 2.2 Commit and push implementation on change/replace-old-persian-terminology, verify GitHub Actions CI for the final implementation commit, and hand back to Analyst with commit and CI links. Keep history linear and separate POC-37/POC-38 changes.
+
+CI run 44124964056 passed on implementation commit `966792fa26ae8f81fc5a5c2c061fa6a42159e9a9`: compilation (including shared resources), JVM/server tests, coverage, Detekt, ktfmt check, and design web build all succeeded. Local validation was limited to the permitted `ktfmtFormat` plus XML/source audits; see tests.md for the UI smoke limitation.
 
 ## Workflow follow-up
 
