@@ -20,8 +20,8 @@ import com.base.feature.analytics.FakeAnalyticsStateFactory
 import com.base.feature.root.FakeRootComponent
 import com.base.feature.settings.AppLanguage
 import com.base.util.waitForExistence
-import io.kotest.matchers.shouldBe
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
 class AnalyticsLocalizationE2eUiTest {
@@ -93,7 +93,7 @@ class AnalyticsLocalizationE2eUiTest {
       pressKey(Key.Tab)
     }
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
-    openedExpenseId shouldBe 42L
+    assertEquals(42L, openedExpenseId)
   }
 
   @Test
