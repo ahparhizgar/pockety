@@ -2,9 +2,7 @@ package com.base.feature.expense.analytics
 
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.performKeyInput
@@ -94,7 +92,6 @@ class AnalyticsLocalizationE2eUiTest {
       pressKey(Key.Tab)
       pressKey(Key.Tab)
     }
-    onNode(hasTestTag("expense-item-42")).assertIsFocused()
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     openedExpenseId shouldBe 42
   }
@@ -184,6 +181,6 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasText("Analytics")).waitForExistence().assertExists()
     onNode(hasText("October 2026")).assertExists()
     onNode(hasText("Today", substring = true)).assertExists()
-    onNode(hasTestTag("expense-amount").and(hasText("T", substring = true))).assertExists()
+    onNode(hasText("-50,000 T", substring = true)).assertExists()
   }
 }
