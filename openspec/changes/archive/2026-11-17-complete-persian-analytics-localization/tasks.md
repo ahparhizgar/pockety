@@ -20,7 +20,7 @@
 
 ## Verification record
 
-- Exact-head GitHub Actions CI passed on `2a8149a59b37a629d2579b924b555054ae3fe6b7` (run [44197146452](https://github.com/ahparhizgar/pockety/actions/runs/44197146452)): compilation, JVM and platform tests, coverage, Detekt, Ktfmt, and Design Web build all succeeded.
+- Exact-head GitHub Actions CI passed on `30d2d8b732c75585ee39052af3971bf92d5f5a66` (run [44202503307](https://github.com/ahparhizgar/pockety/actions/runs/44202503307)): compilation, JVM and platform tests, coverage, Detekt, Ktfmt, and Design Web build all succeeded.
 - `ktfmtFormat` and strict OpenSpec validation passed locally. Local compilation and tests were not run per the Developer no-local-build constraint; CI ran these gates remotely.
 - Task 3.1 remains open: Android system per-app language resume behavior could not be checked because no Android device/emulator (`adb`) is available in this environment. Automated shared-flow coverage passed.
 - Currency preference audit confirmed no shared preference-aware amount formatter exists; existing Toman presentation was localized without inventing a Rials conversion.
@@ -28,3 +28,10 @@
 ## Workflow follow-up
 
 - Analyst archives with spec synchronization only after Developer implementation and successful CI; rebase linearly onto main, push without merge commits, clean up the worktree/remote change branch, and return to CTO for final sign-off.
+
+## Analyst archive review
+
+- Independently confirmed completed/success CI run 44202503307 on exact implementation head 30d2d8b; Compile, Tests, Coverage, Detekt, Ktfmt check, and Design Web succeeded.
+- Reviewed production Root/Main/Settings keyboard language-switch UI regression and retained-state assertions.
+- Archived with task 3.1 intentionally incomplete under the authorized archive/sync handoff; Android device validation remains a reported limitation, not a passed check.
+- Post-sync strict main-spec validation passed (12/12). Full strict validation also inspects the pre-existing unrelated move-expenses-to-analyze change and reports its omitted expense-list scenario; this change does not modify that artifact.
