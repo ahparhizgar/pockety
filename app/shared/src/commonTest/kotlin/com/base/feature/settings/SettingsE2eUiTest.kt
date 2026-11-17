@@ -1,10 +1,10 @@
 package com.base.feature.settings
 
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsFocused
@@ -12,8 +12,8 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
-import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.calendar.CalendarType
@@ -126,7 +126,6 @@ class SettingsE2eUiTest {
 
   private fun radioRoleMatcher(): SemanticsMatcher =
       SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton)
-
 
   @Test
   fun testSettingsScreenReminderToggle() = runComposeUiTest {
