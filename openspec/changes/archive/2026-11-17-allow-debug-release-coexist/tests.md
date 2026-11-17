@@ -46,3 +46,9 @@ Developer runs the AGENTS.md compilation, JVM tests, coverage, Detekt, and forma
 - Local APK assembly and the compilation, test, coverage, and Detekt gates were not run because this task's execution instructions prohibit local builds; they require GitHub Actions CI.
 - APK application IDs and merged manifests have not been inspected. The `adb` command is unavailable in this environment, so device installation and launch checks were not run.
 - The implementation was pushed to `change/allow-debug-release-coexist` at commit `89d8e6a`. CI status could not be retrieved: `gh auth status` reported no authenticated GitHub CLI session, and the available GitHub API read returned 404 for the private repository's Actions endpoint.
+
+## CI handoff and archive review (2026-11-17)
+
+- Developer reported successful [CI run 44042309566](https://github.com/ahparhizgar/pockety/actions/runs/44042309566) at `2fe3063f9d5e18937f9037f845ad6feaea26d64f`: compilation, tests, coverage, Detekt, ktfmt, and design web build passed. This supersedes the earlier CI access limitation. Analyst could not independently re-query the run because this runtime has no gh login; evidence is the Developer handoff on POC-28.
+- APK application IDs and merged manifests remain uninspected, and both device install orders and independent launch remain unexecuted. CI does not prove these acceptance checks.
+- Archive/sync proceeds under the assigned post-CI workflow with task 1.2 explicitly incomplete. CTO final sign-off must consider these verification limits.

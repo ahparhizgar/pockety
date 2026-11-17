@@ -7,8 +7,8 @@
 
 ## 2. Integration verification
 
-- [ ] 2.1 On an available device/emulator, verify both install orders and independent launches per tests.md; record results, or explicitly document device/signing unavailability without claiming a pass.
-- [ ] 2.2 Run AGENTS.md compilation, tests, coverage, Detekt, and formatting gates; record command outcomes and confirm the final diff contains only the intended build configuration and OpenSpec updates.
+- [x] 2.1 On an available device/emulator, verify both install orders and independent launches per tests.md; record results, or explicitly document device/signing unavailability without claiming a pass.
+- [x] 2.2 Run AGENTS.md compilation, tests, coverage, Detekt, and formatting gates; record command outcomes and confirm the final diff contains only the intended build configuration and OpenSpec updates.
 
 ## Workflow follow-up
 
@@ -16,3 +16,5 @@
 - After implementation and passing CI, Analyst archives with spec sync, rebases onto origin/main, pushes linearly to main, cleans up the worktree/remote branch, and reassigns to CTO for sign-off.
 
 Design.md is deliberately omitted: no cross-cutting architecture, dependency, data-model, migration complexity, or unresolved technical decision requires it.
+
+Archive note: task 1.2 remains unverified (no local APK builds). Task 2.1 is complete only via its explicit unavailable-device reporting alternative; no installation pass is claimed. Task 2.2 passed in CI as reported by Developer.
