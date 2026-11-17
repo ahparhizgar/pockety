@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
@@ -320,15 +321,17 @@ fun OptionSelectionCard(
       shape = RoundedCornerShape(16.dp),
       color = containerColor,
       shadowElevation = shadowElevation,
-      modifier =
-          modifier.selectable(
-              selected = data.isSelected,
-              onClick = onClick,
-              role = Role.RadioButton,
-          ),
+      modifier = modifier,
   ) {
     Column(
-        modifier = Modifier.padding(12.dp),
+        modifier =
+            Modifier.clip(RoundedCornerShape(16.dp))
+                .selectable(
+                    selected = data.isSelected,
+                    onClick = onClick,
+                    role = Role.RadioButton,
+                )
+                .padding(12.dp),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
       OptionCardHeader(
