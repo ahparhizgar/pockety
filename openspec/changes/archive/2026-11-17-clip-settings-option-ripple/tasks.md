@@ -18,3 +18,9 @@
 
 - Developer returns POC-38 to Analyst after implementation and passing CI; keep POC-37 changes separate.
 - Analyst archives with spec sync, rebases linearly onto origin/main, pushes without merge commits, verifies CI, cleans the worktree/remote branch, and returns the issue to CTO for final sign-off.
+
+## Archive disposition
+
+CTO approved archive/spec sync and linear integration with task 1.3 explicitly incomplete via interaction `f3660252-8cb5-4834-9bea-c6877427ead6`. Selected/unselected currency/calendar corner-press visual evidence remains unavailable under the no-local-build restriction. This is a verification limitation, not a passed check; all acceptance requirements remain intact.
+
+Exact implementation head `ec6bf5e1f2eaccc30b227fcc1ee3194ad75e0c91` passed compilation, tests (including keyboard activation/selection), coverage, Detekt, Ktfmt and design build: https://github.com/ahparhizgar/pockety/actions/runs/44161145060 . The integration rebase completed without conflicts. Resulting main-head CI must pass before final CTO handoff.
