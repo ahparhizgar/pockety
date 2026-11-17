@@ -2,9 +2,12 @@ package com.base.feature.settings
 
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsNotSelected
-import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.performClick
@@ -68,39 +71,62 @@ class SettingsE2eUiTest {
   }
 
   @Test
-  fun testSettingsOptionCardsKeepRadioSemanticsAndKeyboardActivation() = runComposeUiTest {
+  fun testCurrencyOptionsKeepRadioSemanticsAndKeyboardActivation() = runComposeUiTest {
     val component = FakeSettingsComponent()
 
     setContent { SettingsScreen(component = component) }
 
-    val tomans = onNode(hasTestTag("currency-option-tomans")).waitForExistence()
-    val rials = onNode(hasTestTag("currency-option-rials")).waitForExistence()
-    tomans.assertIsSelected()
-    rials.assertIsNotSelected()
-    rials.performSemanticsAction(SemanticsActions.RequestFocus)
+    onNode(hasTestTag("currency-option-tomans")).waitForExistence()
+    onNode(hasTestTag("currency-option-rials")).waitForExistence()
+    val radioOptions = onAllNodes(radioRoleMatcher(), useUnmergedTree = true)
+    radioOptions.assertCountEquals(4)
+    onAllNodes(radioSelectionMatcher(selected = true)).assertCountEquals(2)
+    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(2)
+    radioOptions[1].performSemanticsAction(SemanticsActions.RequestFocus)
+    radioOptions[1].assertIsFocused()
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     component.state.value.selectedCurrency shouldBe CurrencyType.RIALS
-    tomans.assertIsNotSelected()
-    rials.assertIsSelected()
+    onAllNodes(radioSelectionMatcher(selected = true)).assertCountEquals(2)
+    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(2)
 
-    tomans.performSemanticsAction(SemanticsActions.RequestFocus)
+    radioOptions[0].performSemanticsAction(SemanticsActions.RequestFocus)
+    radioOptions[0].assertIsFocused()
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     component.state.value.selectedCurrency shouldBe CurrencyType.TOMANS
+  }
 
-    val gregorian = onNode(hasTestTag("calendar-option-gregorian")).waitForExistence()
-    val persian = onNode(hasTestTag("calendar-option-persian")).waitForExistence()
-    gregorian.assertIsSelected()
-    persian.assertIsNotSelected()
-    persian.performSemanticsAction(SemanticsActions.RequestFocus)
+  @Test
+  fun testCalendarOptionsKeepRadioSemanticsAndKeyboardActivation() = runComposeUiTest {
+    val component = FakeSettingsComponent()
+
+    setContent { SettingsScreen(component = component) }
+
+    onNode(hasTestTag("calendar-option-gregorian")).waitForExistence().performScrollTo()
+    onNode(hasTestTag("calendar-option-persian")).waitForExistence().performScrollTo()
+    val radioOptions = onAllNodes(radioRoleMatcher(), useUnmergedTree = true)
+    radioOptions.assertCountEquals(4)
+    onAllNodes(radioSelectionMatcher(selected = true)).assertCountEquals(2)
+    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(2)
+    radioOptions[3].performSemanticsAction(SemanticsActions.RequestFocus)
+    radioOptions[3].assertIsFocused()
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     component.state.value.selectedCalendarType shouldBe CalendarType.PERSIAN
-    gregorian.assertIsNotSelected()
-    persian.assertIsSelected()
+    onAllNodes(radioSelectionMatcher(selected = true)).assertCountEquals(2)
+    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(2)
 
-    gregorian.performSemanticsAction(SemanticsActions.RequestFocus)
+    radioOptions[2].performSemanticsAction(SemanticsActions.RequestFocus)
+    radioOptions[2].assertIsFocused()
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     component.state.value.selectedCalendarType shouldBe CalendarType.GREGORIAN
   }
+
+  private fun radioSelectionMatcher(selected: Boolean): SemanticsMatcher =
+      SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton)
+          .and(SemanticsMatcher.expectValue(SemanticsProperties.Selected, selected))
+
+  private fun radioRoleMatcher(): SemanticsMatcher =
+      SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton)
+
 
   @Test
   fun testSettingsScreenReminderToggle() = runComposeUiTest {
