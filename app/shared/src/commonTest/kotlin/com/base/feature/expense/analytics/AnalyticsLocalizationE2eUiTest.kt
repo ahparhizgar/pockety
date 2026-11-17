@@ -170,7 +170,11 @@ class AnalyticsLocalizationE2eUiTest {
         AnalyticsScreen(
             component =
                 FakeAnalyticsComponent(
-                    initialState = FakeAnalyticsStateFactory.create(dateGroups = listOf(group))
+                    initialState =
+                        FakeAnalyticsStateFactory.create(
+                            selectedMonth = 10,
+                            dateGroups = listOf(group),
+                        )
                 )
         )
       }

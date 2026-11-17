@@ -1,5 +1,6 @@
 package com.base.feature.analytics
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -480,7 +481,7 @@ fun AnalyticsExpenseItem(
       onClick = onClick,
       shape = RoundedCornerShape(16.dp),
       color = MaterialTheme.colorScheme.surfaceContainerLow,
-      modifier = modifier.fillMaxWidth().testTag("expense-item-${expense.id}"),
+      modifier = modifier.fillMaxWidth().focusable().testTag("expense-item-${expense.id}"),
   ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(16.dp),
