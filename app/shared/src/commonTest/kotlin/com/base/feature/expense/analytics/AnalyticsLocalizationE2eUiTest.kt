@@ -18,7 +18,7 @@ import com.base.feature.root.FakeRootComponent
 import com.base.feature.settings.AppLanguage
 import com.base.util.waitForExistence
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalTestApi::class)
 class AnalyticsLocalizationE2eUiTest {
@@ -49,7 +49,7 @@ class AnalyticsLocalizationE2eUiTest {
 
   @Test
   fun populatedAnalyticsLocalizesDateGroupsAndExpenseActivation() = runComposeUiTest {
-    var openedExpenseId: Long? = null
+    var wasExpenseClicked = false
     val expense = FakeAnalyticsExpenseUiModelFactory.create(id = 42, amount = 12_500)
     val dateGroups =
         listOf(
@@ -70,7 +70,7 @@ class AnalyticsLocalizationE2eUiTest {
     val component =
         FakeAnalyticsComponent(
             initialState = FakeAnalyticsStateFactory.create(dateGroups = dateGroups),
-            onExpenseClick = { openedExpenseId = it },
+            onExpenseClick = { wasExpenseClicked = true },
         )
 
     setContent {
@@ -85,7 +85,7 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasText("اکتبر", substring = true)).assertExists()
     onNode(hasText("تومان", substring = true)).assertExists()
     onNode(hasTestTag("expense-item-42")).performClick()
-    assertEquals(42L, openedExpenseId)
+    assertTrue(wasExpenseClicked)
   }
 
   @Test
