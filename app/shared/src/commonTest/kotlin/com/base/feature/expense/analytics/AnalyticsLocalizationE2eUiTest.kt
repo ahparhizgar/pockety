@@ -6,6 +6,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.pressKey
@@ -92,7 +93,7 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasTestTag("expense-item-42")).performSemanticsAction(SemanticsActions.RequestFocus) {
       it()
     }
-    onNode(hasTestTag("expense-item-42")).performKeyInput { pressKey(Key.Enter) }
+    onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     openedExpenseId shouldBe 42
   }
 
@@ -177,6 +178,6 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasText("Analytics")).waitForExistence().assertExists()
     onNode(hasText("October 2026")).assertExists()
     onNode(hasText("Today", substring = true)).assertExists()
-    onNode(hasTestTag("expense-amount").and(hasText("T", substring = true))).assertExists()
+    onNode(hasTestTag("expense-amount")).assertTextContains("T")
   }
 }
