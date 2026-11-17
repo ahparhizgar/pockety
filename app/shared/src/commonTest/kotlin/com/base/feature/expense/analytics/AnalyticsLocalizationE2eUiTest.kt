@@ -93,7 +93,7 @@ class AnalyticsLocalizationE2eUiTest {
       pressKey(Key.Tab)
     }
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
-    openedExpenseId shouldBe 42
+    openedExpenseId shouldBe 42L
   }
 
   @Test
