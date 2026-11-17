@@ -3,6 +3,7 @@ package com.base.feature.expense.analytics
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -178,6 +179,6 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasText("Analytics")).waitForExistence().assertExists()
     onNode(hasText("October 2026")).assertExists()
     onNode(hasText("Today", substring = true)).assertExists()
-    onNode(hasTestTag("expense-amount")).assertTextContains("T")
+    onNode(hasTestTag("expense-amount")).assertTextEquals("-50,000 T")
   }
 }
