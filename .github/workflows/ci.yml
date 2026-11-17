@@ -29,6 +29,16 @@ jobs:
       - name: Tests
         run: ./gradlew jvmTest test --continue --console=plain
 
+      - name: Upload JVM test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jvm-test-reports
+          path: |
+            app/shared/build/test-results/jvmTest/**/*.xml
+            app/shared/build/reports/tests/jvmTest/**
+          if-no-files-found: warn
+
       - name: Coverage
         run: ./gradlew koverVerify --console=plain
 

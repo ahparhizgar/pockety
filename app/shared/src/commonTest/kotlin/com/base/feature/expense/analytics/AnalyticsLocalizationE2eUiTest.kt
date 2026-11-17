@@ -1,9 +1,15 @@
 package com.base.feature.expense.analytics
 
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.isRoot
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.RootScreen
 import com.base.calendar.CalendarDate
@@ -84,7 +90,10 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasText("دیروز", substring = true)).assertExists()
     onNode(hasText("اکتبر", substring = true)).assertExists()
     onNode(hasText("تومان", substring = true)).assertExists()
-    onNode(hasTestTag("expense-item-42")).performClick()
+    onNode(hasTestTag("expense-item-42")).performSemanticsAction(SemanticsActions.RequestFocus) {
+      it()
+    }
+    onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     assertTrue(wasExpenseClicked)
   }
 
