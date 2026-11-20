@@ -40,6 +40,7 @@ import com.base.ui.money.MoneyTextField
 import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.dismiss_action
 import pockety.app.shared.generated.resources.quick_top_up_confirm_button
 import pockety.app.shared.generated.resources.quick_top_up_custom_amount_label
 import pockety.app.shared.generated.resources.quick_top_up_subtitle
@@ -138,7 +139,7 @@ private fun QuickTopUpHeader(onClose: () -> Unit) {
     ) {
       Icon(
           imageVector = Icons.Default.Close,
-          contentDescription = "Close",
+          contentDescription = stringResource(Res.string.dismiss_action),
       )
     }
   }

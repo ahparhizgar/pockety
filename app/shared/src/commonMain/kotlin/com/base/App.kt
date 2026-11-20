@@ -36,6 +36,7 @@ import com.base.feature.root.RootFlowDestination
 import com.base.feature.settings.AppLanguage
 import com.base.feature.sms.inbox.InboxScreen
 import com.base.feature.splash.SplashScreen
+import com.base.ui.AppLocale
 import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
 import com.base.ui.money.LocalCurrency
@@ -68,32 +69,34 @@ fun RootScreen(
       LocalAppLanguage provides appLanguage,
       LocalCurrency provides currency,
   ) {
-    BaseTheme {
-      if (content != null) {
-        content()
-      } else {
-        val hostState = remember { SnackbarHostState() }
+    AppLocale(appLanguage) {
+      BaseTheme {
+        if (content != null) {
+          content()
+        } else {
+          val hostState = remember { SnackbarHostState() }
 
-        LaunchedEffect(Unit) {
-          while (true) {
-            root.messageHolder.showAll { hostState.showSnackbar(it) }
+          LaunchedEffect(Unit) {
+            while (true) {
+              root.messageHolder.showAll { hostState.showSnackbar(it) }
+            }
           }
-        }
 
-        Children(
-            // The background is to prevent a flicker when animating children
-            modifier = modifier.background(MaterialTheme.colorScheme.background),
-            stack = root.childStack,
-            animation =
-                predictiveBackAnimation(
-                    backHandler = root.backHandler,
-                    onBack = root::onBack,
-                    fallbackAnimation = stackAnimation(fade() + scale()),
-                ),
-        ) {
-          RootChildContent(child = it.instance)
+          Children(
+              // The background is to prevent a flicker when animating children
+              modifier = modifier.background(MaterialTheme.colorScheme.background),
+              stack = root.childStack,
+              animation =
+                  predictiveBackAnimation(
+                      backHandler = root.backHandler,
+                      onBack = root::onBack,
+                      fallbackAnimation = stackAnimation(fade() + scale()),
+                  ),
+          ) {
+            RootChildContent(child = it.instance)
+          }
+          SnackbarHost(hostState = hostState) { CustomSnackbar(snackbarData = it) }
         }
-        SnackbarHost(hostState = hostState) { CustomSnackbar(snackbarData = it) }
       }
     }
   }

@@ -56,10 +56,14 @@ import com.base.ui.colorSchemeExtended
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.active_badge
 import pockety.app.shared.generated.resources.back_action
+import pockety.app.shared.generated.resources.categories_title
 import pockety.app.shared.generated.resources.category_search_placeholder
+import pockety.app.shared.generated.resources.clear_search_action
 import pockety.app.shared.generated.resources.create_new_category_action
 import pockety.app.shared.generated.resources.no_categories_found
+import pockety.app.shared.generated.resources.search_action
 import pockety.app.shared.generated.resources.select_category_title
 import pockety.app.shared.generated.resources.uncategorized_desc
 import pockety.app.shared.generated.resources.uncategorized_title
@@ -165,7 +169,9 @@ private fun CategoryOptionsList(
       }
 
       if (displayList.isNotEmpty()) {
-        item(key = "divider_all") { CategorySectionDivider(title = "CATEGORIES") }
+        item(key = "divider_all") {
+          CategorySectionDivider(title = stringResource(Res.string.categories_title))
+        }
       }
     }
 
@@ -212,7 +218,7 @@ private fun CategorySearchField(
       leadingIcon = {
         Icon(
             imageVector = Icons.Default.Search,
-            contentDescription = "Search",
+            contentDescription = stringResource(Res.string.search_action),
             tint = MaterialTheme.colorScheme.outline,
             modifier = Modifier.size(22.dp),
         )
@@ -222,7 +228,7 @@ private fun CategorySearchField(
           IconButton(onClick = { onQueryChange("") }) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Clear search",
+                contentDescription = stringResource(Res.string.clear_search_action),
                 tint = MaterialTheme.colorScheme.outline,
                 modifier = Modifier.size(20.dp),
             )
@@ -342,7 +348,7 @@ private fun CategoryOptionLabels(
             color = MaterialTheme.colorSchemeExtended.primaryFixed,
         ) {
           Text(
-              text = "Active",
+              text = stringResource(Res.string.active_badge),
               style = MaterialTheme.typography.labelSmall,
               fontWeight = FontWeight.SemiBold,
               color = MaterialTheme.colorSchemeExtended.onPrimaryFixedVariant,

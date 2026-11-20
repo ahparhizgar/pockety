@@ -62,6 +62,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.StringResource
 import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.category_color_amber
+import pockety.app.shared.generated.resources.category_color_coral
+import pockety.app.shared.generated.resources.category_color_emerald
+import pockety.app.shared.generated.resources.category_color_forest
+import pockety.app.shared.generated.resources.category_color_sage
+import pockety.app.shared.generated.resources.category_color_slate
+import pockety.app.shared.generated.resources.category_color_teal
 import pockety.app.shared.generated.resources.category_filter_all
 import pockety.app.shared.generated.resources.category_filter_finance
 import pockety.app.shared.generated.resources.category_filter_food
@@ -127,7 +134,7 @@ import pockety.app.shared.generated.resources.category_icon_wifi
 import pockety.app.shared.generated.resources.category_icon_work
 
 data class CategoryColorOption(
-    val name: String,
+    val name: StringResource,
     val color: Color,
     val colorHex: Long,
     val onColor: Color = Color.White,
@@ -148,13 +155,48 @@ data class CategoryIconOption(
 
 val defaultCategoryColors =
     listOf(
-        CategoryColorOption("Coral Red", Color(0xFFE57373), 0xFFE57373, Color.White),
-        CategoryColorOption("Forest Green", Color(0xFF316342), 0xFF316342, Color.White),
-        CategoryColorOption("Emerald", Color(0xFF4A7C59), 0xFF4A7C59, Color.White),
-        CategoryColorOption("Sage", Color(0xFF9DD3AA), 0xFF9DD3AA, Color(0xFF00210E)),
-        CategoryColorOption("Warm Amber", Color(0xFFB87D4B), 0xFFB87D4B, Color.White),
-        CategoryColorOption("Deep Teal", Color(0xFF324C41), 0xFF324C41, Color.White),
-        CategoryColorOption("Slate Muted", Color(0xFF4A6458), 0xFF4A6458, Color.White),
+        CategoryColorOption(
+            Res.string.category_color_coral,
+            Color(0xFFE57373),
+            0xFFE57373,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_forest,
+            Color(0xFF316342),
+            0xFF316342,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_emerald,
+            Color(0xFF4A7C59),
+            0xFF4A7C59,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_sage,
+            Color(0xFF9DD3AA),
+            0xFF9DD3AA,
+            Color(0xFF00210E),
+        ),
+        CategoryColorOption(
+            Res.string.category_color_amber,
+            Color(0xFFB87D4B),
+            0xFFB87D4B,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_teal,
+            Color(0xFF324C41),
+            0xFF324C41,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_slate,
+            Color(0xFF4A6458),
+            0xFF4A6458,
+            Color.White,
+        ),
     )
 
 enum class CategoryIconFilter(val label: StringResource) {

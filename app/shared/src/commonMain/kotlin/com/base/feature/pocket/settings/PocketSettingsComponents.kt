@@ -50,6 +50,7 @@ import com.base.ui.components.AccentColorPicker
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.category_icon_label
+import pockety.app.shared.generated.resources.pocket_icon_description
 import pockety.app.shared.generated.resources.pocket_name_label
 
 private const val ICONS_PER_ROW = 5
@@ -87,7 +88,7 @@ private fun PocketAvatar(
     Box(contentAlignment = Alignment.Center) {
       Icon(
           imageVector = icon,
-          contentDescription = "Pocket icon",
+          contentDescription = stringResource(Res.string.pocket_icon_description),
           modifier = Modifier.size(44.dp),
           tint = Color.White,
       )

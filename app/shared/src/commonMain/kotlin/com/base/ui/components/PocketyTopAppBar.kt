@@ -23,6 +23,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.base.ui.ComponentPreviews
+import org.jetbrains.compose.resources.stringResource
+import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.back_action
+import pockety.app.shared.generated.resources.settings_title
 
 @Suppress("LongParameterList")
 @Composable
@@ -76,7 +80,7 @@ fun PocketyTopAppBar(
         ) {
           Icon(
               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = "Go back",
+              contentDescription = stringResource(Res.string.back_action),
               tint = MaterialTheme.colorScheme.onSurface,
           )
         }
@@ -104,7 +108,7 @@ fun PocketyProfileButton(
       Box(contentAlignment = Alignment.Center) {
         Icon(
             imageVector = Icons.Default.Person,
-            contentDescription = "Profile & Settings",
+            contentDescription = stringResource(Res.string.settings_title),
             modifier = Modifier.size(18.dp),
         )
       }

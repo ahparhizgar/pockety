@@ -5,6 +5,7 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
@@ -60,9 +61,9 @@ class AnalyticsLocalizationE2eUiTest {
     }
 
     onNode(hasText("تحلیل")).waitForExistence().assertExists()
-    onNode(hasText("برون‌رفت ماهانه")).assertExists()
+    onNode(hasText("خرج این ماه")).assertExists()
     onNode(hasText("0 تومان", substring = true)).assertExists()
-    onNode(hasText("در این ماه خرجی ثبت نشده است")).assertExists()
+    onNode(hasText("این ماه هنوز خرجی ثبت نکردی")).assertExists()
     onNode(hasContentDescription("ماه قبل")).assertExists()
     onNode(hasContentDescription("ماه بعد")).assertExists()
   }
@@ -225,14 +226,16 @@ class AnalyticsLocalizationE2eUiTest {
         focusAndEnter(onNode(hasTestTag("tab-settings")))
         selectLanguageFromKeyboard(AppLanguage.PERSIAN)
         waitUntil(timeoutMillis = 5000) { root.appLanguage.value == AppLanguage.PERSIAN }
+        onNode(hasText("زبان برنامه")).waitForExistence().assertExists()
         assertEquals(
             AppLanguage.PERSIAN,
             root.assertMainComponent().assertSettingsComponent().state.value.selectedLanguage,
         )
 
         focusAndEnter(onNode(hasTestTag("tab-analytics")))
-        onNode(hasText("تحلیل")).waitForExistence().assertExists()
-        onNode(hasText("برون‌رفت ماهانه")).assertExists()
+        onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
+        onAllNodes(hasText("تحلیل")).assertCountEquals(2)
+        onNode(hasText("خرج این ماه")).assertExists()
         onNode(hasText("امروز", substring = true)).assertExists()
         onNode(hasTestTag("monthly-outflow")).assertTextContains("تومان", substring = true)
         onNode(hasText("Personal expense")).assertExists()
@@ -240,6 +243,7 @@ class AnalyticsLocalizationE2eUiTest {
         focusAndEnter(onNode(hasTestTag("tab-settings")))
         selectLanguageFromKeyboard(AppLanguage.ENGLISH)
         waitUntil(timeoutMillis = 5000) { root.appLanguage.value == AppLanguage.ENGLISH }
+        onNode(hasText("App language")).waitForExistence().assertExists()
         focusAndEnter(onNode(hasTestTag("tab-analytics")))
         onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
         onNode(hasText("Monthly Outflow")).assertExists()

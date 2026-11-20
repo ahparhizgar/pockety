@@ -48,8 +48,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.category_live_preview
 import pockety.app.shared.generated.resources.category_name_label
 import pockety.app.shared.generated.resources.category_name_placeholder
+import pockety.app.shared.generated.resources.category_preview_placeholder
 import pockety.app.shared.generated.resources.save_category_action
 
 @Composable
@@ -89,7 +91,7 @@ internal fun CategoryLivePreviewCard(
       Spacer(modifier = Modifier.height(14.dp))
 
       Text(
-          text = "LIVE PREVIEW",
+          text = stringResource(Res.string.category_live_preview),
           style = MaterialTheme.typography.labelMedium,
           color = MaterialTheme.colorScheme.onSurfaceVariant,
           letterSpacing = 1.2.sp,
@@ -98,7 +100,7 @@ internal fun CategoryLivePreviewCard(
       Spacer(modifier = Modifier.height(4.dp))
 
       Text(
-          text = categoryName.ifBlank { "Dining Out" },
+          text = categoryName.ifBlank { stringResource(Res.string.category_preview_placeholder) },
           style = MaterialTheme.typography.headlineSmall,
           color = MaterialTheme.colorScheme.onSurface,
           maxLines = 1,

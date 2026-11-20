@@ -45,6 +45,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.jetbrains.compose.resources.stringResource
+import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.dismiss_action
 
 private const val SHAKE_REPEAT_COUNT = 3
 private const val SHAKE_OFFSET = 10f
@@ -174,7 +177,7 @@ fun CustomSnackbar(
         IconButton(onClick = { snackbarData.dismiss() }) {
           Icon(
               imageVector = Icons.Default.Close,
-              contentDescription = "Dismiss",
+              contentDescription = stringResource(Res.string.dismiss_action),
               tint = colors.dismissActionContentColor,
           )
         }

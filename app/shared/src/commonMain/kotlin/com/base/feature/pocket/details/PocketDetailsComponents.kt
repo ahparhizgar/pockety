@@ -40,6 +40,7 @@ import com.base.ui.money.moneyAmount
 import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.dismiss_action
 import pockety.app.shared.generated.resources.pocket_details_balance_label
 import pockety.app.shared.generated.resources.pocket_details_configure_button
 import pockety.app.shared.generated.resources.pocket_details_top_up_button
@@ -212,7 +213,7 @@ fun PocketFeedbackBanner(
       ) {
         Icon(
             imageVector = Icons.Default.Close,
-            contentDescription = "Dismiss",
+            contentDescription = stringResource(Res.string.dismiss_action),
             modifier = Modifier.size(16.dp),
         )
       }

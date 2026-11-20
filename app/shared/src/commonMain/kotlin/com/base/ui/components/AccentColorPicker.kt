@@ -23,6 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.base.feature.category.add.CategoryColorOption
 import com.base.feature.category.add.CategoryColorsWrapper
@@ -46,7 +49,7 @@ fun AccentColorPicker(
   ) {
     AccentColorHeader(
         title = title,
-        selectedColorName = selectedColor.name,
+        selectedColorName = stringResource(selectedColor.name),
     )
 
     Surface(
@@ -102,6 +105,11 @@ private fun ColorCircleItem(
     onSelect: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+  val colorName = stringResource(option.name)
+  val accessibilityModifier = Modifier.semantics {
+    contentDescription = colorName
+    selected = isSelected
+  }
   Box(
       modifier = modifier.size(44.dp),
       contentAlignment = Alignment.Center,
@@ -114,7 +122,10 @@ private fun ColorCircleItem(
           border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
       ) {}
       Surface(
-          modifier = Modifier.size(36.dp).testTag("color-swatch-${option.colorHex}"),
+          modifier =
+              Modifier.size(36.dp)
+                  .testTag("color-swatch-${option.colorHex}")
+                  .then(accessibilityModifier),
           shape = CircleShape,
           color = option.color,
           shadowElevation = 2.dp,
@@ -123,7 +134,7 @@ private fun ColorCircleItem(
         Box(contentAlignment = Alignment.Center) {
           Icon(
               imageVector = Icons.Default.Check,
-              contentDescription = "Selected ${option.name}",
+              contentDescription = null,
               tint = option.onColor,
               modifier = Modifier.size(18.dp),
           )
@@ -131,7 +142,10 @@ private fun ColorCircleItem(
       }
     } else {
       Surface(
-          modifier = Modifier.size(38.dp).testTag("color-swatch-${option.colorHex}"),
+          modifier =
+              Modifier.size(38.dp)
+                  .testTag("color-swatch-${option.colorHex}")
+                  .then(accessibilityModifier),
           shape = CircleShape,
           color = option.color,
           shadowElevation = 1.dp,

@@ -318,4 +318,17 @@
     <string name="category_filter_wellness">Wellness</string>
     <string name="category_filter_finance">Finance</string>
     <string name="category_filter_leisure">Leisure</string>
+    <string name="category_live_preview">Preview</string>
+    <string name="category_preview_placeholder">Category name</string>
+    <string name="search_action">Search</string>
+    <string name="clear_search_action">Clear search</string>
+    <string name="dismiss_action">Dismiss</string>
+    <string name="pocket_icon_description">Pocket icon</string>
+    <string name="category_color_coral">Coral Red</string>
+    <string name="category_color_forest">Forest Green</string>
+    <string name="category_color_emerald">Emerald</string>
+    <string name="category_color_sage">Sage</string>
+    <string name="category_color_amber">Warm Amber</string>
+    <string name="category_color_teal">Deep Teal</string>
+    <string name="category_color_slate">Slate Muted</string>
 </resources>

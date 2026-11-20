@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">جیبک</string>
     <string name="notification_channel_name">تراکنش‌های بانکی</string>
-    <string name="notification_channel_description">اطلاع‌رسانی پیامک‌های بانکی جهت ثبت هزینه</string>
-    <string name="notification_expense_title">هزینه جدید شناسایی شد</string>
-    <string name="notification_expense_body">مبلغ %1$,d ریال از %2$s. برای ثبت هزینه ضربه بزنید.</string>
+    <string name="notification_channel_description">خبرت می‌کنیم تا خرج‌های پیامک بانکی رو ثبت کنی</string>
+    <string name="notification_expense_title">یه خرج جدید پیدا شد</string>
+    <string name="notification_expense_body">مبلغ %1$,d ریال از %2$s. برای ثبت خرج بزن روش.</string>
     <string name="notification_action_deny">رد کردن</string>
-    <string name="new_expense">ثبت هزینه</string>
+    <string name="new_expense">ثبت خرج</string>
     <string name="new_expense_widget_description">هزینه‌ات رو توی جیبک ثبت کن</string>
 </resources>
