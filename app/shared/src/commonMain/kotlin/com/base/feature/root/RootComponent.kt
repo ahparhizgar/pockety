@@ -4,6 +4,7 @@ import com.arkivanov.decompose.Child
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.navigate
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.popWhile
 import com.arkivanov.decompose.router.stack.pushNew
@@ -101,6 +102,7 @@ class DefaultRootComponent(
     scope.launch {
       navigationActionBus.events.collect { action ->
         when (action) {
+          NavigationAction.OpenNewExpense -> openNewExpense()
           is NavigationAction.OpenAddExpense -> {
             rootNavigation.pushNew(
                 RootFlowDestination.AddExpenseFlow(
@@ -122,6 +124,19 @@ class DefaultRootComponent(
           handleBackButton = true,
           childFactory = ::createChild,
       )
+
+  private fun openNewExpense() {
+    rootNavigation.navigate { stack ->
+      stack.filterNot { it is RootFlowDestination.AddExpenseFlow } +
+          RootFlowDestination.AddExpenseFlow()
+    }
+    val flow =
+        (childStack.value.active.instance as? RootFlowDestination.AddExpenseFlow.Instance)
+            ?.component
+    if (flow != null) {
+      while (flow.stack.value.backStack.isNotEmpty()) flow.onBack()
+    }
+  }
 
   @Suppress("LongMethod")
   private fun createChild(

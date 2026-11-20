@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 sealed interface NavigationAction {
+  data object OpenNewExpense : NavigationAction
+
   data class OpenAddExpense(
       val candidateExpenseId: Long,
       val initialAmount: String,

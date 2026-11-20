@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
     val factory: RootComponentFactory by inject()
     val root = retainedComponent { factory.create(defaultCContext(it, permissionController)) }
 
-    handleIntent(intent)
+    if (savedInstanceState == null) handleIntent(intent)
     syncSystemLocale()
 
     setContent { RootScreen(root) }
@@ -69,6 +69,7 @@ class MainActivity : ComponentActivity() {
 
   private fun handleIntent(intent: Intent?) {
     when (intent?.action) {
+      ACTION_NEW_EXPENSE -> navigationActionBus.emit(NavigationAction.OpenNewExpense)
       ACTION_OPEN_ADD_EXPENSE -> {
         val candidateId = intent.getLongExtra(EXTRA_NAV_CANDIDATE_ID, -1L)
         val amount = intent.getStringExtra(EXTRA_NAV_AMOUNT)
@@ -82,6 +83,7 @@ class MainActivity : ComponentActivity() {
         }
       }
     }
+    intent?.action = null
   }
 
   override fun onResume() {
@@ -117,6 +119,7 @@ class MainActivity : ComponentActivity() {
   }
 
   companion object {
+    const val ACTION_NEW_EXPENSE = "com.base.action.NEW_EXPENSE"
     const val ACTION_OPEN_ADD_EXPENSE = "com.base.action.OPEN_ADD_EXPENSE"
     const val EXTRA_NAV_CANDIDATE_ID = "extra_nav_candidate_id"
     const val EXTRA_NAV_AMOUNT = "extra_nav_amount"

@@ -5,4 +5,6 @@
     <string name="notification_expense_title">هزینه جدید شناسایی شد</string>
     <string name="notification_expense_body">مبلغ %1$,d ریال از %2$s. برای ثبت هزینه ضربه بزنید.</string>
     <string name="notification_action_deny">رد کردن</string>
+    <string name="new_expense">ثبت هزینه</string>
+    <string name="new_expense_widget_description">هزینه‌ات رو توی جیبک ثبت کن</string>
 </resources>

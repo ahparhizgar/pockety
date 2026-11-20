@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="new_expense"
+        android:icon="@drawable/ic_shortcut_new_expense"
+        android:shortcutShortLabel="@string/new_expense"
+        android:shortcutLongLabel="@string/new_expense_widget_description">
+        <intent
+            android:action="com.base.action.NEW_EXPENSE"
+            android:targetPackage="ir.ahparhizgar.pockety.debug"
+            android:targetClass="com.base.shortcut.NewExpenseShortcutActivity" />
+    </shortcut>
+</shortcuts>

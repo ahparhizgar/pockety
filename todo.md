@@ -1,5 +1,5 @@
 - [x] Request notification permission on the first Pending SMS card entry, without blocking review on denial.
-- create widgets and quick actions for "new expense" feature
+- [x] Add an Android home-screen widget and launcher shortcut that open New Expense (cold/warm starts, no duplicate forms).
 - Make Persian translations friendly and make sure all texts have translation
 - Make category icons more in quantity
 - [x] Create a reusable Money text field for expense, top-up, and allocation inputs.
