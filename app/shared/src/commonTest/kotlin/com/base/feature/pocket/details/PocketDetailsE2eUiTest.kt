@@ -55,13 +55,13 @@ class PocketDetailsE2eUiTest {
     // Pocket Details Screen is displayed
     onNode(hasTestTag("pocket-details-screen")).waitForExistence().assertExists()
     onNode(hasText("Daily Cafe & Coffee")).assertExists()
-    onNode(hasText("800,000")).assertExists()
+    onNode(hasText("80,000")).assertExists()
 
     // Combined activity feed contains expense and top-up
     onNode(hasText("Sam Cafe")).assertExists()
-    onNode(hasText("-50,000 T")).assertExists()
+    onNode(hasText("-5,000 T")).assertExists()
     onNode(hasText("Initial Balance")).assertExists()
-    onNode(hasText("+850,000 T")).assertExists()
+    onNode(hasText("+85,000 T")).assertExists()
 
     // Tap action Top-up button
     onNode(hasTestTag("action-top-up-button")).performClick()
@@ -70,13 +70,13 @@ class PocketDetailsE2eUiTest {
     onNode(hasTestTag("quick-top-up-bottom-sheet")).waitForExistence().assertExists()
 
     // Select preset chip +100,000 T
-    onNode(hasTestTag("preset-chip-100000")).performClick()
+    onNode(hasTestTag("preset-chip-1000000")).performClick()
 
     // Confirm top-up
     onNode(hasTestTag("confirm-top-up-button")).performClick()
 
     // Balance is updated to 900,000 T, new top-up transaction appears, and feedback banner is shown
-    onNode(hasText("900,000")).waitForExistence().assertExists()
+    onNode(hasText("180,000")).waitForExistence().assertExists()
     onNode(hasText("+100,000 T")).assertExists()
     onNode(hasTestTag("feedback-banner")).assertExists()
   }
@@ -117,7 +117,7 @@ class PocketDetailsE2eUiTest {
     onNode(hasTestTag("confirm-top-up-button")).performClick()
 
     // Balance is updated to 550,000 T
-    onNode(hasText("550,000")).waitForExistence().assertExists()
+    onNode(hasText("100,000")).waitForExistence().assertExists()
   }
 
   @Test
@@ -228,13 +228,13 @@ class PocketDetailsE2eUiTest {
     onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
     onNode(hasTestTag("pocket-card-$pocketId")).waitForExistence().performClick()
     onNode(hasTestTag("pocket-details-screen")).waitForExistence().assertExists()
-    onNode(hasText("800,000")).assertExists()
+    onNode(hasText("80,000")).assertExists()
     onNode(hasText("Sam Cafe")).assertExists()
 
     onNode(hasTestTag("unlink-tx-expense-$expenseId")).performClick()
 
-    onNode(hasText("850,000")).waitForExistence().assertExists()
+    onNode(hasText("85,000")).waitForExistence().assertExists()
     onNode(hasTestTag("feedback-banner")).assertExists()
-    onNode(hasText("Unlinked Sam Cafe. +50,000 T restored!")).assertExists()
+    onNode(hasText("Unlinked Sam Cafe. +5,000 T restored!")).assertExists()
   }
 }

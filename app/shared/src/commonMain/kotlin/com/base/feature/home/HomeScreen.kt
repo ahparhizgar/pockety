@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
+import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.add_expense_title
-import pockety.app.shared.generated.resources.currency_symbol
 import pockety.app.shared.generated.resources.expenses_title
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -105,10 +105,9 @@ private fun HomeBannerItem(
         onClick = component::onEnableSmsTrackingClicked,
     )
   } else {
-    val currency = stringResource(Res.string.currency_symbol)
     UndecidedExpensesBanner(
         count = state.pendingCandidateCount,
-        amountFormatted = "${state.pendingCandidateSum} $currency",
+        amountFormatted = moneyLabel(state.pendingCandidateSum),
         onClick = component::onUndecidedExpensesClicked,
     )
   }

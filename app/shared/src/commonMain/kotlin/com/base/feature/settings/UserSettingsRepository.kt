@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.map
 
 enum class CurrencyType {
   TOMANS,
+  KILO_TOMANS,
   RIALS,
 }
 

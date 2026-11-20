@@ -18,10 +18,13 @@ import com.base.db.FakePocketItemModelFactory
 import com.base.feature.expense.add.AddExpenseScreen
 import com.base.feature.expense.add.AddExpenseState
 import com.base.feature.expense.add.FakeAddExpenseComponent
+import com.base.util.assertAnalyticsComponent
+import com.base.util.assertMainComponent
 import com.base.util.injectUiRoot
 import com.base.util.uiKoin
 import com.base.util.waitForExistence
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 
@@ -48,7 +51,7 @@ class AddViewExpenseE2eUiTest {
 
     // Type amount, move focus to description, type description, and submit with Enter key
     onNode(hasTestTag("amount-field")).performClick()
-    onNode(isFocused()).performTextInput("120000")
+    onNode(isFocused()).performTextInput("100")
     onNode(hasTestTag("description-field")).performClick()
     onNode(isFocused()).performTextInput("Dinner with friends")
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
@@ -64,7 +67,11 @@ class AddViewExpenseE2eUiTest {
     onNode(hasTestTag("month-switcher-card")).assertExists()
     onNode(hasTestTag("date-group-header")).assertExists()
     onNode(hasText("Dinner with friends")).assertExists()
-    onNode(hasText("-120,000 T")).assertExists()
+    onNode(hasText("-100 T")).assertExists()
+    assertEquals(
+        1000L,
+        root.assertMainComponent().assertAnalyticsComponent().state.value.monthlyOutflow,
+    )
   }
 
   @Test
@@ -161,7 +168,7 @@ class AddViewExpenseE2eUiTest {
 
     onNode(hasTestTag("pocket-selector-section")).waitForExistence().assertExists()
     onNode(hasText("Daily Cafe & Coffee")).assertExists()
-    onNode(hasText("Balance: 400,000 T")).assertExists()
+    onNode(hasText("Balance: 40,000 T")).assertExists()
     onNode(hasTestTag("clear-pocket-btn")).assertExists()
 
     onNode(hasTestTag("clear-pocket-btn")).performClick()

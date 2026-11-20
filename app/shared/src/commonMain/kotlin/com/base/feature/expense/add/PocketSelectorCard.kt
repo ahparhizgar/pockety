@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.base.db.PocketItemModel
 import com.base.feature.category.add.resolveCategoryIcon
-import com.base.feature.pocket.formatCurrency
 import com.base.ui.ComponentPreviews
+import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.auto_deduct_pocket_budget
@@ -48,8 +48,7 @@ internal fun PocketSelectorSection(
       } else {
         Icons.Default.AccountBalanceWallet
       }
-  val balanceText =
-      if (selectedPocket != null) formatCurrency(selectedPocket.remainingBalance) else ""
+  val balanceText = if (selectedPocket != null) moneyLabel(selectedPocket.remainingBalance) else ""
 
   PocketSelectorCard(
       pocketName = selectedPocket?.name,

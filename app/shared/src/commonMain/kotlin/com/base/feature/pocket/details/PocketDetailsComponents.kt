@@ -35,6 +35,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.base.feature.category.add.resolveCategoryIcon
 import com.base.ui.ComponentPreviews
+import com.base.ui.money.currencySymbol
+import com.base.ui.money.moneyAmount
+import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.pocket_details_balance_label
@@ -85,7 +88,7 @@ fun PocketDetailsHeaderSection(
         horizontalArrangement = Arrangement.Center,
     ) {
       Text(
-          text = formatAmount(balanceAmount),
+          text = moneyAmount(balanceAmount),
           style = MaterialTheme.typography.displayMedium,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.onSurface,
@@ -93,7 +96,7 @@ fun PocketDetailsHeaderSection(
       )
       Spacer(modifier = Modifier.width(6.dp))
       Text(
-          text = "T",
+          text = currencySymbol(),
           style = MaterialTheme.typography.titleLarge,
           fontWeight = FontWeight.SemiBold,
           color = MaterialTheme.colorScheme.primary,
@@ -300,7 +303,7 @@ private fun PocketTransactionTrailing(
       horizontalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     Text(
-        text = "${if (item.isTopUp) "+" else "-"}${formatAmount(item.amount)} T",
+        text = "${if (item.isTopUp) "+" else "-"}${moneyLabel(item.amount)}",
         style = MaterialTheme.typography.labelLarge,
         fontWeight = FontWeight.SemiBold,
         color =

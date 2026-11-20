@@ -55,6 +55,9 @@ import pockety.app.shared.generated.resources.calendar_persian
 import pockety.app.shared.generated.resources.calendar_persian_subtitle
 import pockety.app.shared.generated.resources.calendar_persian_symbol
 import pockety.app.shared.generated.resources.calendar_system_title
+import pockety.app.shared.generated.resources.settings_currency_kilo_tomans_subtitle
+import pockety.app.shared.generated.resources.settings_currency_kilo_tomans_symbol
+import pockety.app.shared.generated.resources.settings_currency_kilo_tomans_title
 import pockety.app.shared.generated.resources.settings_currency_rials_subtitle
 import pockety.app.shared.generated.resources.settings_currency_rials_symbol
 import pockety.app.shared.generated.resources.settings_currency_rials_title
@@ -430,35 +433,53 @@ fun DisplayCurrencyCard(
             color = MaterialTheme.colorScheme.onSurface,
         )
       }
-      Row(
+      Column(
           modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.spacedBy(10.dp),
+          verticalArrangement = Arrangement.spacedBy(10.dp),
       ) {
-        OptionSelectionCard(
-            data =
-                OptionCardData(
-                    title = stringResource(Res.string.settings_currency_tomans_title),
-                    subtitle = stringResource(Res.string.settings_currency_tomans_subtitle),
-                    symbolText = stringResource(Res.string.settings_currency_tomans_symbol),
-                    isSelected = selectedCurrency == CurrencyType.TOMANS,
-                ),
-            onClick = { onCurrencySelect(CurrencyType.TOMANS) },
-            modifier = Modifier.weight(1f).testTag("currency-option-tomans"),
-        )
-        OptionSelectionCard(
-            data =
-                OptionCardData(
-                    title = stringResource(Res.string.settings_currency_rials_title),
-                    subtitle = stringResource(Res.string.settings_currency_rials_subtitle),
-                    symbolText = stringResource(Res.string.settings_currency_rials_symbol),
-                    isSelected = selectedCurrency == CurrencyType.RIALS,
-                ),
-            onClick = { onCurrencySelect(CurrencyType.RIALS) },
-            modifier = Modifier.weight(1f).testTag("currency-option-rials"),
-        )
+        listOf(CurrencyType.TOMANS, CurrencyType.RIALS, CurrencyType.KILO_TOMANS).forEach { currency
+          ->
+          OptionSelectionCard(
+              data = currencyOptionData(currency, selectedCurrency),
+              onClick = { onCurrencySelect(currency) },
+              modifier =
+                  Modifier.fillMaxWidth().testTag("currency-option-${currency.name.lowercase()}"),
+          )
+        }
       }
     }
   }
+}
+
+@Composable
+private fun currencyOptionData(currency: CurrencyType, selected: CurrencyType): OptionCardData {
+  val (title, subtitle, symbol) =
+      when (currency) {
+        CurrencyType.TOMANS ->
+            Triple(
+                Res.string.settings_currency_tomans_title,
+                Res.string.settings_currency_tomans_subtitle,
+                Res.string.settings_currency_tomans_symbol,
+            )
+        CurrencyType.RIALS ->
+            Triple(
+                Res.string.settings_currency_rials_title,
+                Res.string.settings_currency_rials_subtitle,
+                Res.string.settings_currency_rials_symbol,
+            )
+        CurrencyType.KILO_TOMANS ->
+            Triple(
+                Res.string.settings_currency_kilo_tomans_title,
+                Res.string.settings_currency_kilo_tomans_subtitle,
+                Res.string.settings_currency_kilo_tomans_symbol,
+            )
+      }
+  return OptionCardData(
+      title = stringResource(title),
+      subtitle = stringResource(subtitle),
+      symbolText = stringResource(symbol),
+      isSelected = currency == selected,
+  )
 }
 
 @Composable

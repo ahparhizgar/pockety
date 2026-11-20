@@ -34,12 +34,15 @@ import com.base.feature.pocket.QuickTopUpBottomSheet
 import com.base.ui.ExcludeScreenshotTest
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
+import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.pocket_details_back_action
 import pockety.app.shared.generated.resources.pocket_details_expenses_header
 import pockety.app.shared.generated.resources.pocket_details_no_expenses
 import pockety.app.shared.generated.resources.pocket_details_title
+import pockety.app.shared.generated.resources.pocket_top_up_feedback
+import pockety.app.shared.generated.resources.pocket_unlink_feedback
 
 @Composable
 fun PocketDetailsScreen(
@@ -130,10 +133,21 @@ private fun PocketDetailsContent(
       )
     }
 
-    if (state.confirmationMessage != null) {
+    val feedback = state.confirmationMessage
+    if (feedback != null) {
       item {
         PocketFeedbackBanner(
-            message = state.confirmationMessage.orEmpty(),
+            message =
+                feedback.let { feedback ->
+                  if (feedback.unlinkedTitle == null)
+                      stringResource(Res.string.pocket_top_up_feedback, moneyLabel(feedback.amount))
+                  else
+                      stringResource(
+                          Res.string.pocket_unlink_feedback,
+                          feedback.unlinkedTitle,
+                          moneyLabel(feedback.amount),
+                      )
+                },
             onDismiss = component::onDismissConfirmation,
         )
       }
@@ -221,7 +235,7 @@ private fun PocketDetailsScreenEmptyTransactionsPreview() {
           initialState =
               FakePocketDetailsStateFactory.create(
                   transactions = emptyList(),
-                  confirmationMessage = "Pocket topped up by +100,000 T!",
+                  confirmationMessage = PocketMoneyFeedback(100_000, null),
               )
       )
   )

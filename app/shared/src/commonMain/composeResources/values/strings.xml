@@ -96,7 +96,7 @@
     <string name="quick_top_up_title">Quick Top-up</string>
     <string name="quick_top_up_subtitle">Add funds to pocket balance</string>
     <string name="quick_top_up_custom_amount_label">Custom Amount</string>
-    <string name="quick_top_up_amount_placeholder">Amount in Tomans (T)</string>
+    <string name="quick_top_up_amount_placeholder">Amount</string>
     <string name="quick_top_up_confirm_button">Top-up Pocket</string>
     <string name="pocket_details_top_up_success_format">Pocket topped up by +%s T!</string>
     <string name="pocket_details_tx_deleted_format">Deleted %s. +%s T restored!</string>
@@ -247,4 +247,12 @@
     <string name="analytics_next_month_action_fa">ماه بعد</string>
     <string name="analytics_title_fa">تحلیل</string>
     <string name="analytics_currency_symbol_fa">تومان</string>
+    <string name="settings_currency_kilo_tomans_title">Kilo Tomans</string>
+    <string name="settings_currency_kilo_tomans_subtitle">1,000 Tomans</string>
+    <string name="settings_currency_kilo_tomans_symbol">kT</string>
+    <string name="pocket_top_up_feedback">Pocket topped up by +%1$s!</string>
+    <string name="pocket_unlink_feedback">Unlinked %1$s. +%2$s restored!</string>
+    <string name="pocket_over_budget_amount">Over budget by %1$s</string>
+    <string name="money_kilo_toman_fa">هزارتومن</string>
+    <string name="money_rial_fa">ریال</string>
 </resources>

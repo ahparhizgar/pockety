@@ -106,7 +106,8 @@ class PocketDetailsTest : BehaviorSpec() {
             val state = component.state.value
             state.transactions.none { tx -> !tx.isTopUp } shouldBe true
             state.balanceAmount shouldBe 850000L
-            state.confirmationMessage shouldBe "Unlinked Sam Cafe. +50,000 T restored!"
+            state.confirmationMessage?.amount shouldBe 50_000L
+            state.confirmationMessage?.unlinkedTitle shouldBe "Sam Cafe"
 
             val expenses = expenseRepository.observeExpenses().first()
             expenses shouldHaveSize 1
@@ -177,7 +178,8 @@ class PocketDetailsTest : BehaviorSpec() {
           state.balanceAmount shouldBe 1100000L
           state.transactions.first().isTopUp shouldBe true
           state.transactions.first().amount shouldBe 250000L
-          state.confirmationMessage shouldBe "Pocket topped up by +250,000 T!"
+          state.confirmationMessage?.amount shouldBe 250_000L
+          state.confirmationMessage?.unlinkedTitle shouldBe null
         }
       }
 

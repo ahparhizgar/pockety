@@ -40,11 +40,11 @@ import com.base.LocalAppLanguage
 import com.base.calendar.CalendarDate
 import com.base.calendar.CalendarType
 import com.base.feature.category.add.resolveCategoryIcon
-import com.base.feature.pocket.details.formatAmount
 import com.base.feature.settings.AppLanguage
 import com.base.ui.ComponentPreviews
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
+import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
@@ -58,7 +58,6 @@ import pockety.app.shared.generated.resources.analytics_azar
 import pockety.app.shared.generated.resources.analytics_azar_fa
 import pockety.app.shared.generated.resources.analytics_bahman
 import pockety.app.shared.generated.resources.analytics_bahman_fa
-import pockety.app.shared.generated.resources.analytics_currency_symbol_fa
 import pockety.app.shared.generated.resources.analytics_december
 import pockety.app.shared.generated.resources.analytics_december_fa
 import pockety.app.shared.generated.resources.analytics_dey
@@ -110,7 +109,6 @@ import pockety.app.shared.generated.resources.analytics_today
 import pockety.app.shared.generated.resources.analytics_today_fa
 import pockety.app.shared.generated.resources.analytics_yesterday
 import pockety.app.shared.generated.resources.analytics_yesterday_fa
-import pockety.app.shared.generated.resources.currency_symbol
 import pockety.app.shared.generated.resources.monthly_outflow_label
 import pockety.app.shared.generated.resources.next_month_action
 import pockety.app.shared.generated.resources.no_expenses_month
@@ -307,7 +305,7 @@ private fun MonthlyOutflowSummary(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
     Text(
-        text = "${formatAmount(state.monthlyOutflow)} ${analyticsCurrencySymbol()}",
+        text = moneyLabel(state.monthlyOutflow),
         style = MaterialTheme.typography.headlineLarge,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.primary,
@@ -322,13 +320,6 @@ private fun analyticsStaticText(
     persian: StringResource,
 ): String =
     stringResource(if (LocalAppLanguage.current == AppLanguage.PERSIAN) persian else english)
-
-@Composable
-private fun analyticsCurrencySymbol(): String =
-    stringResource(
-        if (LocalAppLanguage.current == AppLanguage.PERSIAN) Res.string.analytics_currency_symbol_fa
-        else Res.string.currency_symbol
-    )
 
 @Composable
 private fun analyticsMonthLabel(state: AnalyticsState): String {
@@ -447,7 +438,7 @@ private fun DateGroupHeader(
                 date.year,
             )
       }
-  val formattedTotalAmount = "${formatAmount(totalAmount)} ${analyticsCurrencySymbol()}"
+  val formattedTotalAmount = moneyLabel(totalAmount)
   Row(
       modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp),
       horizontalArrangement = Arrangement.SpaceBetween,
@@ -523,7 +514,7 @@ fun AnalyticsExpenseItem(
       Spacer(modifier = Modifier.width(16.dp))
 
       Text(
-          text = "-${formatAmount(expense.amount)} ${analyticsCurrencySymbol()}",
+          text = "-${moneyLabel(expense.amount)}",
           style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
           color = MaterialTheme.colorScheme.primary,
           modifier = Modifier.testTag("expense-amount"),

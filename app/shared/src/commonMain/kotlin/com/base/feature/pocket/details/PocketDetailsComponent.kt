@@ -30,6 +30,8 @@ data class PocketTransactionUiModel(
     val isTopUp: Boolean = false,
 )
 
+data class PocketMoneyFeedback(val amount: Long, val unlinkedTitle: String?)
+
 data class PocketDetailsState(
     val pocketId: Long = 0,
     val name: String = "",
@@ -39,7 +41,7 @@ data class PocketDetailsState(
     val isLoading: Boolean = false,
     val isQuickTopUpVisible: Boolean = false,
     val quickTopUpCustomAmount: String = "",
-    val confirmationMessage: String? = null,
+    val confirmationMessage: PocketMoneyFeedback? = null,
     val transactions: List<PocketTransactionUiModel> = emptyList(),
 )
 
@@ -183,7 +185,7 @@ class DefaultPocketDetailsComponent(
         it.copy(
             isQuickTopUpVisible = false,
             quickTopUpCustomAmount = "",
-            confirmationMessage = "Pocket topped up by +${formatAmount(amount)} T!",
+            confirmationMessage = PocketMoneyFeedback(amount, null),
         )
       }
     }
@@ -208,7 +210,7 @@ class DefaultPocketDetailsComponent(
       }
       _state.update {
         it.copy(
-            confirmationMessage = "Unlinked ${tx.title}. +${formatAmount(tx.amount)} T restored!",
+            confirmationMessage = PocketMoneyFeedback(tx.amount, tx.title),
         )
       }
     }
@@ -313,7 +315,7 @@ object FakePocketDetailsStateFactory {
       isLoading: Boolean = false,
       isQuickTopUpVisible: Boolean = false,
       quickTopUpCustomAmount: String = "",
-      confirmationMessage: String? = null,
+      confirmationMessage: PocketMoneyFeedback? = null,
       transactions: List<PocketTransactionUiModel> = defaultPocketTransactions(),
   ): PocketDetailsState =
       PocketDetailsState(

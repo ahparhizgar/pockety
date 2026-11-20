@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -36,11 +35,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.feature.pocket.details.PocketDetailsComponent
-import com.base.feature.pocket.details.formatAmount
 import com.base.ui.ComponentPreviews
+import com.base.ui.money.MoneyTextField
+import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.quick_top_up_amount_placeholder
 import pockety.app.shared.generated.resources.quick_top_up_confirm_button
 import pockety.app.shared.generated.resources.quick_top_up_custom_amount_label
 import pockety.app.shared.generated.resources.quick_top_up_subtitle
@@ -74,12 +73,10 @@ fun QuickTopUpBottomSheet(
       QuickTopUpHeader(onClose = component::onDismissQuickTopUp)
       QuickTopUpPresets(onSelectPreset = component::onQuickTopUpPresetSelected)
 
-      OutlinedTextField(
+      MoneyTextField(
           value = state.quickTopUpCustomAmount,
           onValueChange = component::onQuickTopUpCustomAmountChanged,
           label = { Text(stringResource(Res.string.quick_top_up_custom_amount_label)) },
-          placeholder = { Text(stringResource(Res.string.quick_top_up_amount_placeholder)) },
-          singleLine = true,
           keyboardOptions =
               KeyboardOptions(
                   keyboardType = KeyboardType.Number,
@@ -150,7 +147,7 @@ private fun QuickTopUpHeader(onClose: () -> Unit) {
 @Suppress("MagicNumber")
 @Composable
 private fun QuickTopUpPresets(onSelectPreset: (Long) -> Unit) {
-  val presetAmounts = listOf(50000L, 100000L, 200000L, 500000L)
+  val presetAmounts = listOf(500_000L, 1_000_000L, 2_000_000L, 5_000_000L)
   LazyRow(
       horizontalArrangement = Arrangement.spacedBy(8.dp),
       modifier = Modifier.fillMaxWidth(),
@@ -160,7 +157,7 @@ private fun QuickTopUpPresets(onSelectPreset: (Long) -> Unit) {
           onClick = { onSelectPreset(amount) },
           label = {
             Text(
-                text = "+${formatAmount(amount)} T",
+                text = "+${moneyLabel(amount)}",
                 fontWeight = FontWeight.SemiBold,
             )
           },

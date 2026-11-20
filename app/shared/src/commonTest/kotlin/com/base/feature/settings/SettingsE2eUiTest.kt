@@ -79,15 +79,15 @@ class SettingsE2eUiTest {
     onNode(hasTestTag("currency-option-tomans")).waitForExistence()
     onNode(hasTestTag("currency-option-rials")).waitForExistence()
     val radioOptions = onAllNodes(radioRoleMatcher(), useUnmergedTree = true)
-    radioOptions.assertCountEquals(4)
+    radioOptions.assertCountEquals(5)
     onAllNodes(radioSelectionMatcher(selected = true)).assertCountEquals(2)
-    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(2)
+    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(3)
     radioOptions[1].performSemanticsAction(SemanticsActions.RequestFocus)
     radioOptions[1].assertIsFocused()
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     component.state.value.selectedCurrency shouldBe CurrencyType.RIALS
     onAllNodes(radioSelectionMatcher(selected = true)).assertCountEquals(2)
-    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(2)
+    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(3)
 
     radioOptions[0].performSemanticsAction(SemanticsActions.RequestFocus)
     radioOptions[0].assertIsFocused()
@@ -104,18 +104,18 @@ class SettingsE2eUiTest {
     onNode(hasTestTag("calendar-option-gregorian")).waitForExistence().performScrollTo()
     onNode(hasTestTag("calendar-option-persian")).waitForExistence().performScrollTo()
     val radioOptions = onAllNodes(radioRoleMatcher(), useUnmergedTree = true)
-    radioOptions.assertCountEquals(4)
+    radioOptions.assertCountEquals(5)
     onAllNodes(radioSelectionMatcher(selected = true)).assertCountEquals(2)
-    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(2)
-    radioOptions[3].performSemanticsAction(SemanticsActions.RequestFocus)
-    radioOptions[3].assertIsFocused()
+    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(3)
+    radioOptions[4].performSemanticsAction(SemanticsActions.RequestFocus)
+    radioOptions[4].assertIsFocused()
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     component.state.value.selectedCalendarType shouldBe CalendarType.PERSIAN
     onAllNodes(radioSelectionMatcher(selected = true)).assertCountEquals(2)
-    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(2)
+    onAllNodes(radioSelectionMatcher(selected = false)).assertCountEquals(3)
 
-    radioOptions[2].performSemanticsAction(SemanticsActions.RequestFocus)
-    radioOptions[2].assertIsFocused()
+    radioOptions[3].performSemanticsAction(SemanticsActions.RequestFocus)
+    radioOptions[3].assertIsFocused()
     onNode(isRoot()).performKeyInput { pressKey(Key.Enter) }
     component.state.value.selectedCalendarType shouldBe CalendarType.GREGORIAN
   }

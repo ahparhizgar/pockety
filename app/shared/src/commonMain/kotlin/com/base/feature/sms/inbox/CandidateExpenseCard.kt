@@ -35,9 +35,9 @@ import androidx.compose.ui.unit.sp
 import com.base.db.CandidateExpenseEntity
 import com.base.db.FakeCandidateExpenseEntityFactory
 import com.base.ui.ComponentPreviews
+import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
-import pockety.app.shared.generated.resources.currency_symbol
 import pockety.app.shared.generated.resources.inbox_dismiss_action
 import pockety.app.shared.generated.resources.inbox_edit_open_action
 import pockety.app.shared.generated.resources.inbox_parsed_sms
@@ -49,7 +49,6 @@ fun CandidateExpenseCard(
     onDismissClick: () -> Unit = {},
     onOpenEditClick: () -> Unit = {},
 ) {
-  val currency = stringResource(Res.string.currency_symbol)
 
   Surface(
       modifier = modifier.fillMaxWidth(),
@@ -61,7 +60,7 @@ fun CandidateExpenseCard(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-      CandidateExpenseHeader(candidate = candidate, currency = currency)
+      CandidateExpenseHeader(candidate = candidate)
 
       ParsedSmsBox(rawSms = candidate.rawBody)
 
@@ -76,7 +75,6 @@ fun CandidateExpenseCard(
 @Composable
 private fun CandidateExpenseHeader(
     candidate: CandidateExpenseEntity,
-    currency: String,
 ) {
   Row(
       modifier = Modifier.fillMaxWidth(),
@@ -116,7 +114,7 @@ private fun CandidateExpenseHeader(
     }
 
     Text(
-        text = "${candidate.amount} $currency",
+        text = moneyLabel(candidate.amount),
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.primary,

@@ -54,11 +54,11 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.db.FakePocketItemModelFactory
 import com.base.db.PocketItemModel
 import com.base.feature.category.add.resolveCategoryIcon
-import com.base.feature.pocket.formatCurrency
 import com.base.ui.ComponentPreviews
 import com.base.ui.ScreenPreviews
 import com.base.ui.colorSchemeExtended
 import com.base.ui.components.PocketyTopAppBar
+import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.active_badge
@@ -320,7 +320,7 @@ private fun PocketOptionItem(
           PocketOptionVisuals(
               name = pocket.name,
               categoryTag = pocket.categoryTag,
-              balanceFormatted = formatCurrency(pocket.remainingBalance),
+              balanceFormatted = moneyLabel(pocket.remainingBalance),
               icon = resolveCategoryIcon(pocket.icon),
               iconBackgroundColor = Color(pocket.color),
               iconContentColor = Color.White,

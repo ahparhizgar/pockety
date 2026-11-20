@@ -33,8 +33,8 @@ class InboxE2eUiTest {
     runBlocking {
       candidateExpenseRepository.addCandidate(
           sender = "Bank Mellat",
-          rawBody = "Withdrawal: 45,000 Toman",
-          amount = 45000L,
+          rawBody = "Withdrawal: 1,000 Rial",
+          amount = 1000L,
       )
     }
 
@@ -52,9 +52,9 @@ class InboxE2eUiTest {
     // Open candidate to edit/add expense
     onNode(hasTestTag("candidate-open-button")).performClick()
 
-    // Navigates to AddExpense screen with amount 45000 prefilled
+    // Navigates to AddExpense screen with 1000 Rials prefilled as 100 Tomans
     onNode(hasTestTag("add-expense-screen")).waitForExistence().assertExists()
-    onNode(hasText("45000")).waitForExistence().assertExists()
+    onNode(hasText("100")).waitForExistence().assertExists()
 
     // Enter description and submit
     onNode(hasTestTag("description-field")).performClick()

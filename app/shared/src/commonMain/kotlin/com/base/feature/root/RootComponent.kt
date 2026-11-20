@@ -25,6 +25,7 @@ import com.base.feature.pocket.details.PocketDetailsComponentFactory
 import com.base.feature.pocket.settings.PocketSettingsFlowComponentFactory
 import com.base.feature.privacypolicy.PrivacyPolicyComponentFactory
 import com.base.feature.settings.AppLanguage
+import com.base.feature.settings.CurrencyType
 import com.base.feature.settings.UserSettingsRepository
 import com.base.feature.sms.inbox.InboxComponentFactory
 import com.base.navigation.NavigationAction
@@ -42,6 +43,7 @@ interface RootComponent {
   val childStack: Value<ChildStack<RootFlowDestination, RootFlowDestination.Instance>>
   val messageHolder: MessageHolder
   val windowSizeHolder: WindowSizeHolder
+  val currency: Value<CurrencyType>
   val appLanguage: Value<AppLanguage>
 
   fun onBack()
@@ -61,6 +63,8 @@ class DefaultRootComponent(
   private val rootNavigation = StackNavigation<RootFlowDestination>()
   override val backHandler: BackHandler = cContext.backHandler
   override val messageHolder: MessageHolder = MessageHolder()
+  private val _currency = MutableValue(CurrencyType.TOMANS)
+  override val currency: Value<CurrencyType> = _currency
   private val _appLanguage = MutableValue(AppLanguage.ENGLISH)
   override val appLanguage: Value<AppLanguage> = _appLanguage
 
@@ -78,6 +82,12 @@ class DefaultRootComponent(
     scope.launch {
       val userSettingsRepository = componentProvider.provide(UserSettingsRepository::class)
       userSettingsRepository.appLanguage.collect { language -> _appLanguage.value = language }
+    }
+
+    scope.launch {
+      componentProvider.provide(UserSettingsRepository::class).currencyType.collect {
+        _currency.value = it
+      }
     }
 
     scope.launch {
@@ -235,6 +245,7 @@ class FakeRootComponent(
   override val backHandler: BackHandler = BackDispatcher()
   override val messageHolder: MessageHolder = MessageHolder()
   override val windowSizeHolder: WindowSizeHolder = WindowSizeHolder()
+  override val currency: Value<CurrencyType> = MutableValue(CurrencyType.TOMANS)
   override val appLanguage: Value<AppLanguage> = MutableValue(initialLanguage)
 
   override fun onBack() {}

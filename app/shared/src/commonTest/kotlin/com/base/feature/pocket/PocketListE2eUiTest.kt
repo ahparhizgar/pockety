@@ -58,7 +58,7 @@ class PocketListE2eUiTest {
     onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
     onNode(hasText("Groceries & Household")).waitForExistence().assertExists()
     onNode(hasText("Groceries")).assertExists()
-    onNode(hasText("1,000,000 T")).assertExists()
+    onNode(hasText("100,000 T")).assertExists()
 
     // Verify pocket budget card does not render top-up button
     onNode(hasText("Top-up")).assertDoesNotExist()

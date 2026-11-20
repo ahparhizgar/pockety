@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -48,7 +47,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -62,12 +60,13 @@ import com.base.db.FakePocketItemModelFactory
 import com.base.ui.RequestFocusOnce
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
+import com.base.ui.money.MoneyTextField
+import com.base.ui.money.currencySymbol
 import com.base.usermessage.UiString
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.add_expense_title
 import pockety.app.shared.generated.resources.cancel_action
-import pockety.app.shared.generated.resources.currency_symbol
 import pockety.app.shared.generated.resources.delete_expense_action
 import pockety.app.shared.generated.resources.description_label
 import pockety.app.shared.generated.resources.description_placeholder
@@ -329,7 +328,7 @@ private fun AmountHeroSurface(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-      BasicTextField(
+      MoneyTextField(
           value = amountText,
           onValueChange = onAmountChange,
           modifier =
@@ -342,8 +341,7 @@ private fun AmountHeroSurface(
                   color = MaterialTheme.colorScheme.onSurface,
                   textAlign = TextAlign.Center,
               ),
-          singleLine = true,
-          cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+          outlined = false,
           keyboardOptions =
               KeyboardOptions(
                   keyboardType = KeyboardType.Number,
@@ -353,7 +351,7 @@ private fun AmountHeroSurface(
       )
       Spacer(modifier = Modifier.width(6.dp))
       Text(
-          text = stringResource(Res.string.currency_symbol),
+          text = currencySymbol(),
           style = MaterialTheme.typography.headlineSmall,
           fontWeight = FontWeight.SemiBold,
           color = MaterialTheme.colorScheme.primary,

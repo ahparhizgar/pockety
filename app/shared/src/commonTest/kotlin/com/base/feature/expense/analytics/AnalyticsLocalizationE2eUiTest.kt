@@ -199,7 +199,7 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasText("Analytics")).waitForExistence().assertExists()
     onNode(hasText("October 2026")).assertExists()
     onNode(hasText("Today", substring = true)).assertExists()
-    onNode(hasText("-50,000 T", substring = true)).assertExists()
+    onNode(hasText("-5,000 T", substring = true)).assertExists()
   }
 
   @Test

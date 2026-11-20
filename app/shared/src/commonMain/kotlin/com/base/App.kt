@@ -38,6 +38,7 @@ import com.base.feature.sms.inbox.InboxScreen
 import com.base.feature.splash.SplashScreen
 import com.base.ui.BaseTheme
 import com.base.ui.ScreenPreviews
+import com.base.ui.money.LocalCurrency
 import com.base.usermessage.CustomSnackbar
 import com.base.usermessage.SnackbarHost
 import com.base.usermessage.SnackbarHostState
@@ -55,6 +56,7 @@ fun RootScreen(
   SideEffect { root.windowSizeHolder.update(windowSizeClass) }
 
   val appLanguage by root.appLanguage.subscribeAsState()
+  val currency by root.currency.subscribeAsState()
   val layoutDirection =
       when (appLanguage) {
         AppLanguage.PERSIAN -> LayoutDirection.Rtl
@@ -64,6 +66,7 @@ fun RootScreen(
   CompositionLocalProvider(
       LocalLayoutDirection provides layoutDirection,
       LocalAppLanguage provides appLanguage,
+      LocalCurrency provides currency,
   ) {
     BaseTheme {
       if (content != null) {

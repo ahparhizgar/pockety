@@ -27,8 +27,10 @@ import com.base.db.FakePocketItemModelFactory
 import com.base.db.PocketItemModel
 import com.base.feature.category.add.resolveCategoryIcon
 import com.base.ui.ComponentPreviews
+import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.pocket_over_budget_amount
 import pockety.app.shared.generated.resources.pockets_dynamic_sync_desc
 import pockety.app.shared.generated.resources.pockets_dynamic_sync_title
 
@@ -82,11 +84,17 @@ fun PocketBudgetCard(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
       if (pocket.warningMessage != null) {
-        PocketWarningHeader(message = pocket.warningMessage)
+        PocketWarningHeader(
+            message =
+                stringResource(
+                    Res.string.pocket_over_budget_amount,
+                    moneyLabel(-pocket.remainingBalance),
+                )
+        )
       }
       PocketCardHeader(pocket = pocket)
       Text(
-          text = formatCurrency(pocket.remainingBalance),
+          text = moneyLabel(pocket.remainingBalance),
           style = MaterialTheme.typography.headlineSmall,
           fontWeight = FontWeight.Bold,
           color =

@@ -30,7 +30,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -53,8 +52,10 @@ import androidx.compose.ui.unit.dp
 import com.base.db.CategoryEntity
 import com.base.db.FakeCategoryFactory
 import com.base.feature.category.add.resolveCategoryIcon
-import com.base.feature.pocket.details.formatAmount
 import com.base.ui.ComponentPreviews
+import com.base.ui.money.MoneyTextField
+import com.base.ui.money.currencySymbol
+import com.base.ui.money.moneyAmount
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.associated_category_subtitle
@@ -364,14 +365,14 @@ private fun MonthlyAllocationAmountDisplay(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
           Text(
-              text = formatAmount(amount),
+              text = moneyAmount(amount),
               style = MaterialTheme.typography.headlineMedium,
               fontWeight = FontWeight.Bold,
               color = MaterialTheme.colorScheme.onSurface,
               modifier = Modifier.testTag("allocated-refill-amount"),
           )
           Text(
-              text = "T",
+              text = currencySymbol(),
               style = MaterialTheme.typography.titleMedium,
               fontWeight = FontWeight.Bold,
               color = MaterialTheme.colorScheme.primary,
@@ -465,15 +466,10 @@ private fun AdjustAllocationDialog(
       onDismissRequest = onDismiss,
       title = { Text(text = stringResource(Res.string.pocket_adjust_allocation_dialog_title)) },
       text = {
-        OutlinedTextField(
+        MoneyTextField(
             value = textValue,
-            onValueChange = { input ->
-              val digits = input.filter { it.isDigit() }
-              textValue = digits
-            },
+            onValueChange = { textValue = it },
             label = { Text(stringResource(Res.string.pocket_allocated_refill_label)) },
-            placeholder = { Text("0") },
-            singleLine = true,
             keyboardOptions =
                 KeyboardOptions(
                     keyboardType = KeyboardType.Number,
