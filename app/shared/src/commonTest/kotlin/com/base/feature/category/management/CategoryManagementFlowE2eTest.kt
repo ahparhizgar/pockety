@@ -66,6 +66,7 @@ class CategoryManagementFlowE2eTest : BehaviorSpec() {
             testCoroutineScheduler.advanceUntilIdle()
             val add = root.assertCategoryManagementFlow().assertAddCategory()
             add.onNameChanged("Groceries")
+            add.onIconSelected("local_grocery_store")
             add.onSaveClicked()
             testCoroutineScheduler.advanceUntilIdle()
           }
@@ -74,6 +75,14 @@ class CategoryManagementFlowE2eTest : BehaviorSpec() {
             root.assertCategoryManagementFlow().assertBrowse().state.value.categories.map {
               it.name
             } shouldContain "Groceries"
+            root
+                .assertCategoryManagementFlow()
+                .assertBrowse()
+                .state
+                .value
+                .categories
+                .single()
+                .icon shouldBe "local_grocery_store"
           }
 
           And("the user returns with visible Back") {

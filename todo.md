@@ -1,7 +1,7 @@
 - [x] Request notification permission on the first Pending SMS card entry, without blocking review on denial.
 - [x] Add an Android home-screen widget and launcher shortcut that open New Expense (cold/warm starts, no duplicate forms).
 - Make Persian translations friendly and make sure all texts have translation
-- Make category icons more in quantity
+- [x] Expand category and pocket icons from 33 to 55 choices, with localized labels and keyboard selection.
 - [x] Create a reusable Money text field for expense, top-up, and allocation inputs.
 - [x] Keep amounts in integer Rials and convert exactly to/from the selected display unit in the UI.
 - [x] Format Money text fields with commas (e.g. 1,000,000).

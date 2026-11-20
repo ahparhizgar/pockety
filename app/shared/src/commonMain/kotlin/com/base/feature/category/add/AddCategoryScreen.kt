@@ -88,7 +88,7 @@ private fun AddCategoryFormContent(
     state: AddCategoryState,
     modifier: Modifier = Modifier,
 ) {
-  var selectedFilter by remember { mutableStateOf("All") }
+  var selectedFilter by remember { mutableStateOf(CategoryIconFilter.All) }
   val focusManager = LocalFocusManager.current
   val nameFocusRequester = remember { FocusRequester() }
   RequestFocusOnce(nameFocusRequester)
@@ -154,7 +154,7 @@ private data class CategoryIconSectionConfig(
     val icons: CategoryIconsWrapper,
     val selectedIcon: CategoryIconOption,
     val filters: CategoryFiltersWrapper,
-    val selectedFilter: String,
+    val selectedFilter: CategoryIconFilter,
     val accentColor: Color,
 )
 
@@ -162,11 +162,11 @@ private data class CategoryIconSectionConfig(
 private fun CategoryIconSection(
     config: CategoryIconSectionConfig,
     onIconSelect: (CategoryIconOption) -> Unit,
-    onFilterSelect: (String) -> Unit,
+    onFilterSelect: (CategoryIconFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
   val displayedIcons =
-      if (config.selectedFilter == "All") {
+      if (config.selectedFilter == CategoryIconFilter.All) {
         config.icons.items
       } else {
         val filtered = config.icons.items.filter { it.categoryFilter == config.selectedFilter }
@@ -202,8 +202,8 @@ private fun CategoryIconSection(
 @Composable
 private fun IconFiltersBar(
     filters: CategoryFiltersWrapper,
-    selectedFilter: String,
-    onFilterSelect: (String) -> Unit,
+    selectedFilter: CategoryIconFilter,
+    onFilterSelect: (CategoryIconFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
   Row(
@@ -213,6 +213,7 @@ private fun IconFiltersBar(
     filters.items.forEach { filter ->
       val isSelected = filter == selectedFilter
       Surface(
+          modifier = Modifier.testTag("icon-filter-${filter.name}"),
           shape = CircleShape,
           color =
               if (isSelected) MaterialTheme.colorScheme.primary
@@ -224,7 +225,7 @@ private fun IconFiltersBar(
           onClick = { onFilterSelect(filter) },
       ) {
         Text(
-            text = filter,
+            text = stringResource(filter.label),
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         )
@@ -285,7 +286,7 @@ private fun IconGridTile(
     modifier: Modifier = Modifier,
 ) {
   Surface(
-      modifier = modifier.aspectRatio(1f),
+      modifier = modifier.aspectRatio(1f).testTag("category-icon-${iconOption.id}"),
       shape = RoundedCornerShape(16.dp),
       color = MaterialTheme.colorScheme.surfaceContainerLowest,
       border =
@@ -300,7 +301,7 @@ private fun IconGridTile(
     Box(contentAlignment = Alignment.Center) {
       Icon(
           imageVector = iconOption.icon,
-          contentDescription = iconOption.label,
+          contentDescription = stringResource(iconOption.label),
           tint =
               if (isSelected) {
                 accentColor

@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.base.feature.category.add.CategoryColorsWrapper
+import com.base.feature.category.add.CategoryIconFilter
 import com.base.feature.category.add.CategoryIconsWrapper
 import com.base.feature.category.add.defaultCategoryColors
 import com.base.feature.category.add.defaultCategoryIcons
@@ -179,9 +180,9 @@ fun PocketIconPickerSection(
     state: PocketSettingsState,
     modifier: Modifier = Modifier,
 ) {
-  var selectedFilter by remember { mutableStateOf("All") }
+  var selectedFilter by remember { mutableStateOf(CategoryIconFilter.All) }
   val displayedIcons =
-      if (selectedFilter == "All") {
+      if (selectedFilter == CategoryIconFilter.All) {
         defaultCategoryIcons
       } else {
         defaultCategoryIcons.filter { it.categoryFilter == selectedFilter }
@@ -213,8 +214,8 @@ fun PocketIconPickerSection(
 
 @Composable
 private fun PocketIconFilterRow(
-    selectedFilter: String,
-    onFilterSelect: (String) -> Unit,
+    selectedFilter: CategoryIconFilter,
+    onFilterSelect: (CategoryIconFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
   Row(
@@ -226,7 +227,7 @@ private fun PocketIconFilterRow(
       FilterChip(
           selected = isSelected,
           onClick = { onFilterSelect(filter) },
-          label = { Text(text = filter) },
+          label = { Text(text = stringResource(filter.label)) },
           colors =
               FilterChipDefaults.filterChipColors(
                   selectedContainerColor = MaterialTheme.colorScheme.primary,
@@ -282,7 +283,7 @@ private fun PocketIconGrid(
               Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = iconOption.icon,
-                    contentDescription = iconOption.label,
+                    contentDescription = stringResource(iconOption.label),
                     modifier = Modifier.size(24.dp),
                 )
               }
