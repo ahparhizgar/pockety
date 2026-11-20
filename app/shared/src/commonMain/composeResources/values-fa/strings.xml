@@ -25,7 +25,7 @@
     <string name="description_placeholder">یادداشت خرج را وارد کنید...</string>
     <string name="currency_symbol">تومان</string>
     <string name="auto_track_bank_sms">رهگیری خودکار پیامک بانک</string>
-    <string name="enable_auto_detection_subtitle">برای فعال‌سازی تشخیص خودکار خرج‌ها ضربه بزنید</string>
+    <string name="enable_auto_detection_subtitle">با دسترسی پیامک، آخرین خرج بانکی‌ات را ببین و خرج‌های جدید را خودکار پیدا کن.</string>
     <string name="enable_sms_permission_description">فعال‌سازی دسترسی پیامک</string>
     <string name="undecided_expenses">خرج‌های بررسی‌نشده</string>
     <string name="pending_review">%1$s در انتظار بررسی</string>

@@ -1,8 +1,13 @@
 package com.base.feature.permission
 
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.RootScreen
 import com.base.component.TestCContext
@@ -11,6 +16,7 @@ import com.base.util.injectUiRoot
 import com.base.util.uiKoin
 import com.base.util.waitForExistence
 import kotlin.test.Test
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalTestApi::class)
@@ -58,6 +64,11 @@ class SmsPermissionIntegrationUiTest {
   @Test
   fun testUndecidedExpensesBannerClickNavigatesToInbox() = runComposeUiTest {
     val context = TestCContext()
+    var notificationRequested = false
+    context.fakePermissionController.onRequestNotificationPermission = {
+      notificationRequested = true
+      false
+    }
     context.fakePermissionController.setSmsPermissionGranted(true)
 
     val koin = uiKoin()
@@ -77,10 +88,17 @@ class SmsPermissionIntegrationUiTest {
     // Wait for UndecidedExpensesBanner to appear
     onNode(hasTestTag("undecided-expenses-banner")).waitForExistence().assertExists()
 
-    // Click banner
-    onNode(hasTestTag("undecided-expenses-banner")).performClick()
+    // Activate the card using a keyboard; denial must not block inbox navigation.
+    onNode(hasTestTag("undecided-expenses-banner")).performSemanticsAction(
+        SemanticsActions.RequestFocus
+    ) {
+      it()
+    }
+    onNode(hasTestTag("undecided-expenses-banner")).performKeyInput { pressKey(Key.Enter) }
 
     // Verify InboxScreen is displayed
     onNode(hasTestTag("inbox-screen")).waitForExistence().assertExists()
+    waitUntil { notificationRequested }
+    assertTrue(notificationRequested)
   }
 }

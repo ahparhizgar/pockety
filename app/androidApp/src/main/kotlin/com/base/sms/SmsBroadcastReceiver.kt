@@ -6,6 +6,8 @@ import android.content.Intent
 import android.provider.Telephony
 import com.base.db.CandidateExpenseRepository
 import com.base.notification.ExpenseNotificationManager
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -35,6 +37,7 @@ class SmsBroadcastReceiver(
         for ((sender, partList) in messagesBySender) {
           val fullBody = partList.joinToString("") { it.displayMessageBody ?: "" }
           processSms(
+              receivedAt = Instant.fromEpochMilliseconds(partList.first().timestampMillis),
               sender = sender,
               body = fullBody,
               repository = candidateExpenseRepository,
@@ -52,6 +55,7 @@ class SmsBroadcastReceiver(
       body: String,
       repository: CandidateExpenseRepository,
       notificationManager: ExpenseNotificationManager? = null,
+      receivedAt: Instant = Clock.System.now(),
   ): Long? {
     val parsed = SmsExpenseParser.parse(body) ?: return null
     val id =
@@ -59,6 +63,7 @@ class SmsBroadcastReceiver(
             sender = sender,
             rawBody = body,
             amount = parsed.amount,
+            receivedAt = receivedAt,
         )
     notificationManager?.showExpenseCandidateNotification(
         candidateId = id,

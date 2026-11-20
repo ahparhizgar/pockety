@@ -10,6 +10,10 @@ import com.base.feature.settings.FakeLanguageSettingsHandler
 import com.base.feature.settings.FakeUserSettingsRepository
 import com.base.feature.settings.LanguageSettingsHandler
 import com.base.feature.settings.UserSettingsRepository
+import com.base.feature.sms.FakeSmsImportHistory
+import com.base.feature.sms.FakeSmsInboxReader
+import com.base.sms.SmsImportHistory
+import com.base.sms.SmsInboxReader
 import com.base.testValue
 import io.kotest.core.spec.Spec
 import kotlinx.coroutines.CoroutineDispatcher
@@ -42,6 +46,8 @@ fun uiKoin() = koinApplication {
     .koin
 
 fun integrationTestModule() = module {
+  single { FakeSmsInboxReader() }.bind<SmsInboxReader>()
+  single { FakeSmsImportHistory() }.bind<SmsImportHistory>()
   single { CoroutineScope(SupervisorJob() + Dispatchers.Main) }
   single { DataDir.MEMORY }
   single {

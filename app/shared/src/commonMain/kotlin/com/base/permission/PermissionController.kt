@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 interface PermissionController {
   val isSmsPermissionGranted: StateFlow<Boolean>
 
+  suspend fun requestNotificationPermission(): Boolean
+
   suspend fun requestReceiveSmsPermission(): Boolean
 }
 
@@ -22,6 +24,11 @@ class FakePermissionController(
     private set
 
   var onRequestReceiveSmsPermission: (suspend () -> Boolean)? = null
+
+  var onRequestNotificationPermission: (suspend () -> Boolean)? = null
+
+  override suspend fun requestNotificationPermission(): Boolean =
+      onRequestNotificationPermission?.invoke() ?: true
 
   fun setSmsPermissionGranted(granted: Boolean) {
     _isSmsPermissionGranted.value = granted

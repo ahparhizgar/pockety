@@ -2,6 +2,7 @@ package com.base.feature.sms.inbox
 
 import com.base.db.CandidateExpenseRepository
 import com.base.db.CandidateExpenseStatus
+import com.base.feature.sms.FakeBankSmsFactory
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
 import com.base.util.integrationKoin
@@ -18,6 +19,22 @@ class CandidateExpenseRepositoryTest : BehaviorSpec() {
     Given("CandidateExpenseRepository with in-memory database") {
       val koin by integrationKoin()
       val repository by testValue { koin.get<CandidateExpenseRepository>() }
+
+      When("the same historical SMS is imported after it was already rejected") {
+        var originalId = 0L
+        var duplicateId = 0L
+        beforeEach {
+          val sms = FakeBankSmsFactory.create()
+          originalId = repository.addCandidate(sms.sender, sms.body, sms.amount, sms.receivedAt)
+          repository.updateStatus(originalId, CandidateExpenseStatus.REJECTED)
+          duplicateId = repository.addCandidate(sms.sender, sms.body, sms.amount, sms.receivedAt)
+        }
+        Then("the existing decision is preserved without another pending candidate") {
+          duplicateId shouldBe originalId
+          repository.getCandidateById(originalId)?.status shouldBe CandidateExpenseStatus.REJECTED
+          repository.observePendingCandidates().first() shouldHaveSize 0
+        }
+      }
 
       When("no candidate expenses exist") {
         Then("observePendingCandidates emits empty list") {

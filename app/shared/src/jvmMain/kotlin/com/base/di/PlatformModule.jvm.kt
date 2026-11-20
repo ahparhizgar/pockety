@@ -12,12 +12,15 @@ import com.base.notification.ExpenseNotificationManager
 import com.base.notification.FakeExpenseNotificationManager
 import com.base.permission.FakePermissionController
 import com.base.permission.PermissionController
+import com.base.sms.NoOpSmsInboxReader
+import com.base.sms.SmsInboxReader
 import java.io.File
 import org.koin.core.module.Module
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 actual fun platformModule(): Module = module {
+  single { NoOpSmsInboxReader() }.bind<SmsInboxReader>()
   single { JvmAppDatabaseBuilderFactory() }.bind<AppDatabaseBuilderFactory>()
   single { FakePermissionController() }.bind<PermissionController>()
   single { FakeExpenseNotificationManager() }.bind<ExpenseNotificationManager>()

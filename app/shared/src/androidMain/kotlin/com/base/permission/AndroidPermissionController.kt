@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
@@ -27,10 +28,17 @@ class AndroidPermissionController(
   override val isSmsPermissionGranted: StateFlow<Boolean> = _isSmsPermissionGranted.asStateFlow()
 
   private var activityRef: WeakReference<ComponentActivity>? = null
-  private var launcherRef: ActivityResultLauncher<String>? = null
+  private var launcherRef: ActivityResultLauncher<Array<String>>? = null
+  private var notificationLauncher: ActivityResultLauncher<String>? = null
+  private var pendingNotification: CompletableDeferred<Boolean>? = null
   private var pendingResult: CompletableDeferred<Boolean>? = null
 
-  fun attach(activity: ComponentActivity, launcher: ActivityResultLauncher<String>) {
+  fun attach(
+      activity: ComponentActivity,
+      launcher: ActivityResultLauncher<Array<String>>,
+      notificationLauncher: ActivityResultLauncher<String>,
+  ) {
+    this.notificationLauncher = notificationLauncher
     activityRef = WeakReference(activity)
     launcherRef = launcher
     refreshPermissionState()
@@ -39,6 +47,9 @@ class AndroidPermissionController(
   fun detach() {
     activityRef = null
     launcherRef = null
+    notificationLauncher = null
+    pendingNotification?.cancel()
+    pendingNotification = null
     pendingResult?.cancel()
     pendingResult = null
   }
@@ -48,10 +59,39 @@ class AndroidPermissionController(
     _isSmsPermissionGranted.value = granted
   }
 
-  fun onPermissionResult(granted: Boolean) {
+  fun onPermissionResult() {
+    val granted = checkIsSmsPermissionGranted(context)
     _isSmsPermissionGranted.value = granted
     pendingResult?.complete(granted)
     pendingResult = null
+  }
+
+  fun onNotificationPermissionResult(granted: Boolean) {
+    pendingNotification?.complete(granted)
+    pendingNotification = null
+  }
+
+  override suspend fun requestNotificationPermission(): Boolean {
+    if (
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+    )
+        return true
+    return pendingNotification?.await() ?: launchNotificationPermissionRequest()
+  }
+
+  private suspend fun launchNotificationPermissionRequest(): Boolean {
+    val launcher = notificationLauncher
+    return if (prefs.getBoolean(KEY_NOTIFICATION_REQUESTED, false) || launcher == null) {
+      false
+    } else {
+      prefs.edit { putBoolean(KEY_NOTIFICATION_REQUESTED, true) }
+      val result = CompletableDeferred<Boolean>()
+      pendingNotification = result
+      launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      result.await()
+    }
   }
 
   override suspend fun requestReceiveSmsPermission(): Boolean {
@@ -71,20 +111,25 @@ class AndroidPermissionController(
     val isPermanentlyDenied =
         activity != null &&
             wasRequestedBefore &&
-            !ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                Manifest.permission.RECEIVE_SMS,
-            )
+            listOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS).any {
+              ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED &&
+                  prefs.getBoolean("requested_$it", false) &&
+                  !ActivityCompat.shouldShowRequestPermissionRationale(activity, it)
+            }
 
     if (isPermanentlyDenied || launcher == null) {
       openAppSettings()
       return false
     }
 
-    prefs.edit { putBoolean(KEY_SMS_REQUESTED_BEFORE, true) }
+    prefs.edit {
+      putBoolean(KEY_SMS_REQUESTED_BEFORE, true)
+      putBoolean("requested_${Manifest.permission.RECEIVE_SMS}", true)
+      putBoolean("requested_${Manifest.permission.READ_SMS}", true)
+    }
     val deferred = CompletableDeferred<Boolean>()
     pendingResult = deferred
-    launcher.launch(Manifest.permission.RECEIVE_SMS)
+    launcher.launch(arrayOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS))
     return deferred.await()
   }
 
@@ -98,13 +143,13 @@ class AndroidPermissionController(
   }
 
   companion object {
+    private const val KEY_NOTIFICATION_REQUESTED = "notification_permission_requested"
     private const val KEY_SMS_REQUESTED_BEFORE = "sms_permission_requested_before"
 
     fun checkIsSmsPermissionGranted(context: Context): Boolean {
-      return ContextCompat.checkSelfPermission(
-          context,
-          Manifest.permission.RECEIVE_SMS,
-      ) == PackageManager.PERMISSION_GRANTED
+      return listOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_SMS).all {
+        ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+      }
     }
   }
 }

@@ -11,12 +11,18 @@ import com.base.feature.settings.DefaultLanguageSettingsHandler
 import com.base.feature.settings.LanguageSettingsHandler
 import com.base.permission.AndroidPermissionController
 import com.base.permission.PermissionController
+import com.base.sms.AndroidSmsInboxReader
+import com.base.sms.SmsInboxReader
+import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 actual fun platformModule(): Module = module {
+  single { AndroidSmsInboxReader(androidContext(), get<CoroutineDispatcher>(named("io"))) }
+      .bind<SmsInboxReader>()
   single { AndroidAppDatabaseBuilderFactory(androidContext()) }.bind<AppDatabaseBuilderFactory>()
   single { AndroidPermissionController(androidContext()) }.bind<PermissionController>()
   single { DefaultLanguageSettingsHandler() }.bind<LanguageSettingsHandler>()

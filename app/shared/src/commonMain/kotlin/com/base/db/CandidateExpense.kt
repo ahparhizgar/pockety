@@ -43,6 +43,16 @@ interface CandidateExpenseDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun insertCandidate(candidate: CandidateExpenseEntity): Long
 
+  @Query(
+      "SELECT id FROM candidate_expenses WHERE sender = :sender AND rawBody = :body AND receivedAt = :receivedAt LIMIT 1"
+  )
+  suspend fun findExisting(sender: String, body: String, receivedAt: Instant): Long?
+
+  @Transaction
+  suspend fun insertIfAbsent(candidate: CandidateExpenseEntity): Long =
+      findExisting(candidate.sender, candidate.rawBody, candidate.receivedAt)
+          ?: insertCandidate(candidate)
+
   @Query("UPDATE candidate_expenses SET status = :status WHERE id = :id")
   suspend fun updateStatus(id: Long, status: CandidateExpenseStatus)
 }
@@ -85,7 +95,7 @@ class DefaultCandidateExpenseRepository(
             status = CandidateExpenseStatus.PENDING,
             receivedAt = receivedAt,
         )
-    return candidateExpenseDao.insertCandidate(candidate)
+    return candidateExpenseDao.insertIfAbsent(candidate)
   }
 
   override suspend fun updateStatus(id: Long, status: CandidateExpenseStatus) {

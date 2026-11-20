@@ -19,6 +19,9 @@ import com.base.feature.settings.UserSettingsRepository
 import com.base.ktor.createHttpClient
 import com.base.navigation.DefaultNavigationActionBus
 import com.base.navigation.NavigationActionBus
+import com.base.sms.DataStoreSmsImportHistory
+import com.base.sms.InitialSmsImport
+import com.base.sms.SmsImportHistory
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -35,6 +38,8 @@ fun appModule() = module {
 fun othersModule() = module {
   factoryOf(::createHttpClient)
   singleOf(::createDataStore)
+  singleOf(::InitialSmsImport)
+  singleOf(::DataStoreSmsImportHistory).bind<SmsImportHistory>()
   singleOf(::DataStoreTokenStorage).bind<TokenStorage>()
   singleOf(::DataStoreUserSettingsRepository).bind<UserSettingsRepository>()
   single { CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>(named("default"))) }

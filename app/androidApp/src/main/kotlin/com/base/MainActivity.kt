@@ -31,15 +31,26 @@ class MainActivity : ComponentActivity() {
   private val userSettingsRepository: UserSettingsRepository by inject()
 
   private val permissionLauncher =
+      registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        (permissionController as? AndroidPermissionController)?.onPermissionResult()
+      }
+
+  private val notificationPermissionLauncher =
       registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        (permissionController as? AndroidPermissionController)?.onPermissionResult(granted)
+        (permissionController as? AndroidPermissionController)?.onNotificationPermissionResult(
+            granted
+        )
       }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
 
-    (permissionController as? AndroidPermissionController)?.attach(this, permissionLauncher)
+    (permissionController as? AndroidPermissionController)?.attach(
+        this,
+        permissionLauncher,
+        notificationPermissionLauncher,
+    )
 
     val factory: RootComponentFactory by inject()
     val root = retainedComponent { factory.create(defaultCContext(it, permissionController)) }
@@ -75,7 +86,11 @@ class MainActivity : ComponentActivity() {
 
   override fun onResume() {
     super.onResume()
-    (permissionController as? AndroidPermissionController)?.attach(this, permissionLauncher)
+    (permissionController as? AndroidPermissionController)?.attach(
+        this,
+        permissionLauncher,
+        notificationPermissionLauncher,
+    )
     syncSystemLocale()
   }
 

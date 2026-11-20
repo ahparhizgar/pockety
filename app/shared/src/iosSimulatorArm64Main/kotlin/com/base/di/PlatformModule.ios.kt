@@ -3,6 +3,8 @@ package com.base.di
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.base.sms.NoOpSmsInboxReader
+import com.base.sms.SmsInboxReader
 import com.base.DataDir
 import com.base.db.AppDatabase
 import com.base.db.AppDatabaseBuilderFactory
@@ -19,6 +21,7 @@ import com.base.feature.settings.DefaultLanguageSettingsHandler
 import com.base.feature.settings.LanguageSettingsHandler
 
 actual fun platformModule(): Module = module {
+  single { NoOpSmsInboxReader() }.bind<SmsInboxReader>()
   single { IosAppDatabaseBuilderFactory() }.bind<AppDatabaseBuilderFactory>()
   single { FakePermissionController() }.bind<PermissionController>()
   single { NoOpExpenseNotificationManager() }.bind<ExpenseNotificationManager>()

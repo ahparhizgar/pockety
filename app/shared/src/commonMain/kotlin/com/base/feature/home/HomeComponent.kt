@@ -9,6 +9,7 @@ import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.CandidateExpenseRepository
 import com.base.feature.root.RootFlowDestination
+import com.base.sms.InitialSmsImport
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -41,6 +42,7 @@ interface HomeComponentFactory {
 class DefaultHomeComponent(
     cContext: CContext,
     private val candidateExpenseRepository: CandidateExpenseRepository,
+    private val initialSmsImport: InitialSmsImport,
     private val onAddExpense: () -> Unit,
     private val onOpenInbox: () -> Unit = {},
 ) : HomeComponent, CContext by cContext {
@@ -60,7 +62,10 @@ class DefaultHomeComponent(
 
   private fun observePermission(): Job =
       permissionController.isSmsPermissionGranted
-          .onEach { granted -> _state.update { it.copy(isSmsPermissionGranted = granted) } }
+          .onEach { granted ->
+            _state.update { it.copy(isSmsPermissionGranted = granted) }
+            if (granted) initialSmsImport.importOnce()
+          }
           .launchIn(scope)
 
   private fun observePendingCandidates(): Job =
@@ -83,18 +88,17 @@ class DefaultHomeComponent(
 
   override fun onUndecidedExpensesClicked() {
     onOpenInbox()
+    scope.launch { permissionController.requestNotificationPermission() }
   }
 
   override fun onEnableSmsTrackingClicked(): Job = scope.launch {
-    val granted = permissionController.requestReceiveSmsPermission()
-    if (granted) {
-      // Future navigation or prompt to track bank SMS if needed
-    }
+    permissionController.requestReceiveSmsPermission()
   }
 }
 
 class DefaultHomeComponentFactory(
     private val candidateExpenseRepository: CandidateExpenseRepository,
+    private val initialSmsImport: InitialSmsImport,
 ) : HomeComponentFactory {
   override fun create(
       cContext: CContext,
@@ -104,6 +108,7 @@ class DefaultHomeComponentFactory(
       DefaultHomeComponent(
           cContext = cContext,
           candidateExpenseRepository = candidateExpenseRepository,
+          initialSmsImport = initialSmsImport,
           onAddExpense = onAddExpense,
           onOpenInbox = onOpenInbox,
       )
