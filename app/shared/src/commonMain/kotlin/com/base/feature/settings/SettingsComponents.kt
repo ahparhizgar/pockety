@@ -700,7 +700,7 @@ private fun OptionSelectionCardUnselectedPreview() {
           OptionCardData(
               title = "Rials",
               subtitle = "Official Banking",
-              symbolText = "IRR",
+              symbolText = "﷼",
               isSelected = false,
           ),
       onClick = {},

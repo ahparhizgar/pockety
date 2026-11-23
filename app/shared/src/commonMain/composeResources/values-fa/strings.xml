@@ -119,7 +119,7 @@
     <string name="settings_currency_tomans_symbol">ت</string>
     <string name="settings_currency_rials_title">ریال</string>
     <string name="settings_currency_rials_subtitle">واحد رسمی بانکی</string>
-    <string name="settings_currency_rials_symbol">IRR</string>
+    <string name="settings_currency_rials_symbol">﷼</string>
     <string name="settings_reminder_title">یادآور پایان روز</string>
     <string name="settings_reminder_subtitle">ساعت ۲۱ یادت می‌ندازیم پیامک‌ها رو بررسی کنی</string>
     <string name="settings_section_privacy">حریم خصوصی و امنیت</string>
@@ -181,7 +181,7 @@
     <string name="analytics_currency_symbol_fa">تومان</string>
     <string name="settings_currency_kilo_tomans_title">هزارتومن</string>
     <string name="settings_currency_kilo_tomans_subtitle">هر هزارتومن، ۱۰٬۰۰۰ ریال</string>
-    <string name="settings_currency_kilo_tomans_symbol">هزارتومن</string>
+    <string name="settings_currency_kilo_tomans_symbol">ه‌ت</string>
     <string name="pocket_top_up_feedback">%1$s به جیبت اضافه شد!</string>
     <string name="pocket_unlink_feedback">%1$s از جیبت جدا شد. %2$s برگشت!</string>
     <string name="pocket_over_budget_amount">%1$s بیشتر از بودجه</string>
