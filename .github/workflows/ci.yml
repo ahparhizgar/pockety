@@ -66,6 +66,7 @@ jobs:
             .screenshots/**/*.png
             design/screenshots/**/*.png
           if-no-files-found: warn
+          include-hidden-files: true
           retention-days: 7
 
       - name: Coverage
