@@ -13,6 +13,8 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -22,6 +24,22 @@ jobs:
           java-version: '21'
 
       - uses: gradle/actions/setup-gradle@v4
+
+      - name: Ktfmt format
+        run: ./gradlew ktfmtFormat --console=plain
+
+      - name: Commit formatting
+        if: github.event_name == 'push'
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "Apply ktfmt formatting"
+            git push origin "HEAD:${{ github.ref_name }}"
+          else
+            echo "Already formatted, nothing to commit."
+          fi
 
       - name: Compile
         run: ./gradlew compileKotlinJvm compileKotlin --continue --console=plain
