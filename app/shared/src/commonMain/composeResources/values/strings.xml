@@ -163,7 +163,7 @@
     <string name="settings_currency_tomans_symbol">T</string>
     <string name="settings_currency_rials_title">Rials</string>
     <string name="settings_currency_rials_subtitle">Official Banking</string>
-    <string name="settings_currency_rials_symbol">﷼</string>
+    <string name="settings_currency_rials_symbol">IRR</string>
     <string name="settings_reminder_title">End-of-day reminder</string>
     <string name="settings_reminder_subtitle">Notify at 21:00 to review pending SMS</string>
     <string name="settings_section_privacy">Privacy &amp; Security</string>
