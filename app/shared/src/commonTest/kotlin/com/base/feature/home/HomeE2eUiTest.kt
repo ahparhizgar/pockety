@@ -58,7 +58,7 @@ class HomeE2eUiTest {
     onNode(hasTestTag("home-monthly-outflow-card")).waitForExistence().assertExists()
     onNode(hasTestTag("home-date-pill")).assertExists()
     onNode(hasTestTag("home-mom-card")).performScrollTo().assertExists()
-    onNode(hasTestTag("home-mom-badge")).assertExists()
+    onNode(hasTestTag("home-mom-badge"), useUnmergedNode = true).assertExists()
     onNode(hasTestTag("home-pockets-section")).performScrollTo().assertExists()
     onNode(hasTestTag("home-pocket-1")).assertExists()
     onNode(hasTestTag("home-pocket-2")).assertExists()
@@ -74,7 +74,7 @@ class HomeE2eUiTest {
     onNode(hasTestTag("home-date-pill")).waitForExistence().performClick()
     component.allMonthsClickedCount shouldBe 1
 
-    onNode(hasTestTag("home-all-months")).performScrollTo().performClick()
+    onNode(hasTestTag("home-all-months"), useUnmergedNode = true).performScrollTo().performClick()
     component.allMonthsClickedCount shouldBe 2
 
     onNode(hasTestTag("home-mom-card")).performScrollTo().performClick()
@@ -109,7 +109,7 @@ class HomeE2eUiTest {
         "Pockets section must be hidden when there are no pockets",
     )
     assertTrue(
-        onAllNodes(hasTestTag("home-mom-badge")).fetchSemanticsNodes().isEmpty(),
+        onAllNodes(hasTestTag("home-mom-badge"), useUnmergedTree = true).fetchSemanticsNodes().isEmpty(),
         "MoM badge must be hidden when the previous month total is zero",
     )
   }
