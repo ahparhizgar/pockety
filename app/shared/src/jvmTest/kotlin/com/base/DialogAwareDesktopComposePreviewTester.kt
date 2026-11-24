@@ -3,7 +3,6 @@ package com.base
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.isRoot
-import androidx.compose.ui.test.onAllNodes
 import androidx.compose.ui.test.onRoot
 import com.github.takahirom.roborazzi.DefaultDesktopComposePreviewTester
 import com.github.takahirom.roborazzi.DesktopComposePreviewTester
