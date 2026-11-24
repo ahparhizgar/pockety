@@ -204,7 +204,7 @@ private fun CategoryManagementList(
               category = category,
               isDragging = isDragging,
               showHandle = showAll,
-              handleModifier =
+              modifier =
                   if (showAll) {
                     Modifier.draggableHandle(
                             onDragStopped = { component.onCategoryMoveFinished() },
@@ -226,7 +226,7 @@ private fun CategoryManagementRow(
     category: CategoryEntity,
     isDragging: Boolean,
     showHandle: Boolean,
-    handleModifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
   CategoryOptionItem(
       data =
@@ -239,7 +239,7 @@ private fun CategoryManagementRow(
       onClick = {},
       isDragging = isDragging,
       modifier = Modifier.testTag("category-item-${category.name}"),
-      leadingModifier = handleModifier,
+      leadingModifier = modifier,
       leadingContent =
           if (showHandle) {
             { contentModifier ->
