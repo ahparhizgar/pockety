@@ -363,7 +363,9 @@ class MigrationTest : BehaviorSpec() {
 
         Then("sortOrder preserves the previously displayed order") {
           val statement =
-              connection.prepare("SELECT `id`, `sortOrder` FROM `categories` ORDER BY `sortOrder` ASC")
+              connection.prepare(
+                  "SELECT `id`, `sortOrder` FROM `categories` ORDER BY `sortOrder` ASC"
+              )
           val ids = mutableListOf<Long>()
           val sortOrders = mutableListOf<Long>()
           while (statement.step()) {

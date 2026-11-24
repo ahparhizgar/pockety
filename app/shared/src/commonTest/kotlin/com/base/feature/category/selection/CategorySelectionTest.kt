@@ -80,8 +80,7 @@ class CategorySelectionTest : BehaviorSpec() {
         }
 
         Then("the selection list shows the manual order") {
-          component.state.value.categories.map { it.name } shouldBe
-              listOf("Groceries", "Dining")
+          component.state.value.categories.map { it.name } shouldBe listOf("Groceries", "Dining")
         }
       }
 

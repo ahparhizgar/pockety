@@ -126,8 +126,7 @@ class DefaultCategoryManagementComponent(
       if (fromIndex !in state.categories.indices || toIndex !in state.categories.indices) {
         state
       } else {
-        val reordered =
-            state.categories.toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
+        val reordered = state.categories.toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
         state.copy(
             categories = reordered,
             filteredCategories = filterCategories(reordered, state.searchQuery),
@@ -136,10 +135,9 @@ class DefaultCategoryManagementComponent(
     }
   }
 
-  override fun onCategoryMoveFinished(): Job =
-      scope.launch {
-        categoryRepository.reorderCategories(_state.value.categories.map { it.id })
-      }
+  override fun onCategoryMoveFinished(): Job = scope.launch {
+    categoryRepository.reorderCategories(_state.value.categories.map { it.id })
+  }
 
   override fun onDeleteClicked(category: CategoryEntity) {
     _state.update { it.copy(categoryPendingDeletion = category) }

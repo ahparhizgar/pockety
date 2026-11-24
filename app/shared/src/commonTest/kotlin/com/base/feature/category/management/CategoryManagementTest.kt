@@ -131,8 +131,7 @@ class CategoryManagementTest : BehaviorSpec() {
         }
 
         Then("the state order changes") {
-          component.state.value.categories.map { it.name } shouldBe
-              listOf("Groceries", "Dining")
+          component.state.value.categories.map { it.name } shouldBe listOf("Groceries", "Dining")
         }
 
         And("the move is finished") {
@@ -155,8 +154,7 @@ class CategoryManagementTest : BehaviorSpec() {
         }
 
         Then("the order is unchanged") {
-          component.state.value.categories.map { it.name } shouldBe
-              listOf("Dining", "Groceries")
+          component.state.value.categories.map { it.name } shouldBe listOf("Dining", "Groceries")
         }
       }
 

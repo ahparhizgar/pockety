@@ -59,9 +59,6 @@ import com.base.feature.category.add.resolveCategoryIcon
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyListState
-import sh.calvin.reorderable.reorderable
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.back_action
 import pockety.app.shared.generated.resources.cancel_action
@@ -72,6 +69,9 @@ import pockety.app.shared.generated.resources.category_delete_dialog_title
 import pockety.app.shared.generated.resources.category_empty
 import pockety.app.shared.generated.resources.category_reorder_action
 import pockety.app.shared.generated.resources.delete_action
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
+import sh.calvin.reorderable.reorderable
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable

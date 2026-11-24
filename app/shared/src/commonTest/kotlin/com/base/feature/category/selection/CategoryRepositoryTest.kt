@@ -129,8 +129,7 @@ class CategoryRepositoryTest : BehaviorSpec() {
       When("categories are reordered") {
         beforeEach {
           val diningId = categoryRepository.addCategory("Dining", "restaurant", 0xFFE57373)
-          val groceriesId =
-              categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
+          val groceriesId = categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
           val billsId = categoryRepository.addCategory("Bills", "receipt", 0xFF64B5F6)
           categoryRepository.reorderCategories(listOf(billsId, diningId, groceriesId))
           testCoroutineScheduler.advanceUntilIdle()
@@ -150,8 +149,7 @@ class CategoryRepositoryTest : BehaviorSpec() {
       When("a category is added after reordering") {
         beforeEach {
           val diningId = categoryRepository.addCategory("Dining", "restaurant", 0xFFE57373)
-          val groceriesId =
-              categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
+          val groceriesId = categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
           categoryRepository.reorderCategories(listOf(groceriesId, diningId))
           categoryRepository.addCategory("Bills", "receipt", 0xFF64B5F6)
           testCoroutineScheduler.advanceUntilIdle()
@@ -166,8 +164,7 @@ class CategoryRepositoryTest : BehaviorSpec() {
       When("a category is deleted after reordering") {
         beforeEach {
           val diningId = categoryRepository.addCategory("Dining", "restaurant", 0xFFE57373)
-          val groceriesId =
-              categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
+          val groceriesId = categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
           val billsId = categoryRepository.addCategory("Bills", "receipt", 0xFF64B5F6)
           categoryRepository.reorderCategories(listOf(billsId, diningId, groceriesId))
           categoryRepository.deleteCategory(diningId)
