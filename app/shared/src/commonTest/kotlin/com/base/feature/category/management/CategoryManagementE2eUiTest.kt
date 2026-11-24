@@ -2,6 +2,7 @@ package com.base.feature.category.management
 
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isFocused
@@ -225,7 +226,7 @@ class CategoryManagementE2eUiTest {
 
     onNode(hasTestTag("reorder-handle-Groceries")).waitForExistence().assertExists()
     onNode(hasTestTag("reorder-handle-Groceries")).performClick()
-    onNode(hasTestTag("reorder-handle-Groceries")).assert(isFocused())
+    onNode(hasTestTag("reorder-handle-Groceries")).assertIsFocused()
     onNode(hasTestTag("reorder-handle-Groceries")).performKeyInput { pressKey(Key.DirectionUp) }
 
     waitUntil(timeoutMillis = 5_000) {
