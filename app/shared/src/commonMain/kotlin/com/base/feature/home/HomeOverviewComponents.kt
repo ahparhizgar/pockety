@@ -56,6 +56,8 @@ import pockety.app.shared.generated.resources.uncategorized_title
 
 private const val PERCENT_WHOLE: Float = 100f
 
+private const val MIN_SEGMENT_WEIGHT: Float = 0.01f
+
 /** Display color of a breakdown row: the category's own color, or a neutral tone. */
 @Composable
 @ReadOnlyComposable
@@ -111,7 +113,7 @@ private fun HomeSegmentedProgressBar(
               }
 
           Surface(
-              modifier = Modifier.weight(segment.share.coerceAtLeast(0.01f)).fillMaxHeight(),
+              modifier = Modifier.weight(segment.share.coerceAtLeast(MIN_SEGMENT_WEIGHT)).fillMaxHeight(),
               shape = shape,
               color = segment.displayColor(),
           ) {}
