@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.LabelOff
@@ -32,12 +31,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import com.base.feature.category.add.resolveCategoryIcon
+import com.base.feature.category.CategoryNoResultsState
 import com.base.feature.category.CategoryOptionData
 import com.base.feature.category.CategoryOptionItem
-import com.base.feature.category.CategoryNoResultsState
 import com.base.feature.category.CategorySearchField
 import com.base.feature.category.CreateCategoryButton
+import com.base.feature.category.add.resolveCategoryIcon
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
@@ -177,7 +176,6 @@ private fun CategoryOptionsList(
   }
 }
 
-
 @Composable
 private fun CategorySectionDivider(
     title: String,
@@ -209,8 +207,6 @@ private fun CategorySectionDivider(
     )
   }
 }
-
-
 
 @ScreenPreviews
 @Composable

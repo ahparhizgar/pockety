@@ -75,9 +75,10 @@ object SmsExpenseParser {
 
   fun parse(text: String): ParsedSmsExpense? {
     val normalized = normalize(text)
-    if (normalized.isBlank() ||
-        nonExpenseRegex.containsMatchIn(normalized) ||
-        promotionalRegex.containsMatchIn(normalized)
+    if (
+        normalized.isBlank() ||
+            nonExpenseRegex.containsMatchIn(normalized) ||
+            promotionalRegex.containsMatchIn(normalized)
     ) {
       return null
     }

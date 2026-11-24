@@ -58,9 +58,9 @@ data class CategoryOptionData(
 )
 
 /**
- * Shared category list row used by the category selection and management screens.
- * [trailingContent] lets the management screen attach a per-row action (delete)
- * without changing the row's appearance for selection.
+ * Shared category list row used by the category selection and management screens. [trailingContent]
+ * lets the management screen attach a per-row action (delete) without changing the row's appearance
+ * for selection.
  */
 @Composable
 fun CategoryOptionItem(
@@ -183,7 +183,9 @@ fun CategorySearchField(
   )
 }
 
-/** Selection-style create button pinned below the category lists. Callers set their own test tag. */
+/**
+ * Selection-style create button pinned below the category lists. Callers set their own test tag.
+ */
 @Composable
 fun CreateCategoryButton(
     onClick: () -> Unit,
