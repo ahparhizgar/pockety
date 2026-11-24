@@ -77,6 +77,9 @@ class HomeE2eUiTest {
     onNode(hasTestTag("home-all-months")).performScrollTo().performClick()
     component.allMonthsClickedCount shouldBe 2
 
+    onNode(hasTestTag("home-mom-card")).performScrollTo().performClick()
+    component.allMonthsClickedCount shouldBe 3
+
     onNode(hasTestTag("home-manage-pockets")).performScrollTo().performClick()
     component.managePocketsClickedCount shouldBe 1
 

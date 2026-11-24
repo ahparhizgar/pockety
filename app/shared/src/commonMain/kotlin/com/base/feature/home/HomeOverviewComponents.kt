@@ -36,13 +36,63 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.base.calendar.getMonthName
+import com.base.LocalAppLanguage
+import com.base.calendar.CalendarType
+import com.base.feature.settings.AppLanguage
 import com.base.feature.category.add.resolveCategoryIcon
 import com.base.ui.money.currencySymbol
 import com.base.ui.money.moneyAmount
 import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.analytics_january
+import pockety.app.shared.generated.resources.analytics_january_fa
+import pockety.app.shared.generated.resources.analytics_february
+import pockety.app.shared.generated.resources.analytics_february_fa
+import pockety.app.shared.generated.resources.analytics_march
+import pockety.app.shared.generated.resources.analytics_march_fa
+import pockety.app.shared.generated.resources.analytics_april
+import pockety.app.shared.generated.resources.analytics_april_fa
+import pockety.app.shared.generated.resources.analytics_may
+import pockety.app.shared.generated.resources.analytics_may_fa
+import pockety.app.shared.generated.resources.analytics_june
+import pockety.app.shared.generated.resources.analytics_june_fa
+import pockety.app.shared.generated.resources.analytics_july
+import pockety.app.shared.generated.resources.analytics_july_fa
+import pockety.app.shared.generated.resources.analytics_august
+import pockety.app.shared.generated.resources.analytics_august_fa
+import pockety.app.shared.generated.resources.analytics_september
+import pockety.app.shared.generated.resources.analytics_september_fa
+import pockety.app.shared.generated.resources.analytics_october
+import pockety.app.shared.generated.resources.analytics_october_fa
+import pockety.app.shared.generated.resources.analytics_november
+import pockety.app.shared.generated.resources.analytics_november_fa
+import pockety.app.shared.generated.resources.analytics_december
+import pockety.app.shared.generated.resources.analytics_december_fa
+import pockety.app.shared.generated.resources.analytics_farvardin
+import pockety.app.shared.generated.resources.analytics_farvardin_fa
+import pockety.app.shared.generated.resources.analytics_ordibehesht
+import pockety.app.shared.generated.resources.analytics_ordibehesht_fa
+import pockety.app.shared.generated.resources.analytics_khordad
+import pockety.app.shared.generated.resources.analytics_khordad_fa
+import pockety.app.shared.generated.resources.analytics_tir
+import pockety.app.shared.generated.resources.analytics_tir_fa
+import pockety.app.shared.generated.resources.analytics_mordad
+import pockety.app.shared.generated.resources.analytics_mordad_fa
+import pockety.app.shared.generated.resources.analytics_shahrivar
+import pockety.app.shared.generated.resources.analytics_shahrivar_fa
+import pockety.app.shared.generated.resources.analytics_mehr
+import pockety.app.shared.generated.resources.analytics_mehr_fa
+import pockety.app.shared.generated.resources.analytics_aban
+import pockety.app.shared.generated.resources.analytics_aban_fa
+import pockety.app.shared.generated.resources.analytics_azar
+import pockety.app.shared.generated.resources.analytics_azar_fa
+import pockety.app.shared.generated.resources.analytics_dey
+import pockety.app.shared.generated.resources.analytics_dey_fa
+import pockety.app.shared.generated.resources.analytics_bahman
+import pockety.app.shared.generated.resources.analytics_bahman_fa
+import pockety.app.shared.generated.resources.analytics_esfand
+import pockety.app.shared.generated.resources.analytics_esfand_fa
 import pockety.app.shared.generated.resources.home_active_pockets
 import pockety.app.shared.generated.resources.home_all_months
 import pockety.app.shared.generated.resources.home_last_month_format
@@ -53,6 +103,84 @@ import pockety.app.shared.generated.resources.home_saved_format
 import pockety.app.shared.generated.resources.home_vs_month_format
 import pockety.app.shared.generated.resources.monthly_outflow_label
 import pockety.app.shared.generated.resources.uncategorized_title
+
+
+private val gregorianMonths =
+    listOf(
+        Res.string.analytics_january,
+        Res.string.analytics_february,
+        Res.string.analytics_march,
+        Res.string.analytics_april,
+        Res.string.analytics_may,
+        Res.string.analytics_june,
+        Res.string.analytics_july,
+        Res.string.analytics_august,
+        Res.string.analytics_september,
+        Res.string.analytics_october,
+        Res.string.analytics_november,
+        Res.string.analytics_december,
+    )
+
+private val gregorianMonthsFa =
+    listOf(
+        Res.string.analytics_january_fa,
+        Res.string.analytics_february_fa,
+        Res.string.analytics_march_fa,
+        Res.string.analytics_april_fa,
+        Res.string.analytics_may_fa,
+        Res.string.analytics_june_fa,
+        Res.string.analytics_july_fa,
+        Res.string.analytics_august_fa,
+        Res.string.analytics_september_fa,
+        Res.string.analytics_october_fa,
+        Res.string.analytics_november_fa,
+        Res.string.analytics_december_fa,
+    )
+
+private val persianMonths =
+    listOf(
+        Res.string.analytics_farvardin,
+        Res.string.analytics_ordibehesht,
+        Res.string.analytics_khordad,
+        Res.string.analytics_tir,
+        Res.string.analytics_mordad,
+        Res.string.analytics_shahrivar,
+        Res.string.analytics_mehr,
+        Res.string.analytics_aban,
+        Res.string.analytics_azar,
+        Res.string.analytics_dey,
+        Res.string.analytics_bahman,
+        Res.string.analytics_esfand,
+    )
+
+private val persianMonthsFa =
+    listOf(
+        Res.string.analytics_farvardin_fa,
+        Res.string.analytics_ordibehesht_fa,
+        Res.string.analytics_khordad_fa,
+        Res.string.analytics_tir_fa,
+        Res.string.analytics_mordad_fa,
+        Res.string.analytics_shahrivar_fa,
+        Res.string.analytics_mehr_fa,
+        Res.string.analytics_aban_fa,
+        Res.string.analytics_azar_fa,
+        Res.string.analytics_dey_fa,
+        Res.string.analytics_bahman_fa,
+        Res.string.analytics_esfand_fa,
+    )
+
+/** Localized month name for the given calendar, following the app language. */
+@Composable
+private fun homeMonthName(month: Int, calendarType: CalendarType): String {
+  val isPersian = LocalAppLanguage.current == AppLanguage.PERSIAN
+  val names =
+      when (calendarType) {
+        CalendarType.PERSIAN -> if (isPersian) persianMonthsFa else persianMonths
+        CalendarType.GREGORIAN -> if (isPersian) gregorianMonthsFa else gregorianMonths
+      }
+  val key = names.getOrElse(month - 1) { names.first() }
+  return stringResource(key)
+}
 
 private const val PERCENT_WHOLE: Float = 100f
 
@@ -257,7 +385,7 @@ fun MonthlyOutflowHeroCard(
             )
             Text(
                 text =
-                    "${getMonthName(state.currentMonth, state.calendarType)} ${state.currentYear}",
+                    "${homeMonthName(state.currentMonth, state.calendarType)} ${state.currentYear}",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -331,11 +459,8 @@ private fun HomeMonthOverMonthBadge(state: HomeState, percent: Int) {
 }
 
 @Composable
-private fun HomeAllMonthsButton(onClick: () -> Unit) {
-  TextButton(
-      onClick = onClick,
-      modifier = Modifier.testTag("home-all-months"),
-  ) {
+private fun HomeAllMonthsButton() {
+  Box(modifier = Modifier.testTag("home-all-months")) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -363,6 +488,7 @@ fun MonthOverMonthCard(
     modifier: Modifier = Modifier,
 ) {
   Surface(
+      onClick = onAllMonthsClick,
       shape = RoundedCornerShape(24.dp),
       color = MaterialTheme.colorScheme.surfaceContainerLow,
       shadowElevation = 1.dp,
@@ -385,7 +511,7 @@ fun MonthOverMonthCard(
               text =
                   stringResource(
                       Res.string.home_vs_month_format,
-                      getMonthName(state.previousMonth, state.calendarType),
+                      homeMonthName(state.previousMonth, state.calendarType),
                   ),
               style = MaterialTheme.typography.labelSmall,
               color = MaterialTheme.colorScheme.secondary,
@@ -408,7 +534,7 @@ fun MonthOverMonthCard(
         )
       }
 
-      HomeAllMonthsButton(onClick = onAllMonthsClick)
+      HomeAllMonthsButton()
     }
   }
 }
