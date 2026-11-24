@@ -34,7 +34,9 @@ import kotlinx.datetime.toLocalDateTime
 private fun previousMonthInstant(): kotlin.time.Instant {
   val timeZone = TimeZone.currentSystemDefault()
   val today = Clock.System.now().toLocalDateTime(timeZone).date
-  return LocalDate(today.year, today.month, 15).minus(1, DateTimeUnit.MONTH).atStartOfDayIn(timeZone)
+  return LocalDate(today.year, today.month, 15)
+      .minus(1, DateTimeUnit.MONTH)
+      .atStartOfDayIn(timeZone)
 }
 
 private fun stubInitialSmsImport() =
@@ -202,7 +204,14 @@ class HomeComponentTest : BehaviorSpec() {
                     initialExpenses =
                         listOf(FakeExpenseFactory.create(id = 1, amount = 30_000, pocketId = 7)),
                     initialTopUps =
-                        listOf(PocketTopUpEntity(id = 1, pocketId = 7, amount = 100_000, createdAt = now)),
+                        listOf(
+                            PocketTopUpEntity(
+                                id = 1,
+                                pocketId = 7,
+                                amount = 100_000,
+                                createdAt = now,
+                            )
+                        ),
                 ),
             initialSmsImport = stubInitialSmsImport(),
             onAddExpense = {},

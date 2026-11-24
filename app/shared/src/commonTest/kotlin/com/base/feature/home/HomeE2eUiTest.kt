@@ -39,7 +39,12 @@ class HomeE2eUiTest {
           pockets =
               listOf(
                   HomePocketUi(id = 1, name = "Cafe", balance = 85_000L, icon = "coffee"),
-                  HomePocketUi(id = 2, name = "Groceries", balance = 450_000L, icon = "shopping_cart"),
+                  HomePocketUi(
+                      id = 2,
+                      name = "Groceries",
+                      balance = 450_000L,
+                      icon = "shopping_cart",
+                  ),
                   HomePocketUi(id = 3, name = "Travel", balance = 900_000L, icon = "beach_access"),
               ),
       )

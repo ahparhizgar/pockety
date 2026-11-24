@@ -194,8 +194,7 @@ class DefaultHomeComponent(
 
   private fun buildOverview(): HomeState {
     val now = activeCalendar.toCalendarDate(Clock.System.now().toEpochMilliseconds(), timeZone)
-    val previous =
-        activeCalendar.addMonths(CalendarDate(now.year, now.month, 1, calendarType), -1)
+    val previous = activeCalendar.addMonths(CalendarDate(now.year, now.month, 1, calendarType), -1)
 
     val currentExpenses = rawExpenses.filter { expense -> expense.isInMonth(now) }
     val previousExpenses = rawExpenses.filter { expense -> expense.isInMonth(previous) }
