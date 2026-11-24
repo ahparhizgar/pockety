@@ -143,6 +143,8 @@ fun PocketDetailsActionBar(
           text = stringResource(Res.string.pocket_details_top_up_button),
           style = MaterialTheme.typography.labelLarge,
           fontWeight = FontWeight.SemiBold,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
       )
     }
 
@@ -167,6 +169,8 @@ fun PocketDetailsActionBar(
           text = stringResource(Res.string.pocket_details_configure_button),
           style = MaterialTheme.typography.labelLarge,
           fontWeight = FontWeight.SemiBold,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
       )
     }
   }

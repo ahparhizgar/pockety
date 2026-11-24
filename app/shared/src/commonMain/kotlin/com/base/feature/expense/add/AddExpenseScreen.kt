@@ -332,7 +332,8 @@ private fun AmountHeroSurface(
           value = amountText,
           onValueChange = onAmountChange,
           modifier =
-              Modifier.widthIn(min = 60.dp, max = 280.dp)
+              Modifier.weight(1f, fill = false)
+                  .widthIn(min = 60.dp, max = 280.dp)
                   .focusRequester(focusRequester)
                   .testTag("amount-field"),
           textStyle =
@@ -355,6 +356,8 @@ private fun AmountHeroSurface(
           style = MaterialTheme.typography.headlineSmall,
           fontWeight = FontWeight.SemiBold,
           color = MaterialTheme.colorScheme.primary,
+          maxLines = 1,
+          softWrap = false,
       )
     }
   }
