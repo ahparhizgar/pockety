@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.base.design.features.addcategory.AddCategoryScreen
 import com.base.design.features.categorydetail.CategoryDetailScreen
 import com.base.design.features.categorylist.CategoryListScreen
+import com.base.design.features.categorylist.defaultCategoryList
 import com.base.design.features.editexpense.EditExpenseScreen
 import com.base.design.features.home.HomeScreen
 import com.base.design.features.home.rememberDefaultHomeScreenState
@@ -162,6 +163,19 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                             },
                             FigmaScreenItem("10b", "Category List (Empty)", "No Categories") {
                               CategoryListScreen(initialCategories = emptyList())
+                            },
+                            FigmaScreenItem("10c", "Category List (Search)", "Live Filter") {
+                              CategoryListScreen(initialSearchQuery = "gro")
+                            },
+                            FigmaScreenItem("10d", "Category List (No Results)", "Search Empty") {
+                              CategoryListScreen(initialSearchQuery = "unknownxyz")
+                            },
+                            FigmaScreenItem("10e", "Category List (Delete)", "Delete Confirmation") {
+                              val categories = defaultCategoryList()
+                              CategoryListScreen(
+                                  initialCategories = categories,
+                                  initialCategoryPendingDeletion = categories.first(),
+                              )
                             },
                             FigmaScreenItem("11", "Category Detail", "Spend History") {
                               CategoryDetailScreen()

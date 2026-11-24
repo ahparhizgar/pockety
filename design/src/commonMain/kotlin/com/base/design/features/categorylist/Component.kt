@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Checkroom
@@ -34,6 +33,7 @@ import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.SportsEsports
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,6 +60,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.base.design.features.selectcategory.CategoryOptionItem
 import com.base.design.ui.ComponentPreviews
 import com.base.design.ui.theme.colorSchemeExtended
 
@@ -133,93 +134,60 @@ val selectableCategoryIcons =
     )
 
 @Composable
-fun CategoryListItem(
+fun CategoryManagementRow(
     category: CategoryItemUiModel,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onDelete: (() -> Unit)? = null,
 ) {
-  Surface(
-      modifier = modifier.fillMaxWidth(),
-      shape = RoundedCornerShape(16.dp),
-      color = MaterialTheme.colorScheme.surfaceContainerLow,
-      contentColor = MaterialTheme.colorScheme.onSurface,
+  CategoryOptionItem(
+      name = category.name,
+      description = category.subtitle,
+      icon = category.icon,
+      iconBackgroundColor = category.iconContainerColor,
+      iconContentColor = category.iconContentColor,
       onClick = onClick,
-  ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-      Row(
-          modifier = Modifier.weight(1f),
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(16.dp),
-      ) {
-        Surface(
-            modifier = Modifier.size(48.dp),
-            shape = CircleShape,
-            color = category.iconContainerColor,
-            contentColor = category.iconContentColor,
-        ) {
-          Box(contentAlignment = Alignment.Center) {
-            Icon(
-                imageVector = category.icon,
-                contentDescription = category.name,
-                modifier = Modifier.size(24.dp),
-            )
-          }
-        }
-        Column(
-            verticalArrangement = Arrangement.Center,
-        ) {
-          Text(
-              text = category.name,
-              style = MaterialTheme.typography.titleMedium,
-              color = MaterialTheme.colorScheme.onSurface,
-          )
-          if (category.subtitle != null) {
-            Text(
-                text = category.subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-          }
-        }
-      }
-      Row(
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(8.dp),
-      ) {
-        if (onDelete != null) {
-          IconButton(
-              onClick = onDelete,
-              modifier = Modifier.size(32.dp),
-          ) {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ) {
-              Box(contentAlignment = Alignment.Center) {
+      modifier = modifier,
+      trailingContent =
+          onDelete?.let { delete ->
+            {
+              IconButton(onClick = delete) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete ${category.name}",
-                    modifier = Modifier.size(18.dp),
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(22.dp),
                 )
               }
             }
-          }
-        }
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+          },
+  )
+}
+
+@Composable
+fun DeleteCategoryDialog(
+    category: CategoryItemUiModel,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+  AlertDialog(
+      onDismissRequest = onDismiss,
+      modifier = modifier,
+      title = { Text("Delete category?") },
+      text = {
+        Text(
+            "\"${category.name}\" will be deleted. Expenses in this category will become " +
+                "uncategorized."
         )
-      }
-    }
-  }
+      },
+      confirmButton = {
+        TextButton(onClick = onConfirm) {
+          Text("Delete", color = MaterialTheme.colorScheme.error)
+        }
+      },
+      dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+  )
 }
 
 @Composable
@@ -546,23 +514,22 @@ object FakeCategoryFactory {
 
 @ComponentPreviews
 @Composable
-private fun CategoryListItemPreview() {
-  CategoryListItem(
-      category = FakeCategoryFactory.create(),
-      onDelete = {},
-  )
+fun CategoryManagementRowPreview() {
+  Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.padding(16.dp)) {
+    CategoryManagementRow(
+        category = FakeCategoryFactory.create(),
+        onDelete = {},
+    )
+  }
 }
 
 @ComponentPreviews
 @Composable
-private fun CategoryListItemWithSubtitlePreview() {
-  CategoryListItem(
-      category =
-          FakeCategoryFactory.create(
-              name = "Bills & Utilities",
-              icon = Icons.Default.Bolt,
-              subtitle = "4 transactions • $210.00",
-          ),
+fun DeleteCategoryDialogPreview() {
+  DeleteCategoryDialog(
+      category = FakeCategoryFactory.create(),
+      onConfirm = {},
+      onDismiss = {},
   )
 }
 

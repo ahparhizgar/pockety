@@ -1,6 +1,7 @@
 package com.base.design
 
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.runDesktopComposeUiTest
 import com.base.design.figma.FigmaScreenItem
@@ -21,7 +22,12 @@ class CatalogScreenshotTest(private val screenItem: FigmaScreenItem) {
       runDesktopComposeUiTest(width = 390, height = 844) {
         setContent { PocketyTheme(darkTheme = false, content = screenItem.content) }
         val safeTitle = screenItem.title.replace("/", "-")
-        onRoot()
+        // A screen showing a dialog has two semantics roots (the dialog lives in its
+        // own window); capture the last root, which is the dialog window.
+        val roots = onAllNodes(isRoot())
+        val rootCount = roots.fetchSemanticsNodes().size
+        val target = if (rootCount <= 1) onRoot() else roots[rootCount - 1]
+        target
             .captureRoboImage(
                 filePath = "screenshots/${safeTitle}.png",
                 roborazziOptions =

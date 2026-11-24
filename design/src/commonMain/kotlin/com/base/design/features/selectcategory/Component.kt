@@ -189,6 +189,7 @@ fun CategoryOptionItem(
     description: String? = null,
     isSelected: Boolean = false,
     badgeText: String? = if (isSelected) "Active" else null,
+    trailingContent: (@Composable () -> Unit)? = null,
 ) {
   val containerColor =
       if (isSelected) {
@@ -269,6 +270,11 @@ fun CategoryOptionItem(
               overflow = TextOverflow.Ellipsis,
           )
         }
+      }
+
+      if (trailingContent != null) {
+        Spacer(modifier = Modifier.width(8.dp))
+        trailingContent()
       }
     }
   }
