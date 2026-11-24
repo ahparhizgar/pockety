@@ -126,6 +126,9 @@ class CategoryManagementTest : BehaviorSpec() {
 
       When("a category is moved to the top") {
         beforeEach {
+          // Force component creation and let the initial categories emission land first.
+          component.state.value
+          testCoroutineScheduler.advanceUntilIdle()
           component.onCategoryMoved(1, 0)
           testCoroutineScheduler.advanceUntilIdle()
         }
@@ -149,6 +152,8 @@ class CategoryManagementTest : BehaviorSpec() {
 
       When("a move is out of range") {
         beforeEach {
+          component.state.value
+          testCoroutineScheduler.advanceUntilIdle()
           component.onCategoryMoved(0, 5)
           testCoroutineScheduler.advanceUntilIdle()
         }
