@@ -58,7 +58,7 @@ class HomeE2eUiTest {
     onNode(hasTestTag("home-monthly-outflow-card")).waitForExistence().assertExists()
     onNode(hasTestTag("home-date-pill")).assertExists()
     onNode(hasTestTag("home-mom-card")).performScrollTo().assertExists()
-    onNode(hasTestTag("home-mom-badge"), useUnmergedNode = true).assertExists()
+    onNode(hasTestTag("home-mom-badge"), useUnmergedTree = true).assertExists()
     onNode(hasTestTag("home-pockets-section")).performScrollTo().assertExists()
     onNode(hasTestTag("home-pocket-1")).assertExists()
     onNode(hasTestTag("home-pocket-2")).assertExists()
@@ -74,7 +74,7 @@ class HomeE2eUiTest {
     onNode(hasTestTag("home-date-pill")).waitForExistence().performClick()
     component.allMonthsClickedCount shouldBe 1
 
-    onNode(hasTestTag("home-all-months"), useUnmergedNode = true).performScrollTo().performClick()
+    onNode(hasTestTag("home-all-months"), useUnmergedTree = true).performScrollTo().performClick()
     component.allMonthsClickedCount shouldBe 2
 
     onNode(hasTestTag("home-mom-card")).performScrollTo().performClick()
