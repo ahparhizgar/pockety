@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.base.ui.ComponentPreviews
+import com.base.ui.ExcludeScreenshotTest
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.cancel_action
@@ -98,6 +99,7 @@ private fun LanguageOptionItem(
 }
 
 @ComponentPreviews
+@ExcludeScreenshotTest
 @Composable
 private fun LanguageSelectionDialogPreview() {
   LanguageSelectionDialog(
