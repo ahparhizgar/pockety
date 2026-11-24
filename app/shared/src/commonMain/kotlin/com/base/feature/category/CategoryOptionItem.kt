@@ -54,13 +54,14 @@ import pockety.app.shared.generated.resources.search_action
  * and receives [leadingModifier] so the caller can attach drag/key handling to it. [isDragging]
  * raises the row while it is being reordered.
  */
+@Suppress("LongParameterList")
 @Composable
 fun CategoryOptionItem(
     data: CategoryOptionData,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    leadingContent: (@Composable (Modifier) -> Unit)? = null,
     leadingModifier: Modifier = Modifier,
+    leadingContent: (@Composable (Modifier) -> Unit)? = null,
     isDragging: Boolean = false,
     trailingContent: (@Composable () -> Unit)? = null,
 ) {

@@ -131,6 +131,7 @@ class FakeCategoryRepository(
 }
 
 object FakeCategoryFactory {
+  @Suppress("LongParameterList")
   fun create(
       id: Long = 1,
       name: String = "Dining",

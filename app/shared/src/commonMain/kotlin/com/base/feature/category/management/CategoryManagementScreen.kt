@@ -199,18 +199,12 @@ private fun CategoryManagementList(
     } else {
       itemsIndexed(displayList, key = { _, category -> category.id }) { index, category ->
         ReorderableItem(reorderableState, key = category.id) { isDragging ->
-          CategoryOptionItem(
-              data =
-                  CategoryOptionData(
-                      name = category.name,
-                      icon = resolveCategoryIcon(category.icon),
-                      iconBackgroundColor = Color(category.color),
-                      iconContentColor = Color.White,
-                  ),
-              onClick = {},
+          CategoryManagementRow(
+              component = component,
+              category = category,
               isDragging = isDragging,
-              modifier = Modifier.testTag("category-item-${category.name}"),
-              leadingModifier =
+              showHandle = showAll,
+              handleModifier =
                   if (showAll) {
                     Modifier.draggableHandle(
                             onDragStopped = { component.onCategoryMoveFinished() },
@@ -219,40 +213,63 @@ private fun CategoryManagementList(
                   } else {
                     Modifier
                   },
-              leadingContent =
-                  if (showAll) {
-                    { handleModifier ->
-                      IconButton(
-                          onClick = {},
-                          modifier = handleModifier.testTag("reorder-handle-${category.name}"),
-                      ) {
-                        Icon(
-                            imageVector = Icons.Default.DragHandle,
-                            contentDescription =
-                                stringResource(Res.string.category_reorder_action, category.name),
-                        )
-                      }
-                    }
-                  } else {
-                    null
-                  },
-              trailingContent = {
-                IconButton(
-                    onClick = { component.onDeleteClicked(category) },
-                    modifier = Modifier.testTag("delete-category-${category.name}"),
-                ) {
-                  Icon(
-                      imageVector = Icons.Default.Delete,
-                      contentDescription = stringResource(Res.string.category_delete_action),
-                      tint = MaterialTheme.colorScheme.error,
-                  )
-                }
-              },
           )
         }
       }
     }
   }
+}
+
+@Composable
+private fun CategoryManagementRow(
+    component: CategoryManagementComponent,
+    category: CategoryEntity,
+    isDragging: Boolean,
+    showHandle: Boolean,
+    handleModifier: Modifier,
+) {
+  CategoryOptionItem(
+      data =
+          CategoryOptionData(
+              name = category.name,
+              icon = resolveCategoryIcon(category.icon),
+              iconBackgroundColor = Color(category.color),
+              iconContentColor = Color.White,
+          ),
+      onClick = {},
+      isDragging = isDragging,
+      modifier = Modifier.testTag("category-item-${category.name}"),
+      leadingModifier = handleModifier,
+      leadingContent =
+          if (showHandle) {
+            { contentModifier ->
+              IconButton(
+                  onClick = {},
+                  modifier = contentModifier.testTag("reorder-handle-${category.name}"),
+              ) {
+                Icon(
+                    imageVector = Icons.Default.DragHandle,
+                    contentDescription =
+                        stringResource(Res.string.category_reorder_action, category.name),
+                )
+              }
+            }
+          } else {
+            null
+          },
+      trailingContent = {
+        IconButton(
+            onClick = { component.onDeleteClicked(category) },
+            modifier = Modifier.testTag("delete-category-${category.name}"),
+        ) {
+          Icon(
+              imageVector = Icons.Default.Delete,
+              contentDescription = stringResource(Res.string.category_delete_action),
+              tint = MaterialTheme.colorScheme.error,
+          )
+        }
+      },
+  )
 }
 
 private fun handleReorderKeyEvent(
