@@ -3,6 +3,10 @@
     <string name="categories_title">دسته‌بندی‌ها</string>
     <string name="category_add">افزودن دسته‌بندی</string>
     <string name="category_empty">هنوز دسته‌بندی نداری. برای مرتب‌کردن خرج‌هات یکی بساز.</string>
+    <string name="category_delete_action">حذف دسته‌بندی</string>
+    <string name="category_delete_dialog_title">دسته‌بندی حذف شود؟</string>
+    <string name="category_delete_dialog_message">«%1$s» حذف می‌شود. خرج‌های این دسته بدون دسته‌بندی می‌شوند.</string>
+    <string name="delete_action">حذف</string>
     <string name="error_invalid_request">این درخواست معتبر نیست. دوباره امتحان کن.</string>
     <string name="error_unauthorized">برای ادامه دوباره وارد شو.</string>
     <string name="error_forbidden">به این بخش دسترسی نداری.</string>

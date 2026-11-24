@@ -8,6 +8,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.decompose.value.update
 import com.arkivanov.essenty.backhandler.BackDispatcher
 import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.Fake
@@ -19,12 +20,26 @@ import com.base.feature.category.add.AddCategoryComponent
 import com.base.feature.category.add.AddCategoryComponentFactory
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
-data class CategoryManagementState(val categories: List<CategoryEntity> = emptyList())
+data class CategoryManagementState(
+    val categories: List<CategoryEntity> = emptyList(),
+    val filteredCategories: List<CategoryEntity> = emptyList(),
+    val searchQuery: String = "",
+    val categoryPendingDeletion: CategoryEntity? = null,
+)
 
 interface CategoryManagementComponent {
   val state: Value<CategoryManagementState>
+
+  fun onSearchQueryChanged(query: String)
+
+  fun onDeleteClicked(category: CategoryEntity)
+
+  fun onDeleteConfirmed()
+
+  fun onDeleteDismissed()
 
   fun onAddClicked()
 
@@ -61,18 +76,58 @@ interface CategoryManagementFlowComponentFactory {
 
 class DefaultCategoryManagementComponent(
     cContext: CContext,
-    categoryRepository: CategoryRepository,
+    private val categoryRepository: CategoryRepository,
     private val onAdd: () -> Unit,
     private val onBack: () -> Unit,
 ) : CategoryManagementComponent, CContext by cContext {
+  private val scope = componentScope()
   private val _state = MutableValue(CategoryManagementState())
   override val state: Value<CategoryManagementState> = _state
 
   init {
     categoryRepository
         .observeCategories()
-        .onEach { categories -> _state.value = CategoryManagementState(categories) }
-        .launchIn(componentScope())
+        .onEach { categories ->
+          _state.update {
+            it.copy(
+                categories = categories,
+                filteredCategories = filterCategories(categories, it.searchQuery),
+            )
+          }
+        }
+        .launchIn(scope)
+  }
+
+  private fun filterCategories(
+      categories: List<CategoryEntity>,
+      query: String,
+  ): List<CategoryEntity> {
+    if (query.isBlank()) return categories
+    val trimmed = query.trim().lowercase()
+    return categories.filter { it.name.lowercase().contains(trimmed) }
+  }
+
+  override fun onSearchQueryChanged(query: String) {
+    _state.update {
+      it.copy(
+          searchQuery = query,
+          filteredCategories = filterCategories(it.categories, query),
+      )
+    }
+  }
+
+  override fun onDeleteClicked(category: CategoryEntity) {
+    _state.update { it.copy(categoryPendingDeletion = category) }
+  }
+
+  override fun onDeleteConfirmed() {
+    val category = _state.value.categoryPendingDeletion ?: return
+    _state.update { it.copy(categoryPendingDeletion = null) }
+    scope.launch { categoryRepository.deleteCategory(category.id) }
+  }
+
+  override fun onDeleteDismissed() {
+    _state.update { it.copy(categoryPendingDeletion = null) }
   }
 
   override fun onAddClicked() = onAdd()
@@ -155,6 +210,14 @@ class DefaultCategoryManagementFlowComponentFactory(
 class FakeCategoryManagementComponent(
     override val state: Value<CategoryManagementState> = MutableValue(CategoryManagementState()),
 ) : CategoryManagementComponent {
+  override fun onSearchQueryChanged(query: String) {}
+
+  override fun onDeleteClicked(category: CategoryEntity) {}
+
+  override fun onDeleteConfirmed() {}
+
+  override fun onDeleteDismissed() {}
+
   override fun onAddClicked() {}
 
   override fun onBackClicked() {}

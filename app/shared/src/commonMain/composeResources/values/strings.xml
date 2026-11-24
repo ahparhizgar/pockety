@@ -3,6 +3,10 @@
     <string name="categories_title">Categories</string>
     <string name="category_add">Add category</string>
     <string name="category_empty">No categories yet. Add a category to organize your expenses.</string>
+    <string name="category_delete_action">Delete category</string>
+    <string name="category_delete_dialog_title">Delete category?</string>
+    <string name="category_delete_dialog_message">\"%1$s\" will be deleted. Expenses in this category will become uncategorized.</string>
+    <string name="delete_action">Delete</string>
     <string name="error_invalid_request">Invalid request</string>
     <string name="error_unauthorized">Unauthorized access</string>
     <string name="error_forbidden">Access denied</string>
