@@ -71,7 +71,6 @@ import pockety.app.shared.generated.resources.category_reorder_action
 import pockety.app.shared.generated.resources.delete_action
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
-import sh.calvin.reorderable.reorderable
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
@@ -191,7 +190,7 @@ private fun CategoryManagementList(
 
   LazyColumn(
       state = lazyListState,
-      modifier = if (showAll) modifier.reorderable(reorderableState) else modifier,
+      modifier = modifier,
       verticalArrangement = Arrangement.spacedBy(8.dp),
       contentPadding = PaddingValues(bottom = 16.dp),
   ) {
