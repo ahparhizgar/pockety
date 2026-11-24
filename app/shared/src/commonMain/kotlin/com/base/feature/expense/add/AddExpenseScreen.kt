@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -83,7 +84,7 @@ fun AddExpenseScreen(
   val state by component.state.subscribeAsState()
 
   Scaffold(
-      modifier = modifier.testTag("add-expense-screen"),
+      modifier = modifier.testTag("add-expense-screen").imePadding(),
       topBar = { AddExpenseTopAppBar(component = component) },
   ) { paddingValues ->
     Box(
