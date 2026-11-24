@@ -38,8 +38,6 @@ interface SettingsComponent {
 
   fun onCategoriesClicked()
 
-  fun onLabelsClicked()
-
   fun onLanguageClicked()
 
   fun onPrivacyPolicyClicked()
@@ -49,7 +47,6 @@ interface SettingsComponentFactory {
   fun create(
       cContext: CContext,
       onCategoriesClick: () -> Unit,
-      onLabelsClick: () -> Unit = {},
       onLanguageClick: () -> Unit = {},
       onPrivacyPolicyClick: () -> Unit = {},
   ): SettingsComponent
@@ -62,7 +59,6 @@ class DefaultSettingsComponent(
     private val categoryRepository: CategoryRepository,
     private val languageSettingsHandler: LanguageSettingsHandler = DefaultLanguageSettingsHandler(),
     private val onCategoriesClick: () -> Unit,
-    private val onLabelsClick: () -> Unit = {},
     private val onLanguageClick: () -> Unit = {},
     private val onPrivacyPolicyClick: () -> Unit = {},
 ) : SettingsComponent, CContext by cContext {
@@ -118,10 +114,6 @@ class DefaultSettingsComponent(
     onCategoriesClick()
   }
 
-  override fun onLabelsClicked() {
-    onLabelsClick()
-  }
-
   override fun onLanguageClicked() {
     onLanguageClick()
     if (languageSettingsHandler.supportsSystemLocaleSettings) {
@@ -144,7 +136,6 @@ class DefaultSettingsComponentFactory(
   override fun create(
       cContext: CContext,
       onCategoriesClick: () -> Unit,
-      onLabelsClick: () -> Unit,
       onLanguageClick: () -> Unit,
       onPrivacyPolicyClick: () -> Unit,
   ): SettingsComponent =
@@ -154,7 +145,6 @@ class DefaultSettingsComponentFactory(
           categoryRepository = categoryRepository,
           languageSettingsHandler = languageSettingsHandler,
           onCategoriesClick = onCategoriesClick,
-          onLabelsClick = onLabelsClick,
           onLanguageClick = onLanguageClick,
           onPrivacyPolicyClick = onPrivacyPolicyClick,
       )
@@ -165,7 +155,6 @@ class DefaultSettingsComponentFactory(
 class FakeSettingsComponent(
     initialState: SettingsState = FakeSettingsStateFactory.create(),
     private val onCategoriesClick: () -> Unit = {},
-    private val onLabelsClick: () -> Unit = {},
     private val onLanguageClick: () -> Unit = {},
     private val onPrivacyPolicyClick: () -> Unit = {},
 ) : SettingsComponent {
@@ -200,10 +189,6 @@ class FakeSettingsComponent(
     onCategoriesClick()
   }
 
-  override fun onLabelsClicked() {
-    onLabelsClick()
-  }
-
   override fun onLanguageClicked() {
     onLanguageClick()
     _state.update { it.copy(isLanguageDialogVisible = true) }
@@ -218,13 +203,11 @@ class FakeSettingsComponentFactory : SettingsComponentFactory {
   override fun create(
       cContext: CContext,
       onCategoriesClick: () -> Unit,
-      onLabelsClick: () -> Unit,
       onLanguageClick: () -> Unit,
       onPrivacyPolicyClick: () -> Unit,
   ): SettingsComponent =
       FakeSettingsComponent(
           onCategoriesClick = onCategoriesClick,
-          onLabelsClick = onLabelsClick,
           onLanguageClick = onLanguageClick,
           onPrivacyPolicyClick = onPrivacyPolicyClick,
       )

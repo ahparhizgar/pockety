@@ -35,9 +35,6 @@ import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.settings_categories_count_format
 import pockety.app.shared.generated.resources.settings_categories_subtitle
 import pockety.app.shared.generated.resources.settings_categories_title
-import pockety.app.shared.generated.resources.settings_labels_count_format
-import pockety.app.shared.generated.resources.settings_labels_subtitle
-import pockety.app.shared.generated.resources.settings_labels_title
 import pockety.app.shared.generated.resources.settings_language_english
 import pockety.app.shared.generated.resources.settings_language_persian
 import pockety.app.shared.generated.resources.settings_privacy_policy_subtitle
@@ -141,31 +138,6 @@ private fun SettingsOrganizeSection(
               ),
           onClick = component::onCategoriesClicked,
           modifier = Modifier.testTag("settings-navigation-categories"),
-      )
-      HorizontalDivider(
-          modifier = Modifier.padding(horizontal = 16.dp),
-          color = MaterialTheme.colorScheme.surfaceContainer,
-          thickness = 1.dp,
-      )
-      SettingsNavigationRow(
-          data =
-              NavigationRowData(
-                  title = stringResource(Res.string.settings_labels_title),
-                  subtitle = stringResource(Res.string.settings_labels_subtitle),
-                  iconData =
-                      SettingsRowIconData(
-                          icon = Icons.Default.LocalOffer,
-                          containerColor = MaterialTheme.colorSchemeExtended.tertiaryFixed,
-                          contentColor = MaterialTheme.colorSchemeExtended.onTertiaryFixedVariant,
-                      ),
-                  countBadgeText =
-                      stringResource(
-                          Res.string.settings_labels_count_format,
-                          0,
-                      ),
-              ),
-          onClick = component::onLabelsClicked,
-          modifier = Modifier.testTag("settings-navigation-labels"),
       )
     }
   }
