@@ -14,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -27,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.calendar.CalendarType
 import com.base.ui.ScreenPreviews
-import com.base.ui.colorSchemeExtended
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
