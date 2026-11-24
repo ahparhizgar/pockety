@@ -58,6 +58,21 @@ class SmsExpenseParserTest : BehaviorSpec() {
         }
       }
 
+      When("SMS is a promotional SnapPay advertisement") {
+        val sms =
+            "تا ۶۹۰٪ تخفیف خرید انواع کالا!\n" +
+                "در بلک‌فرایدی اسنپ‌پی، کالای مورد نیازت رو تا ۶۹۰٪ ارزون‌تر بخر.\n" +
+                "+ ۵۰۰هزار تومن تخفیف بیشتر با کد: PAY5NPA\n" +
+                "حداقل خرید: ۲ میلیون تومن\n" +
+                "خرید کن:\n" +
+                "l.snpy.ir/himi1"
+        val parsed = SmsExpenseParser.parse(sms)
+
+        Then("it returns null instead of suggesting the minimum purchase as an expense") {
+          parsed shouldBe null
+        }
+      }
+
       When("SMS is purely a deposit notice") {
         val sms = "بانک صادرات\nواریز: 10,000,000 ریال به حساب شما"
         val parsed = SmsExpenseParser.parse(sms)

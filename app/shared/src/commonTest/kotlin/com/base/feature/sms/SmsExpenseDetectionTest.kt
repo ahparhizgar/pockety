@@ -75,6 +75,18 @@ class SmsExpenseDetectionTest :
                 "bill reminder" to "یادآوری پرداخت قبض به مبلغ 500,000 ریال تا فردا",
                 "payment request" to "لطفا مبلغ 500,000 ریال پرداخت کنید",
                 "advertisement" to "با خرید مبلغ 500,000 ریال جایزه بگیرید",
+                "promotional discount with link and discount code" to
+                    "تا ۶۹۰٪ تخفیف خرید انواع کالا!\n" +
+                        "در بلک‌فرایدی اسنپ‌پی، کالای مورد نیازت رو تا ۶۹۰٪ ارزون‌تر بخر.\n" +
+                        "+ ۵۰۰هزار تومن تخفیف بیشتر با کد: PAY5NPA\n" +
+                        "حداقل خرید: ۲ میلیون تومن\n" +
+                        "خرید کن:\n" +
+                        "l.snpy.ir/himi1",
+                "promotional percent discount" to
+                    "تا ۵۰٪ تخفیف خرید از فروشگاه ما! خرید: 500,000 ریال",
+                "promotional shopping link" to "خرید: 500,000 ریال\nبرای خرید: shop.example.ir/buy",
+                "English promotional discount" to
+                    "Get 20% discount on your next purchase of 500,000 IRR with promo code SAVE20",
                 "English incoming" to
                     "Transfer received. Amount: 500,000 IRR credited to your account",
                 "fee on deposit" to "واریز: 500,000 ریال\nکارمزد: 7,200 ریال",

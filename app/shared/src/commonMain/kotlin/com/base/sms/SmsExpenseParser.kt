@@ -20,6 +20,14 @@ object SmsExpenseParser {
           """(?:^|\s)رمز|کد\s*(?:تایید|تأیید|فعال\s*سازی)|گذرواژه|\botp\b|password|verification\s+code|واریز|بستانکار|برگشت|عودت|استرداد|deposit|credited|received|refund|revers|ناموفق|موفق\s*نبود|انجام\s*نشد|عدم\s*موجودی|موجودی\s*کافی|لغو|failed|declined|unsuccessful|یادآوری|سررسید|لطفا|پرداخت\s*کنید|جایزه|reminder|please\s+pay""",
           RegexOption.IGNORE_CASE,
       )
+  // Promotional messages are not bank transactions, even when they mention
+  // purchases and amounts: discounts, percent-off figures and shopping links
+  // never appear in real debit notifications.
+  private val promotionalRegex =
+      Regex(
+          """تخفیف|discount|promo|٪|%|(?:https?://|www\.)\S+|\b[a-z0-9-]+\.(?:ir|com|net|org|io)/\S*""",
+          RegexOption.IGNORE_CASE,
+      )
   // A complete integer token: never parse a fragment of a date, account, decimal or bad grouping.
   private val numberRegex =
       Regex(
@@ -67,7 +75,12 @@ object SmsExpenseParser {
 
   fun parse(text: String): ParsedSmsExpense? {
     val normalized = normalize(text)
-    if (normalized.isBlank() || nonExpenseRegex.containsMatchIn(normalized)) return null
+    if (normalized.isBlank() ||
+        nonExpenseRegex.containsMatchIn(normalized) ||
+        promotionalRegex.containsMatchIn(normalized)
+    ) {
+      return null
+    }
     val hasOutgoing =
         expenseRegex.containsMatchIn(normalized) || feeRegex.containsMatchIn(normalized)
     val candidate = candidates(normalized, hasOutgoing).maxByOrNull { it.priority }
