@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
@@ -210,20 +211,21 @@ private fun CategoryManagementList(
               onClick = {},
               isDragging = isDragging,
               modifier = Modifier.testTag("category-item-${category.name}"),
+              leadingModifier =
+                  if (showAll) {
+                    Modifier.draggableHandle(
+                            onDragStopped = { component.onCategoryMoveFinished() },
+                        )
+                        .onKeyEvent { event -> handleReorderKeyEvent(event, index, component) }
+                  } else {
+                    Modifier
+                  },
               leadingContent =
                   if (showAll) {
                     { handleModifier ->
                       IconButton(
                           onClick = {},
-                          modifier =
-                              handleModifier
-                                  .draggableHandle(
-                                      onDragStopped = { component.onCategoryMoveFinished() },
-                                  )
-                                  .onKeyEvent { event ->
-                                    handleReorderKeyEvent(event, index, component)
-                                  }
-                                  .testTag("reorder-handle-${category.name}"),
+                          modifier = handleModifier.testTag("reorder-handle-${category.name}"),
                       ) {
                         Icon(
                             imageVector = Icons.Default.DragHandle,
@@ -255,7 +257,7 @@ private fun CategoryManagementList(
 }
 
 private fun handleReorderKeyEvent(
-    event: androidx.compose.ui.input.key.KeyEvent,
+    event: KeyEvent,
     index: Int,
     component: CategoryManagementComponent,
 ): Boolean {
