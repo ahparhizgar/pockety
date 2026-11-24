@@ -23,8 +23,8 @@
 
 ## 5. Flow and data verification
 
-- [ ] 5.1 Extend `CategoryManagementFlowE2eTest` with the delete journey (Settings → Categories → delete a category assigned to an expense → expense becomes uncategorized, Settings count decreases) and verify it passes
-- [ ] 5.2 Extend `CategoryRepositoryTest` if needed so `deleteCategory` is covered for the expense/pocket SET_NULL behavior and verify it passes
+- [x] 5.1 Extend `CategoryManagementFlowE2eTest` with the delete journey (Settings → Categories → delete a category assigned to an expense → expense becomes uncategorized, Settings count decreases) and verify it passes
+- [x] 5.2 Extend `CategoryRepositoryTest` if needed so `deleteCategory` is covered for the expense/pocket SET_NULL behavior and verify it passes
 - [ ] 5.3 Run the full verification gates (compile, jvmTest, coverage, detekt, ktfmt) via CI, push, pull, and run the screenshot-diff routine; verify CI is green and only the expected new/changed screenshots appear
 
 ## Workflow follow-up

@@ -15,19 +15,19 @@ category repository.
 
 - Given a state with existing categories
     - When the user activates delete for a category,
-        - [ ] Then the state holds that category as pending deletion and nothing is deleted yet
+        - [x] Then the state holds that category as pending deletion and nothing is deleted yet
 - Given a category pending deletion
     - When the user confirms the deletion,
-        - [ ] Then the category is removed from the repository and from the state list, and no category is pending deletion
+        - [x] Then the category is removed from the repository and from the state list, and no category is pending deletion
 - Given a category pending deletion
     - When the user cancels the deletion,
-        - [ ] Then the category remains in the repository and in the state list, and no category is pending deletion
+        - [x] Then the category remains in the repository and in the state list, and no category is pending deletion
 - Given a state with existing categories
     - When the user enters a search query matching only some category names,
-        - [ ] Then the displayed list contains only the matching categories
+        - [x] Then the displayed list contains only the matching categories
 - Given a state with existing categories
     - When the search query is cleared,
-        - [ ] Then the displayed list contains all categories again
+        - [x] Then the displayed list contains all categories again
 
 ## E2E Flow Tests
 
@@ -40,12 +40,12 @@ end to end.
 
 - Given categories exist and one of them is assigned to an expense
     - When the user opens Categories from Settings, deletes that category and confirms,
-        - [ ] Then the category list no longer shows it
+        - [x] Then the category list no longer shows it
         - And the expense still exists and is uncategorized
         - And returning to Settings shows the decreased category count
 - Given the redesigned Categories destination
     - When the user adds a category through the existing creation form and saves,
-        - [ ] Then the new category appears in the list with its name, icon and color
+        - [x] Then the new category appears in the list with its name, icon and color
 
 ## Repository & Data Tests
 
@@ -53,7 +53,7 @@ end to end.
 
 - Given a category assigned to an expense and a pocket
     - When `deleteCategory` is called for that category,
-        - [ ] Then the category is gone
+        - [x] Then the category is gone
         - And the expense and pocket remain with a null category reference
 
 ## UI & Accessibility Tests

@@ -2,6 +2,7 @@ package com.base.feature.category.selection
 
 import com.base.db.CategoryRepository
 import com.base.db.ExpenseRepository
+import com.base.db.PocketRepository
 import com.base.testValue
 import com.base.util.MainDispatcherExtension
 import com.base.util.integrationKoin
@@ -21,6 +22,7 @@ class CategoryRepositoryTest : BehaviorSpec() {
       val koin by integrationKoin()
       val categoryRepository by testValue { koin.get<CategoryRepository>() }
       val expenseRepository by testValue { koin.get<ExpenseRepository>() }
+      val pocketRepository by testValue { koin.get<PocketRepository>() }
 
       When("category repository is empty") {
         Then("observeCategories emits empty list") {
@@ -76,6 +78,37 @@ class CategoryRepositoryTest : BehaviorSpec() {
           val expenses = expenseRepository.observeExpenses().first()
           val expense = expenses.first { it.id == expenseId }
           expense.categoryId.shouldBeNull()
+        }
+      }
+
+      When("category assigned to a pocket is deleted") {
+        var categoryId: Long by testValue { 0 }
+        var pocketId: Long by testValue { 0 }
+
+        beforeEach {
+          categoryId = categoryRepository.addCategory("Bills", "receipt", 0xFF64B5F6)
+          pocketId =
+              pocketRepository.addPocket(
+                  name = "Bills Pocket",
+                  categoryTag = "Bills",
+                  budgetAmount = 1_000_000,
+                  icon = "receipt",
+                  categoryId = categoryId,
+              )
+          testCoroutineScheduler.advanceUntilIdle()
+
+          categoryRepository.deleteCategory(categoryId)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the category is gone") {
+          categoryRepository.observeCategories().first() shouldHaveSize 0
+        }
+
+        Then("pocket's categoryId is set to null") {
+          val pockets = pocketRepository.observePockets().first()
+          val pocket = pockets.first { it.id == pocketId }
+          pocket.categoryId.shouldBeNull()
         }
       }
     }

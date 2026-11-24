@@ -6,6 +6,7 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.isRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.pressKey
@@ -13,11 +14,13 @@ import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.compose.ui.test.withKeyDown
 import com.base.RootScreen
 import com.base.component.TestCContext
+import com.base.db.CategoryRepository
 import com.base.util.injectUiRoot
 import com.base.util.uiKoin
 import com.base.util.waitForExistence
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalTestApi::class)
 class CategoryManagementE2eUiTest {
@@ -103,5 +106,100 @@ class CategoryManagementE2eUiTest {
     onNode(hasText("Groceries")).waitForExistence().assertExists()
     activateWithEnter("back-button")
     assertVisible("settings-screen", "returning from Category Management")
+  }
+
+  @Test
+  fun categoryCanBeDeletedFromManagementScreen() = runComposeUiTest {
+    val context = TestCContext()
+    val koin = uiKoin()
+    val categoryRepository = koin.get<CategoryRepository>()
+    runBlocking {
+      categoryRepository.addCategory(name = "Dining", icon = "restaurant", color = 0xFFE57373)
+      categoryRepository.addCategory(
+          name = "Groceries",
+          icon = "shopping_cart",
+          color = 0xFF81C784,
+      )
+    }
+    val component =
+        koin
+            .get<CategoryManagementComponentFactory>()
+            .create(cContext = context, onAdd = {}, onBack = {})
+    setContent { CategoryManagementScreen(component = component) }
+
+    onNode(hasTestTag("category-item-Groceries")).waitForExistence().assertExists()
+    assertTrue(
+        onAllNodes(hasTestTag("uncategorized-item")).fetchSemanticsNodes().isEmpty(),
+        "Management screen must not show an Uncategorized row",
+    )
+    assertTrue(
+        onAllNodes(hasText("Active")).fetchSemanticsNodes().isEmpty(),
+        "Management screen must not show a selected state",
+    )
+
+    onNode(hasTestTag("delete-category-Groceries")).performClick()
+    onNode(hasTestTag("confirm-delete-button")).waitForExistence().assertExists()
+    onNode(hasTestTag("cancel-delete-button")).performClick()
+    onNode(hasTestTag("category-item-Groceries")).assertExists()
+
+    onNode(hasTestTag("delete-category-Groceries")).performClick()
+    onNode(hasTestTag("confirm-delete-button")).waitForExistence().performClick()
+    assertTrue(
+        onAllNodes(hasTestTag("category-item-Groceries")).fetchSemanticsNodes().isEmpty(),
+        "Groceries row should be removed after confirming deletion",
+    )
+    onNode(hasTestTag("category-item-Dining")).assertExists()
+  }
+
+  @Test
+  fun searchFiltersManagementRows() = runComposeUiTest {
+    val context = TestCContext()
+    val koin = uiKoin()
+    val categoryRepository = koin.get<CategoryRepository>()
+    runBlocking {
+      categoryRepository.addCategory(name = "Dining", icon = "restaurant", color = 0xFFE57373)
+      categoryRepository.addCategory(
+          name = "Groceries",
+          icon = "shopping_cart",
+          color = 0xFF81C784,
+      )
+    }
+    val component =
+        koin
+            .get<CategoryManagementComponentFactory>()
+            .create(cContext = context, onAdd = {}, onBack = {})
+    setContent { CategoryManagementScreen(component = component) }
+
+    onNode(hasTestTag("category-search-field")).waitForExistence().performClick()
+    onNode(isFocused()).performTextInput("Din")
+    onNode(hasTestTag("category-item-Dining")).waitForExistence().assertExists()
+    assertTrue(
+        onAllNodes(hasTestTag("category-item-Groceries")).fetchSemanticsNodes().isEmpty(),
+        "Groceries row should be filtered out by the search query",
+    )
+  }
+
+  @Test
+  fun searchWithNoMatchesShowsNoResultsState() = runComposeUiTest {
+    val context = TestCContext()
+    val koin = uiKoin()
+    val categoryRepository = koin.get<CategoryRepository>()
+    runBlocking {
+      categoryRepository.addCategory(name = "Dining", icon = "restaurant", color = 0xFFE57373)
+      categoryRepository.addCategory(
+          name = "Groceries",
+          icon = "shopping_cart",
+          color = 0xFF81C784,
+      )
+    }
+    val component =
+        koin
+            .get<CategoryManagementComponentFactory>()
+            .create(cContext = context, onAdd = {}, onBack = {})
+    setContent { CategoryManagementScreen(component = component) }
+
+    onNode(hasTestTag("category-search-field")).waitForExistence().performClick()
+    onNode(isFocused()).performTextInput("unknownxyz")
+    onNode(hasText("No categories found")).waitForExistence().assertExists()
   }
 }
