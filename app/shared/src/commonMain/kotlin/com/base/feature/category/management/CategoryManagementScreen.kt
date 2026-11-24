@@ -8,19 +8,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -42,6 +41,11 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.base.db.CategoryEntity
 import com.base.db.FakeCategoryFactory
+import com.base.feature.category.CategoryNoResultsState
+import com.base.feature.category.CategoryOptionData
+import com.base.feature.category.CategoryOptionItem
+import com.base.feature.category.CategorySearchField
+import com.base.feature.category.CreateCategoryButton
 import com.base.feature.category.add.AddCategoryScreen
 import com.base.feature.category.add.resolveCategoryIcon
 import com.base.ui.ScreenPreviews
@@ -49,9 +53,13 @@ import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.back_action
+import pockety.app.shared.generated.resources.cancel_action
 import pockety.app.shared.generated.resources.categories_title
-import pockety.app.shared.generated.resources.category_add
+import pockety.app.shared.generated.resources.category_delete_action
+import pockety.app.shared.generated.resources.category_delete_dialog_message
+import pockety.app.shared.generated.resources.category_delete_dialog_title
 import pockety.app.shared.generated.resources.category_empty
+import pockety.app.shared.generated.resources.delete_action
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable
@@ -100,28 +108,111 @@ fun CategoryManagementScreen(
             },
         )
       },
-      floatingActionButton = {
-        Button(
-            onClick = component::onAddClicked,
-            modifier = Modifier.testTag("add-category-button"),
-        ) {
-          Icon(Icons.Default.Add, contentDescription = null)
-          Text(stringResource(Res.string.category_add), modifier = Modifier.padding(start = 8.dp))
-        }
-      },
-  ) { padding ->
-    if (state.categories.isEmpty()) {
-      EmptyCategoriesContent(padding)
-    } else {
-      CategoriesGridContent(padding, state)
+  ) { innerPadding ->
+    CategoryManagementContent(
+        component = component,
+        state = state,
+        modifier = Modifier.padding(innerPadding),
+    )
+  }
+
+  state.categoryPendingDeletion?.let { category ->
+    DeleteCategoryDialog(component = component, category = category)
+  }
+}
+
+@Composable
+private fun CategoryManagementContent(
+    component: CategoryManagementComponent,
+    state: CategoryManagementState,
+    modifier: Modifier = Modifier,
+) {
+  Box(
+      modifier = modifier.fillMaxSize(),
+      contentAlignment = Alignment.TopCenter,
+  ) {
+    Column(
+        modifier =
+            Modifier.widthIn(max = 640.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+      if (state.categories.isNotEmpty()) {
+        CategorySearchField(
+            query = state.searchQuery,
+            onQueryChange = component::onSearchQueryChanged,
+        )
+      }
+
+      if (state.categories.isEmpty()) {
+        EmptyCategoriesContent(modifier = Modifier.fillMaxWidth().weight(1f))
+      } else {
+        CategoryManagementList(
+            component = component,
+            state = state,
+            modifier = Modifier.fillMaxWidth().weight(1f),
+        )
+      }
+
+      CreateCategoryButton(
+          onClick = component::onAddClicked,
+          modifier = Modifier.testTag("add-category-button"),
+      )
     }
   }
 }
 
 @Composable
-private fun EmptyCategoriesContent(padding: PaddingValues) {
+private fun CategoryManagementList(
+    component: CategoryManagementComponent,
+    state: CategoryManagementState,
+    modifier: Modifier = Modifier,
+) {
+  val showAll = state.searchQuery.isBlank()
+  val displayList = if (showAll) state.categories else state.filteredCategories
+
+  LazyColumn(
+      modifier = modifier,
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+      contentPadding = PaddingValues(bottom = 16.dp),
+  ) {
+    if (!showAll && displayList.isEmpty()) {
+      item(key = "empty_state") { CategoryNoResultsState() }
+    } else {
+      items(displayList, key = { it.id }) { category ->
+        CategoryOptionItem(
+            data =
+                CategoryOptionData(
+                    name = category.name,
+                    icon = resolveCategoryIcon(category.icon),
+                    iconBackgroundColor = Color(category.color),
+                    iconContentColor = Color.White,
+                ),
+            onClick = {},
+            modifier = Modifier.testTag("category-item-${category.name}"),
+            trailingContent = {
+              IconButton(
+                  onClick = { component.onDeleteClicked(category) },
+                  modifier = Modifier.testTag("delete-category-${category.name}"),
+              ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(Res.string.category_delete_action),
+                    tint = MaterialTheme.colorScheme.error,
+                )
+              }
+            },
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun EmptyCategoriesContent(modifier: Modifier = Modifier) {
   Box(
-      Modifier.fillMaxSize().padding(padding).padding(24.dp),
+      modifier = modifier.padding(24.dp),
       contentAlignment = Alignment.Center,
   ) {
     Text(stringResource(Res.string.category_empty), style = MaterialTheme.typography.bodyLarge)
@@ -129,43 +220,36 @@ private fun EmptyCategoriesContent(padding: PaddingValues) {
 }
 
 @Composable
-private fun CategoriesGridContent(padding: PaddingValues, state: CategoryManagementState) {
-  Box(
-      modifier = Modifier.fillMaxSize().padding(padding),
-      contentAlignment = Alignment.TopCenter,
-  ) {
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 160.dp),
-        modifier = Modifier.fillMaxWidth().widthIn(max = 960.dp).padding(horizontal = 24.dp),
-        contentPadding = PaddingValues(vertical = 24.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-      items(state.categories, key = { it.id }) { category -> CategoryManagementCard(category) }
-    }
-  }
-}
-
-@Composable
-private fun CategoryManagementCard(category: CategoryEntity) {
-  Surface(
-      modifier = Modifier.fillMaxWidth(),
-      shape = MaterialTheme.shapes.large,
-      color = MaterialTheme.colorScheme.surfaceContainerLow,
-  ) {
-    Column(
-        modifier = Modifier.padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-      Icon(
-          imageVector = resolveCategoryIcon(category.icon),
-          contentDescription = null,
-          tint = Color(category.color),
-      )
-      Text(category.name, style = MaterialTheme.typography.titleMedium)
-    }
-  }
+private fun DeleteCategoryDialog(
+    component: CategoryManagementComponent,
+    category: CategoryEntity,
+) {
+  AlertDialog(
+      onDismissRequest = component::onDeleteDismissed,
+      title = { Text(text = stringResource(Res.string.category_delete_dialog_title)) },
+      text = {
+        Text(text = stringResource(Res.string.category_delete_dialog_message, category.name))
+      },
+      confirmButton = {
+        TextButton(
+            onClick = component::onDeleteConfirmed,
+            modifier = Modifier.testTag("confirm-delete-button"),
+        ) {
+          Text(
+              text = stringResource(Res.string.delete_action),
+              color = MaterialTheme.colorScheme.error,
+          )
+        }
+      },
+      dismissButton = {
+        TextButton(
+            onClick = component::onDeleteDismissed,
+            modifier = Modifier.testTag("cancel-delete-button"),
+        ) {
+          Text(text = stringResource(Res.string.cancel_action))
+        }
+      },
+  )
 }
 
 @ScreenPreviews
@@ -177,9 +261,70 @@ private fun EmptyCategoryManagementPreview() {
 @ScreenPreviews
 @Composable
 private fun PopulatedCategoryManagementPreview() {
+  val categories = FakeCategoryFactory.createList()
   CategoryManagementScreen(
       FakeCategoryManagementComponent(
-          state = MutableValue(CategoryManagementState(FakeCategoryFactory.createList())),
+          state =
+              MutableValue(
+                  CategoryManagementState(
+                      categories = categories,
+                      filteredCategories = categories,
+                  )
+              ),
+      )
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun SearchCategoryManagementPreview() {
+  val categories = FakeCategoryFactory.createList()
+  CategoryManagementScreen(
+      FakeCategoryManagementComponent(
+          state =
+              MutableValue(
+                  CategoryManagementState(
+                      categories = categories,
+                      filteredCategories = listOf(categories.first()),
+                      searchQuery = "Category 1",
+                  )
+              ),
+      )
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun NoResultsCategoryManagementPreview() {
+  val categories = FakeCategoryFactory.createList()
+  CategoryManagementScreen(
+      FakeCategoryManagementComponent(
+          state =
+              MutableValue(
+                  CategoryManagementState(
+                      categories = categories,
+                      filteredCategories = emptyList(),
+                      searchQuery = "unknownxyz",
+                  )
+              ),
+      )
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun DeleteCategoryManagementPreview() {
+  val categories = FakeCategoryFactory.createList()
+  CategoryManagementScreen(
+      FakeCategoryManagementComponent(
+          state =
+              MutableValue(
+                  CategoryManagementState(
+                      categories = categories,
+                      filteredCategories = categories,
+                      categoryPendingDeletion = categories.first(),
+                  )
+              ),
       )
   )
 }
@@ -190,9 +335,16 @@ private fun RightToLeftCategoryManagementPreview() {
   CompositionLocalProvider(
       LocalLayoutDirection provides LayoutDirection.Rtl,
   ) {
+    val categories = FakeCategoryFactory.createList()
     CategoryManagementScreen(
         FakeCategoryManagementComponent(
-            state = MutableValue(CategoryManagementState(FakeCategoryFactory.createList())),
+            state =
+                MutableValue(
+                    CategoryManagementState(
+                        categories = categories,
+                        filteredCategories = categories,
+                    )
+                ),
         )
     )
   }

@@ -18,8 +18,8 @@
 
 ## 4. Management screen redesign
 
-- [ ] 4.1 Rebuild `CategoryManagementScreen` as the approved design: centered column bounded at 640dp, search field, `LazyColumn` of shared rows with a delete trailing action, selection-style bottom create button replacing the floating button, existing empty state for no categories, and the no-results empty state for unmatched searches — verify the extended `CategoryManagementE2eUiTest` passes, including the keyboard journey
-- [ ] 4.2 Add the delete-confirmation `AlertDialog` bound to the pending-deletion state and update the screen previews (populated, empty, no-results, dialog, RTL) — verify the new previews are captured by the screenshot tests
+- [x] 4.1 Rebuild `CategoryManagementScreen` as the approved design: centered column bounded at 640dp, search field, `LazyColumn` of shared rows with a delete trailing action, selection-style bottom create button replacing the floating button, existing empty state for no categories, and the no-results empty state for unmatched searches — verify the extended `CategoryManagementE2eUiTest` passes, including the keyboard journey
+- [x] 4.2 Add the delete-confirmation `AlertDialog` bound to the pending-deletion state and update the screen previews (populated, empty, no-results, dialog, RTL) — verify the new previews are captured by the screenshot tests
 
 ## 5. Flow and data verification
 
