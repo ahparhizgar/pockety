@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
             PocketEntity::class,
             PocketTopUpEntity::class,
         ],
-    version = 9,
+    version = 10,
 )
 @ColumnTypeConverters(InstantConverter::class)
 @ConstructedBy(AppDatabaseConstructor::class)
@@ -348,6 +348,27 @@ val MIGRATION_8_9 =
       }
     }
 
+val MIGRATION_9_10 =
+    object : Migration(9, 10) {
+      override suspend fun migrate(connection: SQLiteConnection) {
+        connection
+            .prepare("ALTER TABLE `categories` ADD COLUMN `sortOrder` INTEGER NOT NULL DEFAULT 0")
+            .use { it.step() }
+        connection
+            .prepare(
+                """
+                UPDATE `categories` SET `sortOrder` = (
+                    SELECT COUNT(*) FROM `categories` AS `c`
+                    WHERE `c`.`createdAt` > `categories`.`createdAt`
+                        OR (`c`.`createdAt` = `categories`.`createdAt` AND `c`.`id` > `categories`.`id`)
+                )
+                """
+                    .trimIndent(),
+            )
+            .use { it.step() }
+      }
+    }
+
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
     queryContext: CoroutineContext = Dispatchers.Default,
@@ -362,6 +383,7 @@ fun getRoomDatabase(
           MIGRATION_6_7,
           MIGRATION_7_8,
           MIGRATION_8_9,
+          MIGRATION_9_10,
       )
       .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
       .setQueryCoroutineContext(queryContext)

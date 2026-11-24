@@ -22,16 +22,27 @@ data class CategoryEntity(
     val icon: String,
     val color: Long,
     val createdAt: Instant,
+    val sortOrder: Int,
 )
 
 @Dao
 interface CategoryDao {
   @Transaction
-  @Query("SELECT * FROM categories ORDER BY createdAt DESC")
+  @Query("SELECT * FROM categories ORDER BY sortOrder ASC, createdAt DESC")
   fun observeCategories(): Flow<List<CategoryEntity>>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun insertCategory(category: CategoryEntity): Long
+
+  @Query("SELECT COALESCE(MAX(sortOrder), -1) FROM categories") suspend fun maxSortOrder(): Int
+
+  @Query("UPDATE categories SET sortOrder = :sortOrder WHERE id = :id")
+  suspend fun updateSortOrder(id: Long, sortOrder: Int)
+
+  @Transaction
+  suspend fun reorderCategories(orderedIds: List<Long>) {
+    orderedIds.forEachIndexed { index, id -> updateSortOrder(id, index) }
+  }
 
   @Query("UPDATE transactions SET categoryId = NULL WHERE categoryId = :id")
   suspend fun clearTransactionsCategory(id: Long)
@@ -51,6 +62,8 @@ interface CategoryRepository {
   suspend fun addCategory(name: String, icon: String, color: Long): Long
 
   suspend fun deleteCategory(id: Long)
+
+  suspend fun reorderCategories(orderedIds: List<Long>)
 }
 
 class DefaultCategoryRepository(
@@ -65,8 +78,13 @@ class DefaultCategoryRepository(
             icon = icon,
             color = color,
             createdAt = Clock.System.now(),
+            sortOrder = categoryDao.maxSortOrder() + 1,
         )
     return categoryDao.insertCategory(category)
+  }
+
+  override suspend fun reorderCategories(orderedIds: List<Long>) {
+    categoryDao.reorderCategories(orderedIds)
   }
 
   override suspend fun deleteCategory(id: Long) {
@@ -92,9 +110,19 @@ class FakeCategoryRepository(
             icon = icon,
             color = color,
             createdAt = Clock.System.now(),
+            sortOrder = (categoriesFlow.value.maxOfOrNull { it.sortOrder } ?: -1) + 1,
         )
-    categoriesFlow.update { listOf(newCategory) + it }
+    categoriesFlow.update { it + newCategory }
     return id
+  }
+
+  override suspend fun reorderCategories(orderedIds: List<Long>) {
+    categoriesFlow.update { current ->
+      val byId = current.associateBy { it.id }
+      val reordered = orderedIds.mapNotNull { byId[it] }
+      val rest = current.filterNot { it.id in orderedIds.toSet() }
+      (reordered + rest).mapIndexed { index, category -> category.copy(sortOrder = index) }
+    }
   }
 
   override suspend fun deleteCategory(id: Long) {
@@ -109,6 +137,7 @@ object FakeCategoryFactory {
       icon: String = "restaurant",
       color: Long = 0xFFE57373,
       createdAt: Instant = Clock.System.now(),
+      sortOrder: Int = 0,
   ): CategoryEntity =
       CategoryEntity(
           id = id,
@@ -116,6 +145,7 @@ object FakeCategoryFactory {
           icon = icon,
           color = color,
           createdAt = createdAt,
+          sortOrder = sortOrder,
       )
 
   fun createList(count: Int = 3): List<CategoryEntity> =
@@ -125,6 +155,7 @@ object FakeCategoryFactory {
             name = "Category $index",
             icon = "category_$index",
             color = 0xFFE57373 + index,
+            sortOrder = index - 1,
         )
       }
 }

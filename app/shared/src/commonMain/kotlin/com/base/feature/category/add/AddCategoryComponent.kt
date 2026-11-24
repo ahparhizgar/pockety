@@ -97,6 +97,7 @@ class DefaultAddCategoryComponent(
                   icon = currentState.selectedIcon,
                   color = currentState.selectedColor,
                   createdAt = Clock.System.now(),
+                  sortOrder = 0,
               )
       onCompleted(createdCategory)
     } finally {
