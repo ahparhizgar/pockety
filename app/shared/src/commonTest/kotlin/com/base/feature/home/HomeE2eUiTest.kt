@@ -109,7 +109,9 @@ class HomeE2eUiTest {
         "Pockets section must be hidden when there are no pockets",
     )
     assertTrue(
-        onAllNodes(hasTestTag("home-mom-badge"), useUnmergedTree = true).fetchSemanticsNodes().isEmpty(),
+        onAllNodes(hasTestTag("home-mom-badge"), useUnmergedTree = true)
+            .fetchSemanticsNodes()
+            .isEmpty(),
         "MoM badge must be hidden when the previous month total is zero",
     )
   }

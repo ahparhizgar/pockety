@@ -8,8 +8,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.base.ui.theme.appTypography
 import com.base.ui.theme.ExtendedColorScheme
+import com.base.ui.theme.appTypography
 import com.base.ui.theme.darkScheme
 import com.base.ui.theme.extendedDark
 import com.base.ui.theme.extendedLight
