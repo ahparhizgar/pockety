@@ -15,10 +15,10 @@ import io.github.takahirom.roborazzi.captureRoboImage
 /**
  * Capturer that can also screenshot previews which show a dialog.
  *
- * The default capturer calls [onRoot], which requires exactly one semantics root. On
- * desktop a dialog composes into its own window with its own root, so a dialog preview
- * has two roots and the single-root lookup throws. When more than one root exists, the
- * last root belongs to the dialog window, so capture that one instead.
+ * The default capturer calls [onRoot], which requires exactly one semantics root. On desktop a
+ * dialog composes into its own window with its own root, so a dialog preview has two roots and the
+ * single-root lookup throws. When more than one root exists, the last root belongs to the dialog
+ * window, so capture that one instead.
  */
 @OptIn(ExperimentalRoborazziApi::class, InternalRoborazziApi::class, ExperimentalTestApi::class)
 class DialogAwareCapturer : DefaultDesktopComposePreviewTester.Capturer {
@@ -39,10 +39,11 @@ class DialogAwareCapturer : DefaultDesktopComposePreviewTester.Capturer {
 }
 
 /**
- * Desktop preview tester that captures dialog previews instead of failing on them.
- * Everything except capturing delegates to [DefaultDesktopComposePreviewTester].
+ * Desktop preview tester that captures dialog previews instead of failing on them. Everything
+ * except capturing delegates to [DefaultDesktopComposePreviewTester].
  */
 @OptIn(ExperimentalRoborazziApi::class, InternalRoborazziApi::class)
 class DialogAwareDesktopComposePreviewTester :
-    DesktopComposePreviewTester by
-        DefaultDesktopComposePreviewTester(capturer = DialogAwareCapturer())
+    DesktopComposePreviewTester by DefaultDesktopComposePreviewTester(
+        capturer = DialogAwareCapturer()
+    )

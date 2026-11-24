@@ -57,9 +57,7 @@ class PreviewScreenshotTest(
     private val testParameter: DesktopPreviewTestParameter,
 ) {
   private val tester =
-      getDesktopComposePreviewTester(
-          "com.base.DialogAwareDesktopComposePreviewTester"
-      )
+      getDesktopComposePreviewTester("com.base.DialogAwareDesktopComposePreviewTester")
   private val testLifecycleOptions =
       tester.options().testLifecycleOptions
           as DesktopComposePreviewTester.Options.JUnit4TestLifecycleOptions
@@ -74,10 +72,7 @@ class PreviewScreenshotTest(
   companion object {
     val testParameters: List<DesktopPreviewTestParameter> by lazy {
       setupDefaultOptions()
-      val tester =
-          getDesktopComposePreviewTester(
-              "com.base.DialogAwareDesktopComposePreviewTester"
-          )
+      val tester = getDesktopComposePreviewTester("com.base.DialogAwareDesktopComposePreviewTester")
       tester.testParameters()
     }
 
