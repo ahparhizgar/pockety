@@ -2,7 +2,7 @@
 
 ## 1. Design in the `:design` module (approval gate)
 
-- [ ] 1.1 Extend the redesigned category list in `:design` with a drag handle on each row (leading slot of the shared row component) and a dragging visual state; register the new states in `Catalog.kt`
+- [x] 1.1 Extend the redesigned category list in `:design` with a drag handle on each row (leading slot of the shared row component) and a dragging visual state; register the new states in `Catalog.kt`
 - [ ] 1.2 Send the design screenshots to the product owner and get explicit approval before starting group 2 — no app code changes before this gate
 
 ## 2. Data layer: persistent manual order

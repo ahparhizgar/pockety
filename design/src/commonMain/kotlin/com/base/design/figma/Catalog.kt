@@ -181,6 +181,17 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                                   initialCategoryPendingDeletion = categories.first(),
                               )
                             },
+                            FigmaScreenItem(
+                                "10f",
+                                "Category List (Reorder)",
+                                "Drag to Reorder",
+                            ) {
+                              val categories = defaultCategoryList()
+                              CategoryListScreen(
+                                  initialCategories = categories,
+                                  initialDraggingCategory = categories[1],
+                              )
+                            },
                             FigmaScreenItem("11", "Category Detail", "Spend History") {
                               CategoryDetailScreen()
                             },

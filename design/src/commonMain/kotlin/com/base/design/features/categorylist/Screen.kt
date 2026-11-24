@@ -41,6 +41,7 @@ fun CategoryListScreen(
     initialCategories: List<CategoryItemUiModel> = defaultCategoryList(),
     initialSearchQuery: String = "",
     initialCategoryPendingDeletion: CategoryItemUiModel? = null,
+    initialDraggingCategory: CategoryItemUiModel? = null,
     onBackClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     onCategoryClick: (CategoryItemUiModel) -> Unit = {},
@@ -111,6 +112,8 @@ fun CategoryListScreen(
                     category = category,
                     onClick = { onCategoryClick(category) },
                     onDelete = { categoryPendingDeletion = category },
+                    showDragHandle = !isSearchActive,
+                    isDragging = category == initialDraggingCategory,
                 )
               }
             }

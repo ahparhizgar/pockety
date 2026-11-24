@@ -190,12 +190,14 @@ fun CategoryOptionItem(
     isSelected: Boolean = false,
     badgeText: String? = if (isSelected) "Active" else null,
     trailingContent: (@Composable () -> Unit)? = null,
+    leadingContent: (@Composable () -> Unit)? = null,
+    isDragging: Boolean = false,
 ) {
   val containerColor =
-      if (isSelected) {
-        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f)
-      } else {
-        MaterialTheme.colorScheme.surfaceContainerLow
+      when {
+        isDragging -> MaterialTheme.colorScheme.surfaceContainerHigh
+        isSelected -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f)
+        else -> MaterialTheme.colorScheme.surfaceContainerLow
       }
 
   Surface(
@@ -204,11 +206,17 @@ fun CategoryOptionItem(
       shape = RoundedCornerShape(16.dp),
       color = containerColor,
       contentColor = MaterialTheme.colorScheme.onSurface,
+      shadowElevation = if (isDragging) 8.dp else 0.dp,
   ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(all = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+      if (leadingContent != null) {
+        leadingContent()
+        Spacer(modifier = Modifier.width(4.dp))
+      }
+
       Surface(
           modifier = Modifier.size(44.dp),
           shape = RoundedCornerShape(14.dp),

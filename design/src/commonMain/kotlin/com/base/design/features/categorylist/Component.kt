@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.FolderOff
@@ -139,6 +140,8 @@ fun CategoryManagementRow(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onDelete: (() -> Unit)? = null,
+    showDragHandle: Boolean = true,
+    isDragging: Boolean = false,
 ) {
   CategoryOptionItem(
       name = category.name,
@@ -148,6 +151,20 @@ fun CategoryManagementRow(
       iconContentColor = category.iconContentColor,
       onClick = onClick,
       modifier = modifier,
+      isDragging = isDragging,
+      leadingContent =
+          if (showDragHandle) {
+            {
+              Icon(
+                  imageVector = Icons.Default.DragHandle,
+                  contentDescription = "Reorder ${category.name}",
+                  tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                  modifier = Modifier.size(24.dp),
+              )
+            }
+          } else {
+            null
+          },
       trailingContent =
           onDelete?.let { delete ->
             {
