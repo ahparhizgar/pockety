@@ -73,6 +73,18 @@ class CategorySelectionTest : BehaviorSpec() {
             )
       }
 
+      When("categories are reordered in the repository") {
+        beforeEach {
+          categoryRepository.reorderCategories(listOf(groceriesCategory.id, diningCategory.id))
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the selection list shows the manual order") {
+          component.state.value.categories.map { it.name } shouldBe
+              listOf("Groceries", "Dining")
+        }
+      }
+
       When("a category item is selected") {
         beforeEach {
           component.onCategorySelected(groceriesCategory)

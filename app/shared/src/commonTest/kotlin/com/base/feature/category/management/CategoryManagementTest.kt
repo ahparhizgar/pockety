@@ -13,6 +13,7 @@ import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.flow.first
 
 class CategoryManagementTest : BehaviorSpec() {
   init {
@@ -120,6 +121,42 @@ class CategoryManagementTest : BehaviorSpec() {
             state.categories shouldHaveSize 2
             state.categoryPendingDeletion.shouldBeNull()
           }
+        }
+      }
+
+      When("a category is moved to the top") {
+        beforeEach {
+          component.onCategoryMoved(1, 0)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the state order changes") {
+          component.state.value.categories.map { it.name } shouldBe
+              listOf("Groceries", "Dining")
+        }
+
+        And("the move is finished") {
+          beforeEach {
+            component.onCategoryMoveFinished()
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then("the new order is persisted in the repository") {
+            val persisted = categoryRepository.observeCategories().first()
+            persisted.map { it.name } shouldBe listOf("Groceries", "Dining")
+          }
+        }
+      }
+
+      When("a move is out of range") {
+        beforeEach {
+          component.onCategoryMoved(0, 5)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the order is unchanged") {
+          component.state.value.categories.map { it.name } shouldBe
+              listOf("Dining", "Groceries")
         }
       }
 

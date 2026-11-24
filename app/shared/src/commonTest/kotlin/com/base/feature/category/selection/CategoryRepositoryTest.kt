@@ -111,6 +111,74 @@ class CategoryRepositoryTest : BehaviorSpec() {
           pocket.categoryId.shouldBeNull()
         }
       }
+
+      When("three categories are added") {
+        beforeEach {
+          categoryRepository.addCategory("Dining", "restaurant", 0xFFE57373)
+          categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
+          categoryRepository.addCategory("Bills", "receipt", 0xFF64B5F6)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("observeCategories emits them in the order they were added") {
+          val names = categoryRepository.observeCategories().first().map { it.name }
+          names shouldBe listOf("Dining", "Groceries", "Bills")
+        }
+      }
+
+      When("categories are reordered") {
+        beforeEach {
+          val diningId = categoryRepository.addCategory("Dining", "restaurant", 0xFFE57373)
+          val groceriesId =
+              categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
+          val billsId = categoryRepository.addCategory("Bills", "receipt", 0xFF64B5F6)
+          categoryRepository.reorderCategories(listOf(billsId, diningId, groceriesId))
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("observeCategories emits the manual order") {
+          val names = categoryRepository.observeCategories().first().map { it.name }
+          names shouldBe listOf("Bills", "Dining", "Groceries")
+        }
+
+        Then("sortOrder values match the positions") {
+          val sortOrders = categoryRepository.observeCategories().first().map { it.sortOrder }
+          sortOrders shouldBe listOf(0, 1, 2)
+        }
+      }
+
+      When("a category is added after reordering") {
+        beforeEach {
+          val diningId = categoryRepository.addCategory("Dining", "restaurant", 0xFFE57373)
+          val groceriesId =
+              categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
+          categoryRepository.reorderCategories(listOf(groceriesId, diningId))
+          categoryRepository.addCategory("Bills", "receipt", 0xFF64B5F6)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the new category is appended at the end") {
+          val names = categoryRepository.observeCategories().first().map { it.name }
+          names shouldBe listOf("Groceries", "Dining", "Bills")
+        }
+      }
+
+      When("a category is deleted after reordering") {
+        beforeEach {
+          val diningId = categoryRepository.addCategory("Dining", "restaurant", 0xFFE57373)
+          val groceriesId =
+              categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF81C784)
+          val billsId = categoryRepository.addCategory("Bills", "receipt", 0xFF64B5F6)
+          categoryRepository.reorderCategories(listOf(billsId, diningId, groceriesId))
+          categoryRepository.deleteCategory(diningId)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the rest keep their relative order") {
+          val names = categoryRepository.observeCategories().first().map { it.name }
+          names shouldBe listOf("Bills", "Groceries")
+        }
+      }
     }
   }
 }

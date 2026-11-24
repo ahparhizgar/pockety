@@ -20,6 +20,7 @@ import com.base.util.uiKoin
 import com.base.util.waitForExistence
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalTestApi::class)
@@ -201,5 +202,39 @@ class CategoryManagementE2eUiTest {
     onNode(hasTestTag("category-search-field")).waitForExistence().performClick()
     onNode(isFocused()).performTextInput("unknownxyz")
     onNode(hasText("No categories found")).waitForExistence().assertExists()
+  }
+
+  @Test
+  fun categoryCanBeReorderedWithKeyboard() = runComposeUiTest {
+    val context = TestCContext()
+    val koin = uiKoin()
+    val categoryRepository = koin.get<CategoryRepository>()
+    runBlocking {
+      categoryRepository.addCategory(name = "Dining", icon = "restaurant", color = 0xFFE57373)
+      categoryRepository.addCategory(
+          name = "Groceries",
+          icon = "shopping_cart",
+          color = 0xFF81C784,
+      )
+    }
+    val component =
+        koin
+            .get<CategoryManagementComponentFactory>()
+            .create(cContext = context, onAdd = {}, onBack = {})
+    setContent { CategoryManagementScreen(component = component) }
+
+    onNode(hasTestTag("reorder-handle-Groceries")).waitForExistence().assertExists()
+    onNode(hasTestTag("reorder-handle-Groceries")).performClick()
+    onNode(hasTestTag("reorder-handle-Groceries")).assert(isFocused())
+    onNode(hasTestTag("reorder-handle-Groceries")).performKeyInput { pressKey(Key.DirectionUp) }
+
+    waitUntil(timeoutMillis = 5_000) {
+      component.state.value.categories.map { it.name } == listOf("Groceries", "Dining")
+    }
+    val persisted = runBlocking { categoryRepository.observeCategories().first() }
+    assertTrue(
+        persisted.map { it.name } == listOf("Groceries", "Dining"),
+        "Keyboard reorder should be persisted",
+    )
   }
 }

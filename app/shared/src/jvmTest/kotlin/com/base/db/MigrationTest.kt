@@ -340,5 +340,43 @@ class MigrationTest : BehaviorSpec() {
 
       afterSpec { connection.close() }
     }
+    Given("a version 9 categories table") {
+      val driver = BundledSQLiteDriver()
+      val connection = driver.open(":memory:")
+
+      connection.execSQL(
+          "CREATE TABLE IF NOT EXISTS `categories` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `icon` TEXT NOT NULL, `color` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL)"
+      )
+      // At version 9 the list was displayed newest first: Groceries, Bills, Dining.
+      connection.execSQL(
+          "INSERT INTO `categories` (`id`, `name`, `icon`, `color`, `createdAt`) VALUES (1, 'Dining', 'restaurant', 1, 1000)"
+      )
+      connection.execSQL(
+          "INSERT INTO `categories` (`id`, `name`, `icon`, `color`, `createdAt`) VALUES (2, 'Groceries', 'shopping_cart', 2, 3000)"
+      )
+      connection.execSQL(
+          "INSERT INTO `categories` (`id`, `name`, `icon`, `color`, `createdAt`) VALUES (3, 'Bills', 'receipt', 3, 2000)"
+      )
+
+      When("MIGRATION_9_10 is executed") {
+        MIGRATION_9_10.migrate(connection)
+
+        Then("sortOrder preserves the previously displayed order") {
+          val statement =
+              connection.prepare("SELECT `id`, `sortOrder` FROM `categories` ORDER BY `sortOrder` ASC")
+          val ids = mutableListOf<Long>()
+          val sortOrders = mutableListOf<Long>()
+          while (statement.step()) {
+            ids.add(statement.getLong(0))
+            sortOrders.add(statement.getLong(1))
+          }
+          statement.close()
+          ids shouldBe listOf(2L, 3L, 1L)
+          sortOrders shouldBe listOf(0L, 1L, 2L)
+        }
+      }
+
+      afterSpec { connection.close() }
+    }
   }
 }
