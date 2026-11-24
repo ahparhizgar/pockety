@@ -65,7 +65,7 @@ class CategoryManagementFlowE2eTest : BehaviorSpec() {
                 )
             testCoroutineScheduler.advanceUntilIdle()
             val browse = root.assertCategoryManagementFlow().assertBrowse()
-            val category = browse.state.value.categories.single { it.id == categoryId }
+            val category = browse.state.value.categories.single { item -> item.id == categoryId }
             browse.onDeleteClicked(category)
             testCoroutineScheduler.advanceUntilIdle()
             browse.onDeleteConfirmed()

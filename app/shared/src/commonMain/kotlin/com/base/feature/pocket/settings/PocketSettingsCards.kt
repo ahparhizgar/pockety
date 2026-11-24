@@ -276,7 +276,7 @@ fun PocketMonthlyAllocationCard(
 
       MonthlyAllocationAmountField(
           amount = state.monthlyTopUpAmount,
-          onAmountChanged = component::onMonthlyTopUpAmountChanged,
+          onAmountChange = component::onMonthlyTopUpAmountChanged,
       )
 
       MonthlyAllocationAutoRefillRow(
@@ -311,12 +311,12 @@ private fun MonthlyAllocationHeader(modifier: Modifier = Modifier) {
 @Composable
 private fun MonthlyAllocationAmountField(
     amount: Long,
-    onAmountChanged: (Long) -> Unit,
+    onAmountChange: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
   MoneyTextField(
       value = if (amount > 0) amount.toString() else "",
-      onValueChange = { text -> onAmountChanged(text.toLongOrNull() ?: 0L) },
+      onValueChange = { text -> onAmountChange(text.toLongOrNull() ?: 0L) },
       label = { Text(stringResource(Res.string.pocket_allocated_refill_label)) },
       keyboardOptions =
           KeyboardOptions(

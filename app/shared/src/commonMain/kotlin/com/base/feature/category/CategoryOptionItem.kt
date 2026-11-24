@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -47,15 +46,6 @@ import pockety.app.shared.generated.resources.clear_search_action
 import pockety.app.shared.generated.resources.create_new_category_action
 import pockety.app.shared.generated.resources.no_categories_found
 import pockety.app.shared.generated.resources.search_action
-
-data class CategoryOptionData(
-    val name: String,
-    val icon: ImageVector,
-    val iconBackgroundColor: Color,
-    val iconContentColor: Color,
-    val description: String? = null,
-    val isSelected: Boolean = false,
-)
 
 /**
  * Shared category list row used by the category selection and management screens. [trailingContent]
