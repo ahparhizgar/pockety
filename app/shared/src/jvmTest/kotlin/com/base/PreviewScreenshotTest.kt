@@ -58,7 +58,7 @@ class PreviewScreenshotTest(
 ) {
   private val tester =
       getDesktopComposePreviewTester(
-          "com.github.takahirom.roborazzi.DefaultDesktopComposePreviewTester"
+          "com.base.DialogAwareDesktopComposePreviewTester"
       )
   private val testLifecycleOptions =
       tester.options().testLifecycleOptions
@@ -76,7 +76,7 @@ class PreviewScreenshotTest(
       setupDefaultOptions()
       val tester =
           getDesktopComposePreviewTester(
-              "com.github.takahirom.roborazzi.DefaultDesktopComposePreviewTester"
+              "com.base.DialogAwareDesktopComposePreviewTester"
           )
       tester.testParameters()
     }
