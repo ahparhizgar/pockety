@@ -20,6 +20,7 @@ import com.base.calendar.CalendarType
 import com.base.util.waitForExistence
 import io.kotest.matchers.shouldBe
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalTestApi::class)
 class SettingsE2eUiTest {
@@ -32,7 +33,10 @@ class SettingsE2eUiTest {
 
     onNode(hasTestTag("settings-screen")).waitForExistence().assertExists()
     onNode(hasTestTag("settings-navigation-categories")).waitForExistence().assertExists()
-    onNode(hasTestTag("settings-navigation-labels")).waitForExistence().assertExists()
+    assertTrue(
+        onAllNodes(hasTestTag("settings-navigation-labels")).fetchSemanticsNodes().isEmpty(),
+        "Settings screen must not show a labels option",
+    )
     onNode(hasTestTag("settings-row-language")).waitForExistence().assertExists()
     onNode(hasTestTag("currency-option-tomans")).waitForExistence().assertExists()
     onNode(hasTestTag("currency-option-rials")).waitForExistence().assertExists()
