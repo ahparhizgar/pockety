@@ -25,6 +25,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,8 +54,11 @@ import pockety.app.shared.generated.resources.home_vs_month_format
 import pockety.app.shared.generated.resources.monthly_outflow_label
 import pockety.app.shared.generated.resources.uncategorized_title
 
+private const val PERCENT_WHOLE: Float = 100f
+
 /** Display color of a breakdown row: the category's own color, or a neutral tone. */
 @Composable
+@ReadOnlyComposable
 private fun HomeCategoryOutflow.displayColor(): Color =
     color?.let { Color(it) } ?: MaterialTheme.colorScheme.surfaceDim
 
@@ -68,10 +72,11 @@ private fun HomeCategoryOutflow.displayName(): String =
 
 /** Segmented progress bar showing proportional distribution of categories. */
 @Composable
-fun HomeSegmentedProgressBar(
-    segments: List<HomeCategoryOutflow>,
+private fun HomeSegmentedProgressBar(
+    state: HomeState,
     modifier: Modifier = Modifier,
 ) {
+  val segments = state.topCategories
   Surface(
       shape = CircleShape,
       color = MaterialTheme.colorScheme.surfaceContainer,
@@ -118,7 +123,7 @@ fun HomeSegmentedProgressBar(
 
 /** Single category row displaying legend dot, category name, percentage, and amount. */
 @Composable
-fun HomeCategoryBreakdownRow(
+private fun HomeCategoryBreakdownRow(
     category: HomeCategoryOutflow,
     modifier: Modifier = Modifier,
 ) {
@@ -147,7 +152,7 @@ fun HomeCategoryBreakdownRow(
       )
 
       Text(
-          text = "${(category.share * 100).toInt()}%",
+          text = "${(category.share * PERCENT_WHOLE).toInt()}%",
           style = MaterialTheme.typography.labelSmall,
           color = MaterialTheme.colorScheme.secondary,
       )
@@ -167,6 +172,42 @@ fun HomeCategoryBreakdownRow(
           style = MaterialTheme.typography.labelSmall,
           color = MaterialTheme.colorScheme.secondary,
           modifier = Modifier.padding(bottom = 1.dp),
+      )
+    }
+  }
+}
+
+@Composable
+private fun HomeOutflowAmount(state: HomeState) {
+  Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Text(
+        text = stringResource(Res.string.monthly_outflow_label).uppercase(),
+        style =
+            MaterialTheme.typography.labelSmall.copy(
+                letterSpacing = 1.sp,
+                fontWeight = FontWeight.SemiBold,
+            ),
+        color = MaterialTheme.colorScheme.secondary,
+    )
+    Row(
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+      Text(
+          text = moneyAmount(state.monthlyOutflow),
+          style =
+              MaterialTheme.typography.displayLarge.copy(
+                  fontWeight = FontWeight.Bold,
+                  fontSize = 36.sp,
+                  lineHeight = 44.sp,
+              ),
+          color = MaterialTheme.colorScheme.onSurface,
+      )
+      Text(
+          text = currencySymbol(),
+          style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
+          color = MaterialTheme.colorScheme.secondary,
+          modifier = Modifier.padding(bottom = 6.dp),
       )
     }
   }
@@ -221,40 +262,9 @@ fun MonthlyOutflowHeroCard(
         }
       }
 
-      Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(
-            text = stringResource(Res.string.monthly_outflow_label).uppercase(),
-            style =
-                MaterialTheme.typography.labelSmall.copy(
-                    letterSpacing = 1.sp,
-                    fontWeight = FontWeight.SemiBold,
-                ),
-            color = MaterialTheme.colorScheme.secondary,
-        )
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-          Text(
-              text = moneyAmount(state.monthlyOutflow),
-              style =
-                  MaterialTheme.typography.displayLarge.copy(
-                      fontWeight = FontWeight.Bold,
-                      fontSize = 36.sp,
-                      lineHeight = 44.sp,
-                  ),
-              color = MaterialTheme.colorScheme.onSurface,
-          )
-          Text(
-              text = currencySymbol(),
-              style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
-              color = MaterialTheme.colorScheme.secondary,
-              modifier = Modifier.padding(bottom = 6.dp),
-          )
-        }
-      }
+      HomeOutflowAmount(state = state)
 
-      HomeSegmentedProgressBar(segments = state.topCategories)
+      HomeSegmentedProgressBar(state = state)
 
       if (state.topCategories.isNotEmpty()) {
         Column(
@@ -264,6 +274,80 @@ fun MonthlyOutflowHeroCard(
           state.topCategories.forEach { category -> HomeCategoryBreakdownRow(category = category) }
         }
       }
+    }
+  }
+}
+
+@Composable
+private fun HomeMonthOverMonthBadge(state: HomeState, percent: Int) {
+  Surface(
+      shape = CircleShape,
+      color =
+          if (state.isMonthOverMonthSaved) {
+            MaterialTheme.colorScheme.secondaryContainer
+          } else {
+            MaterialTheme.colorScheme.errorContainer
+          },
+      contentColor =
+          if (state.isMonthOverMonthSaved) {
+            MaterialTheme.colorScheme.onSecondaryContainer
+          } else {
+            MaterialTheme.colorScheme.onErrorContainer
+          },
+      modifier = Modifier.testTag("home-mom-badge"),
+  ) {
+    Row(
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+      Icon(
+          imageVector =
+              if (state.isMonthOverMonthSaved) {
+                Icons.AutoMirrored.Filled.TrendingDown
+              } else {
+                Icons.AutoMirrored.Filled.TrendingUp
+              },
+          contentDescription = null,
+          modifier = Modifier.size(14.dp),
+      )
+      Text(
+          text =
+              stringResource(
+                  if (state.isMonthOverMonthSaved) {
+                    Res.string.home_saved_format
+                  } else {
+                    Res.string.home_more_format
+                  },
+                  percent,
+              ),
+          style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+      )
+    }
+  }
+}
+
+@Composable
+private fun HomeAllMonthsButton(onClick: () -> Unit) {
+  TextButton(
+      onClick = onClick,
+      modifier = Modifier.testTag("home-all-months"),
+  ) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+      Text(
+          text = stringResource(Res.string.home_all_months),
+          style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+          color = MaterialTheme.colorScheme.primary,
+      )
+      Icon(
+          imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+          contentDescription = null,
+          modifier = Modifier.size(16.dp),
+          tint = MaterialTheme.colorScheme.primary,
+      )
     }
   }
 }
@@ -303,54 +387,8 @@ fun MonthOverMonthCard(
               style = MaterialTheme.typography.labelSmall,
               color = MaterialTheme.colorScheme.secondary,
           )
-          val percent = state.monthOverMonthPercent
-          if (percent != null) {
-            Surface(
-                shape = CircleShape,
-                color =
-                    if (state.isMonthOverMonthSaved) {
-                      MaterialTheme.colorScheme.secondaryContainer
-                    } else {
-                      MaterialTheme.colorScheme.errorContainer
-                    },
-                contentColor =
-                    if (state.isMonthOverMonthSaved) {
-                      MaterialTheme.colorScheme.onSecondaryContainer
-                    } else {
-                      MaterialTheme.colorScheme.onErrorContainer
-                    },
-                modifier = Modifier.testTag("home-mom-badge"),
-            ) {
-              Row(
-                  modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                  verticalAlignment = Alignment.CenterVertically,
-                  horizontalArrangement = Arrangement.spacedBy(4.dp),
-              ) {
-                Icon(
-                    imageVector =
-                        if (state.isMonthOverMonthSaved) {
-                          Icons.AutoMirrored.Filled.TrendingDown
-                        } else {
-                          Icons.AutoMirrored.Filled.TrendingUp
-                        },
-                    contentDescription = null,
-                    modifier = Modifier.size(14.dp),
-                )
-                Text(
-                    text =
-                        stringResource(
-                            if (state.isMonthOverMonthSaved) {
-                              Res.string.home_saved_format
-                            } else {
-                              Res.string.home_more_format
-                            },
-                            percent,
-                        ),
-                    style =
-                        MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
-                )
-              }
-            }
+          state.monthOverMonthPercent?.let { percent ->
+            HomeMonthOverMonthBadge(state = state, percent = percent)
           }
         }
 
@@ -367,27 +405,7 @@ fun MonthOverMonthCard(
         )
       }
 
-      TextButton(
-          onClick = onAllMonthsClick,
-          modifier = Modifier.testTag("home-all-months"),
-      ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-          Text(
-              text = stringResource(Res.string.home_all_months),
-              style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-              color = MaterialTheme.colorScheme.primary,
-          )
-          Icon(
-              imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-              contentDescription = null,
-              modifier = Modifier.size(16.dp),
-              tint = MaterialTheme.colorScheme.primary,
-          )
-        }
-      }
+      HomeAllMonthsButton(onClick = onAllMonthsClick)
     }
   }
 }
@@ -459,7 +477,7 @@ fun HomePocketCard(
 /** Active pockets section: title, "Manage All" action, and a responsive grid of pocket cards. */
 @Composable
 fun ActivePocketsSection(
-    pockets: List<HomePocketUi>,
+    state: HomeState,
     onManageAllClick: () -> Unit,
     onPocketClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -493,7 +511,7 @@ fun ActivePocketsSection(
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
       val columns = (maxWidth / 176.dp).toInt().coerceIn(2, 6)
       Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        pockets.chunked(columns).forEach { rowPockets ->
+        state.pockets.chunked(columns).forEach { rowPockets ->
           Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             rowPockets.forEach { pocket ->
               HomePocketCard(

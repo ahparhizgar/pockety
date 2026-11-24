@@ -1,5 +1,6 @@
 package com.base.feature.home
 
+import androidx.compose.runtime.Immutable
 import com.arkivanov.decompose.router.stack.pushNew
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
@@ -21,6 +22,7 @@ import com.base.db.PocketRepository
 import com.base.feature.root.RootFlowDestination
 import com.base.feature.settings.UserSettingsRepository
 import com.base.sms.InitialSmsImport
+import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlinx.coroutines.Job
@@ -36,6 +38,7 @@ enum class HomeCategoryKind {
   OTHER,
 }
 
+@Immutable
 data class HomeCategoryOutflow(
     val kind: HomeCategoryKind,
     val name: String? = null,
@@ -44,6 +47,7 @@ data class HomeCategoryOutflow(
     val color: Long? = null,
 )
 
+@Immutable
 data class HomePocketUi(
     val id: Long,
     val name: String,
@@ -203,7 +207,7 @@ class DefaultHomeComponent(
 
     val percent =
         if (previousMonthOutflow > 0) {
-          (kotlin.math.abs(monthlyOutflow - previousMonthOutflow).toDouble() * 100.0 /
+          (abs(monthlyOutflow - previousMonthOutflow).toDouble() * 100.0 /
                   previousMonthOutflow)
               .roundToInt()
         } else {
