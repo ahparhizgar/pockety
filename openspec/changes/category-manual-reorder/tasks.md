@@ -19,7 +19,7 @@
 ## 4. Verification
 
 - [x] 4.1 Cover the reorder journey with tests: repository ordering/reorder/append/delete cases, component move + persist-on-finish, selection list showing the manual order, the v9→v10 migration test, and the keyboard reorder UI journey
-- [ ] 4.2 Run the full verification gates (compile, jvmTest, coverage, detekt, ktfmt) via CI, push, pull, and run the screenshot-diff routine; verify CI is green and only the expected new/changed screenshots appear
+- [x] 4.2 Run the full verification gates (compile, jvmTest, coverage, detekt, ktfmt) via CI, push, pull, and run the screenshot-diff routine; verify CI is green and only the expected new/changed screenshots appear
 
 ## Workflow follow-up
 
