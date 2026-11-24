@@ -2,9 +2,9 @@
 
 ## 1. Design in the `:design` module (approval gate)
 
-- [ ] 1.1 Build the redesigned Categories page in `:design` following the designer skill (feature folder with `Screen.kt`/`Component.kt`, selection-style list rows with colored icon tiles, search field, delete icon button per row, bottom create button) and verify `:design:compileKotlinJvm` passes
-- [ ] 1.2 Add the delete-confirmation dialog state and the populated, empty, no-search-results, and dark states; register all of them in `Catalog.kt` and verify the catalog screenshot tests capture them
-- [ ] 1.3 Send the design screenshots to the product owner and get explicit approval before starting group 2 — no app code changes before this gate
+- [x] 1.1 Build the redesigned Categories page in `:design` following the designer skill (feature folder with `Screen.kt`/`Component.kt`, selection-style list rows with colored icon tiles, search field, delete icon button per row, bottom create button) and verify `:design:compileKotlinJvm` passes
+- [x] 1.2 Add the delete-confirmation dialog state and the populated, empty, no-search-results, and dark states; register all of them in `Catalog.kt` and verify the catalog screenshot tests capture them
+- [x] 1.3 Send the design screenshots to the product owner and get explicit approval before starting group 2 — no app code changes before this gate
 
 ## 2. Shared category row component
 
