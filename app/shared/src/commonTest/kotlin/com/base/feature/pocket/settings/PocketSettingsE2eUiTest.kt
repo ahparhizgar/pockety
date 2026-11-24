@@ -193,18 +193,14 @@ class PocketSettingsE2eUiTest {
         .waitForExistence()
         .performScrollTo()
         .assertExists()
-    onNode(hasTestTag("allocated-refill-amount")).assertExists()
 
     // Toggle auto-refill switch
     onNode(hasTestTag("auto-refill-switch")).performClick()
 
-    // Click adjust allocation button to open dialog
-    onNode(hasTestTag("adjust-allocation-btn")).performClick()
-    // Focus input and type via keyboard
+    // The monthly allocation is an inline text field: type the new amount directly
     onNode(hasTestTag("adjust-allocation-input")).waitForExistence().performTextInput("250000")
-    onNode(hasTestTag("confirm-allocation-btn")).performClick()
 
-    // Verify updated amount is displayed in allocation card
+    // Verify updated amount is displayed in the inline field
     onNode(hasText("250,000")).waitForExistence().assertExists()
   }
 }

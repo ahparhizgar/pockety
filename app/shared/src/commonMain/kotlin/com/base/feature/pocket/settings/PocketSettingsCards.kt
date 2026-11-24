@@ -1,6 +1,5 @@
 package com.base.feature.pocket.settings
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,10 +22,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.EventRepeat
 import androidx.compose.material.icons.filled.LocalOffer
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,15 +30,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -54,18 +44,12 @@ import com.base.db.FakeCategoryFactory
 import com.base.feature.category.add.resolveCategoryIcon
 import com.base.ui.ComponentPreviews
 import com.base.ui.money.MoneyTextField
-import com.base.ui.money.currencySymbol
-import com.base.ui.money.moneyAmount
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.associated_category_subtitle
 import pockety.app.shared.generated.resources.associated_category_title
 import pockety.app.shared.generated.resources.associated_category_unlinked_subtitle
-import pockety.app.shared.generated.resources.cancel_action
 import pockety.app.shared.generated.resources.clear_association_action
-import pockety.app.shared.generated.resources.pocket_adjust_allocation_action
-import pockety.app.shared.generated.resources.pocket_adjust_allocation_confirm
-import pockety.app.shared.generated.resources.pocket_adjust_allocation_dialog_title
 import pockety.app.shared.generated.resources.pocket_allocated_refill_label
 import pockety.app.shared.generated.resources.pocket_auto_refill_desc
 import pockety.app.shared.generated.resources.pocket_auto_refill_title
@@ -278,8 +262,6 @@ fun PocketMonthlyAllocationCard(
     state: PocketSettingsState,
     modifier: Modifier = Modifier,
 ) {
-  var showAdjustDialog by remember { mutableStateOf(false) }
-
   Surface(
       modifier = modifier.fillMaxWidth().testTag("monthly-allocation-card"),
       shape = RoundedCornerShape(24.dp),
@@ -292,9 +274,9 @@ fun PocketMonthlyAllocationCard(
     ) {
       MonthlyAllocationHeader()
 
-      MonthlyAllocationAmountDisplay(
+      MonthlyAllocationAmountField(
           amount = state.monthlyTopUpAmount,
-          onAdjustClick = { showAdjustDialog = true },
+          onAmountChanged = component::onMonthlyTopUpAmountChanged,
       )
 
       MonthlyAllocationAutoRefillRow(
@@ -302,17 +284,6 @@ fun PocketMonthlyAllocationCard(
           onEnabledChange = { component.onAutoTopUpEnabledChanged(it) },
       )
     }
-  }
-
-  if (showAdjustDialog) {
-    AdjustAllocationDialog(
-        currentAmount = state.monthlyTopUpAmount,
-        onConfirm = { newAmount ->
-          component.onMonthlyTopUpAmountChanged(newAmount)
-          showAdjustDialog = false
-        },
-        onDismiss = { showAdjustDialog = false },
-    )
   }
 }
 
@@ -338,65 +309,23 @@ private fun MonthlyAllocationHeader(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun MonthlyAllocationAmountDisplay(
+private fun MonthlyAllocationAmountField(
     amount: Long,
-    onAdjustClick: () -> Unit,
+    onAmountChanged: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-  Surface(
-      modifier = modifier.fillMaxWidth(),
-      shape = RoundedCornerShape(16.dp),
-      color = MaterialTheme.colorScheme.surfaceContainerLowest,
-      shadowElevation = 1.dp,
-  ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Column {
-        Text(
-            text = stringResource(Res.string.pocket_allocated_refill_label),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-          Text(
-              text = moneyAmount(amount),
-              style = MaterialTheme.typography.headlineMedium,
-              fontWeight = FontWeight.Bold,
-              color = MaterialTheme.colorScheme.onSurface,
-              modifier = Modifier.testTag("allocated-refill-amount"),
-          )
-          Text(
-              text = currencySymbol(),
-              style = MaterialTheme.typography.titleMedium,
-              fontWeight = FontWeight.Bold,
-              color = MaterialTheme.colorScheme.primary,
-          )
-        }
-      }
-
-      IconButton(
-          onClick = onAdjustClick,
-          modifier =
-              Modifier.size(40.dp)
-                  .clip(CircleShape)
-                  .background(MaterialTheme.colorScheme.surfaceContainer)
-                  .testTag("adjust-allocation-btn"),
-      ) {
-        Icon(
-            imageVector = Icons.Default.Tune,
-            contentDescription = stringResource(Res.string.pocket_adjust_allocation_action),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(20.dp),
-        )
-      }
-    }
-  }
+  MoneyTextField(
+      value = if (amount > 0) amount.toString() else "",
+      onValueChange = { text -> onAmountChanged(text.toLongOrNull() ?: 0L) },
+      label = { Text(stringResource(Res.string.pocket_allocated_refill_label)) },
+      keyboardOptions =
+          KeyboardOptions(
+              keyboardType = KeyboardType.Number,
+              imeAction = ImeAction.Done,
+          ),
+      keyboardActions = KeyboardActions.Default,
+      modifier = modifier.fillMaxWidth().testTag("adjust-allocation-input"),
+  )
 }
 
 @Composable
@@ -450,61 +379,6 @@ private fun MonthlyAllocationAutoRefillRow(
         modifier = Modifier.testTag("auto-refill-switch"),
     )
   }
-}
-
-@Composable
-private fun AdjustAllocationDialog(
-    currentAmount: Long,
-    onConfirm: (Long) -> Unit,
-    onDismiss: () -> Unit,
-) {
-  var textValue by remember {
-    mutableStateOf(if (currentAmount > 0) currentAmount.toString() else "")
-  }
-
-  AlertDialog(
-      onDismissRequest = onDismiss,
-      title = { Text(text = stringResource(Res.string.pocket_adjust_allocation_dialog_title)) },
-      text = {
-        MoneyTextField(
-            value = textValue,
-            onValueChange = { textValue = it },
-            label = { Text(stringResource(Res.string.pocket_allocated_refill_label)) },
-            keyboardOptions =
-                KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done,
-                ),
-            keyboardActions =
-                KeyboardActions(
-                    onDone = {
-                      val parsed = textValue.toLongOrNull() ?: 0L
-                      onConfirm(parsed)
-                    },
-                ),
-            modifier = Modifier.fillMaxWidth().testTag("adjust-allocation-input"),
-        )
-      },
-      confirmButton = {
-        Button(
-            onClick = {
-              val parsed = textValue.toLongOrNull() ?: 0L
-              onConfirm(parsed)
-            },
-            modifier = Modifier.testTag("confirm-allocation-btn"),
-        ) {
-          Text(text = stringResource(Res.string.pocket_adjust_allocation_confirm))
-        }
-      },
-      dismissButton = {
-        TextButton(
-            onClick = onDismiss,
-            modifier = Modifier.testTag("cancel-allocation-btn"),
-        ) {
-          Text(text = stringResource(Res.string.cancel_action))
-        }
-      },
-  )
 }
 
 @ComponentPreviews
