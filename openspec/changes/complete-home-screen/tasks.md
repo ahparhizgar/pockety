@@ -34,5 +34,5 @@
 
 ## 5. Verification
 
-- [ ] 5.1 Run the full verification gates via CI, push, pull, and run the
+- [x] 5.1 Run the full verification gates via CI, push, pull, and run the
   screenshot-diff routine; the Home previews gain the new sections
