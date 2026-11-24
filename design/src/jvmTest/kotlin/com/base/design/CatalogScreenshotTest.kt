@@ -27,17 +27,16 @@ class CatalogScreenshotTest(private val screenItem: FigmaScreenItem) {
         val roots = onAllNodes(isRoot())
         val rootCount = roots.fetchSemanticsNodes().size
         val target = if (rootCount <= 1) onRoot() else roots[rootCount - 1]
-        target
-            .captureRoboImage(
-                filePath = "screenshots/${safeTitle}.png",
-                roborazziOptions =
-                    RoborazziOptions(
-                        compareOptions =
-                            RoborazziOptions.CompareOptions(
-                                outputDirectoryPath = "screenshots/compare/"
-                            )
-                    ),
-            )
+        target.captureRoboImage(
+            filePath = "screenshots/${safeTitle}.png",
+            roborazziOptions =
+                RoborazziOptions(
+                    compareOptions =
+                        RoborazziOptions.CompareOptions(
+                            outputDirectoryPath = "screenshots/compare/"
+                        )
+                ),
+        )
       }
 
   companion object {

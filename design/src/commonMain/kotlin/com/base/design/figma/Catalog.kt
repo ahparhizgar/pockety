@@ -170,7 +170,11 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                             FigmaScreenItem("10d", "Category List (No Results)", "Search Empty") {
                               CategoryListScreen(initialSearchQuery = "unknownxyz")
                             },
-                            FigmaScreenItem("10e", "Category List (Delete)", "Delete Confirmation") {
+                            FigmaScreenItem(
+                                "10e",
+                                "Category List (Delete)",
+                                "Delete Confirmation",
+                            ) {
                               val categories = defaultCategoryList()
                               CategoryListScreen(
                                   initialCategories = categories,

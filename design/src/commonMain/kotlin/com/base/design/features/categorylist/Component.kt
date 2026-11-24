@@ -182,9 +182,7 @@ fun DeleteCategoryDialog(
         )
       },
       confirmButton = {
-        TextButton(onClick = onConfirm) {
-          Text("Delete", color = MaterialTheme.colorScheme.error)
-        }
+        TextButton(onClick = onConfirm) { Text("Delete", color = MaterialTheme.colorScheme.error) }
       },
       dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
   )

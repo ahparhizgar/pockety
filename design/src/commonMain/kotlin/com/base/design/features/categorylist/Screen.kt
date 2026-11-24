@@ -21,18 +21,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.base.design.features.selectcategory.CategoryEmptyState as SearchEmptyState
 import com.base.design.features.selectcategory.CategorySearchField
 import com.base.design.features.selectcategory.CreateCategoryButton
 import com.base.design.globalcomponents.PocketyTopAppBar
 import com.base.design.ui.ScreenPreviews
 import com.base.design.ui.theme.colorSchemeExtended
-import com.base.design.features.selectcategory.CategoryEmptyState as SearchEmptyState
 
 /**
- * Categories management screen, modeled on the Select Category screen: a search field,
- * a bounded centered list of category rows with a delete action per row, and a bottom
- * create button. There is no selection state and no Uncategorized row — this screen
- * manages categories instead of assigning them.
+ * Categories management screen, modeled on the Select Category screen: a search field, a bounded
+ * centered list of category rows with a delete action per row, and a bottom create button. There is
+ * no selection state and no Uncategorized row — this screen manages categories instead of assigning
+ * them.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
