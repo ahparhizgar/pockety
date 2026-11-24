@@ -11,57 +11,42 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.LabelOff
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.feature.category.add.resolveCategoryIcon
 import com.base.feature.category.CategoryOptionData
 import com.base.feature.category.CategoryOptionItem
+import com.base.feature.category.CategoryNoResultsState
+import com.base.feature.category.CategorySearchField
+import com.base.feature.category.CreateCategoryButton
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.back_action
 import pockety.app.shared.generated.resources.categories_title
-import pockety.app.shared.generated.resources.category_search_placeholder
-import pockety.app.shared.generated.resources.clear_search_action
-import pockety.app.shared.generated.resources.create_new_category_action
-import pockety.app.shared.generated.resources.no_categories_found
-import pockety.app.shared.generated.resources.search_action
 import pockety.app.shared.generated.resources.select_category_title
 import pockety.app.shared.generated.resources.uncategorized_desc
 import pockety.app.shared.generated.resources.uncategorized_title
@@ -130,6 +115,7 @@ private fun CategorySelectionContent(
 
       CreateCategoryButton(
           onClick = component::onCreateCategoryClicked,
+          modifier = Modifier.testTag("create-category-button"),
       )
     }
   }
@@ -174,7 +160,7 @@ private fun CategoryOptionsList(
     }
 
     if (!showAll && displayList.isEmpty()) {
-      item(key = "empty_state") { CategoryEmptyState() }
+      item(key = "empty_state") { CategoryNoResultsState() }
     } else {
       items(displayList, key = { it.id }) { category ->
         CategoryOptionItem(
@@ -194,65 +180,6 @@ private fun CategoryOptionsList(
   }
 }
 
-@Composable
-private fun CategorySearchField(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  val focusManager = LocalFocusManager.current
-
-  TextField(
-      value = query,
-      onValueChange = onQueryChange,
-      modifier = modifier.fillMaxWidth().testTag("category-search-field"),
-      placeholder = {
-        Text(
-            text = stringResource(Res.string.category_search_placeholder),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.outline,
-        )
-      },
-      leadingIcon = {
-        Icon(
-            imageVector = Icons.Default.Search,
-            contentDescription = stringResource(Res.string.search_action),
-            tint = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.size(22.dp),
-        )
-      },
-      trailingIcon = {
-        if (query.isNotEmpty()) {
-          IconButton(onClick = { onQueryChange("") }) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = stringResource(Res.string.clear_search_action),
-                tint = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.size(20.dp),
-            )
-          }
-        }
-      },
-      singleLine = true,
-      shape = RoundedCornerShape(16.dp),
-      colors =
-          TextFieldDefaults.colors(
-              focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-              unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-              disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-              focusedIndicatorColor = Color.Transparent,
-              unfocusedIndicatorColor = Color.Transparent,
-              disabledIndicatorColor = Color.Transparent,
-              focusedTextColor = MaterialTheme.colorScheme.onSurface,
-              unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-          ),
-      keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-      keyboardActions =
-          KeyboardActions(
-              onSearch = { focusManager.clearFocus() },
-          ),
-  )
-}
 
 @Composable
 private fun CategorySectionDivider(
@@ -286,71 +213,7 @@ private fun CategorySectionDivider(
   }
 }
 
-@Composable
-private fun CreateCategoryButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-  Surface(
-      onClick = onClick,
-      modifier = modifier.fillMaxWidth().testTag("create-category-button"),
-      shape = RoundedCornerShape(16.dp),
-      color = MaterialTheme.colorScheme.surfaceContainer,
-  ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 14.dp, horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-      Icon(
-          imageVector = Icons.Default.AddCircle,
-          contentDescription = null,
-          tint = MaterialTheme.colorScheme.primary,
-          modifier = Modifier.size(20.dp),
-      )
-      Spacer(modifier = Modifier.width(8.dp))
-      Text(
-          text = stringResource(Res.string.create_new_category_action),
-          style = MaterialTheme.typography.labelLarge,
-          fontWeight = FontWeight.SemiBold,
-          color = MaterialTheme.colorScheme.primary,
-      )
-    }
-  }
-}
 
-@Composable
-private fun CategoryEmptyState(
-    modifier: Modifier = Modifier,
-) {
-  Column(
-      modifier = modifier.fillMaxWidth().padding(vertical = 32.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center,
-  ) {
-    Surface(
-        modifier = Modifier.size(56.dp),
-        shape = CircleShape,
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
-    ) {
-      Box(contentAlignment = Alignment.Center) {
-        Icon(
-            imageVector = Icons.Default.SearchOff,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.size(28.dp),
-        )
-      }
-    }
-    Spacer(modifier = Modifier.height(12.dp))
-    Text(
-        text = stringResource(Res.string.no_categories_found),
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurface,
-        textAlign = TextAlign.Center,
-    )
-  }
-}
 
 @ScreenPreviews
 @Composable

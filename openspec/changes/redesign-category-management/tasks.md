@@ -8,13 +8,13 @@
 
 ## 2. Shared category row component
 
-- [ ] 2.1 Extract the selection screen's private row into a shared category-row component parameterized by name, icon, tile color, optional description, optional selected state, and an optional trailing-action slot; rewire the selection screen to use it and verify the existing selection tests pass
+- [x] 2.1 Extract the selection screen's private row into a shared category-row component parameterized by name, icon, tile color, optional description, optional selected state, and an optional trailing-action slot; rewire the selection screen to use it and verify the existing selection tests pass
 - [ ] 2.2 Push and verify with the screenshot-diff routine that every existing selection screenshot is byte-identical (no visual regression)
 
 ## 3. Management component: search and delete
 
-- [ ] 3.1 Extend `CategoryManagementState` and the fake component with a search query, a filtered list, and a pending-deletion category; add `onSearchQueryChanged`, `onDeleteClicked`, `onDeleteConfirmed`, and `onDeleteDismissed` to the component, where confirm calls `CategoryRepository.deleteCategory` — verify with the new `CategoryManagementTest` scenarios in tests.md
-- [ ] 3.2 Add the EN and FA string resources for the delete action, the confirmation dialog title/message naming the category, and the confirm/cancel actions; verify both locales compile into the resources
+- [x] 3.1 Extend `CategoryManagementState` and the fake component with a search query, a filtered list, and a pending-deletion category; add `onSearchQueryChanged`, `onDeleteClicked`, `onDeleteConfirmed`, and `onDeleteDismissed` to the component, where confirm calls `CategoryRepository.deleteCategory` — verify with the new `CategoryManagementTest` scenarios in tests.md
+- [x] 3.2 Add the EN and FA string resources for the delete action, the confirmation dialog title/message naming the category, and the confirm/cancel actions; verify both locales compile into the resources
 
 ## 4. Management screen redesign
 
