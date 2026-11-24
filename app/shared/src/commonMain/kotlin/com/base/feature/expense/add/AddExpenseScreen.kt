@@ -176,7 +176,7 @@ private fun AddExpenseForm(
         amountText = state.amountText,
         amountError = state.amountError,
         onAmountChange = component::onAmountChanged,
-        onNext = { focusManager.moveFocus(FocusDirection.Down) },
+        onDone = { focusManager.clearFocus() },
         focusRequester = amountFocusRequester,
     )
 
@@ -271,7 +271,7 @@ private fun AmountInputField(
     amountText: String,
     amountError: UiString?,
     onAmountChange: (String) -> Unit,
-    onNext: () -> Unit,
+    onDone: () -> Unit,
     focusRequester: FocusRequester,
 ) {
   Column(
@@ -281,7 +281,7 @@ private fun AmountInputField(
     AmountHeroSurface(
         amountText = amountText,
         onAmountChange = onAmountChange,
-        onNext = onNext,
+        onDone = onDone,
         focusRequester = focusRequester,
     )
 
@@ -300,7 +300,7 @@ private fun AmountInputField(
 private fun AmountHeroSurface(
     amountText: String,
     onAmountChange: (String) -> Unit,
-    onNext: () -> Unit,
+    onDone: () -> Unit,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
@@ -347,9 +347,9 @@ private fun AmountHeroSurface(
           keyboardOptions =
               KeyboardOptions(
                   keyboardType = KeyboardType.Number,
-                  imeAction = ImeAction.Next,
+                  imeAction = ImeAction.Done,
               ),
-          keyboardActions = KeyboardActions(onNext = { onNext() }),
+          keyboardActions = KeyboardActions(onDone = { onDone() }),
       )
       Spacer(modifier = Modifier.width(6.dp))
       Text(
