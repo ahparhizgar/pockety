@@ -37,11 +37,12 @@ class HomeTest : BehaviorSpec() {
       }
 
       When("HomeComponent is initialized") {
-        Then("HomeState does not observe or expose an expense list") {
+        Then("HomeState aggregates expenses into the monthly outflow without a list") {
           val state = component.state.value
           state.isSmsPermissionGranted shouldBe false
           state.pendingCandidateCount shouldBe 0
           state.pendingCandidateSum shouldBe 0L
+          state.monthlyOutflow shouldBe 50_000L
         }
 
         Then("SMS permission banner actions and permission updates function normally") {

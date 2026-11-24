@@ -152,6 +152,12 @@ class DefaultMainComponent(
               onOpenInbox = {
                 mainNavigation.replaceAll(MainChildConfig.Home, MainChildConfig.Inbox)
               },
+              onOpenAnalytics = {
+                mainNavigation.replaceAll(MainChildConfig.Home, MainChildConfig.Analytics)
+              },
+              onOpenPockets = {
+                mainNavigation.replaceAll(MainChildConfig.Home, MainChildConfig.Pockets)
+              },
           )
       )
 

@@ -8,27 +8,27 @@
 
 ## 2. Component and data
 
-- [ ] 2.1 Extend `HomeState` with the overview fields and UI models; extend
+- [x] 2.1 Extend `HomeState` with the overview fields and UI models; extend
   `DefaultHomeComponent` to observe expenses, categories, calendar type and
   pockets and aggregate current/previous month figures, mirroring
   `AnalyticsComponent` — verify with the new `HomeComponentTest`
-- [ ] 2.2 Extend the factory and DI (`DecomposeModule`) with the new
+- [x] 2.2 Extend the factory and DI (`DecomposeModule`) with the new
   repositories and the `onOpenAnalytics` / `onOpenPockets` callbacks; mirror
   everything in `FakeHomeComponent` / `FakeHomeComponentFactory`
 
 ## 3. Screen
 
-- [ ] 3.1 Port `MonthlyOutflowHeroCard`, `SegmentedProgressBar`,
+- [x] 3.1 Port `MonthlyOutflowHeroCard`, `SegmentedProgressBar`,
   `CategoryBreakdownRow`, `MonthOverMonthCard`, `ActivePocketCard` and
   `ActivePocketsSection` from `:design` into the app with string resources
   (EN + FA) and test tags; make the Home content scroll with a bottom spacer
-- [ ] 3.2 Render the pockets as a responsive grid (columns from available
+- [x] 3.2 Render the pockets as a responsive grid (columns from available
   width, 2 minimum) and hide the section when empty — verify with the new
   `HomeE2eUiTest`
 
 ## 4. Navigation wiring
 
-- [ ] 4.1 Wire `MainComponent.createHomeChild`: date pill / All months →
+- [x] 4.1 Wire `MainComponent.createHomeChild`: date pill / All months →
   Analytics tab, Manage All → Pockets tab, pocket card → push
   `PocketDetails` — covered by the UI test callback assertions
 

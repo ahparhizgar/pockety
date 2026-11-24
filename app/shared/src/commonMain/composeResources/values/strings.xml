@@ -137,6 +137,14 @@
     <string name="edit_expense_title">Edit Expense</string>
     <string name="delete_expense_action">Delete Expense</string>
     <string name="monthly_outflow_label">Monthly Outflow</string>
+    <string name="home_vs_month_format">vs %1$s:</string>
+    <string name="home_saved_format">%1$d%% saved</string>
+    <string name="home_more_format">%1$d%% more</string>
+    <string name="home_last_month_format">%1$s last month</string>
+    <string name="home_all_months">All months</string>
+    <string name="home_active_pockets">Active Pockets</string>
+    <string name="home_manage_all">Manage All</string>
+    <string name="home_other_category">Other</string>
     <string name="no_expenses_month">No expenses recorded for this month</string>
     <string name="previous_month_action">Previous month</string>
     <string name="next_month_action">Next month</string>

@@ -147,6 +147,14 @@
     <string name="privacy_policy_version_footer">سیاست حریم خصوصی • به‌روزشده در آبان ۱۴۰۵</string>
     <string name="settings_version_format">جیبک نسخه %1$s</string>
     <string name="monthly_outflow_label">خرج این ماه</string>
+    <string name="home_vs_month_format">نسبت به %1$s:</string>
+    <string name="home_saved_format">٪%1$d کمتر</string>
+    <string name="home_more_format">٪%1$d بیشتر</string>
+    <string name="home_last_month_format">%1$s در ماه گذشته</string>
+    <string name="home_all_months">همه ماه‌ها</string>
+    <string name="home_active_pockets">پاکت‌های فعال</string>
+    <string name="home_manage_all">مدیریت همه</string>
+    <string name="home_other_category">سایر</string>
     <string name="no_expenses_month">این ماه هنوز خرجی ثبت نکردی</string>
     <string name="previous_month_action">ماه قبل</string>
     <string name="next_month_action">ماه بعد</string>
