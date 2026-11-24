@@ -207,8 +207,7 @@ class DefaultHomeComponent(
 
     val percent =
         if (previousMonthOutflow > 0) {
-          (abs(monthlyOutflow - previousMonthOutflow).toDouble() * 100.0 /
-                  previousMonthOutflow)
+          (abs(monthlyOutflow - previousMonthOutflow).toDouble() * 100.0 / previousMonthOutflow)
               .roundToInt()
         } else {
           null
