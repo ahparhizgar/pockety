@@ -115,6 +115,7 @@ kotlin {
       implementation(libs.androidx.datastore.preferences.core)
       implementation(libs.androidx.datastore.core.okio)
       implementation(libs.androidx.room3.runtime)
+      implementation(libs.reorderable)
       implementation(libs.androidx.sqlite)
       implementation(libs.kotlinx.datetime)
       implementation(npm("sqlite-wasm-worker", layout.projectDirectory.dir("worker").asFile))

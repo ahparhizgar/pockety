@@ -18,6 +18,7 @@ import com.base.db.CategoryEntity
 import com.base.db.CategoryRepository
 import com.base.feature.category.add.AddCategoryComponent
 import com.base.feature.category.add.AddCategoryComponentFactory
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -34,6 +35,10 @@ interface CategoryManagementComponent {
   val state: Value<CategoryManagementState>
 
   fun onSearchQueryChanged(query: String)
+
+  fun onCategoryMoved(fromIndex: Int, toIndex: Int)
+
+  fun onCategoryMoveFinished(): Job
 
   fun onDeleteClicked(category: CategoryEntity)
 
@@ -115,6 +120,26 @@ class DefaultCategoryManagementComponent(
       )
     }
   }
+
+  override fun onCategoryMoved(fromIndex: Int, toIndex: Int) {
+    _state.update { state ->
+      if (fromIndex !in state.categories.indices || toIndex !in state.categories.indices) {
+        state
+      } else {
+        val reordered =
+            state.categories.toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
+        state.copy(
+            categories = reordered,
+            filteredCategories = filterCategories(reordered, state.searchQuery),
+        )
+      }
+    }
+  }
+
+  override fun onCategoryMoveFinished(): Job =
+      scope.launch {
+        categoryRepository.reorderCategories(_state.value.categories.map { it.id })
+      }
 
   override fun onDeleteClicked(category: CategoryEntity) {
     _state.update { it.copy(categoryPendingDeletion = category) }
@@ -211,6 +236,10 @@ class FakeCategoryManagementComponent(
     override val state: Value<CategoryManagementState> = MutableValue(CategoryManagementState()),
 ) : CategoryManagementComponent {
   override fun onSearchQueryChanged(query: String) {}
+
+  override fun onCategoryMoved(fromIndex: Int, toIndex: Int) {}
+
+  override fun onCategoryMoveFinished(): Job = Job()
 
   override fun onDeleteClicked(category: CategoryEntity) {}
 

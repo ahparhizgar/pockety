@@ -4,6 +4,7 @@
     <string name="category_add">Add category</string>
     <string name="category_empty">No categories yet. Add a category to organize your expenses.</string>
     <string name="category_delete_action">Delete category</string>
+    <string name="category_reorder_action">Reorder %1$s</string>
     <string name="category_delete_dialog_title">Delete category?</string>
     <string name="category_delete_dialog_message">\"%1$s\" will be deleted. Expenses in this category will become uncategorized.</string>
     <string name="delete_action">Delete</string>

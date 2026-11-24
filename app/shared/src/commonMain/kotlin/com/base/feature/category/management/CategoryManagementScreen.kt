@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +28,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.LayoutDirection
@@ -51,6 +58,9 @@ import com.base.feature.category.add.resolveCategoryIcon
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
+import sh.calvin.reorderable.reorderable
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.back_action
 import pockety.app.shared.generated.resources.cancel_action
@@ -59,6 +69,7 @@ import pockety.app.shared.generated.resources.category_delete_action
 import pockety.app.shared.generated.resources.category_delete_dialog_message
 import pockety.app.shared.generated.resources.category_delete_dialog_title
 import pockety.app.shared.generated.resources.category_empty
+import pockety.app.shared.generated.resources.category_reorder_action
 import pockety.app.shared.generated.resources.delete_action
 
 @OptIn(ExperimentalDecomposeApi::class)
@@ -171,41 +182,96 @@ private fun CategoryManagementList(
 ) {
   val showAll = state.searchQuery.isBlank()
   val displayList = if (showAll) state.categories else state.filteredCategories
+  val lazyListState = rememberLazyListState()
+  val reorderableState =
+      rememberReorderableLazyListState(lazyListState) { from, to ->
+        component.onCategoryMoved(from.index, to.index)
+      }
 
   LazyColumn(
-      modifier = modifier,
+      state = lazyListState,
+      modifier = if (showAll) modifier.reorderable(reorderableState) else modifier,
       verticalArrangement = Arrangement.spacedBy(8.dp),
       contentPadding = PaddingValues(bottom = 16.dp),
   ) {
     if (!showAll && displayList.isEmpty()) {
       item(key = "empty_state") { CategoryNoResultsState() }
     } else {
-      items(displayList, key = { it.id }) { category ->
-        CategoryOptionItem(
-            data =
-                CategoryOptionData(
-                    name = category.name,
-                    icon = resolveCategoryIcon(category.icon),
-                    iconBackgroundColor = Color(category.color),
-                    iconContentColor = Color.White,
-                ),
-            onClick = {},
-            modifier = Modifier.testTag("category-item-${category.name}"),
-            trailingContent = {
-              IconButton(
-                  onClick = { component.onDeleteClicked(category) },
-                  modifier = Modifier.testTag("delete-category-${category.name}"),
-              ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(Res.string.category_delete_action),
-                    tint = MaterialTheme.colorScheme.error,
-                )
-              }
-            },
-        )
+      itemsIndexed(displayList, key = { _, category -> category.id }) { index, category ->
+        ReorderableItem(reorderableState, key = category.id) { isDragging ->
+          CategoryOptionItem(
+              data =
+                  CategoryOptionData(
+                      name = category.name,
+                      icon = resolveCategoryIcon(category.icon),
+                      iconBackgroundColor = Color(category.color),
+                      iconContentColor = Color.White,
+                  ),
+              onClick = {},
+              isDragging = isDragging,
+              modifier = Modifier.testTag("category-item-${category.name}"),
+              leadingContent =
+                  if (showAll) {
+                    { handleModifier ->
+                      IconButton(
+                          onClick = {},
+                          modifier =
+                              handleModifier
+                                  .draggableHandle(
+                                      onDragStopped = { component.onCategoryMoveFinished() },
+                                  )
+                                  .onKeyEvent { event ->
+                                    handleReorderKeyEvent(event, index, component)
+                                  }
+                                  .testTag("reorder-handle-${category.name}"),
+                      ) {
+                        Icon(
+                            imageVector = Icons.Default.DragHandle,
+                            contentDescription =
+                                stringResource(Res.string.category_reorder_action, category.name),
+                        )
+                      }
+                    }
+                  } else {
+                    null
+                  },
+              trailingContent = {
+                IconButton(
+                    onClick = { component.onDeleteClicked(category) },
+                    modifier = Modifier.testTag("delete-category-${category.name}"),
+                ) {
+                  Icon(
+                      imageVector = Icons.Default.Delete,
+                      contentDescription = stringResource(Res.string.category_delete_action),
+                      tint = MaterialTheme.colorScheme.error,
+                  )
+                }
+              },
+          )
+        }
       }
     }
+  }
+}
+
+private fun handleReorderKeyEvent(
+    event: androidx.compose.ui.input.key.KeyEvent,
+    index: Int,
+    component: CategoryManagementComponent,
+): Boolean {
+  if (event.type != KeyEventType.KeyDown) return false
+  return when (event.key) {
+    Key.DirectionUp -> {
+      component.onCategoryMoved(index, index - 1)
+      component.onCategoryMoveFinished()
+      true
+    }
+    Key.DirectionDown -> {
+      component.onCategoryMoved(index, index + 1)
+      component.onCategoryMoveFinished()
+      true
+    }
+    else -> false
   }
 }
 

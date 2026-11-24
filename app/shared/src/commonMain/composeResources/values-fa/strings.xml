@@ -4,6 +4,7 @@
     <string name="category_add">افزودن دسته‌بندی</string>
     <string name="category_empty">هنوز دسته‌بندی نداری. برای مرتب‌کردن خرج‌هات یکی بساز.</string>
     <string name="category_delete_action">حذف دسته‌بندی</string>
+    <string name="category_reorder_action">جابه‌جایی %1$s</string>
     <string name="category_delete_dialog_title">دسته‌بندی حذف شود؟</string>
     <string name="category_delete_dialog_message">«%1$s» حذف می‌شود. خرج‌های این دسته بدون دسته‌بندی می‌شوند.</string>
     <string name="delete_action">حذف</string>

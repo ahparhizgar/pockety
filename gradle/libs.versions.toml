@@ -38,6 +38,7 @@ room3 = "3.0.3"
 sqlite = "2.7.1"
 kover = "0.9.9"
 roborazzi = "1.76.0"
+reorderable = "3.1.0"
 composablePreviewScanner = "0.9.3"
 detekt = "2.0.0-alpha.6"
 composeRules = "0.6.7"
@@ -51,6 +52,7 @@ compose-adaptive-navigation = { module = "org.jetbrains.compose.material3.adapti
 compose-adaptive-navigation-suite = { module = "org.jetbrains.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 compose-material3-windowSizeClass = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "material3" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }

@@ -50,20 +50,25 @@ import pockety.app.shared.generated.resources.search_action
 /**
  * Shared category list row used by the category selection and management screens. [trailingContent]
  * lets the management screen attach a per-row action (delete) without changing the row's appearance
- * for selection.
+ * for selection. [leadingContent] renders a leading element (the management screen's drag handle)
+ * and receives [leadingModifier] so the caller can attach drag/key handling to it. [isDragging]
+ * raises the row while it is being reordered.
  */
 @Composable
 fun CategoryOptionItem(
     data: CategoryOptionData,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    leadingContent: (@Composable (Modifier) -> Unit)? = null,
+    leadingModifier: Modifier = Modifier,
+    isDragging: Boolean = false,
     trailingContent: (@Composable () -> Unit)? = null,
 ) {
   val containerColor =
-      if (data.isSelected) {
-        MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f)
-      } else {
-        MaterialTheme.colorScheme.surfaceContainerLow
+      when {
+        data.isSelected -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.55f)
+        isDragging -> MaterialTheme.colorScheme.surfaceContainerHigh
+        else -> MaterialTheme.colorScheme.surfaceContainerLow
       }
 
   Surface(
@@ -72,11 +77,17 @@ fun CategoryOptionItem(
       shape = RoundedCornerShape(16.dp),
       color = containerColor,
       contentColor = MaterialTheme.colorScheme.onSurface,
+      shadowElevation = if (isDragging) 8.dp else 0.dp,
   ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+      if (leadingContent != null) {
+        leadingContent(leadingModifier)
+        Spacer(modifier = Modifier.width(2.dp))
+      }
+
       Surface(
           modifier = Modifier.size(44.dp),
           shape = RoundedCornerShape(14.dp),
