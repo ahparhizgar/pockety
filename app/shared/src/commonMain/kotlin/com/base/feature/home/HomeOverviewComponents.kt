@@ -113,7 +113,8 @@ private fun HomeSegmentedProgressBar(
               }
 
           Surface(
-              modifier = Modifier.weight(segment.share.coerceAtLeast(MIN_SEGMENT_WEIGHT)).fillMaxHeight(),
+              modifier =
+                  Modifier.weight(segment.share.coerceAtLeast(MIN_SEGMENT_WEIGHT)).fillMaxHeight(),
               shape = shape,
               color = segment.displayColor(),
           ) {}
