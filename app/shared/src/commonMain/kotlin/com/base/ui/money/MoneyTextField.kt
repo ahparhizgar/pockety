@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import com.base.ui.ComponentPreviews
 
@@ -57,13 +58,15 @@ fun MoneyTextField(
     }
   }
   val options = keyboardOptions.copy(keyboardType = KeyboardType.Decimal)
+  // Numbers always edit left-to-right so digits and the cursor behave, even in RTL locales.
+  val ltrTextStyle = textStyle.copy(textDirection = TextDirection.Ltr)
   if (outlined) {
     OutlinedTextField(
         value = editing,
         onValueChange = onEdit,
         label = label,
         suffix = { Text(currencySymbol()) },
-        textStyle = textStyle,
+        textStyle = ltrTextStyle,
         singleLine = true,
         keyboardOptions = options,
         keyboardActions = keyboardActions,
@@ -75,7 +78,7 @@ fun MoneyTextField(
     BasicTextField(
         value = editing,
         onValueChange = onEdit,
-        textStyle = textStyle,
+        textStyle = ltrTextStyle,
         singleLine = true,
         keyboardOptions = options,
         keyboardActions = keyboardActions,
