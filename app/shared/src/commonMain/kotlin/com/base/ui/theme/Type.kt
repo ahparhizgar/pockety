@@ -23,13 +23,11 @@ fun vazirmatnFontFamily(): FontFamily =
         Font(Res.font.vazirmatn_bold, FontWeight.Bold),
     )
 
-@Composable
-fun appTypography(): Typography {
-  val vazirmatn = vazirmatnFontFamily()
-  return Typography(
+private val baseTypography =
+    Typography(
       displayLarge =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.Bold,
               fontSize = 36.sp,
               lineHeight = 44.sp,
@@ -37,7 +35,7 @@ fun appTypography(): Typography {
           ),
       headlineLarge =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.SemiBold,
               fontSize = 32.sp,
               lineHeight = 40.sp,
@@ -45,7 +43,7 @@ fun appTypography(): Typography {
           ),
       headlineMedium =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.SemiBold,
               fontSize = 24.sp,
               lineHeight = 32.sp,
@@ -53,7 +51,7 @@ fun appTypography(): Typography {
           ),
       headlineSmall =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.SemiBold,
               fontSize = 20.sp,
               lineHeight = 28.sp,
@@ -61,7 +59,7 @@ fun appTypography(): Typography {
           ),
       titleLarge =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.SemiBold,
               fontSize = 18.sp,
               lineHeight = 26.sp,
@@ -69,7 +67,7 @@ fun appTypography(): Typography {
           ),
       titleMedium =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.Medium,
               fontSize = 16.sp,
               lineHeight = 24.sp,
@@ -77,7 +75,7 @@ fun appTypography(): Typography {
           ),
       titleSmall =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.Medium,
               fontSize = 14.sp,
               lineHeight = 20.sp,
@@ -85,7 +83,7 @@ fun appTypography(): Typography {
           ),
       bodyLarge =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.Normal,
               fontSize = 16.sp,
               lineHeight = 24.sp,
@@ -93,7 +91,7 @@ fun appTypography(): Typography {
           ),
       bodyMedium =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.Normal,
               fontSize = 14.sp,
               lineHeight = 20.sp,
@@ -101,7 +99,7 @@ fun appTypography(): Typography {
           ),
       bodySmall =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.Normal,
               fontSize = 12.sp,
               lineHeight = 18.sp,
@@ -109,7 +107,7 @@ fun appTypography(): Typography {
           ),
       labelLarge =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.SemiBold,
               fontSize = 14.sp,
               lineHeight = 20.sp,
@@ -117,7 +115,7 @@ fun appTypography(): Typography {
           ),
       labelMedium =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.SemiBold,
               fontSize = 12.sp,
               lineHeight = 16.sp,
@@ -125,11 +123,33 @@ fun appTypography(): Typography {
           ),
       labelSmall =
           TextStyle(
-              fontFamily = vazirmatn,
+              fontFamily = FontFamily.SansSerif,
               fontWeight = FontWeight.Medium,
               fontSize = 11.sp,
               lineHeight = 14.sp,
               letterSpacing = 0.04.sp,
           ),
   )
+
+/** The app's typography with every style set in the Vazirmatn family. */
+@Composable
+fun appTypography(): Typography {
+  val vazirmatn = vazirmatnFontFamily()
+  return with(baseTypography) {
+    Typography(
+        displayLarge = displayLarge.copy(fontFamily = vazirmatn),
+        headlineLarge = headlineLarge.copy(fontFamily = vazirmatn),
+        headlineMedium = headlineMedium.copy(fontFamily = vazirmatn),
+        headlineSmall = headlineSmall.copy(fontFamily = vazirmatn),
+        titleLarge = titleLarge.copy(fontFamily = vazirmatn),
+        titleMedium = titleMedium.copy(fontFamily = vazirmatn),
+        titleSmall = titleSmall.copy(fontFamily = vazirmatn),
+        bodyLarge = bodyLarge.copy(fontFamily = vazirmatn),
+        bodyMedium = bodyMedium.copy(fontFamily = vazirmatn),
+        bodySmall = bodySmall.copy(fontFamily = vazirmatn),
+        labelLarge = labelLarge.copy(fontFamily = vazirmatn),
+        labelMedium = labelMedium.copy(fontFamily = vazirmatn),
+        labelSmall = labelSmall.copy(fontFamily = vazirmatn),
+    )
+  }
 }
