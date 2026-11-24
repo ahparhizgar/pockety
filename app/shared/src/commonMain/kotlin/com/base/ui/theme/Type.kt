@@ -1,16 +1,35 @@
 package com.base.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.Font
+import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.vazirmatn_bold
+import pockety.app.shared.generated.resources.vazirmatn_medium
+import pockety.app.shared.generated.resources.vazirmatn_regular
+import pockety.app.shared.generated.resources.vazirmatn_semibold
 
-val AppTypography =
-    Typography(
+/** Vazirmatn (OFL) — the app's font family for Persian and Latin text. */
+@Composable
+fun vazirmatnFontFamily(): FontFamily =
+    FontFamily(
+        Font(Res.font.vazirmatn_regular, FontWeight.Normal),
+        Font(Res.font.vazirmatn_medium, FontWeight.Medium),
+        Font(Res.font.vazirmatn_semibold, FontWeight.SemiBold),
+        Font(Res.font.vazirmatn_bold, FontWeight.Bold),
+    )
+
+@Composable
+fun appTypography(): Typography {
+  val vazirmatn = vazirmatnFontFamily()
+  return Typography(
         displayLarge =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.Bold,
                 fontSize = 36.sp,
                 lineHeight = 44.sp,
@@ -18,7 +37,7 @@ val AppTypography =
             ),
         headlineLarge =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 32.sp,
                 lineHeight = 40.sp,
@@ -26,7 +45,7 @@ val AppTypography =
             ),
         headlineMedium =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 24.sp,
                 lineHeight = 32.sp,
@@ -34,7 +53,7 @@ val AppTypography =
             ),
         headlineSmall =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 20.sp,
                 lineHeight = 28.sp,
@@ -42,7 +61,7 @@ val AppTypography =
             ),
         titleLarge =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 18.sp,
                 lineHeight = 26.sp,
@@ -50,7 +69,7 @@ val AppTypography =
             ),
         titleMedium =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
@@ -58,7 +77,7 @@ val AppTypography =
             ),
         titleSmall =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
@@ -66,7 +85,7 @@ val AppTypography =
             ),
         bodyLarge =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.Normal,
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
@@ -74,7 +93,7 @@ val AppTypography =
             ),
         bodyMedium =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
@@ -82,7 +101,7 @@ val AppTypography =
             ),
         bodySmall =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
                 lineHeight = 18.sp,
@@ -90,7 +109,7 @@ val AppTypography =
             ),
         labelLarge =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
@@ -98,7 +117,7 @@ val AppTypography =
             ),
         labelMedium =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
@@ -106,10 +125,11 @@ val AppTypography =
             ),
         labelSmall =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
+                fontFamily = vazirmatn,
                 fontWeight = FontWeight.Medium,
                 fontSize = 11.sp,
                 lineHeight = 14.sp,
                 letterSpacing = 0.04.sp,
             ),
     )
+}
