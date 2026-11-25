@@ -105,8 +105,7 @@ class AnalyticsLocalizationE2eUiTest {
 
     onNode(hasText("اکتبر 2026")).waitForExistence().assertExists()
     onNode(hasText("امروز", substring = true)).assertExists()
-    onNode(hasTestTag("analytics-list"))
-        .performScrollToNode(hasText("دیروز", substring = true))
+    onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("دیروز", substring = true))
     onNode(hasText("دیروز", substring = true)).assertExists()
     onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("22 اکتبر 2026"))
     onNode(hasText("22 اکتبر 2026")).assertExists()
@@ -205,8 +204,7 @@ class AnalyticsLocalizationE2eUiTest {
 
     onNode(hasText("Analytics")).waitForExistence().assertExists()
     onNode(hasText("October 2026")).assertExists()
-    onNode(hasTestTag("analytics-list"))
-        .performScrollToNode(hasText("Today", substring = true))
+    onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("Today", substring = true))
     onNode(hasText("Today", substring = true)).assertExists()
     onNode(hasText("-5,000 T", substring = true)).assertExists()
   }
@@ -244,8 +242,7 @@ class AnalyticsLocalizationE2eUiTest {
         onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
         onAllNodes(hasText("تحلیل")).assertCountEquals(2)
         onNode(hasText("جریان نقدی ماهانه")).assertExists()
-        onNode(hasTestTag("analytics-list"))
-            .performScrollToNode(hasText("امروز", substring = true))
+        onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("امروز", substring = true))
         onNode(hasText("امروز", substring = true)).assertExists()
         onNode(hasTestTag("monthly-outflow")).assertTextContains("تومان", substring = true)
         onNode(hasText("Personal expense")).assertExists()
@@ -257,8 +254,7 @@ class AnalyticsLocalizationE2eUiTest {
         focusAndEnter(onNode(hasTestTag("tab-analytics")))
         onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
         onNode(hasText("Monthly Cash Flow")).assertExists()
-        onNode(hasTestTag("analytics-list"))
-            .performScrollToNode(hasText("Today", substring = true))
+        onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("Today", substring = true))
         onNode(hasText("Today", substring = true)).assertExists()
         onNode(hasText("Personal expense")).assertExists()
 

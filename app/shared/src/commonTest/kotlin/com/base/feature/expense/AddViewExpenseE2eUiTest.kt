@@ -7,8 +7,8 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -111,8 +111,7 @@ class AddViewExpenseE2eUiTest {
 
     // Verify returning to AnalyticsScreen and updated description is shown
     onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
-    onNode(hasTestTag("analytics-list"))
-        .performScrollToNode(hasText("Original Coffee & Croissant"))
+    onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("Original Coffee & Croissant"))
     onNode(hasText("Original Coffee & Croissant")).waitForExistence().assertExists()
   }
 
