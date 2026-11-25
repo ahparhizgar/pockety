@@ -308,7 +308,7 @@ private fun PocketTransactionTrailing(
       horizontalArrangement = Arrangement.spacedBy(4.dp),
   ) {
     Text(
-        text = "${if (item.isTopUp) "+" else "-"}${moneyLabel(item.amount)}",
+        text = "${if (item.isTopUp) "+" else ""}${moneyLabel(item.amount)}",
         style = MaterialTheme.typography.labelLarge,
         fontWeight = FontWeight.SemiBold,
         color =

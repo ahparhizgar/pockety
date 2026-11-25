@@ -914,7 +914,7 @@ fun AnalyticsExpenseItem(
       }
       Spacer(modifier = Modifier.width(12.dp))
       Text(
-          text = "-${moneyLabel(expense.amount)}",
+          text = moneyLabel(expense.amount),
           style = MaterialTheme.typography.titleLarge,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.onSurface,

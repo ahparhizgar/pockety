@@ -59,7 +59,7 @@ class PocketDetailsE2eUiTest {
 
     // Combined activity feed contains expense and top-up
     onNode(hasText("Sam Cafe")).assertExists()
-    onNode(hasText("-5,000 T")).assertExists()
+    onNode(hasText("5,000 T")).assertExists()
     onNode(hasText("Initial Balance")).assertExists()
     onNode(hasText("+85,000 T")).assertExists()
 
