@@ -51,6 +51,8 @@ class AnalyticsLocalizationE2eUiTest {
             initialState =
                 FakeAnalyticsStateFactory.create(
                     monthlyOutflow = 0,
+                    previousMonthOutflow = 0,
+                    categorySpending = emptyList(),
                     dateGroups = emptyList(),
                 )
         )
