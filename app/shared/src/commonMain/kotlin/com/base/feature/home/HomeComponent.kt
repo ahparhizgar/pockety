@@ -208,10 +208,12 @@ class DefaultHomeComponent(
 
     val recentWindowStart = nowInstant - COMPARISON_WINDOW_DAYS.days
     val previousWindowStart = nowInstant - (2 * COMPARISON_WINDOW_DAYS).days
-    val recentWindowExpenses =
-        rawExpenses.filter { it.createdAt > recentWindowStart && it.createdAt <= nowInstant }
-    val previousWindowExpenses =
-        rawExpenses.filter { it.createdAt > previousWindowStart && it.createdAt <= recentWindowStart }
+    val recentWindowExpenses = rawExpenses.filter {
+      it.createdAt > recentWindowStart && it.createdAt <= nowInstant
+    }
+    val previousWindowExpenses = rawExpenses.filter {
+      it.createdAt > previousWindowStart && it.createdAt <= recentWindowStart
+    }
     val recentOutflow = recentWindowExpenses.sumOf { it.amount }
     val previousMonthOutflow = previousWindowExpenses.sumOf { it.amount }
 
@@ -219,7 +221,8 @@ class DefaultHomeComponent(
         recentWindowExpenses.size >= MIN_COMPARISON_TRANSACTIONS &&
             previousWindowExpenses.size >= MIN_COMPARISON_TRANSACTIONS &&
             maxOf(recentWindowExpenses.size, previousWindowExpenses.size) <=
-                COMPARISON_COUNT_RATIO * minOf(recentWindowExpenses.size, previousWindowExpenses.size)
+                COMPARISON_COUNT_RATIO *
+                    minOf(recentWindowExpenses.size, previousWindowExpenses.size)
     val percent =
         if (previousMonthOutflow > 0 && countsAreComparable) {
           (abs(recentOutflow - previousMonthOutflow).toDouble() * 100.0 / previousMonthOutflow)
