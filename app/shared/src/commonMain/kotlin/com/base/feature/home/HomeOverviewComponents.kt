@@ -507,11 +507,7 @@ fun MonthOverMonthCard(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
           Text(
-              text =
-                  stringResource(
-                      Res.string.home_vs_month_format,
-                      homeMonthName(state.previousMonth, state.calendarType),
-                  ),
+              text = stringResource(Res.string.home_vs_month_format),
               style = MaterialTheme.typography.labelSmall,
               color = MaterialTheme.colorScheme.secondary,
           )

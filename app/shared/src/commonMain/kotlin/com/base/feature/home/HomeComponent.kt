@@ -25,6 +25,7 @@ import com.base.sms.InitialSmsImport
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -197,17 +198,27 @@ class DefaultHomeComponent(
           .launchIn(scope)
 
   private fun buildOverview(): HomeState {
-    val now = activeCalendar.toCalendarDate(Clock.System.now().toEpochMilliseconds(), timeZone)
+    val nowInstant = Clock.System.now()
+    val now = activeCalendar.toCalendarDate(nowInstant.toEpochMilliseconds(), timeZone)
     val previous = activeCalendar.addMonths(CalendarDate(now.year, now.month, 1, calendarType), -1)
 
     val currentExpenses = rawExpenses.filter { expense -> expense.isInMonth(now) }
-    val previousExpenses = rawExpenses.filter { expense -> expense.isInMonth(previous) }
     val monthlyOutflow = currentExpenses.sumOf { it.amount }
-    val previousMonthOutflow = previousExpenses.sumOf { it.amount }
+
+    val recentWindowStart = nowInstant - COMPARISON_WINDOW_DAYS.days
+    val previousWindowStart = nowInstant - (2 * COMPARISON_WINDOW_DAYS).days
+    val recentOutflow =
+        rawExpenses
+            .filter { it.createdAt > recentWindowStart && it.createdAt <= nowInstant }
+            .sumOf { it.amount }
+    val previousMonthOutflow =
+        rawExpenses
+            .filter { it.createdAt > previousWindowStart && it.createdAt <= recentWindowStart }
+            .sumOf { it.amount }
 
     val percent =
         if (previousMonthOutflow > 0) {
-          (abs(monthlyOutflow - previousMonthOutflow).toDouble() * 100.0 / previousMonthOutflow)
+          (abs(recentOutflow - previousMonthOutflow).toDouble() * 100.0 / previousMonthOutflow)
               .roundToInt()
         } else {
           null
@@ -222,7 +233,7 @@ class DefaultHomeComponent(
         monthlyOutflow = monthlyOutflow,
         previousMonthOutflow = previousMonthOutflow,
         monthOverMonthPercent = percent,
-        isMonthOverMonthSaved = monthlyOutflow <= previousMonthOutflow,
+        isMonthOverMonthSaved = recentOutflow <= previousMonthOutflow,
         topCategories = buildBreakdown(currentExpenses, monthlyOutflow),
     )
   }
@@ -388,3 +399,5 @@ class FakeHomeComponentFactory : HomeComponentFactory {
       onOpenPockets: () -> Unit,
   ): HomeComponent = FakeHomeComponent()
 }
+
+private const val COMPARISON_WINDOW_DAYS = 30

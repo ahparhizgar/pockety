@@ -24,20 +24,12 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.shouldBe
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Instant
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.minus
-import kotlinx.datetime.toLocalDateTime
 
 private fun previousMonthInstant(): Instant {
-  val timeZone = TimeZone.currentSystemDefault()
-  val today = Clock.System.now().toLocalDateTime(timeZone).date
-  return LocalDate(today.year, today.month, 15)
-      .minus(1, DateTimeUnit.MONTH)
-      .atStartOfDayIn(timeZone)
+  return Clock.System.now() - 45.days
 }
 
 private fun stubInitialSmsImport() =
