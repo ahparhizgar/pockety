@@ -30,5 +30,5 @@
 
 ## 4. Verification
 
-- [ ] 4.1 Existing analytics UI/localization tests keep passing (test tags kept)
-- [ ] 4.2 CI green; screenshot diff reviewed and sent
+- [x] 4.1 Existing analytics UI/localization tests keep passing (test tags kept)
+- [x] 4.2 CI green; screenshot diff reviewed and sent
