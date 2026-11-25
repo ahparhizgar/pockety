@@ -68,6 +68,7 @@ data class HomeState(
     val monthlyOutflow: Long = 0L,
     val previousMonthOutflow: Long = 0L,
     val monthOverMonthPercent: Int? = null,
+    val showMonthOverMonthCard: Boolean = false,
     val isMonthOverMonthSaved: Boolean = true,
     val topCategories: List<HomeCategoryOutflow> = emptyList(),
     val pockets: List<HomePocketUi> = emptyList(),
@@ -207,17 +208,20 @@ class DefaultHomeComponent(
 
     val recentWindowStart = nowInstant - COMPARISON_WINDOW_DAYS.days
     val previousWindowStart = nowInstant - (2 * COMPARISON_WINDOW_DAYS).days
-    val recentOutflow =
-        rawExpenses
-            .filter { it.createdAt > recentWindowStart && it.createdAt <= nowInstant }
-            .sumOf { it.amount }
-    val previousMonthOutflow =
-        rawExpenses
-            .filter { it.createdAt > previousWindowStart && it.createdAt <= recentWindowStart }
-            .sumOf { it.amount }
+    val recentWindowExpenses =
+        rawExpenses.filter { it.createdAt > recentWindowStart && it.createdAt <= nowInstant }
+    val previousWindowExpenses =
+        rawExpenses.filter { it.createdAt > previousWindowStart && it.createdAt <= recentWindowStart }
+    val recentOutflow = recentWindowExpenses.sumOf { it.amount }
+    val previousMonthOutflow = previousWindowExpenses.sumOf { it.amount }
 
+    val countsAreComparable =
+        recentWindowExpenses.size >= MIN_COMPARISON_TRANSACTIONS &&
+            previousWindowExpenses.size >= MIN_COMPARISON_TRANSACTIONS &&
+            maxOf(recentWindowExpenses.size, previousWindowExpenses.size) <=
+                COMPARISON_COUNT_RATIO * minOf(recentWindowExpenses.size, previousWindowExpenses.size)
     val percent =
-        if (previousMonthOutflow > 0) {
+        if (previousMonthOutflow > 0 && countsAreComparable) {
           (abs(recentOutflow - previousMonthOutflow).toDouble() * 100.0 / previousMonthOutflow)
               .roundToInt()
         } else {
@@ -233,6 +237,7 @@ class DefaultHomeComponent(
         monthlyOutflow = monthlyOutflow,
         previousMonthOutflow = previousMonthOutflow,
         monthOverMonthPercent = percent,
+        showMonthOverMonthCard = previousWindowExpenses.isNotEmpty(),
         isMonthOverMonthSaved = recentOutflow <= previousMonthOutflow,
         topCategories = buildBreakdown(currentExpenses, monthlyOutflow),
     )
@@ -293,6 +298,7 @@ class DefaultHomeComponent(
           monthlyOutflow = overview.monthlyOutflow,
           previousMonthOutflow = overview.previousMonthOutflow,
           monthOverMonthPercent = overview.monthOverMonthPercent,
+          showMonthOverMonthCard = overview.showMonthOverMonthCard,
           isMonthOverMonthSaved = overview.isMonthOverMonthSaved,
           topCategories = overview.topCategories,
       )
@@ -401,3 +407,5 @@ class FakeHomeComponentFactory : HomeComponentFactory {
 }
 
 private const val COMPARISON_WINDOW_DAYS = 30
+private const val MIN_COMPARISON_TRANSACTIONS = 3
+private const val COMPARISON_COUNT_RATIO = 2

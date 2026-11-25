@@ -25,6 +25,7 @@ class HomeE2eUiTest {
           monthlyOutflow = 900_000L,
           previousMonthOutflow = 1_000_000L,
           monthOverMonthPercent = 10,
+          showMonthOverMonthCard = true,
           isMonthOverMonthSaved = true,
           topCategories =
               listOf(

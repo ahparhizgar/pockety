@@ -103,10 +103,12 @@ private fun HomeContent(
             onDateClick = component::onAllMonthsClicked,
         )
 
-        MonthOverMonthCard(
-            state = state,
-            onAllMonthsClick = component::onAllMonthsClicked,
-        )
+        if (state.showMonthOverMonthCard) {
+          MonthOverMonthCard(
+              state = state,
+              onAllMonthsClick = component::onAllMonthsClicked,
+          )
+        }
 
         if (state.pockets.isNotEmpty()) {
           ActivePocketsSection(

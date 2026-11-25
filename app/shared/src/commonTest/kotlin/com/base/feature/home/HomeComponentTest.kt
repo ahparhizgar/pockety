@@ -61,10 +61,21 @@ class HomeComponentTest : BehaviorSpec() {
                     initialExpenses =
                         listOf(
                             FakeExpenseFactory.create(id = 1, amount = 100_000),
-                            FakeExpenseFactory.create(id = 2, amount = 50_000),
+                            FakeExpenseFactory.create(id = 2, amount = 30_000),
+                            FakeExpenseFactory.create(id = 3, amount = 20_000),
                             FakeExpenseFactory.create(
-                                id = 3,
-                                amount = 300_000,
+                                id = 4,
+                                amount = 100_000,
+                                createdAt = previousMonthInstant(),
+                            ),
+                            FakeExpenseFactory.create(
+                                id = 5,
+                                amount = 100_000,
+                                createdAt = previousMonthInstant(),
+                            ),
+                            FakeExpenseFactory.create(
+                                id = 6,
+                                amount = 100_000,
                                 createdAt = previousMonthInstant(),
                             ),
                         ),
@@ -165,6 +176,48 @@ class HomeComponentTest : BehaviorSpec() {
 
         Then("the month-over-month percent is null without previous data") {
           component.state.value.monthOverMonthPercent.shouldBeNull()
+        }
+
+        Then("the comparison card is hidden without previous data") {
+          component.state.value.showMonthOverMonthCard shouldBe false
+        }
+      }
+    }
+
+    Given("many recent expenses but only one previous-window expense") {
+      val component by testValue {
+        DefaultHomeComponent(
+            cContext = TestCContext(),
+            candidateExpenseRepository = FakeCandidateExpenseRepository(),
+            expenseRepository =
+                FakeExpenseRepository(
+                    initialExpenses =
+                        (1L..6L).map { FakeExpenseFactory.create(id = it, amount = 10_000) } +
+                            listOf(
+                                FakeExpenseFactory.create(
+                                    id = 7,
+                                    amount = 10_000,
+                                    createdAt = previousMonthInstant(),
+                                ),
+                            ),
+                ),
+            categoryRepository = FakeCategoryRepository(),
+            userSettingsRepository = FakeUserSettingsRepository(),
+            pocketRepository = FakePocketRepository(),
+            initialSmsImport = stubInitialSmsImport(),
+            onAddExpense = {},
+        )
+      }
+
+      When("the component state settles") {
+        beforeEach { testCoroutineScheduler.advanceUntilIdle() }
+
+        Then("the percent is hidden because the counts are not comparable") {
+          component.state.value.monthOverMonthPercent.shouldBeNull()
+        }
+
+        Then("the comparison card still shows with previous data present") {
+          component.state.value.showMonthOverMonthCard shouldBe true
         }
       }
     }
