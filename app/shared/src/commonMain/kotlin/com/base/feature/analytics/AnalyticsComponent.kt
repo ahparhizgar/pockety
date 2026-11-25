@@ -1,5 +1,6 @@
 package com.base.feature.analytics
 
+import androidx.compose.runtime.Immutable
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.base.Fake
@@ -50,6 +51,7 @@ data class AnalyticsDateGroupUiModel(
     val expenses: List<AnalyticsExpenseUiModel>,
 )
 
+@Immutable
 data class AnalyticsCategorySpendingUiModel(
     val categoryId: Long? = null,
     val categoryName: String? = null,
@@ -363,6 +365,7 @@ object FakeAnalyticsCategorySpendingUiModelFactory {
 }
 
 object FakeAnalyticsStateFactory {
+  @Suppress("LongParameterList")
   fun create(
       calendarType: CalendarType = CalendarType.GREGORIAN,
       selectedMonth: Int = 10,

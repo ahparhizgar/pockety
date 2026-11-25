@@ -142,6 +142,7 @@ private const val PERCENT_WHOLE = 100.0
 private const val DONUT_FULL_CIRCLE = 360f
 private const val DONUT_START_ANGLE = -90f
 private const val DONUT_GAP_ANGLE = 4f
+private const val MONTHS_IN_YEAR = 12
 
 @Composable
 fun AnalyticsScreen(
@@ -226,28 +227,36 @@ private fun AnalyticsContent(
       }
       state.dateGroups.forEach { group ->
         item(key = "group-${group.date}") {
-          Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            DateGroupHeader(
-                date = group.date,
-                relativeDate = group.relativeDate,
-                totalAmount = group.totalAmount,
-            )
-            Column(modifier = Modifier.fillMaxWidth()) {
-              group.expenses.forEachIndexed { index, expense ->
-                AnalyticsExpenseItem(
-                    expense = expense,
-                    onClick = { component.onExpenseClicked(expense.id) },
-                )
-                if (index < group.expenses.size - 1) {
-                  HorizontalDivider(
-                      color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f),
-                      thickness = 0.5.dp,
-                      modifier = Modifier.padding(horizontal = 4.dp),
-                  )
-                }
-              }
-            }
-          }
+          DateGroupSection(component = component, group = group)
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun DateGroupSection(
+    component: AnalyticsComponent,
+    group: AnalyticsDateGroupUiModel,
+) {
+  Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    DateGroupHeader(
+        date = group.date,
+        relativeDate = group.relativeDate,
+        totalAmount = group.totalAmount,
+    )
+    Column(modifier = Modifier.fillMaxWidth()) {
+      group.expenses.forEachIndexed { index, expense ->
+        AnalyticsExpenseItem(
+            expense = expense,
+            onClick = { component.onExpenseClicked(expense.id) },
+        )
+        if (index < group.expenses.size - 1) {
+          HorizontalDivider(
+              color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f),
+              thickness = 0.5.dp,
+              modifier = Modifier.padding(horizontal = 4.dp),
+          )
         }
       }
     }
@@ -291,15 +300,24 @@ private fun MonthNavigationRow(
         isPrevious = true,
         enabled = true,
         onClick = component::onPreviousMonthClicked,
-        contentDescription =
-            analyticsStaticText(
-                Res.string.previous_month_action,
-                Res.string.analytics_previous_month_action_fa,
-            ),
         modifier = Modifier.testTag("prev-month-button"),
     )
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    MonthTitleBlock(state = state)
+
+    MonthNavPill(
+        label = analyticsMonthName(adjacentMonth(state.selectedMonth, 1), state.calendarType),
+        isPrevious = false,
+        enabled = state.canNavigateNext,
+        onClick = component::onNextMonthClicked,
+        modifier = Modifier.testTag("next-month-button"),
+    )
+  }
+}
+
+@Composable
+private fun MonthTitleBlock(state: AnalyticsState) {
+Column(horizontalAlignment = Alignment.CenterHorizontally) {
       Row(
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -329,20 +347,6 @@ private fun MonthNavigationRow(
           color = MaterialTheme.colorScheme.secondary,
       )
     }
-
-    MonthNavPill(
-        label = analyticsMonthName(adjacentMonth(state.selectedMonth, 1), state.calendarType),
-        isPrevious = false,
-        enabled = state.canNavigateNext,
-        onClick = component::onNextMonthClicked,
-        contentDescription =
-            analyticsStaticText(
-                Res.string.next_month_action,
-                Res.string.analytics_next_month_action_fa,
-            ),
-        modifier = Modifier.testTag("next-month-button"),
-    )
-  }
 }
 
 @Composable
@@ -351,9 +355,20 @@ private fun MonthNavPill(
     isPrevious: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
-    contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
+  val contentDescription =
+      if (isPrevious) {
+        analyticsStaticText(
+            Res.string.previous_month_action,
+            Res.string.analytics_previous_month_action_fa,
+        )
+      } else {
+        analyticsStaticText(
+            Res.string.next_month_action,
+            Res.string.analytics_next_month_action_fa,
+        )
+      }
   val contentColor =
       if (enabled) MaterialTheme.colorScheme.onSurfaceVariant
       else MaterialTheme.colorScheme.outlineVariant
@@ -396,7 +411,8 @@ private fun MonthNavPill(
   }
 }
 
-private fun adjacentMonth(month: Int, delta: Int): Int = ((month - 1 + delta + 12) % 12) + 1
+private fun adjacentMonth(month: Int, delta: Int): Int =
+    ((month - 1 + delta + MONTHS_IN_YEAR) % MONTHS_IN_YEAR) + 1
 
 @Composable
 private fun MonthlyOutflowSummary(
@@ -560,7 +576,6 @@ private fun CategorySpendingCard(
     state: AnalyticsState,
     modifier: Modifier = Modifier,
 ) {
-  val top = state.categorySpending.firstOrNull() ?: return
   Surface(
       shape = RoundedCornerShape(24.dp),
       color = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -584,11 +599,7 @@ private fun CategorySpendingCard(
           modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
           contentAlignment = Alignment.Center,
       ) {
-        SpendingDonutChart(
-            spending = state.categorySpending,
-            topPercentage = top.percentage,
-            topName = top.categoryName ?: stringResource(Res.string.uncategorized_title),
-        )
+        SpendingDonutChart(state = state)
       }
       Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         state.categorySpending.forEachIndexed { index, item ->
@@ -601,52 +612,21 @@ private fun CategorySpendingCard(
 
 @Composable
 private fun SpendingDonutChart(
-    spending: List<AnalyticsCategorySpendingUiModel>,
-    topPercentage: Int,
-    topName: String,
+    state: AnalyticsState,
     modifier: Modifier = Modifier,
 ) {
+  val top = state.categorySpending.firstOrNull() ?: return
   val trackColor = MaterialTheme.colorScheme.surfaceContainerHigh
-  val fallbackColor = MaterialTheme.colorScheme.surfaceDim
-  val colors = spending.map { item -> item.categoryColor?.let { Color(it) } ?: fallbackColor }
-  val strokeWidth = 16.dp
-  val strokeWidthPx = with(LocalDensity.current) { strokeWidth.toPx() }
+  val strokeWidthPx = with(LocalDensity.current) { 16.dp.toPx() }
   Box(
       modifier = modifier.size(192.dp).testTag("spending-donut"),
       contentAlignment = Alignment.Center,
   ) {
-    Canvas(modifier = Modifier.fillMaxSize()) {
-      val canvasSize = size.minDimension
-      val radius = (canvasSize - strokeWidthPx) / 2f
-      val topLeft = Offset((size.width - 2 * radius) / 2f, (size.height - 2 * radius) / 2f)
-      val arcSize = Size(radius * 2f, radius * 2f)
-      drawArc(
-          color = trackColor,
-          startAngle = 0f,
-          sweepAngle = DONUT_FULL_CIRCLE,
-          useCenter = false,
-          topLeft = topLeft,
-          size = arcSize,
-          style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round),
-      )
-      var currentAngle = DONUT_START_ANGLE
-      val totalPercentage = spending.sumOf { it.percentage }.toFloat().coerceAtLeast(1f)
-      spending.forEachIndexed { index, item ->
-        val sweepAngle = (item.percentage / totalPercentage) * DONUT_FULL_CIRCLE
-        if (sweepAngle > DONUT_GAP_ANGLE) {
-          drawArc(
-              color = colors[index],
-              startAngle = currentAngle + (DONUT_GAP_ANGLE / 2f),
-              sweepAngle = sweepAngle - DONUT_GAP_ANGLE,
-              useCenter = false,
-              topLeft = topLeft,
-              size = arcSize,
-              style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round),
-          )
-        }
-        currentAngle += sweepAngle
-      }
-    }
+    DonutArcsCanvas(
+        state = state,
+        trackColor = trackColor,
+        strokeWidthPx = strokeWidthPx,
+    )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -663,19 +643,61 @@ private fun SpendingDonutChart(
           letterSpacing = 0.5.sp,
       )
       Text(
-          text = "$topPercentage%",
+          text = "${top.percentage}%",
           style = MaterialTheme.typography.headlineSmall,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.onSurface,
       )
       Text(
-          text = topName,
+          text = top.categoryName ?: stringResource(Res.string.uncategorized_title),
           style = MaterialTheme.typography.labelSmall,
           color = MaterialTheme.colorScheme.primary,
           fontWeight = FontWeight.Medium,
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
       )
+    }
+  }
+}
+
+@Composable
+private fun DonutArcsCanvas(
+    state: AnalyticsState,
+    trackColor: Color,
+    strokeWidthPx: Float,
+) {
+  val fallbackColor = MaterialTheme.colorScheme.surfaceDim
+  val spending = state.categorySpending
+  Canvas(modifier = Modifier.fillMaxSize()) {
+    val canvasSize = size.minDimension
+    val radius = (canvasSize - strokeWidthPx) / 2f
+    val topLeft = Offset((size.width - 2 * radius) / 2f, (size.height - 2 * radius) / 2f)
+    val arcSize = Size(radius * 2f, radius * 2f)
+    drawArc(
+        color = trackColor,
+        startAngle = 0f,
+        sweepAngle = DONUT_FULL_CIRCLE,
+        useCenter = false,
+        topLeft = topLeft,
+        size = arcSize,
+        style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round),
+    )
+    var currentAngle = DONUT_START_ANGLE
+    val totalPercentage = spending.sumOf { it.percentage }.toFloat().coerceAtLeast(1f)
+    spending.forEach { item ->
+      val sweepAngle = (item.percentage / totalPercentage) * DONUT_FULL_CIRCLE
+      if (sweepAngle > DONUT_GAP_ANGLE) {
+        drawArc(
+            color = item.categoryColor?.let { Color(it) } ?: fallbackColor,
+            startAngle = currentAngle + (DONUT_GAP_ANGLE / 2f),
+            sweepAngle = sweepAngle - DONUT_GAP_ANGLE,
+            useCenter = false,
+            topLeft = topLeft,
+            size = arcSize,
+            style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round),
+        )
+      }
+      currentAngle += sweepAngle
     }
   }
 }
