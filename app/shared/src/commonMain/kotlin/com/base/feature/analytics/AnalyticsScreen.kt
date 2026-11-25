@@ -226,9 +226,7 @@ private fun AnalyticsContent(
         ExpensesLedgerHeader(totalItemsCount = state.allExpenses.size)
       }
       state.dateGroups.forEach { group ->
-        item(key = "group-${group.date}") {
-          DateGroupSection(component = component, group = group)
-        }
+        item(key = "group-${group.date}") { DateGroupSection(component = component, group = group) }
       }
     }
   }
@@ -317,36 +315,36 @@ private fun MonthNavigationRow(
 
 @Composable
 private fun MonthTitleBlock(state: AnalyticsState) {
-Column(horizontalAlignment = Alignment.CenterHorizontally) {
-      Row(
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(4.dp),
-      ) {
-        Text(
-            text = analyticsMonthLabel(state),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.testTag("month-label"),
-        )
-        Icon(
-            imageVector = Icons.Default.ExpandMore,
-            contentDescription = null,
-            modifier = Modifier.size(18.dp),
-            tint = MaterialTheme.colorScheme.secondary,
-        )
-      }
+  Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
       Text(
-          text =
-              analyticsStaticText(
-                  Res.string.analytics_cash_flow_subtitle,
-                  Res.string.analytics_cash_flow_subtitle_fa,
-              ),
-          style = MaterialTheme.typography.labelSmall,
-          fontWeight = FontWeight.Medium,
-          color = MaterialTheme.colorScheme.secondary,
+          text = analyticsMonthLabel(state),
+          style = MaterialTheme.typography.titleLarge,
+          fontWeight = FontWeight.SemiBold,
+          color = MaterialTheme.colorScheme.onSurface,
+          modifier = Modifier.testTag("month-label"),
+      )
+      Icon(
+          imageVector = Icons.Default.ExpandMore,
+          contentDescription = null,
+          modifier = Modifier.size(18.dp),
+          tint = MaterialTheme.colorScheme.secondary,
       )
     }
+    Text(
+        text =
+            analyticsStaticText(
+                Res.string.analytics_cash_flow_subtitle,
+                Res.string.analytics_cash_flow_subtitle_fa,
+            ),
+        style = MaterialTheme.typography.labelSmall,
+        fontWeight = FontWeight.Medium,
+        color = MaterialTheme.colorScheme.secondary,
+    )
+  }
 }
 
 @Composable
