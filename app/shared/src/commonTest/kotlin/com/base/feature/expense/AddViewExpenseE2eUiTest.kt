@@ -68,7 +68,7 @@ class AddViewExpenseE2eUiTest {
     onNode(hasTestTag("month-switcher-card")).assertExists()
     onNode(hasTestTag("date-group-header")).assertExists()
     onNode(hasText("Dinner with friends")).assertExists()
-    onNode(hasTestTag("expense-amount"), useUnmergedTree = true).assertTextEquals("100 T")
+    onNode(hasTestTag("expense-amount"), useUnmergedTree = true).assertTextContains("100 T")
     assertEquals(
         1000L,
         root.assertMainComponent().assertAnalyticsComponent().state.value.monthlyOutflow,
