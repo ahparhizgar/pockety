@@ -7,6 +7,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.pressKey
@@ -92,6 +93,7 @@ class AddViewExpenseE2eUiTest {
     // Switch to Analytics tab
     onNode(hasTestTag("tab-analytics")).waitForExistence().performClick()
     onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
+    onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("Original Coffee"))
     onNode(hasText("Original Coffee")).waitForExistence().assertExists()
 
     // Click expense item to edit
@@ -109,6 +111,8 @@ class AddViewExpenseE2eUiTest {
 
     // Verify returning to AnalyticsScreen and updated description is shown
     onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
+    onNode(hasTestTag("analytics-list"))
+        .performScrollToNode(hasText("Original Coffee & Croissant"))
     onNode(hasText("Original Coffee & Croissant")).waitForExistence().assertExists()
   }
 
@@ -130,6 +134,7 @@ class AddViewExpenseE2eUiTest {
     // Switch to Analytics tab
     onNode(hasTestTag("tab-analytics")).waitForExistence().performClick()
     onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
+    onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("To Be Deleted"))
     onNode(hasText("To Be Deleted")).waitForExistence().assertExists()
 
     // Click expense item to edit

@@ -12,6 +12,7 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -61,7 +62,7 @@ class AnalyticsLocalizationE2eUiTest {
     }
 
     onNode(hasText("تحلیل")).waitForExistence().assertExists()
-    onNode(hasText("خرج این ماه")).assertExists()
+    onNode(hasText("جریان نقدی ماهانه")).assertExists()
     onNode(hasText("0 تومان", substring = true)).assertExists()
     onNode(hasText("این ماه هنوز خرجی ثبت نکردی")).assertExists()
     onNode(hasContentDescription("ماه قبل")).assertExists()
@@ -104,8 +105,12 @@ class AnalyticsLocalizationE2eUiTest {
 
     onNode(hasText("اکتبر 2026")).waitForExistence().assertExists()
     onNode(hasText("امروز", substring = true)).assertExists()
+    onNode(hasTestTag("analytics-list"))
+        .performScrollToNode(hasText("دیروز", substring = true))
     onNode(hasText("دیروز", substring = true)).assertExists()
+    onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("22 اکتبر 2026"))
     onNode(hasText("22 اکتبر 2026")).assertExists()
+    onNode(hasTestTag("analytics-list")).performScrollToNode(hasTestTag("expense-item-42"))
     onNode(hasTestTag("expense-amount"), useUnmergedTree = true)
         .assertTextContains("تومان", substring = true)
     onNode(hasTestTag("expense-item-42")).performSemanticsAction(SemanticsActions.RequestFocus) {
@@ -170,6 +175,7 @@ class AnalyticsLocalizationE2eUiTest {
     }
 
     onNode(hasText("Mehr 1405")).waitForExistence().assertExists()
+    onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("Today, 24 Mehr"))
     onNode(hasText("Today, 24 Mehr")).assertExists()
   }
 
@@ -199,6 +205,8 @@ class AnalyticsLocalizationE2eUiTest {
 
     onNode(hasText("Analytics")).waitForExistence().assertExists()
     onNode(hasText("October 2026")).assertExists()
+    onNode(hasTestTag("analytics-list"))
+        .performScrollToNode(hasText("Today", substring = true))
     onNode(hasText("Today", substring = true)).assertExists()
     onNode(hasText("-5,000 T", substring = true)).assertExists()
   }
@@ -235,7 +243,9 @@ class AnalyticsLocalizationE2eUiTest {
         focusAndEnter(onNode(hasTestTag("tab-analytics")))
         onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
         onAllNodes(hasText("تحلیل")).assertCountEquals(2)
-        onNode(hasText("خرج این ماه")).assertExists()
+        onNode(hasText("جریان نقدی ماهانه")).assertExists()
+        onNode(hasTestTag("analytics-list"))
+            .performScrollToNode(hasText("امروز", substring = true))
         onNode(hasText("امروز", substring = true)).assertExists()
         onNode(hasTestTag("monthly-outflow")).assertTextContains("تومان", substring = true)
         onNode(hasText("Personal expense")).assertExists()
@@ -246,7 +256,9 @@ class AnalyticsLocalizationE2eUiTest {
         onNode(hasText("App language")).waitForExistence().assertExists()
         focusAndEnter(onNode(hasTestTag("tab-analytics")))
         onNode(hasTestTag("analytics-screen")).waitForExistence().assertExists()
-        onNode(hasText("Monthly Outflow")).assertExists()
+        onNode(hasText("Monthly Cash Flow")).assertExists()
+        onNode(hasTestTag("analytics-list"))
+            .performScrollToNode(hasText("Today", substring = true))
         onNode(hasText("Today", substring = true)).assertExists()
         onNode(hasText("Personal expense")).assertExists()
 

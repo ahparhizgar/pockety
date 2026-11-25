@@ -826,7 +826,7 @@ private fun DateGroupHeader(
       verticalAlignment = Alignment.CenterVertically,
   ) {
     Text(
-        text = headerTitle.uppercase(),
+        text = headerTitle,
         style = MaterialTheme.typography.labelMedium,
         fontWeight = FontWeight.SemiBold,
         letterSpacing = 0.5.sp,
