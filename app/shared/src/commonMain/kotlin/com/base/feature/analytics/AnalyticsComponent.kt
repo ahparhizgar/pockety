@@ -224,8 +224,7 @@ class DefaultAnalyticsComponent(
               categoryIcon = category?.icon,
               categoryColor = category?.color,
               amount = amount,
-              percentage =
-                  (amount.toDouble() * PERCENT_WHOLE / monthlyOutflow).roundToInt(),
+              percentage = (amount.toDouble() * PERCENT_WHOLE / monthlyOutflow).roundToInt(),
           )
         }
         .sortedByDescending { it.amount }

@@ -236,8 +236,7 @@ private fun AnalyticsContent(
                 )
                 if (index < group.expenses.size - 1) {
                   HorizontalDivider(
-                      color =
-                          MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f),
+                      color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f),
                       thickness = 0.5.dp,
                       modifier = Modifier.padding(horizontal = 4.dp),
                   )
@@ -421,8 +420,7 @@ private fun MonthlyOutflowSummary(
 private fun TrendPill(state: AnalyticsState) {
   val previous = state.previousMonthOutflow
   val percent =
-      (abs(state.monthlyOutflow - previous).toDouble() * PERCENT_WHOLE / previous)
-          .roundToInt()
+      (abs(state.monthlyOutflow - previous).toDouble() * PERCENT_WHOLE / previous).roundToInt()
   val isSaved = state.monthlyOutflow <= previous
   Surface(
       shape = CircleShape,
@@ -445,7 +443,8 @@ private fun TrendPill(state: AnalyticsState) {
       Text(
           text =
               stringResource(
-                  if (LocalAppLanguage.current == AppLanguage.PERSIAN) Res.string.analytics_trend_vs_fa
+                  if (LocalAppLanguage.current == AppLanguage.PERSIAN)
+                      Res.string.analytics_trend_vs_fa
                   else Res.string.analytics_trend_vs,
                   percent,
                   analyticsMonthName(
@@ -683,15 +682,12 @@ private fun CategoryAllocationRow(
     isTopSpent: Boolean,
     modifier: Modifier = Modifier,
 ) {
-  val dotColor =
-      item.categoryColor?.let { Color(it) } ?: MaterialTheme.colorScheme.surfaceDim
+  val dotColor = item.categoryColor?.let { Color(it) } ?: MaterialTheme.colorScheme.surfaceDim
   Surface(
       shape = RoundedCornerShape(16.dp),
       color = MaterialTheme.colorScheme.surfaceContainerLowest,
       modifier =
-          modifier
-              .fillMaxWidth()
-              .testTag("category-row-${item.categoryId ?: "uncategorized"}"),
+          modifier.fillMaxWidth().testTag("category-row-${item.categoryId ?: "uncategorized"}"),
   ) {
     Row(
         modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
@@ -779,7 +775,8 @@ private fun ExpensesLedgerHeader(
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp).testTag("expenses-count"),
+            modifier =
+                Modifier.padding(horizontal = 10.dp, vertical = 2.dp).testTag("expenses-count"),
         )
       }
     }
@@ -867,8 +864,7 @@ fun AnalyticsExpenseItem(
               ?: uncategorizedTitle
       val subtitleText =
           when {
-            expense.categoryName != null && expense.description.isNotBlank() ->
-                expense.description
+            expense.categoryName != null && expense.description.isNotBlank() -> expense.description
             expense.formattedTime.isNotEmpty() -> expense.formattedTime
             else -> null
           }
