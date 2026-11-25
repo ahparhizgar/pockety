@@ -1,5 +1,6 @@
 package com.base.feature.analytics
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,16 +14,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.automirrored.filled.TrendingDown
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -31,10 +34,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.LocalAppLanguage
 import com.base.calendar.CalendarDate
@@ -45,6 +55,8 @@ import com.base.ui.ComponentPreviews
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import com.base.ui.money.moneyLabel
+import kotlin.math.abs
+import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
@@ -58,16 +70,24 @@ import pockety.app.shared.generated.resources.analytics_azar
 import pockety.app.shared.generated.resources.analytics_azar_fa
 import pockety.app.shared.generated.resources.analytics_bahman
 import pockety.app.shared.generated.resources.analytics_bahman_fa
+import pockety.app.shared.generated.resources.analytics_cash_flow_subtitle
+import pockety.app.shared.generated.resources.analytics_cash_flow_subtitle_fa
+import pockety.app.shared.generated.resources.analytics_category_spending_title
+import pockety.app.shared.generated.resources.analytics_category_spending_title_fa
 import pockety.app.shared.generated.resources.analytics_december
 import pockety.app.shared.generated.resources.analytics_december_fa
 import pockety.app.shared.generated.resources.analytics_dey
 import pockety.app.shared.generated.resources.analytics_dey_fa
 import pockety.app.shared.generated.resources.analytics_esfand
 import pockety.app.shared.generated.resources.analytics_esfand_fa
+import pockety.app.shared.generated.resources.analytics_expenses_title
+import pockety.app.shared.generated.resources.analytics_expenses_title_fa
 import pockety.app.shared.generated.resources.analytics_farvardin
 import pockety.app.shared.generated.resources.analytics_farvardin_fa
 import pockety.app.shared.generated.resources.analytics_february
 import pockety.app.shared.generated.resources.analytics_february_fa
+import pockety.app.shared.generated.resources.analytics_items_count
+import pockety.app.shared.generated.resources.analytics_items_count_fa
 import pockety.app.shared.generated.resources.analytics_january
 import pockety.app.shared.generated.resources.analytics_january_fa
 import pockety.app.shared.generated.resources.analytics_july
@@ -80,13 +100,8 @@ import pockety.app.shared.generated.resources.analytics_march
 import pockety.app.shared.generated.resources.analytics_march_fa
 import pockety.app.shared.generated.resources.analytics_may
 import pockety.app.shared.generated.resources.analytics_may_fa
-import pockety.app.shared.generated.resources.analytics_mehr
-import pockety.app.shared.generated.resources.analytics_mehr_fa
 import pockety.app.shared.generated.resources.analytics_month_year
 import pockety.app.shared.generated.resources.analytics_month_year_fa
-import pockety.app.shared.generated.resources.analytics_monthly_outflow_label_fa
-import pockety.app.shared.generated.resources.analytics_mordad
-import pockety.app.shared.generated.resources.analytics_mordad_fa
 import pockety.app.shared.generated.resources.analytics_next_month_action_fa
 import pockety.app.shared.generated.resources.analytics_no_expenses_month_fa
 import pockety.app.shared.generated.resources.analytics_november
@@ -107,13 +122,22 @@ import pockety.app.shared.generated.resources.analytics_tir_fa
 import pockety.app.shared.generated.resources.analytics_title_fa
 import pockety.app.shared.generated.resources.analytics_today
 import pockety.app.shared.generated.resources.analytics_today_fa
+import pockety.app.shared.generated.resources.analytics_top_spent
+import pockety.app.shared.generated.resources.analytics_top_spent_fa
+import pockety.app.shared.generated.resources.analytics_trend_vs
+import pockety.app.shared.generated.resources.analytics_trend_vs_fa
 import pockety.app.shared.generated.resources.analytics_yesterday
 import pockety.app.shared.generated.resources.analytics_yesterday_fa
-import pockety.app.shared.generated.resources.monthly_outflow_label
 import pockety.app.shared.generated.resources.next_month_action
 import pockety.app.shared.generated.resources.no_expenses_month
 import pockety.app.shared.generated.resources.previous_month_action
 import pockety.app.shared.generated.resources.tab_analytics
+import pockety.app.shared.generated.resources.uncategorized_title
+
+private const val PERCENT_WHOLE = 100.0
+private const val DONUT_FULL_CIRCLE = 360f
+private const val DONUT_START_ANGLE = -90f
+private const val DONUT_GAP_ANGLE = 4f
 
 @Composable
 fun AnalyticsScreen(
@@ -161,8 +185,8 @@ private fun AnalyticsContent(
 ) {
   LazyColumn(
       modifier = modifier.fillMaxSize().testTag("analytics-list"),
-      contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-      verticalArrangement = Arrangement.spacedBy(12.dp),
+      contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+      verticalArrangement = Arrangement.spacedBy(20.dp),
   ) {
     item(key = "month-switcher") {
       MonthSwitcherCard(
@@ -190,19 +214,37 @@ private fun AnalyticsContent(
         }
       }
     } else {
+      if (state.categorySpending.isNotEmpty()) {
+        item(key = "category-spending") { CategorySpendingCard(state = state) }
+      }
+      item(key = "expenses-header") {
+        ExpensesLedgerHeader(totalItemsCount = state.allExpenses.size)
+      }
       state.dateGroups.forEach { group ->
-        item(key = "group-header-${group.date}") {
-          DateGroupHeader(
-              date = group.date,
-              relativeDate = group.relativeDate,
-              totalAmount = group.totalAmount,
-          )
-        }
-        items(group.expenses, key = { it.id }) { expense ->
-          AnalyticsExpenseItem(
-              expense = expense,
-              onClick = { component.onExpenseClicked(expense.id) },
-          )
+        item(key = "group-${group.date}") {
+          Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            DateGroupHeader(
+                date = group.date,
+                relativeDate = group.relativeDate,
+                totalAmount = group.totalAmount,
+            )
+            Column(modifier = Modifier.fillMaxWidth()) {
+              group.expenses.forEachIndexed { index, expense ->
+                AnalyticsExpenseItem(
+                    expense = expense,
+                    onClick = { component.onExpenseClicked(expense.id) },
+                )
+                if (index < group.expenses.size - 1) {
+                  HorizontalDivider(
+                      color =
+                          MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.6f),
+                      thickness = 0.5.dp,
+                      modifier = Modifier.padding(horizontal = 4.dp),
+                  )
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -222,6 +264,7 @@ private fun MonthSwitcherCard(
   ) {
     Column(
         modifier = Modifier.padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
       MonthNavigationRow(component = component, state = state)
@@ -240,77 +283,181 @@ private fun MonthNavigationRow(
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically,
   ) {
-    IconButton(
+    MonthNavPill(
+        label = analyticsMonthName(adjacentMonth(state.selectedMonth, -1), state.calendarType),
+        isPrevious = true,
+        enabled = true,
         onClick = component::onPreviousMonthClicked,
+        contentDescription =
+            analyticsStaticText(
+                Res.string.previous_month_action,
+                Res.string.analytics_previous_month_action_fa,
+            ),
         modifier = Modifier.testTag("prev-month-button"),
-    ) {
-      Icon(
-          imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-          contentDescription =
+    )
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+      Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(4.dp),
+      ) {
+        Text(
+            text = analyticsMonthLabel(state),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.testTag("month-label"),
+        )
+        Icon(
+            imageVector = Icons.Default.ExpandMore,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp),
+            tint = MaterialTheme.colorScheme.secondary,
+        )
+      }
+      Text(
+          text =
               analyticsStaticText(
-                  Res.string.previous_month_action,
-                  Res.string.analytics_previous_month_action_fa,
+                  Res.string.analytics_cash_flow_subtitle,
+                  Res.string.analytics_cash_flow_subtitle_fa,
               ),
-          tint = MaterialTheme.colorScheme.onSurface,
+          style = MaterialTheme.typography.labelSmall,
+          fontWeight = FontWeight.Medium,
+          color = MaterialTheme.colorScheme.secondary,
       )
     }
 
-    Text(
-        text = analyticsMonthLabel(state),
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.testTag("month-label"),
-    )
-
-    IconButton(
-        onClick = component::onNextMonthClicked,
+    MonthNavPill(
+        label = analyticsMonthName(adjacentMonth(state.selectedMonth, 1), state.calendarType),
+        isPrevious = false,
         enabled = state.canNavigateNext,
+        onClick = component::onNextMonthClicked,
+        contentDescription =
+            analyticsStaticText(
+                Res.string.next_month_action,
+                Res.string.analytics_next_month_action_fa,
+            ),
         modifier = Modifier.testTag("next-month-button"),
+    )
+  }
+}
+
+@Composable
+private fun MonthNavPill(
+    label: String,
+    isPrevious: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+) {
+  val contentColor =
+      if (enabled) MaterialTheme.colorScheme.onSurfaceVariant
+      else MaterialTheme.colorScheme.outlineVariant
+  Surface(
+      onClick = onClick,
+      enabled = enabled,
+      shape = CircleShape,
+      color =
+          if (enabled) MaterialTheme.colorScheme.surfaceContainerHigh
+          else MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.6f),
+      modifier = modifier,
+  ) {
+    Row(
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-      Icon(
-          imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-          contentDescription =
-              analyticsStaticText(
-                  Res.string.next_month_action,
-                  Res.string.analytics_next_month_action_fa,
-              ),
-          tint =
-              if (state.canNavigateNext) {
-                MaterialTheme.colorScheme.onSurface
-              } else {
-                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
-              },
+      if (isPrevious) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(18.dp),
+            tint = contentColor,
+        )
+      }
+      Text(
+          text = label,
+          style = MaterialTheme.typography.labelSmall,
+          color = contentColor,
       )
+      if (!isPrevious) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(18.dp),
+            tint = contentColor,
+        )
+      }
     }
   }
 }
+
+private fun adjacentMonth(month: Int, delta: Int): Int = ((month - 1 + delta + 12) % 12) + 1
 
 @Composable
 private fun MonthlyOutflowSummary(
     state: AnalyticsState,
 ) {
   Column(
-      modifier = Modifier.fillMaxWidth(),
       horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.spacedBy(4.dp),
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+      modifier = Modifier.padding(vertical = 4.dp),
   ) {
     Text(
-        text =
-            analyticsStaticText(
-                Res.string.monthly_outflow_label,
-                Res.string.analytics_monthly_outflow_label_fa,
-            ),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
-    Text(
         text = moneyLabel(state.monthlyOutflow),
-        style = MaterialTheme.typography.headlineLarge,
+        style = MaterialTheme.typography.displayLarge.copy(fontSize = 36.sp),
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.primary,
+        color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.testTag("monthly-outflow"),
     )
+    if (state.previousMonthOutflow > 0L) {
+      TrendPill(state = state)
+    }
+  }
+}
+
+@Composable
+private fun TrendPill(state: AnalyticsState) {
+  val previous = state.previousMonthOutflow
+  val percent =
+      (abs(state.monthlyOutflow - previous).toDouble() * PERCENT_WHOLE / previous)
+          .roundToInt()
+  val isSaved = state.monthlyOutflow <= previous
+  Surface(
+      shape = CircleShape,
+      color = MaterialTheme.colorScheme.secondaryContainer,
+      contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+      modifier = Modifier.testTag("trend-pill"),
+  ) {
+    Row(
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+      Icon(
+          imageVector =
+              if (isSaved) Icons.AutoMirrored.Filled.TrendingDown
+              else Icons.AutoMirrored.Filled.TrendingUp,
+          contentDescription = null,
+          modifier = Modifier.size(16.dp),
+      )
+      Text(
+          text =
+              stringResource(
+                  if (LocalAppLanguage.current == AppLanguage.PERSIAN) Res.string.analytics_trend_vs_fa
+                  else Res.string.analytics_trend_vs,
+                  percent,
+                  analyticsMonthName(
+                      adjacentMonth(state.selectedMonth, -1),
+                      state.calendarType,
+                  ),
+                  moneyLabel(previous),
+              ),
+          style = MaterialTheme.typography.labelMedium,
+          fontWeight = FontWeight.SemiBold,
+      )
+    }
   }
 }
 
@@ -406,6 +553,240 @@ private val persianMonthsFa =
     )
 
 @Composable
+private fun CategorySpendingCard(
+    state: AnalyticsState,
+    modifier: Modifier = Modifier,
+) {
+  val top = state.categorySpending.firstOrNull() ?: return
+  Surface(
+      shape = RoundedCornerShape(24.dp),
+      color = MaterialTheme.colorScheme.surfaceContainerLow,
+      modifier = modifier.fillMaxWidth().testTag("category-spending-card"),
+  ) {
+    Column(
+        modifier = Modifier.padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+      Text(
+          text =
+              analyticsStaticText(
+                  Res.string.analytics_category_spending_title,
+                  Res.string.analytics_category_spending_title_fa,
+              ),
+          style = MaterialTheme.typography.headlineSmall,
+          fontWeight = FontWeight.SemiBold,
+          color = MaterialTheme.colorScheme.onSurface,
+      )
+      Box(
+          modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+          contentAlignment = Alignment.Center,
+      ) {
+        SpendingDonutChart(
+            spending = state.categorySpending,
+            topPercentage = top.percentage,
+            topName = top.categoryName ?: stringResource(Res.string.uncategorized_title),
+        )
+      }
+      Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        state.categorySpending.forEachIndexed { index, item ->
+          CategoryAllocationRow(item = item, isTopSpent = index == 0)
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun SpendingDonutChart(
+    spending: List<AnalyticsCategorySpendingUiModel>,
+    topPercentage: Int,
+    topName: String,
+    modifier: Modifier = Modifier,
+) {
+  val trackColor = MaterialTheme.colorScheme.surfaceContainerHigh
+  val fallbackColor = MaterialTheme.colorScheme.surfaceDim
+  val colors = spending.map { item -> item.categoryColor?.let { Color(it) } ?: fallbackColor }
+  val strokeWidth = 16.dp
+  val strokeWidthPx = with(LocalDensity.current) { strokeWidth.toPx() }
+  Box(
+      modifier = modifier.size(192.dp).testTag("spending-donut"),
+      contentAlignment = Alignment.Center,
+  ) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      val canvasSize = size.minDimension
+      val radius = (canvasSize - strokeWidthPx) / 2f
+      val topLeft = Offset((size.width - 2 * radius) / 2f, (size.height - 2 * radius) / 2f)
+      val arcSize = Size(radius * 2f, radius * 2f)
+      drawArc(
+          color = trackColor,
+          startAngle = 0f,
+          sweepAngle = DONUT_FULL_CIRCLE,
+          useCenter = false,
+          topLeft = topLeft,
+          size = arcSize,
+          style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round),
+      )
+      var currentAngle = DONUT_START_ANGLE
+      val totalPercentage = spending.sumOf { it.percentage }.toFloat().coerceAtLeast(1f)
+      spending.forEachIndexed { index, item ->
+        val sweepAngle = (item.percentage / totalPercentage) * DONUT_FULL_CIRCLE
+        if (sweepAngle > DONUT_GAP_ANGLE) {
+          drawArc(
+              color = colors[index],
+              startAngle = currentAngle + (DONUT_GAP_ANGLE / 2f),
+              sweepAngle = sweepAngle - DONUT_GAP_ANGLE,
+              useCenter = false,
+              topLeft = topLeft,
+              size = arcSize,
+              style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round),
+          )
+        }
+        currentAngle += sweepAngle
+      }
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+      Text(
+          text =
+              analyticsStaticText(
+                  Res.string.analytics_top_spent,
+                  Res.string.analytics_top_spent_fa,
+              ),
+          style = MaterialTheme.typography.labelSmall,
+          color = MaterialTheme.colorScheme.secondary,
+          fontWeight = FontWeight.SemiBold,
+          letterSpacing = 0.5.sp,
+      )
+      Text(
+          text = "$topPercentage%",
+          style = MaterialTheme.typography.headlineSmall,
+          fontWeight = FontWeight.Bold,
+          color = MaterialTheme.colorScheme.onSurface,
+      )
+      Text(
+          text = topName,
+          style = MaterialTheme.typography.labelSmall,
+          color = MaterialTheme.colorScheme.primary,
+          fontWeight = FontWeight.Medium,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+      )
+    }
+  }
+}
+
+@Composable
+private fun CategoryAllocationRow(
+    item: AnalyticsCategorySpendingUiModel,
+    isTopSpent: Boolean,
+    modifier: Modifier = Modifier,
+) {
+  val dotColor =
+      item.categoryColor?.let { Color(it) } ?: MaterialTheme.colorScheme.surfaceDim
+  Surface(
+      shape = RoundedCornerShape(16.dp),
+      color = MaterialTheme.colorScheme.surfaceContainerLowest,
+      modifier =
+          modifier
+              .fillMaxWidth()
+              .testTag("category-row-${item.categoryId ?: "uncategorized"}"),
+  ) {
+    Row(
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Surface(
+          modifier = Modifier.size(14.dp),
+          shape = CircleShape,
+          color = dotColor,
+          content = {},
+      )
+      Spacer(modifier = Modifier.width(10.dp))
+      Text(
+          text = item.categoryName ?: stringResource(Res.string.uncategorized_title),
+          style = MaterialTheme.typography.titleMedium,
+          color = MaterialTheme.colorScheme.onSurface,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+          modifier = Modifier.weight(1f),
+      )
+      Spacer(modifier = Modifier.width(8.dp))
+      Surface(
+          shape = CircleShape,
+          color =
+              if (isTopSpent) MaterialTheme.colorScheme.secondaryContainer
+              else MaterialTheme.colorScheme.surfaceContainerHigh,
+      ) {
+        Text(
+            text = "${item.percentage}%",
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+            color =
+                if (isTopSpent) MaterialTheme.colorScheme.onSecondaryContainer
+                else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+        )
+      }
+      Spacer(modifier = Modifier.width(12.dp))
+      Text(
+          text = moneyLabel(item.amount),
+          style = MaterialTheme.typography.titleMedium,
+          fontWeight = FontWeight.SemiBold,
+          color = MaterialTheme.colorScheme.onSurface,
+      )
+    }
+  }
+}
+
+@Composable
+private fun ExpensesLedgerHeader(
+    totalItemsCount: Int,
+    modifier: Modifier = Modifier,
+) {
+  Row(
+      modifier = modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+      Text(
+          text =
+              analyticsStaticText(
+                  Res.string.analytics_expenses_title,
+                  Res.string.analytics_expenses_title_fa,
+              ),
+          style = MaterialTheme.typography.headlineSmall,
+          fontWeight = FontWeight.SemiBold,
+          color = MaterialTheme.colorScheme.onSurface,
+      )
+      Surface(
+          shape = CircleShape,
+          color = MaterialTheme.colorScheme.secondaryContainer,
+      ) {
+        Text(
+            text =
+                stringResource(
+                    if (LocalAppLanguage.current == AppLanguage.PERSIAN)
+                        Res.string.analytics_items_count_fa
+                    else Res.string.analytics_items_count,
+                    totalItemsCount,
+                ),
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp).testTag("expenses-count"),
+        )
+      }
+    }
+  }
+}
+
+@Composable
 private fun DateGroupHeader(
     date: CalendarDate,
     relativeDate: AnalyticsRelativeDate,
@@ -438,22 +819,22 @@ private fun DateGroupHeader(
                 date.year,
             )
       }
-  val formattedTotalAmount = moneyLabel(totalAmount)
   Row(
-      modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp),
+      modifier = modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 6.dp),
       horizontalArrangement = Arrangement.SpaceBetween,
       verticalAlignment = Alignment.CenterVertically,
   ) {
     Text(
-        text = headerTitle,
-        style = MaterialTheme.typography.labelLarge,
+        text = headerTitle.uppercase(),
+        style = MaterialTheme.typography.labelMedium,
         fontWeight = FontWeight.SemiBold,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        letterSpacing = 0.5.sp,
+        color = MaterialTheme.colorScheme.secondary,
         modifier = Modifier.testTag("date-group-header"),
     )
     Text(
-        text = formattedTotalAmount,
-        style = MaterialTheme.typography.labelMedium,
+        text = moneyLabel(totalAmount),
+        style = MaterialTheme.typography.labelSmall,
         fontWeight = FontWeight.Medium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.testTag("date-group-total"),
@@ -470,53 +851,53 @@ fun AnalyticsExpenseItem(
   Surface(
       onClick = onClick,
       shape = RoundedCornerShape(16.dp),
-      color = MaterialTheme.colorScheme.surfaceContainerLow,
+      color = Color.Transparent,
       modifier = modifier.fillMaxWidth().testTag("expense-item-${expense.id}"),
   ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
+        modifier = Modifier.padding(horizontal = 4.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-      ExpenseCategoryAvatar(expense = expense)
-
-      Spacer(modifier = Modifier.width(16.dp))
-
+      ExpenseCategoryTile(expense = expense)
+      Spacer(modifier = Modifier.width(12.dp))
+      val uncategorizedTitle = stringResource(Res.string.uncategorized_title)
       val titleText =
-          if (expense.description.isNotBlank()) {
-            expense.description
-          } else {
-            expense.categoryName
+          expense.categoryName
+              ?: expense.description.takeIf { it.isNotBlank() }
+              ?: uncategorizedTitle
+      val subtitleText =
+          when {
+            expense.categoryName != null && expense.description.isNotBlank() ->
+                expense.description
+            expense.formattedTime.isNotEmpty() -> expense.formattedTime
+            else -> null
           }
-
-      if (titleText != null || expense.formattedTime.isNotEmpty()) {
-        Column(modifier = Modifier.weight(1f)) {
-          if (titleText != null) {
-            Text(
-                text = titleText,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.testTag("expense-description"),
-            )
-          }
-          if (expense.formattedTime.isNotEmpty()) {
-            Text(
-                text = expense.formattedTime,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-          }
+      Column(modifier = Modifier.weight(1f)) {
+        Text(
+            text = titleText,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.testTag("expense-description"),
+        )
+        if (subtitleText != null) {
+          Text(
+              text = subtitleText,
+              style = MaterialTheme.typography.bodySmall,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+              maxLines = 1,
+              overflow = TextOverflow.Ellipsis,
+          )
         }
-      } else {
-        Spacer(modifier = Modifier.weight(1f))
       }
-
-      Spacer(modifier = Modifier.width(16.dp))
-
+      Spacer(modifier = Modifier.width(12.dp))
       Text(
           text = "-${moneyLabel(expense.amount)}",
-          style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-          color = MaterialTheme.colorScheme.primary,
+          style = MaterialTheme.typography.titleLarge,
+          fontWeight = FontWeight.Bold,
+          color = MaterialTheme.colorScheme.onSurface,
           modifier = Modifier.testTag("expense-amount"),
       )
     }
@@ -524,19 +905,19 @@ fun AnalyticsExpenseItem(
 }
 
 @Composable
-private fun ExpenseCategoryAvatar(
+private fun ExpenseCategoryTile(
     expense: AnalyticsExpenseUiModel,
     modifier: Modifier = Modifier,
 ) {
   val categoryIcon =
       expense.categoryIcon?.let { resolveCategoryIcon(it) } ?: Icons.AutoMirrored.Filled.ReceiptLong
-  val avatarBg =
+  val tileBackground =
       if (expense.categoryColor != null) {
         Color(expense.categoryColor).copy(alpha = 0.15f)
       } else {
         MaterialTheme.colorScheme.secondaryContainer
       }
-  val avatarTint =
+  val tileTint =
       if (expense.categoryColor != null) {
         Color(expense.categoryColor)
       } else {
@@ -545,15 +926,15 @@ private fun ExpenseCategoryAvatar(
 
   Surface(
       modifier = modifier.size(44.dp),
-      shape = CircleShape,
-      color = avatarBg,
+      shape = RoundedCornerShape(14.dp),
+      color = tileBackground,
+      contentColor = tileTint,
   ) {
     Box(contentAlignment = Alignment.Center) {
       Icon(
           imageVector = categoryIcon,
           contentDescription = expense.categoryName,
-          tint = avatarTint,
-          modifier = Modifier.size(22.dp),
+          modifier = Modifier.size(24.dp),
       )
     }
   }
@@ -599,6 +980,8 @@ private fun AnalyticsScreenEmptyPreview() {
               initialState =
                   FakeAnalyticsStateFactory.create(
                       monthlyOutflow = 0L,
+                      previousMonthOutflow = 0L,
+                      categorySpending = emptyList(),
                       dateGroups = emptyList(),
                   ),
           ),

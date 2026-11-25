@@ -15,6 +15,7 @@ import com.base.db.CategoryRepository
 import com.base.db.ExpenseEntity
 import com.base.db.ExpenseRepository
 import com.base.feature.settings.UserSettingsRepository
+import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlinx.coroutines.flow.combine
@@ -22,6 +23,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+
+private const val PERCENT_WHOLE = 100.0
 
 enum class AnalyticsRelativeDate {
   TODAY,
@@ -47,12 +50,23 @@ data class AnalyticsDateGroupUiModel(
     val expenses: List<AnalyticsExpenseUiModel>,
 )
 
+data class AnalyticsCategorySpendingUiModel(
+    val categoryId: Long? = null,
+    val categoryName: String? = null,
+    val categoryIcon: String? = null,
+    val categoryColor: Long? = null,
+    val amount: Long,
+    val percentage: Int,
+)
+
 data class AnalyticsState(
     val calendarType: CalendarType = CalendarType.GREGORIAN,
     val selectedYear: Int = 2026,
     val selectedMonth: Int = 1,
     val canNavigateNext: Boolean = false,
     val monthlyOutflow: Long = 0L,
+    val previousMonthOutflow: Long = 0L,
+    val categorySpending: List<AnalyticsCategorySpendingUiModel> = emptyList(),
     val dateGroups: List<AnalyticsDateGroupUiModel> = emptyList(),
     val isLoading: Boolean = false,
 ) {
@@ -165,7 +179,19 @@ class DefaultAnalyticsComponent(
 
     val monthlyOutflow = monthExpenses.sumOf { it.amount }
 
+    val previousMonthDate =
+        activeCalendar.addMonths(CalendarDate(selectedYear, selectedMonth, 1, calendarType), -1)
+    val previousMonthOutflow =
+        rawExpenses
+            .filter { expense ->
+              val date =
+                  activeCalendar.toCalendarDate(expense.createdAt.toEpochMilliseconds(), timeZone)
+              date.year == previousMonthDate.year && date.month == previousMonthDate.month
+            }
+            .sumOf { it.amount }
+
     val categoriesMap = rawCategories.associateBy { it.id }
+    val categorySpending = buildCategorySpending(monthExpenses, categoriesMap, monthlyOutflow)
     val dateGroups = buildDateGroups(monthExpenses, categoriesMap, timeZone, today)
 
     return AnalyticsState(
@@ -174,9 +200,35 @@ class DefaultAnalyticsComponent(
         selectedMonth = selectedMonth,
         canNavigateNext = canNavigateNext,
         monthlyOutflow = monthlyOutflow,
+        previousMonthOutflow = previousMonthOutflow,
+        categorySpending = categorySpending,
         dateGroups = dateGroups,
         isLoading = false,
     )
+  }
+
+  private fun buildCategorySpending(
+      monthExpenses: List<ExpenseEntity>,
+      categoriesMap: Map<Long, CategoryEntity>,
+      monthlyOutflow: Long,
+  ): List<AnalyticsCategorySpendingUiModel> {
+    if (monthExpenses.isEmpty() || monthlyOutflow <= 0L) return emptyList()
+    return monthExpenses
+        .groupBy { it.categoryId }
+        .map { (categoryId, expenses) ->
+          val category = categoryId?.let { categoriesMap[it] }
+          val amount = expenses.sumOf { it.amount }
+          AnalyticsCategorySpendingUiModel(
+              categoryId = categoryId,
+              categoryName = category?.name,
+              categoryIcon = category?.icon,
+              categoryColor = category?.color,
+              amount = amount,
+              percentage =
+                  (amount.toDouble() * PERCENT_WHOLE / monthlyOutflow).roundToInt(),
+          )
+        }
+        .sortedByDescending { it.amount }
   }
 
   private fun buildDateGroups(
@@ -294,12 +346,32 @@ object FakeAnalyticsDateGroupUiModelFactory {
       )
 }
 
+object FakeAnalyticsCategorySpendingUiModelFactory {
+  fun create(
+      categoryId: Long? = 1,
+      categoryName: String? = "Cafe",
+      amount: Long = 50_000,
+      percentage: Int = 100,
+  ): AnalyticsCategorySpendingUiModel =
+      AnalyticsCategorySpendingUiModel(
+          categoryId = categoryId,
+          categoryName = categoryName,
+          categoryIcon = "local_cafe",
+          categoryColor = 0xFF4CAF50,
+          amount = amount,
+          percentage = percentage,
+      )
+}
+
 object FakeAnalyticsStateFactory {
   fun create(
       calendarType: CalendarType = CalendarType.GREGORIAN,
       selectedMonth: Int = 10,
       canNavigateNext: Boolean = false,
       monthlyOutflow: Long = 50_000,
+      previousMonthOutflow: Long = 40_000,
+      categorySpending: List<AnalyticsCategorySpendingUiModel> =
+          listOf(FakeAnalyticsCategorySpendingUiModelFactory.create()),
       dateGroups: List<AnalyticsDateGroupUiModel> =
           listOf(FakeAnalyticsDateGroupUiModelFactory.create()),
   ): AnalyticsState {
@@ -308,6 +380,8 @@ object FakeAnalyticsStateFactory {
         selectedMonth = selectedMonth,
         canNavigateNext = canNavigateNext,
         monthlyOutflow = monthlyOutflow,
+        previousMonthOutflow = previousMonthOutflow,
+        categorySpending = categorySpending,
         dateGroups = dateGroups,
         isLoading = false,
     )
