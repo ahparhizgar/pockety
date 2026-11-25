@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Icon
@@ -141,12 +142,22 @@ private fun PocketCardTitle(pocket: PocketItemModel, modifier: Modifier = Modifi
               MaterialTheme.colorScheme.onSecondaryContainer
             },
     ) {
-      Text(
-          text = pocket.categoryTag,
-          style = MaterialTheme.typography.labelSmall,
-          fontWeight = FontWeight.SemiBold,
+      Row(
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(4.dp),
           modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
-      )
+      ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.Label,
+            contentDescription = null,
+            modifier = Modifier.size(12.dp),
+        )
+        Text(
+            text = pocket.categoryTag,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+        )
+      }
     }
 
     Text(
