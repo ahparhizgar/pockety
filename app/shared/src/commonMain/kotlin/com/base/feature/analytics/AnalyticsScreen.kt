@@ -100,8 +100,12 @@ import pockety.app.shared.generated.resources.analytics_march
 import pockety.app.shared.generated.resources.analytics_march_fa
 import pockety.app.shared.generated.resources.analytics_may
 import pockety.app.shared.generated.resources.analytics_may_fa
+import pockety.app.shared.generated.resources.analytics_mehr
+import pockety.app.shared.generated.resources.analytics_mehr_fa
 import pockety.app.shared.generated.resources.analytics_month_year
 import pockety.app.shared.generated.resources.analytics_month_year_fa
+import pockety.app.shared.generated.resources.analytics_mordad
+import pockety.app.shared.generated.resources.analytics_mordad_fa
 import pockety.app.shared.generated.resources.analytics_next_month_action_fa
 import pockety.app.shared.generated.resources.analytics_no_expenses_month_fa
 import pockety.app.shared.generated.resources.analytics_november
