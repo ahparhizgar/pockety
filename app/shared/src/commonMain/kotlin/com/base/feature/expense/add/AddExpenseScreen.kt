@@ -165,7 +165,11 @@ private fun AddExpenseForm(
 ) {
   val focusManager = LocalFocusManager.current
   val amountFocusRequester = remember { FocusRequester() }
-  RequestFocusOnce(amountFocusRequester)
+  // Auto-open the keyboard only when there is no amount to edit yet.
+  val shouldAutoFocusAmount = remember { state.amountText.isEmpty() && !state.isEditMode }
+  if (shouldAutoFocusAmount) {
+    RequestFocusOnce(amountFocusRequester)
+  }
 
   Column(
       modifier = modifier.fillMaxWidth(),
