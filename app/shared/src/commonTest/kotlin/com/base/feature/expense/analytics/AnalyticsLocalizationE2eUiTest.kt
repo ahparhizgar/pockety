@@ -208,7 +208,8 @@ class AnalyticsLocalizationE2eUiTest {
     onNode(hasText("October 2026")).assertExists()
     onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("Today", substring = true))
     onNode(hasText("Today", substring = true)).assertExists()
-    onNode(hasText("5,000 T", substring = true)).assertExists()
+    onNode(hasTestTag("expense-amount"), useUnmergedTree = true)
+        .assertTextEquals("5,000 T")
   }
 
   @Test
