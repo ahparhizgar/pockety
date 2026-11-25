@@ -63,6 +63,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import org.jetbrains.compose.resources.StringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.category_color_amber
+import pockety.app.shared.generated.resources.category_color_blue
+import pockety.app.shared.generated.resources.category_color_brown
+import pockety.app.shared.generated.resources.category_color_cyan
+import pockety.app.shared.generated.resources.category_color_gold
+import pockety.app.shared.generated.resources.category_color_graphite
+import pockety.app.shared.generated.resources.category_color_indigo
+import pockety.app.shared.generated.resources.category_color_orange
+import pockety.app.shared.generated.resources.category_color_pink
+import pockety.app.shared.generated.resources.category_color_red
+import pockety.app.shared.generated.resources.category_color_violet
 import pockety.app.shared.generated.resources.category_color_coral
 import pockety.app.shared.generated.resources.category_color_emerald
 import pockety.app.shared.generated.resources.category_color_forest
@@ -162,6 +172,36 @@ val defaultCategoryColors =
             Color.White,
         ),
         CategoryColorOption(
+            Res.string.category_color_red,
+            Color(0xFFE53935),
+            0xFFE53935,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_orange,
+            Color(0xFFEF6C00),
+            0xFFEF6C00,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_amber,
+            Color(0xFFB87D4B),
+            0xFFB87D4B,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_gold,
+            Color(0xFFF9A825),
+            0xFFF9A825,
+            Color(0xFF3E2723),
+        ),
+        CategoryColorOption(
+            Res.string.category_color_brown,
+            Color(0xFF6D4C41),
+            0xFF6D4C41,
+            Color.White,
+        ),
+        CategoryColorOption(
             Res.string.category_color_forest,
             Color(0xFF316342),
             0xFF316342,
@@ -180,12 +220,6 @@ val defaultCategoryColors =
             Color(0xFF00210E),
         ),
         CategoryColorOption(
-            Res.string.category_color_amber,
-            Color(0xFFB87D4B),
-            0xFFB87D4B,
-            Color.White,
-        ),
-        CategoryColorOption(
             Res.string.category_color_teal,
             Color(0xFF324C41),
             0xFF324C41,
@@ -195,6 +229,42 @@ val defaultCategoryColors =
             Res.string.category_color_slate,
             Color(0xFF4A6458),
             0xFF4A6458,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_cyan,
+            Color(0xFF00ACC1),
+            0xFF00ACC1,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_blue,
+            Color(0xFF1E88E5),
+            0xFF1E88E5,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_indigo,
+            Color(0xFF3949AB),
+            0xFF3949AB,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_violet,
+            Color(0xFF8E24AA),
+            0xFF8E24AA,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_pink,
+            Color(0xFFEC407A),
+            0xFFEC407A,
+            Color.White,
+        ),
+        CategoryColorOption(
+            Res.string.category_color_graphite,
+            Color(0xFF757575),
+            0xFF757575,
             Color.White,
         ),
     )

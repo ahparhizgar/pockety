@@ -79,6 +79,36 @@ data class ItemIconOption(
 val defaultItemColors =
     listOf(
         ItemColorOption(
+            name = "Coral Red",
+            color = Color(0xFFE57373),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Red",
+            color = Color(0xFFE53935),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Orange",
+            color = Color(0xFFEF6C00),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Warm Amber",
+            color = Color(0xFFB87D4B),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Gold",
+            color = Color(0xFFF9A825),
+            onColor = Color(0xFF3E2723),
+        ),
+        ItemColorOption(
+            name = "Brown",
+            color = Color(0xFF6D4C41),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
             name = "Forest Green",
             color = Color(0xFF316342),
             onColor = Color.White,
@@ -94,11 +124,6 @@ val defaultItemColors =
             onColor = Color(0xFF00210E),
         ),
         ItemColorOption(
-            name = "Warm Amber",
-            color = Color(0xFFB87D4B),
-            onColor = Color.White,
-        ),
-        ItemColorOption(
             name = "Deep Teal",
             color = Color(0xFF324C41),
             onColor = Color.White,
@@ -106,6 +131,36 @@ val defaultItemColors =
         ItemColorOption(
             name = "Slate Muted",
             color = Color(0xFF4A6458),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Cyan",
+            color = Color(0xFF00ACC1),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Blue",
+            color = Color(0xFF1E88E5),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Indigo",
+            color = Color(0xFF3949AB),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Violet",
+            color = Color(0xFF8E24AA),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Pink",
+            color = Color(0xFFEC407A),
+            onColor = Color.White,
+        ),
+        ItemColorOption(
+            name = "Graphite",
+            color = Color(0xFF757575),
             onColor = Color.White,
         ),
     )

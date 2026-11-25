@@ -356,4 +356,14 @@
     <string name="category_color_amber">کهربایی</string>
     <string name="category_color_teal">سبز تیره</string>
     <string name="category_color_slate">سبز خاکستری</string>
+    <string name="category_color_red">قرمز</string>
+    <string name="category_color_orange">نارنجی</string>
+    <string name="category_color_gold">طلایی</string>
+    <string name="category_color_brown">قهوه‌ای</string>
+    <string name="category_color_cyan">فیروزه‌ای</string>
+    <string name="category_color_blue">آبی</string>
+    <string name="category_color_indigo">نیلی</string>
+    <string name="category_color_violet">بنفش</string>
+    <string name="category_color_pink">صورتی</string>
+    <string name="category_color_graphite">خاکستری</string>
 </resources>

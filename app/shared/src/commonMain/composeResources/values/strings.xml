@@ -356,4 +356,14 @@
     <string name="category_color_amber">Warm Amber</string>
     <string name="category_color_teal">Deep Teal</string>
     <string name="category_color_slate">Slate Muted</string>
+    <string name="category_color_red">Red</string>
+    <string name="category_color_orange">Orange</string>
+    <string name="category_color_gold">Gold</string>
+    <string name="category_color_brown">Brown</string>
+    <string name="category_color_cyan">Cyan</string>
+    <string name="category_color_blue">Blue</string>
+    <string name="category_color_indigo">Indigo</string>
+    <string name="category_color_violet">Violet</string>
+    <string name="category_color_pink">Pink</string>
+    <string name="category_color_graphite">Graphite</string>
 </resources>
