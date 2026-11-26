@@ -165,7 +165,8 @@ fun InheritedFromCategoryNote(
 ) {
   Text(
       text =
-          "Name, icon and color come from \u201C$categoryName\u201D \u2014 you can still tweak them.",
+          "Linked to \u201C$categoryName\u201D \u2014 name, icon and color follow the category " +
+              "until you switch to manual setup.",
       style = MaterialTheme.typography.bodySmall,
       color = MaterialTheme.colorScheme.onSurfaceVariant,
       modifier = modifier,
