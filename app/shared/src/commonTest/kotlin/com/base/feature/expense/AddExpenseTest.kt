@@ -408,7 +408,7 @@ class AddExpenseTest : BehaviorSpec() {
           expenseRepo.addExpense(
               amount = 45000,
               description = "Burger",
-              categoryIds = listOf(catId),
+              categoryId = catId,
               pocketId = pockId,
           )
         }

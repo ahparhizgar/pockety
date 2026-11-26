@@ -129,6 +129,7 @@ class PocketRepositoryTest : BehaviorSpec() {
       }
 
       When("adding a pocket linked to two categories and then re-linking it") {
+        val categoryRepository by testValue { koin.get<CategoryRepository>() }
         var pocketId: Long by testValue { 0 }
         var firstCategoryId: Long by testValue { 0 }
         var secondCategoryId: Long by testValue { 0 }
