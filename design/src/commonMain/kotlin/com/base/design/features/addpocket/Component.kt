@@ -93,9 +93,9 @@ fun AddPocketCategoryRow(
 }
 
 /**
- * The "No Category" escape hatch at the top of the step 1 list: makes it obvious the user can
- * skip categories entirely. Tapping it goes straight to the next step (the advanced setup)
- * instead of selecting anything.
+ * The "No Category" escape hatch at the top of the step 1 list: makes it obvious the user can skip
+ * categories entirely. Tapping it goes straight to the next step (the advanced setup) instead of
+ * selecting anything.
  */
 @Composable
 fun NoCategoryRow(
