@@ -518,5 +518,109 @@ class PocketSettingsTest : BehaviorSpec() {
         }
       }
     }
+
+    Given("PocketSettingsComponent edit mode detection") {
+      val koin by integrationKoin()
+      val pocketRepository by testValue { koin.get<PocketRepository>() }
+      val categoryRepository by testValue { koin.get<CategoryRepository>() }
+      var categoryId: Long by testValue { 0 }
+      var otherCategoryId: Long by testValue { 0 }
+
+      beforeEach {
+        categoryId = categoryRepository.addCategory("Cafe", "coffee", 0xFF445566)
+        otherCategoryId = categoryRepository.addCategory("Travel", "flight", 0xFF112233)
+        testCoroutineScheduler.advanceUntilIdle()
+      }
+
+      fun editComponent(pocketId: Long): PocketSettingsComponent =
+          koin.get<PocketSettingsComponentFactory>().create(
+              cContext = TestCContext(),
+              pocketId = pocketId,
+          )
+
+      When("the pocket name and icon exactly match its only category") {
+        Then("it opens in the simple setup with the identity following the category") {
+          val pocketId =
+              pocketRepository.addPocket(
+                  name = "Cafe",
+                  categoryTag = "Cafe",
+                  icon = "coffee",
+                  budgetAmount = 10_000L,
+                  color = 0xFF999999,
+                  categoryIds = listOf(categoryId),
+              )
+          val component = editComponent(pocketId)
+          testCoroutineScheduler.advanceUntilIdle()
+          component.state.value.manualMode shouldBe false
+          component.state.value.nameText shouldBe "Cafe"
+          component.state.value.selectedIcon shouldBe "coffee"
+          component.state.value.selectedColor shouldBe 0xFF445566
+        }
+      }
+
+      When("the pocket name differs from its category") {
+        Then("it opens in the advanced setup") {
+          val pocketId =
+              pocketRepository.addPocket(
+                  name = "My Cafe",
+                  categoryTag = "Cafe",
+                  icon = "coffee",
+                  budgetAmount = 10_000L,
+                  categoryIds = listOf(categoryId),
+              )
+          val component = editComponent(pocketId)
+          testCoroutineScheduler.advanceUntilIdle()
+          component.state.value.manualMode shouldBe true
+        }
+      }
+
+      When("the pocket icon differs from its category") {
+        Then("it opens in the advanced setup") {
+          val pocketId =
+              pocketRepository.addPocket(
+                  name = "Cafe",
+                  categoryTag = "Cafe",
+                  icon = "restaurant",
+                  budgetAmount = 10_000L,
+                  categoryIds = listOf(categoryId),
+              )
+          val component = editComponent(pocketId)
+          testCoroutineScheduler.advanceUntilIdle()
+          component.state.value.manualMode shouldBe true
+        }
+      }
+
+      When("the pocket follows two categories") {
+        Then("it opens in the advanced setup") {
+          val pocketId =
+              pocketRepository.addPocket(
+                  name = "Cafe",
+                  categoryTag = "Cafe",
+                  icon = "coffee",
+                  budgetAmount = 10_000L,
+                  categoryIds = listOf(categoryId, otherCategoryId),
+              )
+          val component = editComponent(pocketId)
+          testCoroutineScheduler.advanceUntilIdle()
+          component.state.value.manualMode shouldBe true
+        }
+      }
+
+      When("the pocket has no category") {
+        Then("it opens in the advanced setup") {
+          val pocketId =
+              pocketRepository.addPocket(
+                  name = "Cafe",
+                  categoryTag = "",
+                  icon = "coffee",
+                  budgetAmount = 10_000L,
+                  categoryIds = emptyList(),
+              )
+          val component = editComponent(pocketId)
+          testCoroutineScheduler.advanceUntilIdle()
+          component.state.value.manualMode shouldBe true
+        }
+      }
+    }
   }
 }

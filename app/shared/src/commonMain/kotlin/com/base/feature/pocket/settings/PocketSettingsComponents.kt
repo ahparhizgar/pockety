@@ -140,6 +140,9 @@ private fun PocketNameField(
     OutlinedTextField(
         value = state.nameText,
         onValueChange = component::onNameChanged,
+        // While a pocket follows its category the name is the category's and
+        // cannot be edited; it only becomes editable in the advanced setup.
+        readOnly = !state.manualMode && state.selectedCategory != null,
         modifier =
             Modifier.fillMaxWidth().focusRequester(focusRequester).testTag("pocket-name-input"),
         singleLine = true,

@@ -163,6 +163,7 @@ private fun PocketSettingsContent(
           CategoryPickContent(component, state)
       state.pocketId == null && !state.manualMode -> SimpleCreationContent(component, state)
       state.pocketId == null -> ManualCreationContent(component, state)
+      !state.manualMode -> SimpleEditContent(component, state)
       else -> EditPocketContent(component, state)
     }
 
@@ -275,6 +276,44 @@ private fun ManualCreationContent(
   }
 }
 
+/** Editing a pocket that still follows its category: the identity stays locked to it. */
+@Composable
+private fun SimpleEditContent(
+    component: PocketSettingsComponent,
+    state: PocketSettingsState,
+) {
+
+  Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+    PocketIdentitySection(component = component, state = state)
+
+    val selectedCategory = state.selectedCategory
+    if (selectedCategory != null) {
+      Text(
+          text = stringResource(Res.string.pocket_inherited_note, selectedCategory.name),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.padding(start = 4.dp),
+      )
+
+      Text(
+          text = stringResource(Res.string.category_label),
+          style = MaterialTheme.typography.titleMedium,
+          color = MaterialTheme.colorScheme.onSurface,
+          modifier = Modifier.padding(start = 4.dp),
+      )
+      PocketSelectedCategoryRow(state = state)
+    }
+
+    PocketMonthlyAllocationCard(component = component, state = state)
+
+    PocketManualSetupRow(component = component)
+
+    PocketDangerZoneCard(
+        onDeletePocketClick = { component.onDeleteClicked() },
+    )
+  }
+}
+
 @Composable
 private fun EditPocketContent(
     component: PocketSettingsComponent,
@@ -310,6 +349,7 @@ private fun PocketSettingsScreenNormalPreview() {
           initialState =
               FakePocketSettingsStateFactory.create(
                   pocketId = 1L,
+                  manualMode = true,
                   nameText = "Daily Cafe & Coffee",
                   balanceAmount = 850_000,
                   selectedCategory = FakeCategoryFactory.create(name = "Cafe & Dining"),
@@ -385,6 +425,24 @@ private fun PocketSettingsScreenManualPreview() {
                   manualMode = true,
                   linkedCategoryIds = setOf(categories[0].id, categories[1].id),
                   nameText = "Travel",
+              )
+      )
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun PocketSettingsScreenSimpleEditPreview() {
+  val category = FakeCategoryFactory.create(name = "Cafe & Dining")
+  PocketSettingsScreen(
+      FakePocketSettingsComponent(
+          initialState =
+              FakePocketSettingsStateFactory.create(
+                  pocketId = 1L,
+                  nameText = category.name,
+                  selectedIcon = category.icon,
+                  selectedColor = category.color,
+                  selectedCategory = category,
               )
       )
   )

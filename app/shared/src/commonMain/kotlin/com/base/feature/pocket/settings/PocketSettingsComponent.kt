@@ -130,15 +130,27 @@ class DefaultPocketSettingsComponent(
               pocket.categoryId?.let { catId ->
                 categoryRepository.observeCategories().first().firstOrNull { it.id == catId }
               }
-          val linkedIds = pocketRepository.getPocketCategoryIds(pocketId).toSet()
+          val linkedIds =
+              pocketRepository.getPocketCategoryIds(pocketId).toSet().ifEmpty {
+                listOfNotNull(pocket.categoryId).toSet()
+              }
+          // A pocket opens in the simple setup when it follows exactly one
+          // category and its name and icon still match that category exactly;
+          // anything else opens in the advanced setup.
+          val isSimple =
+              linkedIds.size == 1 &&
+                  category != null &&
+                  pocket.name == category.name &&
+                  pocket.icon == category.icon
           _state.update {
             it.copy(
                 pocketId = pocket.id,
-                nameText = pocket.name,
-                selectedColor = pocket.color,
-                selectedIcon = pocket.icon,
+                manualMode = !isSimple,
+                nameText = if (isSimple && category != null) category.name else pocket.name,
+                selectedColor = if (isSimple && category != null) category.color else pocket.color,
+                selectedIcon = if (isSimple && category != null) category.icon else pocket.icon,
                 selectedCategory = category,
-                linkedCategoryIds = linkedIds.ifEmpty { listOfNotNull(pocket.categoryId).toSet() },
+                linkedCategoryIds = linkedIds,
                 monthlyTopUpAmount = pocket.monthlyTopUpAmount,
                 autoTopUpEnabled = pocket.autoTopUpEnabled,
             )
@@ -353,7 +365,6 @@ class DefaultPocketSettingsComponent(
   override fun onBackClicked() {
     val currentState = _state.value
     when {
-      pocketId != null -> onCancelled()
       currentState.manualMode && currentState.manualFromSimple -> {
         // Before saving, Back leaves a manual mode that was entered from the
         // simple setup and returns to it: the category stays selected and
@@ -370,6 +381,7 @@ class DefaultPocketSettingsComponent(
           )
         }
       }
+      pocketId != null -> onCancelled()
       currentState.phase == PocketCreationPhase.CategoryPick -> onCancelled()
       else -> {
         // Back from the form returns to the pick step, keeping the current
@@ -587,7 +599,6 @@ class FakePocketSettingsComponent(
   override fun onBackClicked() {
     _state.update { state ->
       when {
-        state.pocketId != null -> state
         state.manualMode && state.manualFromSimple -> {
           val category = state.selectedCategory
           state.copy(
@@ -599,6 +610,7 @@ class FakePocketSettingsComponent(
               linkedCategoryIds = listOfNotNull(category?.id).toSet(),
           )
         }
+        state.pocketId != null -> state
         state.phase == PocketCreationPhase.CategoryPick -> state
         else ->
             state.copy(
