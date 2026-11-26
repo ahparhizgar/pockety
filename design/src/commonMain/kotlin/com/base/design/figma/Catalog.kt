@@ -130,7 +130,11 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                             FigmaScreenItem("08f", "New Pocket (Manual Toggle)", "Quiet Row") {
                               ManualSetupToggleShowcase()
                             },
-                            FigmaScreenItem("08g", "New Pocket (Manual Confirm)", "Enter Advanced") {
+                            FigmaScreenItem(
+                                "08g",
+                                "New Pocket (Manual Confirm)",
+                                "Enter Advanced",
+                            ) {
                               AddPocketScreen(
                                   initialCategoryId = "cafe",
                                   manualConfirmShown = true,

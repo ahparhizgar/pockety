@@ -160,8 +160,8 @@ fun ManualSetupToggle(
 }
 
 /**
- * Confirmation shown when the user taps the manual-setup row: entering manual mode is a
- * deliberate step, after which the whole screen switches to the manual form.
+ * Confirmation shown when the user taps the manual-setup row: entering manual mode is a deliberate
+ * step, after which the whole screen switches to the manual form.
  */
 @Composable
 fun ManualSetupConfirmDialog(
