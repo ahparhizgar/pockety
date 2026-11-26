@@ -108,7 +108,7 @@ class PocketDetailsTest : BehaviorSpec() {
             state.transactions.none { tx -> !tx.isTopUp } shouldBe true
             state.balanceAmount shouldBe 850000L
             state.confirmationMessage?.amount shouldBe 50_000L
-            state.confirmationMessage?.unlinkedTitle shouldBe "Sam Cafe"
+            state.confirmationMessage?.unlinkedTitle shouldBe UiString("Sam Cafe")
 
             val expenses = expenseRepository.observeExpenses().first()
             expenses shouldHaveSize 1

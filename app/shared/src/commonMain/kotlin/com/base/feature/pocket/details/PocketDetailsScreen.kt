@@ -35,6 +35,7 @@ import com.base.ui.ExcludeScreenshotTest
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
 import com.base.ui.money.moneyLabel
+import com.base.usermessage.UiString
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.pocket_details_back_action
@@ -139,14 +140,16 @@ private fun PocketDetailsContent(
         PocketFeedbackBanner(
             message =
                 feedback.let { feedback ->
-                  if (feedback.unlinkedTitle == null)
+                  val unlinkedTitle = feedback.unlinkedTitle
+                  if (unlinkedTitle == null)
                       stringResource(Res.string.pocket_top_up_feedback, moneyLabel(feedback.amount))
                   else
-                      stringResource(
-                          Res.string.pocket_unlink_feedback,
-                          feedback.unlinkedTitle,
-                          moneyLabel(feedback.amount),
-                      )
+                      UiString(
+                              Res.string.pocket_unlink_feedback,
+                              unlinkedTitle,
+                              moneyLabel(feedback.amount),
+                          )
+                          .content()
                 },
             onDismiss = component::onDismissConfirmation,
         )

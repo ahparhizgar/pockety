@@ -34,7 +34,7 @@ data class PocketTransactionUiModel(
     val isTopUp: Boolean = false,
 )
 
-data class PocketMoneyFeedback(val amount: Long, val unlinkedTitle: String?)
+data class PocketMoneyFeedback(val amount: Long, val unlinkedTitle: UiString?)
 
 data class PocketDetailsState(
     val pocketId: Long = 0,
@@ -347,7 +347,7 @@ object FakePocketDetailsStateFactory {
       listOf(
           PocketTransactionUiModel(
               id = "tx-1",
-              title = "Sam Cafe Vanak",
+              title = UiString("Sam Cafe Vanak"),
               icon = "coffee",
               timestamp = "Today, 10:15 AM",
               note = "Meeting with Ali",
@@ -355,7 +355,7 @@ object FakePocketDetailsStateFactory {
           ),
           PocketTransactionUiModel(
               id = "tx-2",
-              title = "Lamiz Coffee Jordan",
+              title = UiString("Lamiz Coffee Jordan"),
               icon = "local_cafe",
               timestamp = "Yesterday, 4:30 PM",
               note = "Iced Latte & Cookie",
@@ -363,7 +363,7 @@ object FakePocketDetailsStateFactory {
           ),
           PocketTransactionUiModel(
               id = "tx-3",
-              title = "Monthly Pocket Allocation",
+              title = UiString("Monthly Pocket Allocation"),
               icon = "arrow_downward_alt",
               timestamp = "23 Oct, 09:00 AM",
               note = "Auto-deposit",
@@ -372,7 +372,7 @@ object FakePocketDetailsStateFactory {
           ),
           PocketTransactionUiModel(
               id = "tx-4",
-              title = "Reza Bakery & Espresso",
+              title = UiString("Reza Bakery & Espresso"),
               icon = "bakery_dining",
               timestamp = "22 Oct, 11:20 AM",
               note = "Morning Americano",
@@ -380,7 +380,7 @@ object FakePocketDetailsStateFactory {
           ),
           PocketTransactionUiModel(
               id = "tx-5",
-              title = "Cafe Kariz Garden",
+              title = UiString("Cafe Kariz Garden"),
               icon = "cloud_sync",
               timestamp = "20 Oct, 6:00 PM",
               note = "Herbal tea & cheesecake",
@@ -388,7 +388,7 @@ object FakePocketDetailsStateFactory {
           ),
           PocketTransactionUiModel(
               id = "tx-6",
-              title = "Bread & Salt Bakery",
+              title = UiString("Bread & Salt Bakery"),
               icon = "shopping_bag",
               timestamp = "18 Oct, 08:10 AM",
               note = "Sourdough & filter roast",
