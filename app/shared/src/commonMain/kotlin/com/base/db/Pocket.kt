@@ -230,7 +230,7 @@ interface PocketDao {
           PocketTopUpEntity(
               pocketId = pocket.id,
               amount = pocket.monthlyTopUpAmount,
-              description = "Monthly Top-Up",
+              description = null,
               createdAt = now,
           )
       val insertedId = insertTopUp(topUp)
@@ -360,7 +360,7 @@ class DefaultPocketRepository(
           PocketTopUpEntity(
               pocketId = pocketId,
               amount = budgetAmount,
-              description = "Initial Balance",
+              description = null,
               createdAt = now,
           )
       pocketDao.insertTopUp(initialTopUp)
@@ -535,7 +535,7 @@ class FakePocketRepository(
               id = nextTopUpId++,
               pocketId = id,
               amount = budgetAmount,
-              description = "Initial Balance",
+              description = null,
               createdAt = now,
           )
       topUpsFlow.update { listOf(initialTopUp) + it }
@@ -594,7 +594,7 @@ class FakePocketRepository(
               id = nextTopUpId++,
               pocketId = pocket.id,
               amount = pocket.monthlyTopUpAmount,
-              description = "Monthly Top-Up",
+              description = null,
               createdAt = now,
           )
       createdTopUps.add(topUp)

@@ -9,6 +9,7 @@ import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.first
@@ -208,7 +209,7 @@ class PocketRepositoryTest : BehaviorSpec() {
           topUps[0].amount shouldBe 500L
           topUps[0].description shouldBe "Weekly allowance"
           topUps[1].amount shouldBe 1000L
-          topUps[1].description shouldBe "Initial Balance"
+          topUps[1].description.shouldBeNull()
 
           val expenses = pocketRepository.observePocketExpenses(pocketId).first()
           expenses shouldHaveSize 1
@@ -335,7 +336,7 @@ class PocketRepositoryTest : BehaviorSpec() {
           generated shouldHaveSize 1
           generated[0].pocketId shouldBe autoPocketId
           generated[0].amount shouldBe 50000L
-          generated[0].description shouldBe "Monthly Top-Up"
+          generated[0].description.shouldBeNull()
 
           val autoPocket = pocketRepository.getPocketById(autoPocketId)
           autoPocket.shouldNotBeNull()

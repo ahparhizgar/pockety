@@ -12,6 +12,7 @@ import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.PocketRepository
 import com.base.feature.settings.UserSettingsRepository
+import com.base.usermessage.UiString
 import kotlin.time.Instant
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.combine
@@ -19,10 +20,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.expense_default_title
+import pockety.app.shared.generated.resources.pocket_details_top_up_button
 
 data class PocketTransactionUiModel(
     val id: String,
-    val title: String,
+    val title: UiString,
     val icon: String,
     val timestamp: String,
     val note: String,
@@ -111,7 +115,11 @@ class DefaultPocketDetailsComponent(
               val topUpItems = topUps.map { topUp ->
                 PocketTransactionUiModel(
                     id = "topup-${topUp.id}",
-                    title = topUp.description?.takeIf { it.isNotBlank() } ?: "Top-up",
+                    title =
+                        topUp.description
+                            ?.takeIf { it.isNotBlank() }
+                            ?.let { UiString(it) }
+                            ?: UiString(Res.string.pocket_details_top_up_button),
                     icon = "arrow_downward_alt",
                     timestamp = formatInstant(topUp.createdAt, calendarType),
                     note = "",
@@ -123,7 +131,12 @@ class DefaultPocketDetailsComponent(
               val expenseItems = expenses.map { expense ->
                 PocketTransactionUiModel(
                     id = "expense-${expense.id}",
-                    title = expense.description.ifBlank { "Expense" },
+                    title =
+                        if (expense.description.isBlank()) {
+                          UiString(Res.string.expense_default_title)
+                        } else {
+                          UiString(expense.description)
+                        },
                     icon = "shopping_bag",
                     timestamp = formatInstant(expense.createdAt, calendarType),
                     note = "",
@@ -390,7 +403,7 @@ object FakePocketTransactionUiModelFactory {
   @Suppress("LongParameterList")
   fun create(
       id: String = "tx-1",
-      title: String = "Sam Cafe Vanak",
+      title: UiString = UiString("Sam Cafe Vanak"),
       icon: String = "coffee",
       timestamp: String = "Today, 10:15 AM",
       note: String = "Meeting with Ali",

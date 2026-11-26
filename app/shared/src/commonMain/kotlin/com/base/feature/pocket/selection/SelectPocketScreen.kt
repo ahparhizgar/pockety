@@ -320,7 +320,7 @@ private fun PocketOptionItem(
       visuals =
           PocketOptionVisuals(
               name = pocket.name,
-              categoryTag = pocket.categoryTag,
+              categoryTag = if (pocket.categoryId != null) pocket.categoryTag else "",
               balanceFormatted = moneyLabel(pocket.remainingBalance),
               icon = resolveCategoryIcon(pocket.icon),
               iconBackgroundColor = Color(pocket.color),

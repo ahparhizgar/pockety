@@ -127,36 +127,39 @@ private fun PocketCardTitle(pocket: PocketItemModel, modifier: Modifier = Modifi
       modifier = modifier,
       verticalArrangement = Arrangement.spacedBy(4.dp),
   ) {
-    Surface(
-        shape = CircleShape,
-        color =
-            if (pocket.isOverBudget) {
-              MaterialTheme.colorScheme.surfaceContainerHighest
-            } else {
-              MaterialTheme.colorScheme.secondaryContainer
-            },
-        contentColor =
-            if (pocket.isOverBudget) {
-              MaterialTheme.colorScheme.secondary
-            } else {
-              MaterialTheme.colorScheme.onSecondaryContainer
-            },
-    ) {
-      Row(
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(4.dp),
-          modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
+    // The category label only exists when the pocket actually has a category.
+    if (pocket.categoryId != null) {
+      Surface(
+          shape = CircleShape,
+          color =
+              if (pocket.isOverBudget) {
+                MaterialTheme.colorScheme.surfaceContainerHighest
+              } else {
+                MaterialTheme.colorScheme.secondaryContainer
+              },
+          contentColor =
+              if (pocket.isOverBudget) {
+                MaterialTheme.colorScheme.secondary
+              } else {
+                MaterialTheme.colorScheme.onSecondaryContainer
+              },
       ) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.Label,
-            contentDescription = null,
-            modifier = Modifier.size(12.dp),
-        )
-        Text(
-            text = pocket.categoryTag,
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.SemiBold,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
+        ) {
+          Icon(
+              imageVector = Icons.AutoMirrored.Filled.Label,
+              contentDescription = null,
+              modifier = Modifier.size(12.dp),
+          )
+          Text(
+              text = pocket.categoryTag,
+              style = MaterialTheme.typography.labelSmall,
+              fontWeight = FontWeight.SemiBold,
+          )
+        }
       }
     }
 

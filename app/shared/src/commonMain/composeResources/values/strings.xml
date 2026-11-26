@@ -90,6 +90,7 @@
     <string name="pocket_pick_simple_hint">Simple pocket — it follows “%1$s”.</string>
     <string name="pocket_pick_advanced_hint">Advanced pocket with %1$d categories.</string>
     <string name="pocket_no_category">No Category</string>
+    <string name="expense_default_title">Expense</string>
     <string name="pocket_inherited_note">Linked to "%1$s" — name, icon and color follow the category until you switch to advanced setup.</string>
     <string name="pocket_manual_setup_title">Advanced setup</string>
     <string name="pocket_manual_setup_subtitle">Custom name, icon and multiple categories</string>

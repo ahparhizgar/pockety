@@ -8,6 +8,7 @@ import com.base.testValue
 import com.base.util.FakeCallback
 import com.base.util.FakeCallback1
 import com.base.util.MainDispatcherExtension
+import com.base.usermessage.UiString
 import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
@@ -88,7 +89,7 @@ class PocketDetailsTest : BehaviorSpec() {
           state.transactions shouldHaveSize 2
           state.transactions[0].isTopUp shouldBe false
           state.transactions[0].amount shouldBe 50000L
-          state.transactions[0].title shouldBe "Sam Cafe"
+          state.transactions[0].title shouldBe UiString("Sam Cafe")
           state.transactions[1].isTopUp shouldBe true
           state.transactions[1].amount shouldBe 850000L
         }

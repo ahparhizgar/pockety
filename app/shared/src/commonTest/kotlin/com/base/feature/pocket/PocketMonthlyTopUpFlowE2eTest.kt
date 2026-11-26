@@ -9,6 +9,7 @@ import com.base.util.integrationKoin
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.testCoroutineScheduler
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import kotlin.time.Clock
@@ -63,7 +64,7 @@ class PocketMonthlyTopUpFlowE2eTest : BehaviorSpec() {
           // Initial previous month + new current month = 2
           topUps shouldHaveSize 2
           topUps[0].amount shouldBe 500_000L
-          topUps[0].description shouldBe "Monthly Top-Up"
+          topUps[0].description.shouldBeNull()
 
           val pocket = pocketRepository.getPocketById(pocketId)
           pocket.shouldNotBeNull()

@@ -260,7 +260,7 @@ private fun PocketTransactionLeading(
       Box(contentAlignment = Alignment.Center) {
         Icon(
             imageVector = resolveCategoryIcon(item.icon),
-            contentDescription = item.title,
+            contentDescription = item.title.content(),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(20.dp),
         )
@@ -269,7 +269,7 @@ private fun PocketTransactionLeading(
 
     Column(modifier = Modifier.weight(1f)) {
       Text(
-          text = item.title,
+          text = item.title.content(),
           style = MaterialTheme.typography.titleMedium,
           fontWeight = FontWeight.SemiBold,
           color = MaterialTheme.colorScheme.onSurface,
