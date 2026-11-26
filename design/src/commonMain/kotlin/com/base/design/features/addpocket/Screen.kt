@@ -197,10 +197,7 @@ fun AddPocketScreen(
 @Composable
 fun ManualSetupToggleShowcase(modifier: Modifier = Modifier) {
   Column(
-      modifier =
-          modifier
-              .fillMaxSize()
-              .padding(horizontal = 16.dp, vertical = 24.dp),
+      modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 24.dp),
       verticalArrangement = Arrangement.spacedBy(12.dp),
   ) {
     AddPocketSectionTitle(text = "Collapsed (at the bottom of the screen)")
