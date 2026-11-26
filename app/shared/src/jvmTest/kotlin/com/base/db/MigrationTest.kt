@@ -420,7 +420,7 @@ class MigrationTest : BehaviorSpec() {
           val indexStmt = connection.prepare("PRAGMA index_list(`pocket_categories`)")
           val indexNames = mutableListOf<String>()
           while (indexStmt.step()) {
-            indexStmt.getText(1)?.let { indexNames.add(it) }
+            indexNames.add(indexStmt.getText(1))
           }
           indexStmt.close()
           indexNames.contains("index_pocket_categories_pocketId") shouldBe true
