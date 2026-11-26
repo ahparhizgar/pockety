@@ -152,12 +152,12 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                                   initialLinkedCategoryIds = setOf("cafe", "groceries"),
                               )
                             },
-                            FigmaScreenItem("08h", "New Pocket (Manual Toggle)", "Quiet Row") {
+                            FigmaScreenItem("08h", "New Pocket (Advanced Toggle)", "Quiet Row") {
                               ManualSetupToggleShowcase()
                             },
                             FigmaScreenItem(
                                 "08i",
-                                "New Pocket (Manual Confirm)",
+                                "New Pocket (Advanced Confirm)",
                                 "Enter Advanced",
                             ) {
                               AddPocketScreen(

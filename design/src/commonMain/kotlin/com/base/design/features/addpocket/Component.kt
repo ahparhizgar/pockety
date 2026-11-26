@@ -11,8 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.LabelOff
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -144,7 +142,6 @@ fun LinkedCategoryRow(
  */
 @Composable
 fun ManualSetupToggle(
-    expanded: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -170,7 +167,7 @@ fun ManualSetupToggle(
           verticalArrangement = Arrangement.spacedBy(2.dp),
       ) {
         Text(
-            text = "Manual setup",
+            text = "Advanced setup",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -182,7 +179,8 @@ fun ManualSetupToggle(
         )
       }
       Icon(
-          imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+          // Points to the end of the row: right in LTR, left in RTL.
+          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
           contentDescription = null,
           tint = MaterialTheme.colorScheme.secondary,
           modifier = Modifier.size(22.dp),
@@ -204,7 +202,7 @@ fun ManualSetupConfirmDialog(
   AlertDialog(
       onDismissRequest = onDismiss,
       modifier = modifier,
-      title = { Text("Switch to manual setup?") },
+      title = { Text("Switch to advanced setup?") },
       text = {
         Text(
             "The pocket keeps its current name, icon and color, but they stop following " +
@@ -226,7 +224,7 @@ fun InheritedFromCategoryNote(
   Text(
       text =
           "Linked to \u201C$categoryName\u201D \u2014 name, icon and color follow the category " +
-              "until you switch to manual setup.",
+              "until you switch to advanced setup.",
       style = MaterialTheme.typography.bodySmall,
       color = MaterialTheme.colorScheme.onSurfaceVariant,
       modifier = modifier,

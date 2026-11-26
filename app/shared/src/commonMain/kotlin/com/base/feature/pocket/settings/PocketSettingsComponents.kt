@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.LabelOff
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
@@ -496,7 +495,8 @@ fun PocketManualSetupRow(
         )
       }
       Icon(
-          imageVector = Icons.Default.ExpandMore,
+          // Points to the end of the row: right in LTR, left in RTL.
+          imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
           contentDescription = null,
           tint = MaterialTheme.colorScheme.secondary,
           modifier = Modifier.size(22.dp),

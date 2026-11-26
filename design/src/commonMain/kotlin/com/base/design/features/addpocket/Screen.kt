@@ -270,7 +270,6 @@ fun AddPocketScreen(
 
         if (!manual) {
           ManualSetupToggle(
-              expanded = false,
               onToggle = { showManualConfirm = true },
           )
         }
@@ -300,7 +299,7 @@ fun ManualSetupToggleShowcase(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
       AddPocketSectionTitle(text = "The row at the bottom of the category screen")
-      ManualSetupToggle(expanded = false, onToggle = {})
+      ManualSetupToggle(onToggle = {})
     }
   }
 }

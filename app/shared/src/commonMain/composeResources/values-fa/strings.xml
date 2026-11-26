@@ -273,10 +273,10 @@
     <string name="pocket_pick_simple_hint">جیب ساده — از «%1$s» پیروی می‌کند.</string>
     <string name="pocket_pick_advanced_hint">جیب پیشرفته با %1$d دسته‌بندی.</string>
     <string name="pocket_no_category">بدون دسته‌بندی</string>
-    <string name="pocket_inherited_note">متصل به «%1$s» — اسم، آیکون و رنگ تا وقتی به تنظیم دستی نروید از دسته‌بندی پیروی می‌کنند.</string>
-    <string name="pocket_manual_setup_title">تنظیم دستی</string>
+    <string name="pocket_inherited_note">متصل به «%1$s» — اسم، آیکون و رنگ تا وقتی به تنظیمات پیشرفته نروید از دسته‌بندی پیروی می‌کنند.</string>
+    <string name="pocket_manual_setup_title">تنظیمات پیشرفته</string>
     <string name="pocket_manual_setup_subtitle">اسم، آیکون و چند دسته‌بندی دلخواه</string>
-    <string name="pocket_manual_dialog_title">تغییر به تنظیم دستی؟</string>
+    <string name="pocket_manual_dialog_title">تغییر به تنظیمات پیشرفته؟</string>
     <string name="pocket_manual_dialog_text">اسم، آیکون و رنگ جیب همین‌طور می‌مانند، ولی دیگر از دسته‌بندی پیروی نمی‌کنند. می‌توانید چند دسته‌بندی را هم به این جیب وصل کنید. تا قبل از ذخیره، هر وقت خواستید می‌توانید به حالت ساده برگردید.</string>
     <string name="pocket_manual_dialog_confirm">تغییر</string>
     <string name="pocket_linked_categories_title">دسته‌بندی‌های متصل</string>
