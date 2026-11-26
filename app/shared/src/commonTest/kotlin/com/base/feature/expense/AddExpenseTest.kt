@@ -268,7 +268,7 @@ class AddExpenseTest : BehaviorSpec() {
                   categoryTag = "Dining",
                   budgetAmount = 500_000,
                   icon = "restaurant",
-                  categoryId = categoryId,
+                  categoryIds = listOf(categoryId),
               )
           testCoroutineScheduler.advanceUntilIdle()
           component.onCategorySelected(category)
@@ -401,14 +401,14 @@ class AddExpenseTest : BehaviorSpec() {
               categoryTag = "Food",
               budgetAmount = 100_000,
               icon = "fastfood",
-              categoryId = catId,
+              categoryIds = listOf(catId),
           )
         }
         val existingExpenseId by testValue {
           expenseRepo.addExpense(
               amount = 45000,
               description = "Burger",
-              categoryId = catId,
+              categoryIds = listOf(catId),
               pocketId = pockId,
           )
         }

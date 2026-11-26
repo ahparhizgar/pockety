@@ -136,7 +136,7 @@ class AddExpenseFlowE2eTest : BehaviorSpec() {
                 categoryTag = "Cafe",
                 budgetAmount = 500_000,
                 icon = "local_cafe",
-                categoryId = cafeCategoryId,
+                categoryIds = listOf(cafeCategoryId),
             )
         generalPocketId =
             pocketRepo.addPocket(

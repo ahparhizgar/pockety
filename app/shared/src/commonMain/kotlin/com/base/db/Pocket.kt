@@ -65,6 +65,36 @@ data class PocketTopUpEntity(
     val createdAt: Instant,
 )
 
+/**
+ * All categories linked to a pocket. [PocketEntity.categoryId] stays as the primary link
+ * (it drives the pocket card badge); this table holds every link, primary included, so a
+ * pocket created in manual mode can follow several categories.
+ */
+@Entity(
+    tableName = "pocket_categories",
+    primaryKeys = ["pocketId", "categoryId"],
+    foreignKeys =
+        [
+            ForeignKey(
+                entity = PocketEntity::class,
+                parentColumns = ["id"],
+                childColumns = ["pocketId"],
+                onDelete = ForeignKey.CASCADE,
+            ),
+            ForeignKey(
+                entity = CategoryEntity::class,
+                parentColumns = ["id"],
+                childColumns = ["categoryId"],
+                onDelete = ForeignKey.CASCADE,
+            ),
+        ],
+    indices = [Index("pocketId"), Index("categoryId")],
+)
+data class PocketCategoryEntity(
+    val pocketId: Long,
+    val categoryId: Long,
+)
+
 data class PocketWithSpent(
     val id: Long,
     val name: String,
@@ -86,6 +116,7 @@ data class PocketItemModel(
     val icon: String,
     val color: Long = 0xFF316342,
     val categoryId: Long? = null,
+    val categoryIds: List<Long> = emptyList(),
     val isOverBudget: Boolean,
     val warningMessage: String? = null,
 )
@@ -127,6 +158,25 @@ interface PocketDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun insertTopUp(topUp: PocketTopUpEntity): Long
+
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
+  suspend fun insertPocketCategory(link: PocketCategoryEntity)
+
+  @Query("DELETE FROM pocket_categories WHERE pocketId = :pocketId")
+  suspend fun deletePocketCategories(pocketId: Long)
+
+  @Query("SELECT * FROM pocket_categories") fun observeAllPocketCategories(): Flow<List<PocketCategoryEntity>>
+
+  @Query("SELECT categoryId FROM pocket_categories WHERE pocketId = :pocketId")
+  suspend fun getPocketCategoryIds(pocketId: Long): List<Long>
+
+  @Transaction
+  suspend fun replacePocketCategories(pocketId: Long, categoryIds: List<Long>) {
+    deletePocketCategories(pocketId)
+    categoryIds.distinct().forEach { categoryId ->
+      insertPocketCategory(PocketCategoryEntity(pocketId = pocketId, categoryId = categoryId))
+    }
+  }
 
   @Query("SELECT * FROM pockets WHERE id = :id") suspend fun getPocketById(id: Long): PocketEntity?
 
@@ -209,7 +259,7 @@ interface PocketRepository {
       budgetAmount: Long,
       icon: String,
       color: Long = 0xFF316342,
-      categoryId: Long? = null,
+      categoryIds: List<Long> = emptyList(),
       monthlyTopUpAmount: Long = 0L,
       autoTopUpEnabled: Boolean = false,
   ): Long
@@ -221,10 +271,12 @@ interface PocketRepository {
       categoryTag: String,
       icon: String,
       color: Long = 0xFF316342,
-      categoryId: Long? = null,
+      categoryIds: List<Long> = emptyList(),
       monthlyTopUpAmount: Long = 0L,
       autoTopUpEnabled: Boolean = false,
   )
+
+  suspend fun getPocketCategoryIds(pocketId: Long): List<Long>
 
   suspend fun processMonthlyTopUps(currentYearMonth: String): List<PocketTopUpEntity>
 
@@ -241,7 +293,11 @@ class DefaultPocketRepository(
     private val pocketDao: PocketDao,
 ) : PocketRepository {
   override fun observePockets(): Flow<List<PocketItemModel>> =
-      pocketDao.observePocketsWithSpent().map { list ->
+      combine(
+          pocketDao.observePocketsWithSpent(),
+          pocketDao.observeAllPocketCategories(),
+      ) { list, links ->
+        val linksByPocket = links.groupBy({ it.pocketId }, { it.categoryId })
         list.map { item ->
           val remainingBalance = item.totalTopUpAmount - item.spentAmount
           val isOverBudget = remainingBalance < 0
@@ -260,6 +316,7 @@ class DefaultPocketRepository(
               icon = item.icon,
               color = item.color,
               categoryId = item.categoryId,
+              categoryIds = linksByPocket[item.id] ?: listOfNotNull(item.categoryId),
               isOverBudget = isOverBudget,
               warningMessage = warningMessage,
           )
@@ -279,7 +336,7 @@ class DefaultPocketRepository(
       budgetAmount: Long,
       icon: String,
       color: Long,
-      categoryId: Long?,
+      categoryIds: List<Long>,
       monthlyTopUpAmount: Long,
       autoTopUpEnabled: Boolean,
   ): Long {
@@ -290,12 +347,13 @@ class DefaultPocketRepository(
             categoryTag = categoryTag,
             icon = icon,
             color = color,
-            categoryId = categoryId,
+            categoryId = categoryIds.firstOrNull(),
             monthlyTopUpAmount = monthlyTopUpAmount,
             autoTopUpEnabled = autoTopUpEnabled,
             createdAt = now,
         )
     val pocketId = pocketDao.insertPocket(pocket)
+    pocketDao.replacePocketCategories(pocketId, categoryIds)
     if (budgetAmount > 0) {
       val initialTopUp =
           PocketTopUpEntity(
@@ -316,7 +374,7 @@ class DefaultPocketRepository(
       categoryTag: String,
       icon: String,
       color: Long,
-      categoryId: Long?,
+      categoryIds: List<Long>,
       monthlyTopUpAmount: Long,
       autoTopUpEnabled: Boolean,
   ) {
@@ -326,10 +384,15 @@ class DefaultPocketRepository(
         categoryTag = categoryTag,
         icon = icon,
         color = color,
-        categoryId = categoryId,
+        categoryId = categoryIds.firstOrNull(),
         monthlyTopUpAmount = monthlyTopUpAmount,
         autoTopUpEnabled = autoTopUpEnabled,
     )
+    pocketDao.replacePocketCategories(id, categoryIds)
+  }
+
+  override suspend fun getPocketCategoryIds(pocketId: Long): List<Long> {
+    return pocketDao.getPocketCategoryIds(pocketId)
   }
 
   override suspend fun processMonthlyTopUps(currentYearMonth: String): List<PocketTopUpEntity> {
@@ -375,6 +438,14 @@ class FakePocketRepository(
   private val pocketsFlow = MutableStateFlow(initialPockets)
   private val expensesFlow = MutableStateFlow(initialExpenses)
   private val topUpsFlow = MutableStateFlow(initialTopUps)
+  private val linksFlow =
+      MutableStateFlow(
+          initialPockets.flatMap { pocket ->
+            listOfNotNull(
+                pocket.categoryId?.let { PocketCategoryEntity(pocket.id, it) },
+            )
+          }
+      )
   private var nextPocketId = (initialPockets.maxOfOrNull { it.id } ?: 0L) + 1L
   private var nextTopUpId = (initialTopUps.maxOfOrNull { it.id } ?: 0L) + 1L
 
@@ -387,7 +458,8 @@ class FakePocketRepository(
   }
 
   override fun observePockets(): Flow<List<PocketItemModel>> =
-      combine(pocketsFlow, expensesFlow, topUpsFlow) { pockets, expenses, topUps ->
+      combine(pocketsFlow, expensesFlow, topUpsFlow, linksFlow) { pockets, expenses, topUps, links ->
+        val linksByPocket = links.groupBy({ it.pocketId }, { it.categoryId })
         pockets.map { pocket ->
           val totalTopUp = topUps.filter { it.pocketId == pocket.id }.sumOf { it.amount }
           val spent = expenses.filter { it.pocketId == pocket.id }.sumOf { it.amount }
@@ -408,6 +480,7 @@ class FakePocketRepository(
               icon = pocket.icon,
               color = pocket.color,
               categoryId = pocket.categoryId,
+              categoryIds = linksByPocket[pocket.id] ?: listOfNotNull(pocket.categoryId),
               isOverBudget = isOverBudget,
               warningMessage = warningMessage,
           )
@@ -431,7 +504,7 @@ class FakePocketRepository(
       budgetAmount: Long,
       icon: String,
       color: Long,
-      categoryId: Long?,
+      categoryIds: List<Long>,
       monthlyTopUpAmount: Long,
       autoTopUpEnabled: Boolean,
   ): Long {
@@ -444,12 +517,16 @@ class FakePocketRepository(
             categoryTag = categoryTag,
             icon = icon,
             color = color,
-            categoryId = categoryId,
+            categoryId = categoryIds.firstOrNull(),
             monthlyTopUpAmount = monthlyTopUpAmount,
             autoTopUpEnabled = autoTopUpEnabled,
             createdAt = now,
         )
     pocketsFlow.update { listOf(newPocket) + it }
+    linksFlow.update { existing ->
+      existing.filterNot { it.pocketId == id } +
+          categoryIds.distinct().map { PocketCategoryEntity(id, it) }
+    }
     if (budgetAmount > 0) {
       val initialTopUp =
           PocketTopUpEntity(
@@ -471,7 +548,7 @@ class FakePocketRepository(
       categoryTag: String,
       icon: String,
       color: Long,
-      categoryId: Long?,
+      categoryIds: List<Long>,
       monthlyTopUpAmount: Long,
       autoTopUpEnabled: Boolean,
   ) {
@@ -483,7 +560,7 @@ class FakePocketRepository(
               categoryTag = categoryTag,
               icon = icon,
               color = color,
-              categoryId = categoryId,
+              categoryId = categoryIds.firstOrNull(),
               monthlyTopUpAmount = monthlyTopUpAmount,
               autoTopUpEnabled = autoTopUpEnabled,
           )
@@ -492,6 +569,14 @@ class FakePocketRepository(
         }
       }
     }
+    linksFlow.update { existing ->
+      existing.filterNot { it.pocketId == id } +
+          categoryIds.distinct().map { PocketCategoryEntity(id, it) }
+    }
+  }
+
+  override suspend fun getPocketCategoryIds(pocketId: Long): List<Long> {
+    return linksFlow.value.filter { it.pocketId == pocketId }.map { it.categoryId }
   }
 
   override suspend fun processMonthlyTopUps(currentYearMonth: String): List<PocketTopUpEntity> {
@@ -555,6 +640,7 @@ class FakePocketRepository(
 
   override suspend fun deletePocket(id: Long) {
     pocketsFlow.update { list -> list.filterNot { it.id == id } }
+    linksFlow.update { list -> list.filterNot { it.pocketId == id } }
     topUpsFlow.update { list -> list.filterNot { it.pocketId == id } }
     expensesFlow.update { list ->
       list.map { expense ->
@@ -617,6 +703,7 @@ object FakePocketItemModelFactory {
       icon: String = "shopping_bag",
       color: Long = 0xFF316342,
       categoryId: Long? = null,
+      categoryIds: List<Long> = listOfNotNull(categoryId),
       isOverBudget: Boolean = false,
       warningMessage: String? = null,
   ): PocketItemModel =
@@ -629,6 +716,7 @@ object FakePocketItemModelFactory {
           icon = icon,
           color = color,
           categoryId = categoryId,
+          categoryIds = categoryIds,
           isOverBudget = isOverBudget,
           warningMessage = warningMessage,
       )

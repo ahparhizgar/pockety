@@ -170,6 +170,125 @@ class PocketSettingsTest : BehaviorSpec() {
           saved.icon shouldBe "shopping_bag"
         }
       }
+
+      When("user picks a category in the simple creation mode") {
+        val cafe =
+            FakeCategoryFactory.create(
+                id = 10,
+                name = "Cafe & Dining",
+                icon = "coffee",
+                color = 0xFFE57373,
+            )
+        val transport =
+            FakeCategoryFactory.create(
+                id = 11,
+                name = "Transport",
+                icon = "directions_car",
+                color = 0xFF1E88E5,
+            )
+
+        beforeEach { component.onCategorySelected(cafe) }
+
+        Then("the pocket inherits the category name, icon and color") {
+          val state = component.state.value
+          state.nameText shouldBe "Cafe & Dining"
+          state.selectedIcon shouldBe "coffee"
+          state.selectedColor shouldBe 0xFFE57373
+          state.linkedCategoryIds shouldBe setOf(10L)
+        }
+
+        And("user picks a different category") {
+          beforeEach { component.onCategorySelected(transport) }
+
+          Then("the identity re-syncs to the new category") {
+            val state = component.state.value
+            state.nameText shouldBe "Transport"
+            state.selectedIcon shouldBe "directions_car"
+            state.selectedColor shouldBe 0xFF1E88E5
+            state.linkedCategoryIds shouldBe setOf(11L)
+          }
+        }
+      }
+
+      When("user opens manual setup and only dismisses the confirmation") {
+        beforeEach {
+          component.onManualSetupClicked()
+          component.onManualConfirmDismissed()
+        }
+
+        Then("manual mode stays off and the dialog is hidden") {
+          val state = component.state.value
+          state.manualMode shouldBe false
+          state.showManualConfirm shouldBe false
+        }
+      }
+
+      When("user confirms manual setup, customizes the pocket and links two categories") {
+        val cafe =
+            FakeCategoryFactory.create(
+                id = 10,
+                name = "Cafe & Dining",
+                icon = "coffee",
+                color = 0xFFE57373,
+            )
+        val groceries =
+            FakeCategoryFactory.create(
+                id = 11,
+                name = "Groceries",
+                icon = "shopping_cart",
+                color = 0xFF4A7C59,
+            )
+
+        beforeEach {
+          component.onCategorySelected(cafe)
+          component.onManualSetupClicked()
+          component.onManualConfirmConfirmed()
+          component.onNameChanged("Travel")
+          component.onLinkedCategoryToggled(groceries)
+          component.onSaveClicked()
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("manual mode is on and the identity no longer follows the category") {
+          val pockets = pocketRepository.observePockets().first()
+          pockets shouldHaveSize 1
+          pockets[0].name shouldBe "Travel"
+        }
+
+        Then("the saved pocket links both categories with the first as primary") {
+          val pockets = pocketRepository.observePockets().first()
+          val saved = pockets[0]
+          saved.categoryIds shouldBe listOf(10L, 11L)
+          saved.categoryId shouldBe 10L
+          pocketRepository.getPocketCategoryIds(saved.id) shouldBe listOf(10L, 11L)
+        }
+      }
+
+      When("user goes back from manual setup before saving") {
+        val cafe =
+            FakeCategoryFactory.create(
+                id = 10,
+                name = "Cafe & Dining",
+                icon = "coffee",
+                color = 0xFFE57373,
+            )
+
+        beforeEach {
+          component.onCategorySelected(cafe)
+          component.onManualSetupClicked()
+          component.onManualConfirmConfirmed()
+          component.onNameChanged("Custom Name")
+          component.onBackClicked()
+        }
+
+        Then("the flow returns to simple mode without cancelling") {
+          val state = component.state.value
+          state.manualMode shouldBe false
+          state.nameText shouldBe "Cafe & Dining"
+          state.linkedCategoryIds shouldBe setOf(10L)
+          cancelledCallback.shouldNotBeCalled()
+        }
+      }
     }
 
     Given("PocketSettingsComponent initialized in edit mode") {
@@ -187,7 +306,7 @@ class PocketSettingsTest : BehaviorSpec() {
                 icon = "shopping_bag",
                 budgetAmount = 50_000L,
                 color = 0xFF112233,
-                categoryId = null,
+                categoryIds = emptyList(),
             )
         testCoroutineScheduler.advanceUntilIdle()
       }

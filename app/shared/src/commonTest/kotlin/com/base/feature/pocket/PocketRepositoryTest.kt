@@ -101,7 +101,7 @@ class PocketRepositoryTest : BehaviorSpec() {
                   budgetAmount = 5000,
                   icon = "shopping_bag",
                   color = 0xFF4A7C59,
-                  categoryId = catId,
+                  categoryIds = listOf(catId),
               )
           testCoroutineScheduler.advanceUntilIdle()
         }
@@ -125,6 +125,54 @@ class PocketRepositoryTest : BehaviorSpec() {
           entity.icon shouldBe "shopping_bag"
           entity.color shouldBe 0xFF4A7C59
           entity.categoryId.shouldNotBeNull()
+        }
+      }
+
+      When("adding a pocket linked to two categories and then re-linking it") {
+        var pocketId: Long by testValue { 0 }
+        var firstCategoryId: Long by testValue { 0 }
+        var secondCategoryId: Long by testValue { 0 }
+
+        beforeEach {
+          firstCategoryId = categoryRepository.addCategory("Food", "restaurant", 0xFFE57373)
+          secondCategoryId = categoryRepository.addCategory("Cafe", "coffee", 0xFFB87D4B)
+          pocketId =
+              pocketRepository.addPocket(
+                  name = "Food & Cafe",
+                  categoryTag = "Food",
+                  budgetAmount = 5000,
+                  icon = "restaurant",
+                  categoryIds = listOf(firstCategoryId, secondCategoryId),
+              )
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("both links are stored and the first category is the primary") {
+          pocketRepository.getPocketCategoryIds(pocketId) shouldBe
+              listOf(firstCategoryId, secondCategoryId)
+          val pocket = pocketRepository.observePockets().first().first { it.id == pocketId }
+          pocket.categoryIds shouldBe listOf(firstCategoryId, secondCategoryId)
+          pocket.categoryId shouldBe firstCategoryId
+        }
+
+        And("the pocket is updated with only the second category linked") {
+          beforeEach {
+            pocketRepository.updatePocket(
+                id = pocketId,
+                name = "Food & Cafe",
+                categoryTag = "Cafe",
+                icon = "restaurant",
+                categoryIds = listOf(secondCategoryId),
+            )
+            testCoroutineScheduler.advanceUntilIdle()
+          }
+
+          Then("the links are replaced and the primary follows") {
+            pocketRepository.getPocketCategoryIds(pocketId) shouldBe listOf(secondCategoryId)
+            val pocket = pocketRepository.observePockets().first().first { it.id == pocketId }
+            pocket.categoryIds shouldBe listOf(secondCategoryId)
+            pocket.categoryId shouldBe secondCategoryId
+          }
         }
       }
 

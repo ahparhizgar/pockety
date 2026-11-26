@@ -1,5 +1,6 @@
 package com.base.feature.pocket.settings
 
+import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -10,13 +11,41 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.RootScreen
 import com.base.component.TestCContext
+import com.base.db.CategoryRepository
 import com.base.util.injectUiRoot
 import com.base.util.uiKoin
 import com.base.util.waitForExistence
 import kotlin.test.Test
+import kotlinx.coroutines.runBlocking
+import org.koin.core.Koin
 
 @OptIn(ExperimentalTestApi::class)
 class PocketSettingsE2eUiTest {
+
+  private fun ComposeUiTest.openCreatePocket() {
+    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
+    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
+    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+  }
+
+  /** Simple mode -> confirmation dialog -> manual form. */
+  private fun ComposeUiTest.enterManualMode() {
+    onNode(hasTestTag("manual-setup-row")).waitForExistence().performScrollTo().performClick()
+    onNode(hasText("Switch")).waitForExistence().performClick()
+    onNode(hasTestTag("pocket-name-input")).waitForExistence().assertExists()
+  }
+
+  private fun ComposeUiTest.createPocketViaManualMode(name: String) {
+    openCreatePocket()
+    enterManualMode()
+    onNode(hasTestTag("pocket-name-input")).performClick()
+    onNode(isFocused()).performTextInput(name)
+    onNode(hasTestTag("save-pocket-btn")).performClick()
+    onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
+  }
+
+  private fun seedCategory(koin: Koin, name: String, icon: String, color: Long): Long =
+      runBlocking { koin.get<CategoryRepository>().addCategory(name, icon, color) }
 
   @Test
   fun testCreatePocketWithKeyboardInputAndSave() = runComposeUiTest {
@@ -25,18 +54,13 @@ class PocketSettingsE2eUiTest {
     val root = koin.injectUiRoot(context)
     setContent { RootScreen(root) }
 
-    // Navigate to Pockets tab
-    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
-
-    // Tap Add Pocket FAB
-    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
-
-    // Pocket Settings Screen is open
-    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+    openCreatePocket()
 
     // Assert "Save" button is displayed for new pocket
     onNode(hasTestTag("save-pocket-btn")).assertExists()
     onNode(hasText("Save")).assertExists()
+
+    enterManualMode()
 
     // Focus pocket name field and type name
     onNode(hasTestTag("pocket-name-input")).performClick()
@@ -51,20 +75,65 @@ class PocketSettingsE2eUiTest {
   }
 
   @Test
+  fun testSimpleModeCategorySelectionCreatesInheritedPocket() = runComposeUiTest {
+    val koin = uiKoin()
+    val cafeId = seedCategory(koin, "Cafe & Dining", "coffee", 0xFFE57373)
+    seedCategory(koin, "Groceries", "shopping_cart", 0xFF4A7C59)
+    val context = TestCContext()
+    val root = koin.injectUiRoot(context)
+    setContent { RootScreen(root) }
+
+    openCreatePocket()
+
+    // Pick the category; the pocket name is filled from it without typing
+    onNode(hasTestTag("pocket-category-$cafeId")).waitForExistence().performClick()
+    onNode(hasTestTag("pocket-name-input")).waitForExistence().assertExists()
+
+    onNode(hasTestTag("save-pocket-btn")).performClick()
+
+    onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
+    onNode(hasText("Cafe & Dining")).waitForExistence().assertExists()
+  }
+
+  @Test
+  fun testManualModeLinksMultipleCategories() = runComposeUiTest {
+    val koin = uiKoin()
+    val cafeId = seedCategory(koin, "Cafe & Dining", "coffee", 0xFFE57373)
+    val groceriesId = seedCategory(koin, "Groceries", "shopping_cart", 0xFF4A7C59)
+    val context = TestCContext()
+    val root = koin.injectUiRoot(context)
+    setContent { RootScreen(root) }
+
+    openCreatePocket()
+    enterManualMode()
+
+    onNode(hasTestTag("pocket-name-input")).performClick()
+    onNode(isFocused()).performTextInput("Food")
+
+    // Link both categories to the pocket
+    onNode(hasTestTag("pocket-linked-category-$cafeId"))
+        .waitForExistence()
+        .performScrollTo()
+        .performClick()
+    onNode(hasTestTag("pocket-linked-category-$groceriesId"))
+        .waitForExistence()
+        .performScrollTo()
+        .performClick()
+
+    onNode(hasTestTag("save-pocket-btn")).performClick()
+
+    onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
+    onNode(hasText("Food")).waitForExistence().assertExists()
+  }
+
+  @Test
   fun testEmptyPocketNameShowsValidationError() = runComposeUiTest {
     val context = TestCContext()
     val koin = uiKoin()
     val root = koin.injectUiRoot(context)
     setContent { RootScreen(root) }
 
-    // Navigate to Pockets tab
-    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
-
-    // Tap Add Pocket FAB
-    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
-
-    // Pocket Settings Screen is open
-    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+    openCreatePocket()
 
     // Submit with empty pocket name
     onNode(hasTestTag("save-pocket-btn")).performClick()
@@ -80,13 +149,12 @@ class PocketSettingsE2eUiTest {
     val root = koin.injectUiRoot(context)
     setContent { RootScreen(root) }
 
-    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
-    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
-    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+    openCreatePocket()
+    enterManualMode()
 
     // Select Coral Red color swatch
     val coralRedHex = 0xFFE57373
-    onNode(hasTestTag("color-swatch-$coralRedHex")).waitForExistence().performClick()
+    onNode(hasTestTag("color-swatch-$coralRedHex")).waitForExistence().performScrollTo().performClick()
 
     // Coral Red swatch is selected and has checkmark
     onNode(hasText("Coral Red")).assertExists()
@@ -99,15 +167,14 @@ class PocketSettingsE2eUiTest {
     val root = koin.injectUiRoot(context)
     setContent { RootScreen(root) }
 
-    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
-    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
-    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+    openCreatePocket()
+    enterManualMode()
 
     // Filter by Food category
-    onNode(hasTestTag("icon-filter-Food")).waitForExistence().performClick()
+    onNode(hasTestTag("icon-filter-Food")).waitForExistence().performScrollTo().performClick()
 
     // Select restaurant icon
-    onNode(hasTestTag("icon-option-restaurant")).waitForExistence().performClick()
+    onNode(hasTestTag("icon-option-restaurant")).waitForExistence().performScrollTo().performClick()
   }
 
   @Test
@@ -117,15 +184,8 @@ class PocketSettingsE2eUiTest {
     val root = koin.injectUiRoot(context)
     setContent { RootScreen(root) }
 
-    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
-    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
-    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+    createPocketViaManualMode("Original Pocket")
 
-    onNode(hasTestTag("pocket-name-input")).performClick()
-    onNode(isFocused()).performTextInput("Original Pocket")
-    onNode(hasTestTag("save-pocket-btn")).performClick()
-
-    onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
     onNode(hasText("Original Pocket")).waitForExistence().performClick()
 
     // On Pocket Details screen, click settings / configure
@@ -151,14 +211,10 @@ class PocketSettingsE2eUiTest {
     val root = koin.injectUiRoot(context)
     setContent { RootScreen(root) }
 
-    // 1. Create a pocket
-    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
-    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
-    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
-
-    // Danger zone shouldn't exist in create mode
+    // 1. Create a pocket (danger zone shouldn't exist in create mode)
+    openCreatePocket()
     onNode(hasTestTag("delete-pocket-btn")).assertDoesNotExist()
-
+    enterManualMode()
     onNode(hasTestTag("pocket-name-input")).performClick()
     onNode(isFocused()).performTextInput("Pocket To Be Deleted")
     onNode(hasTestTag("save-pocket-btn")).performClick()
@@ -184,9 +240,7 @@ class PocketSettingsE2eUiTest {
     val root = koin.injectUiRoot(context)
     setContent { RootScreen(root) }
 
-    onNode(hasTestTag("tab-pockets")).waitForExistence().performClick()
-    onNode(hasTestTag("add-pocket-fab")).waitForExistence().performClick()
-    onNode(hasTestTag("pocket-settings-screen")).waitForExistence().assertExists()
+    openCreatePocket()
 
     // Scroll to monthly allocation card
     onNode(hasTestTag("monthly-allocation-card"))

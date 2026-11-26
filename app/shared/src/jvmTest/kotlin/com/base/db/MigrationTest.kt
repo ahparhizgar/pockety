@@ -380,5 +380,64 @@ class MigrationTest : BehaviorSpec() {
 
       afterSpec { connection.close() }
     }
+    Given("a version 10 database with linked and unlinked pockets") {
+      val driver = BundledSQLiteDriver()
+      val connection = driver.open(":memory:")
+
+      connection.execSQL(
+          "CREATE TABLE IF NOT EXISTS `categories` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `icon` TEXT NOT NULL, `color` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL)"
+      )
+      connection.execSQL(
+          "CREATE TABLE IF NOT EXISTS `pockets` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `categoryTag` TEXT NOT NULL, `icon` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `color` INTEGER NOT NULL, `categoryId` INTEGER, `monthlyTopUpAmount` INTEGER NOT NULL, `autoTopUpEnabled` INTEGER NOT NULL, `lastTopUpMonth` TEXT)"
+      )
+      connection.execSQL(
+          "INSERT INTO `categories` (`id`, `name`, `icon`, `color`, `createdAt`, `sortOrder`) VALUES (1, 'Dining', 'restaurant', 1, 1000, 0)"
+      )
+      connection.execSQL(
+          "INSERT INTO `pockets` (`id`, `name`, `categoryTag`, `icon`, `createdAt`, `color`, `categoryId`, `monthlyTopUpAmount`, `autoTopUpEnabled`, `lastTopUpMonth`) VALUES (1, 'Food', 'Dining', 'restaurant', 1000, 1, 1, 0, 0, NULL)"
+      )
+      connection.execSQL(
+          "INSERT INTO `pockets` (`id`, `name`, `categoryTag`, `icon`, `createdAt`, `color`, `categoryId`, `monthlyTopUpAmount`, `autoTopUpEnabled`, `lastTopUpMonth`) VALUES (2, 'Misc', 'General', 'wallet', 2000, 2, NULL, 0, 0, NULL)"
+      )
+
+      When("MIGRATION_10_11 is executed") {
+        MIGRATION_10_11.migrate(connection)
+
+        Then("existing category links are copied into pocket_categories") {
+          val statement =
+              connection.prepare(
+                  "SELECT `pocketId`, `categoryId` FROM `pocket_categories` ORDER BY `pocketId`"
+              )
+          val rows = mutableListOf<Pair<Long, Long>>()
+          while (statement.step()) {
+            rows.add(statement.getLong(0) to statement.getLong(1))
+          }
+          statement.close()
+          rows shouldBe listOf(1L to 1L)
+        }
+
+        Then("pocket_categories has both indices and cascading foreign keys") {
+          val indexStmt = connection.prepare("PRAGMA index_list(`pocket_categories`)")
+          val indexNames = mutableListOf<String>()
+          while (indexStmt.step()) {
+            indexStmt.getText(1)?.let { indexNames.add(it) }
+          }
+          indexStmt.close()
+          indexNames.contains("index_pocket_categories_pocketId") shouldBe true
+          indexNames.contains("index_pocket_categories_categoryId") shouldBe true
+
+          val fkStmt = connection.prepare("PRAGMA foreign_key_list(`pocket_categories`)")
+          val fkTargets = mutableListOf<String>()
+          while (fkStmt.step()) {
+            fkTargets.add(fkStmt.getText(2))
+          }
+          fkStmt.close()
+          fkTargets.contains("pockets") shouldBe true
+          fkTargets.contains("categories") shouldBe true
+        }
+      }
+
+      afterSpec { connection.close() }
+    }
   }
 }

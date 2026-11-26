@@ -66,7 +66,7 @@ class CategoryRepositoryTest : BehaviorSpec() {
               expenseRepository.addExpense(
                   amount = 12000,
                   description = "Supermarket",
-                  categoryId = categoryId,
+                  categoryIds = listOf(categoryId),
               )
           testCoroutineScheduler.advanceUntilIdle()
 
@@ -93,7 +93,7 @@ class CategoryRepositoryTest : BehaviorSpec() {
                   categoryTag = "Bills",
                   budgetAmount = 1_000_000,
                   icon = "receipt",
-                  categoryId = categoryId,
+                  categoryIds = listOf(categoryId),
               )
           testCoroutineScheduler.advanceUntilIdle()
 

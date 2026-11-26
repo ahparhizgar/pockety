@@ -265,6 +265,15 @@
     <string name="category_filter_leisure">تفریح</string>
     <string name="associated_category_subtitle">خرج‌ها خودکار از این جیب کم می‌شن</string>
     <string name="associated_category_title">دسته‌بندی مرتبط</string>
+    <string name="pocket_create_intro">از یک دسته‌بندی شروع کنید — اسم، آیکون و رنگ جیب از آن گرفته می‌شود.</string>
+    <string name="pocket_inherited_note">متصل به «%1$s» — اسم، آیکون و رنگ تا وقتی به تنظیم دستی نروید از دسته‌بندی پیروی می‌کنند.</string>
+    <string name="pocket_manual_setup_title">تنظیم دستی</string>
+    <string name="pocket_manual_setup_subtitle">اسم، آیکون و چند دسته‌بندی دلخواه</string>
+    <string name="pocket_manual_dialog_title">تغییر به تنظیم دستی؟</string>
+    <string name="pocket_manual_dialog_text">اسم، آیکون و رنگ جیب همین‌طور می‌مانند، ولی دیگر از دسته‌بندی پیروی نمی‌کنند. می‌توانید چند دسته‌بندی را هم به این جیب وصل کنید. تا قبل از ذخیره، هر وقت خواستید می‌توانید به حالت ساده برگردید.</string>
+    <string name="pocket_manual_dialog_confirm">تغییر</string>
+    <string name="pocket_linked_categories_title">دسته‌بندی‌های متصل</string>
+    <string name="pocket_linked_categories_subtitle">خرج‌های این دسته‌بندی‌ها جزو این جیب حساب می‌شوند.</string>
     <string name="choose_category_action">انتخاب دسته‌بندی</string>
     <string name="clear_association_action">برداشتن دسته‌بندی</string>
     <string name="confirm_top_up_action">افزایش موجودی</string>

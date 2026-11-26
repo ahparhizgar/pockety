@@ -39,6 +39,9 @@ import com.base.usermessage.UiString
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.apply_action
+import pockety.app.shared.generated.resources.category_label
+import pockety.app.shared.generated.resources.pocket_create_intro
+import pockety.app.shared.generated.resources.pocket_inherited_note
 import pockety.app.shared.generated.resources.pocket_settings_title
 import pockety.app.shared.generated.resources.save_action
 
@@ -141,25 +144,97 @@ private fun PocketSettingsContent(
               .padding(horizontal = 16.dp, vertical = 12.dp),
       verticalArrangement = Arrangement.spacedBy(20.dp),
   ) {
-    PocketIdentitySection(component = component, state = state)
-
-    PocketAccentColorPicker(component = component, state = state)
-
-    PocketIconPickerSection(component = component, state = state)
-
-    PocketAssociatedCategoryCard(component = component, state = state)
-
-    PocketMonthlyAllocationCard(component = component, state = state)
-
-    val isNewPocket = state.pocketId == null
-    if (!isNewPocket) {
-      PocketDangerZoneCard(
-          onDeletePocketClick = { component.onDeleteClicked() },
-      )
+    when {
+      state.pocketId == null && !state.manualMode -> SimpleCreationContent(component, state)
+      state.pocketId == null -> ManualCreationContent(component, state)
+      else -> EditPocketContent(component, state)
     }
 
     Spacer(modifier = Modifier.height(16.dp))
   }
+
+  if (state.showManualConfirm) {
+    PocketManualConfirmDialog(component = component)
+  }
+}
+
+/** Category-first creation: pick a category and the pocket inherits its identity. */
+@Composable
+private fun SimpleCreationContent(
+    component: PocketSettingsComponent,
+    state: PocketSettingsState,
+) {
+  Text(
+      text = stringResource(Res.string.pocket_create_intro),
+      style = MaterialTheme.typography.bodyMedium,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+  )
+
+  val selectedCategory = state.selectedCategory
+  if (selectedCategory != null || state.nameError != null) {
+    PocketIdentitySection(component = component, state = state)
+    if (selectedCategory != null) {
+      Text(
+          text = stringResource(Res.string.pocket_inherited_note, selectedCategory.name),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.padding(start = 4.dp),
+      )
+    }
+  }
+
+  Text(
+      text = stringResource(Res.string.category_label),
+      style = MaterialTheme.typography.titleMedium,
+      color = MaterialTheme.colorScheme.onSurface,
+      modifier = Modifier.padding(start = 4.dp),
+  )
+  PocketCategoryPickerList(component = component, state = state)
+
+  PocketMonthlyAllocationCard(component = component, state = state)
+
+  PocketManualSetupRow(component = component)
+}
+
+/** The classic form plus multi-category linking, reached through the confirm dialog. */
+@Composable
+private fun ManualCreationContent(
+    component: PocketSettingsComponent,
+    state: PocketSettingsState,
+) {
+  PocketIdentitySection(component = component, state = state)
+
+  PocketLinkedCategoriesSection(component = component, state = state)
+
+  PocketAccentColorPicker(component = component, state = state)
+
+  PocketIconPickerSection(component = component, state = state)
+
+  PocketMonthlyAllocationCard(component = component, state = state)
+}
+
+@Composable
+private fun EditPocketContent(
+    component: PocketSettingsComponent,
+    state: PocketSettingsState,
+) {
+  PocketIdentitySection(component = component, state = state)
+
+  PocketAccentColorPicker(component = component, state = state)
+
+  PocketIconPickerSection(component = component, state = state)
+
+  if (state.linkedCategoryIds.size > 1) {
+    PocketLinkedCategoriesSection(component = component, state = state)
+  } else {
+    PocketAssociatedCategoryCard(component = component, state = state)
+  }
+
+  PocketMonthlyAllocationCard(component = component, state = state)
+
+  PocketDangerZoneCard(
+      onDeletePocketClick = { component.onDeleteClicked() },
+  )
 }
 
 @ScreenPreviews
@@ -194,6 +269,41 @@ private fun PocketSettingsScreenErrorPreview() {
           initialState =
               FakePocketSettingsStateFactory.create(
                   nameError = UiString("Pocket name cannot be empty")
+              )
+      )
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun PocketSettingsScreenSimpleSelectedPreview() {
+  val categories = FakeCategoryFactory.createList()
+  PocketSettingsScreen(
+      FakePocketSettingsComponent(
+          initialState =
+              FakePocketSettingsStateFactory.create(
+                  categories = categories,
+                  selectedCategory = categories.first(),
+                  nameText = categories.first().name,
+                  selectedIcon = categories.first().icon,
+                  selectedColor = categories.first().color,
+              )
+      )
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun PocketSettingsScreenManualPreview() {
+  val categories = FakeCategoryFactory.createList()
+  PocketSettingsScreen(
+      FakePocketSettingsComponent(
+          initialState =
+              FakePocketSettingsStateFactory.create(
+                  categories = categories,
+                  manualMode = true,
+                  linkedCategoryIds = setOf(categories[0].id, categories[1].id),
+                  nameText = "Travel",
               )
       )
   )

@@ -1,10 +1,10 @@
 # Proposal
 
-> DRAFT — written 2026-11-26 from Amir's question in WhatsApp
-> (2026-11-26 11:51 Asia/Tehran). No decision yet, no app code changed.
-> Amir said: «پیاده سازی نکن. فقط نظرت رو بگو.» — this change only
-> records the decision-ready analysis so implementation can start
-> immediately once he picks an option.
+> DECIDED 2026-11-26: Amir picked the middle path (Option B) and
+> refined it in the design review the same day — see tasks.md section 0
+> for the settled rules. The full 1:1 model (Option A) below stays as
+> background analysis only; the Add Expense pocket picker is NOT
+> removed. Design approved in `:design` (Catalog 08c–08g).
 
 ## Why
 

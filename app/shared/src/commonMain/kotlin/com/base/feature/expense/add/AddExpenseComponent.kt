@@ -125,7 +125,7 @@ class DefaultAddExpenseComponent(
                     currentState.selectedCategory != null
             ) {
               val matchingPocket = pockets.firstOrNull {
-                it.categoryId == currentState.selectedCategory.id
+                currentState.selectedCategory.id in it.categoryIds
               }
               currentState.copy(selectedPocket = matchingPocket)
             } else {
@@ -179,7 +179,7 @@ class DefaultAddExpenseComponent(
   override fun onCategorySelected(category: CategoryEntity?) {
     val matchingPocket =
         if (category != null) {
-          availablePockets.firstOrNull { it.categoryId == category.id }
+          availablePockets.firstOrNull { category.id in it.categoryIds }
         } else {
           null
         }

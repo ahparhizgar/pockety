@@ -1,65 +1,75 @@
 # Tasks
 
-> DRAFT — unchecked. Nothing here is approved or started. Pick an
-> option in the proposal first; tasks are grouped by option.
+> DECIDED 2026-11-26 by Amir: middle path (Option B), refined in the
+> WhatsApp design review. Design approved in `:design` (Catalog 08c–08g)
+> before implementation.
 
-## 0. Decision gate
+## 0. Decisions (all settled 2026-11-26)
 
-- [ ] 0.1 Amir picks Option A (full 1:1), B (middle path) or C (keep current)
-- [ ] 0.2 If A: lock or editable inherited name/icon/color? (proposal decision #2)
-- [ ] 0.3 If A: legacy-data rules decided — pockets with no category,
-  pockets sharing a category, expenses whose category disagrees with
-  their pocket (proposal decision #3)
-- [ ] 0.4 If A: category-deletion rule decided (proposal decision #4)
-- [ ] 0.5 If A: uncategorized expenses allowed or not? (proposal decision #5)
+- [x] 0.1 Middle path: pocket creation gains a category-first simple
+  mode; the classic form stays as a manual mode. Add Expense keeps its
+  pocket picker.
+- [x] 0.2 Simple mode: identity is live-linked to the chosen category —
+  picking a category sets name/icon/color, picking another re-syncs all
+  three. The link breaks only in manual mode.
+- [x] 0.3 Manual mode is gated: tapping the quiet "Manual setup" row at
+  the bottom opens a confirmation dialog; confirming swaps the whole
+  screen to the manual form and the row disappears.
+- [x] 0.4 Before saving, Back in manual mode returns to the simple mode
+  (category stays selected; identity follows it again, manual tweaks are
+  dropped).
+- [x] 0.5 Manual mode can link several categories to one pocket.
+  `pockets.categoryId` stays as the primary link (drives the card
+  badge); all links live in a new `pocket_categories` table.
+- [x] 0.6 Category deletion: cross-ref rows cascade-delete; the primary
+  `categoryId` keeps its existing `SET_NULL` behaviour.
 
-## 1. Design gate (Option A only)
+## 1. Design gate
 
-- [ ] 1.1 Build the category-first pocket-creation flow in `:design`
-  and get Amir's approval before app implementation
-- [ ] 1.2 Design the derived-pocket display in Add Expense (read-only
-  line, or hidden) and the blocked-save state without a category
+- [x] 1.1 Category-first creation designed in `:design`
+  (`features/addpocket`, Catalog 08c Category / 08d Category Selected /
+  08e Manual / 08f Manual Toggle / 08g Manual Confirm) and approved by
+  Amir 2026-11-26.
 
-## 2. Data (Option A only)
+## 2. Data
 
-- [ ] 2.1 Unique index on `pockets.categoryId` (partial, NULLs allowed
-  only if legacy unlinked pockets are kept) + Room migration 10 → 11
-- [ ] 2.2 Data repair for legacy cases per decision 0.3 (migration or
-  one-time repair on first launch after upgrade)
-- [ ] 2.3 Category-deletion rule implemented per decision 0.4
-  (today the FK is `SET_NULL`, which orphans the pocket under A)
+- [x] 2.1 `PocketCategoryEntity` cross-ref table (PK pocketId+categoryId,
+  CASCADE both sides) + Room migration 10 → 11 copying existing
+  `categoryId` links.
+- [x] 2.2 `PocketRepository.addPocket`/`updatePocket` take
+  `categoryIds: List<Long>` (first entry is the primary, written to
+  `pockets.categoryId`); links replaced transactionally.
+  `PocketItemModel` gains `categoryIds`; new
+  `getPocketCategoryIds(pocketId)`.
+- [x] 2.3 Add Expense auto-pick matches any linked category
+  (`category.id in pocket.categoryIds`).
 
-## 3. Pocket creation (A: full rework / B: prefill only)
+## 3. Pocket creation UI
 
-- [ ] 3.1 `PocketSettingsComponent.onCategoryChanged` prefills name,
-  icon and color from the picked category (A: category is picked first
-  and is mandatory; B: prefill only, all fields stay editable)
-- [ ] 3.2 One-pocket-per-category enforced at save time (A only):
-  saving a second pocket for a category is rejected with an error
-- [ ] 3.3 Remove the category tag badge from `PocketBudgetCard` (A only —
-  badge == pocket identity once the model is 1:1)
+- [x] 3.1 `PocketSettingsComponent`: observe categories into state;
+  simple mode inherits identity on category pick; manual-mode state,
+  confirm-dialog state and multi-link toggling; Back returns to simple
+  mode before save; save passes ordered links (category order).
+- [x] 3.2 `PocketSettingsScreen`: simple layout (intro, identity +
+  inherited note when selected, in-screen category list, allocation,
+  manual row), confirm dialog, manual layout (identity, linked
+  categories, color/icon pickers, allocation). Edit mode keeps the
+  current layout; a multi-linked pocket shows the linked-categories
+  section instead of the single category card.
+- [x] 3.3 Strings (EN + FA) for intro, manual row, dialog, linked
+  categories and the inherited note.
 
-## 4. Add Expense (A only; B needs no structural change)
+## 4. Tests
 
-- [ ] 4.1 Remove `PocketSelectorCard` and the pocket-selection child
-  from `AddExpenseFlowComponent`
-- [ ] 4.2 Category becomes mandatory; save blocked without one
-- [ ] 4.3 Pocket derived from the category at save time
-  (`firstOrNull { it.categoryId == category.id }` — already the
-  auto-assignment rule; now the only rule)
-- [ ] 4.4 SMS candidates: no detected category means no pocket (explicit)
+- [x] 4.1 Repository tests: links saved/replaced, primary derived,
+  migration of call sites to `categoryIds`.
+- [x] 4.2 Component tests: inheritance, re-sync on category change, no
+  inheritance in edit mode, confirm gate, Back-to-simple, multi-link
+  save.
+- [x] 4.3 UI tests: simple flow (pick category → name filled → save),
+  manual flow (dialog → toggle two categories → save).
 
-## 5. Tests
+## 5. Verification
 
-- [ ] 5.1 Component tests: inheritance prefill, uniqueness rejection,
-  derivation at save, blocked save without a category (A)
-- [ ] 5.2 Component tests: prefill is editable, override still works (B)
-- [ ] 5.3 Migration test 10 → 11 incl. the legacy-data rules (A)
-- [ ] 5.4 E2E tests for the new creation flow and the new add-expense flow
-
-## 6. Verification
-
-- [ ] 6.1 Existing pocket/expense UI tests keep passing (test tags kept
-  where the screens survive)
-- [ ] 6.2 CI green; screenshot diff reviewed and sent
-- [ ] 6.3 Specs synced and change archived after Amir's sign-off
+- [ ] 5.1 CI green; screenshot diff reviewed and mobile shots sent.
+- [ ] 5.2 Specs synced and change archived after Amir's sign-off.

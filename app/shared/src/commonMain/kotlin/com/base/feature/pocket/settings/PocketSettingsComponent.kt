@@ -23,6 +23,10 @@ data class PocketSettingsState(
     val selectedColor: Long = 0xFF316342,
     val selectedIcon: String = "coffee",
     val selectedCategory: CategoryEntity? = null,
+    val categories: List<CategoryEntity> = emptyList(),
+    val manualMode: Boolean = false,
+    val showManualConfirm: Boolean = false,
+    val linkedCategoryIds: Set<Long> = emptySet(),
     val balanceAmount: Long = 0,
     val topUpAmountText: String = "",
     val monthlyTopUpAmount: Long = 0L,
@@ -45,6 +49,14 @@ interface PocketSettingsComponent {
   fun onCategoryChanged(categoryId: Long?)
 
   fun onCategoryCleared()
+
+  fun onManualSetupClicked()
+
+  fun onManualConfirmConfirmed()
+
+  fun onManualConfirmDismissed()
+
+  fun onLinkedCategoryToggled(category: CategoryEntity)
 
   fun onTopUpAmountChanged(amount: String)
 
@@ -89,6 +101,11 @@ class DefaultPocketSettingsComponent(
   override val state: Value<PocketSettingsState> = _state
 
   init {
+    scope.launch {
+      categoryRepository.observeCategories().collect { categories ->
+        _state.update { it.copy(categories = categories) }
+      }
+    }
     if (pocketId != null) {
       scope.launch {
         val pocket = pocketRepository.getPocketById(pocketId)
@@ -97,6 +114,7 @@ class DefaultPocketSettingsComponent(
               pocket.categoryId?.let { catId ->
                 categoryRepository.observeCategories().first().firstOrNull { it.id == catId }
               }
+          val linkedIds = pocketRepository.getPocketCategoryIds(pocketId).toSet()
           _state.update {
             it.copy(
                 pocketId = pocket.id,
@@ -104,6 +122,8 @@ class DefaultPocketSettingsComponent(
                 selectedColor = pocket.color,
                 selectedIcon = pocket.icon,
                 selectedCategory = category,
+                linkedCategoryIds =
+                    linkedIds.ifEmpty { listOfNotNull(pocket.categoryId).toSet() },
                 monthlyTopUpAmount = pocket.monthlyTopUpAmount,
                 autoTopUpEnabled = pocket.autoTopUpEnabled,
             )
@@ -131,7 +151,20 @@ class DefaultPocketSettingsComponent(
   }
 
   override fun onCategorySelected(category: CategoryEntity?) {
-    _state.update { it.copy(selectedCategory = category) }
+    _state.update { state ->
+      // In the simple creation mode the pocket identity is live-linked to the
+      // category: picking one fills name, icon and color, picking another
+      // re-syncs all three. Edit mode and manual mode keep the identity
+      // independent.
+      val inherit = pocketId == null && !state.manualMode && category != null
+      state.copy(
+          selectedCategory = category,
+          linkedCategoryIds = listOfNotNull(category?.id).toSet(),
+          nameText = if (inherit) category.name else state.nameText,
+          selectedIcon = if (inherit) category.icon else state.selectedIcon,
+          selectedColor = if (inherit) category.color else state.selectedColor,
+      )
+    }
   }
 
   override fun onCategoryChanged(categoryId: Long?) {
@@ -141,13 +174,38 @@ class DefaultPocketSettingsComponent(
       scope.launch {
         val category =
             categoryRepository.observeCategories().first().firstOrNull { it.id == categoryId }
-        _state.update { it.copy(selectedCategory = category) }
+        onCategorySelected(category)
       }
     }
   }
 
   override fun onCategoryCleared() {
-    _state.update { it.copy(selectedCategory = null) }
+    _state.update { it.copy(selectedCategory = null, linkedCategoryIds = emptySet()) }
+  }
+
+  override fun onManualSetupClicked() {
+    _state.update { it.copy(showManualConfirm = true) }
+  }
+
+  override fun onManualConfirmConfirmed() {
+    _state.update { it.copy(manualMode = true, showManualConfirm = false) }
+  }
+
+  override fun onManualConfirmDismissed() {
+    _state.update { it.copy(showManualConfirm = false) }
+  }
+
+  override fun onLinkedCategoryToggled(category: CategoryEntity) {
+    _state.update { state ->
+      state.copy(
+          linkedCategoryIds =
+              if (category.id in state.linkedCategoryIds) {
+                state.linkedCategoryIds - category.id
+              } else {
+                state.linkedCategoryIds + category.id
+              },
+      )
+    }
   }
 
   override fun onTopUpAmountChanged(amount: String) {
@@ -176,7 +234,16 @@ class DefaultPocketSettingsComponent(
 
     _state.update { it.copy(isSaving = true) }
     try {
-      val categoryTag = currentState.selectedCategory?.name ?: "General"
+      // Links are saved in category-list order so the first one is a stable
+      // primary (it becomes pockets.categoryId and the card badge).
+      val orderedLinks =
+          currentState.categories
+              .filter { it.id in currentState.linkedCategoryIds }
+              .map { it.id }
+              .ifEmpty { currentState.linkedCategoryIds.toList() }
+      val primaryCategory =
+          currentState.categories.firstOrNull { it.id == orderedLinks.firstOrNull() }
+      val categoryTag = primaryCategory?.name ?: currentState.selectedCategory?.name ?: "General"
       val existingId = currentState.pocketId
       if (existingId != null) {
         pocketRepository.updatePocket(
@@ -185,7 +252,7 @@ class DefaultPocketSettingsComponent(
             categoryTag = categoryTag,
             icon = currentState.selectedIcon,
             color = currentState.selectedColor,
-            categoryId = currentState.selectedCategory?.id,
+            categoryIds = orderedLinks,
             monthlyTopUpAmount = currentState.monthlyTopUpAmount,
             autoTopUpEnabled = currentState.autoTopUpEnabled,
         )
@@ -198,7 +265,7 @@ class DefaultPocketSettingsComponent(
                 budgetAmount = currentState.balanceAmount,
                 icon = currentState.selectedIcon,
                 color = currentState.selectedColor,
-                categoryId = currentState.selectedCategory?.id,
+                categoryIds = orderedLinks,
                 monthlyTopUpAmount = currentState.monthlyTopUpAmount,
                 autoTopUpEnabled = currentState.autoTopUpEnabled,
             )
@@ -216,7 +283,24 @@ class DefaultPocketSettingsComponent(
   }
 
   override fun onBackClicked() {
-    onCancelled()
+    val currentState = _state.value
+    if (pocketId == null && currentState.manualMode) {
+      // Before saving, Back leaves manual mode and returns to the simple
+      // setup: the category stays selected and the identity follows it
+      // again, dropping any manual tweaks and extra links.
+      _state.update { state ->
+        val category = state.selectedCategory
+        state.copy(
+            manualMode = false,
+            nameText = category?.name ?: state.nameText,
+            selectedIcon = category?.icon ?: state.selectedIcon,
+            selectedColor = category?.color ?: state.selectedColor,
+            linkedCategoryIds = listOfNotNull(category?.id).toSet(),
+        )
+      }
+    } else {
+      onCancelled()
+    }
   }
 }
 
@@ -253,6 +337,10 @@ object FakePocketSettingsStateFactory {
       selectedColor: Long = 0xFF316342,
       selectedIcon: String = "coffee",
       selectedCategory: CategoryEntity? = null,
+      categories: List<CategoryEntity> = emptyList(),
+      manualMode: Boolean = false,
+      showManualConfirm: Boolean = false,
+      linkedCategoryIds: Set<Long> = listOfNotNull(selectedCategory?.id).toSet(),
       balanceAmount: Long = 0,
       topUpAmountText: String = "",
       monthlyTopUpAmount: Long = 0L,
@@ -266,6 +354,10 @@ object FakePocketSettingsStateFactory {
           selectedColor = selectedColor,
           selectedIcon = selectedIcon,
           selectedCategory = selectedCategory,
+          categories = categories,
+          manualMode = manualMode,
+          showManualConfirm = showManualConfirm,
+          linkedCategoryIds = linkedCategoryIds,
           balanceAmount = balanceAmount,
           topUpAmountText = topUpAmountText,
           monthlyTopUpAmount = monthlyTopUpAmount,
@@ -295,13 +387,47 @@ class FakePocketSettingsComponent(
   }
 
   override fun onCategorySelected(category: CategoryEntity?) {
-    _state.update { it.copy(selectedCategory = category) }
+    _state.update { state ->
+      val inherit = state.pocketId == null && !state.manualMode && category != null
+      state.copy(
+          selectedCategory = category,
+          linkedCategoryIds = listOfNotNull(category?.id).toSet(),
+          nameText = if (inherit) category.name else state.nameText,
+          selectedIcon = if (inherit) category.icon else state.selectedIcon,
+          selectedColor = if (inherit) category.color else state.selectedColor,
+      )
+    }
   }
 
   override fun onCategoryChanged(categoryId: Long?) {}
 
   override fun onCategoryCleared() {
-    _state.update { it.copy(selectedCategory = null) }
+    _state.update { it.copy(selectedCategory = null, linkedCategoryIds = emptySet()) }
+  }
+
+  override fun onManualSetupClicked() {
+    _state.update { it.copy(showManualConfirm = true) }
+  }
+
+  override fun onManualConfirmConfirmed() {
+    _state.update { it.copy(manualMode = true, showManualConfirm = false) }
+  }
+
+  override fun onManualConfirmDismissed() {
+    _state.update { it.copy(showManualConfirm = false) }
+  }
+
+  override fun onLinkedCategoryToggled(category: CategoryEntity) {
+    _state.update { state ->
+      state.copy(
+          linkedCategoryIds =
+              if (category.id in state.linkedCategoryIds) {
+                state.linkedCategoryIds - category.id
+              } else {
+                state.linkedCategoryIds + category.id
+              },
+      )
+    }
   }
 
   override fun onTopUpAmountChanged(amount: String) {
@@ -322,7 +448,22 @@ class FakePocketSettingsComponent(
 
   override fun onDeleteClicked(): Job = Job()
 
-  override fun onBackClicked() {}
+  override fun onBackClicked() {
+    _state.update { state ->
+      if (state.pocketId == null && state.manualMode) {
+        val category = state.selectedCategory
+        state.copy(
+            manualMode = false,
+            nameText = category?.name ?: state.nameText,
+            selectedIcon = category?.icon ?: state.selectedIcon,
+            selectedColor = category?.color ?: state.selectedColor,
+            linkedCategoryIds = listOfNotNull(category?.id).toSet(),
+        )
+      } else {
+        state
+      }
+    }
+  }
 }
 
 @Fake

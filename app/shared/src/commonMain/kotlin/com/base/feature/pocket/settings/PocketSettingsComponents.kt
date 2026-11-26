@@ -14,6 +14,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -22,6 +26,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +42,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.Icons
+import com.base.feature.category.CategoryOptionData
+import com.base.feature.category.CategoryOptionItem
 import com.base.feature.category.add.CategoryColorsWrapper
 import com.base.feature.category.add.CategoryIconFilter
 import com.base.feature.category.add.CategoryIconsWrapper
@@ -49,8 +57,16 @@ import com.base.ui.RequestFocusOnce
 import com.base.ui.components.AccentColorPicker
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
+import pockety.app.shared.generated.resources.cancel_action
 import pockety.app.shared.generated.resources.category_icon_label
 import pockety.app.shared.generated.resources.pocket_icon_description
+import pockety.app.shared.generated.resources.pocket_linked_categories_subtitle
+import pockety.app.shared.generated.resources.pocket_linked_categories_title
+import pockety.app.shared.generated.resources.pocket_manual_dialog_confirm
+import pockety.app.shared.generated.resources.pocket_manual_dialog_text
+import pockety.app.shared.generated.resources.pocket_manual_dialog_title
+import pockety.app.shared.generated.resources.pocket_manual_setup_subtitle
+import pockety.app.shared.generated.resources.pocket_manual_setup_title
 import pockety.app.shared.generated.resources.pocket_name_label
 
 private const val ICONS_PER_ROW = 5
@@ -104,7 +120,7 @@ private fun PocketNameField(
 ) {
   val focusManager = LocalFocusManager.current
   val focusRequester = remember { FocusRequester() }
-  if (state.pocketId == null) {
+  if (state.pocketId == null && state.manualMode) {
     RequestFocusOnce(focusRequester)
   }
 
@@ -295,6 +311,157 @@ private fun PocketIconGrid(
       }
     }
   }
+}
+
+@Composable
+fun PocketCategoryPickerList(
+    component: PocketSettingsComponent,
+    state: PocketSettingsState,
+    modifier: Modifier = Modifier,
+) {
+  Column(
+      modifier = modifier.fillMaxWidth(),
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    state.categories.forEach { category ->
+      CategoryOptionItem(
+          data =
+              CategoryOptionData(
+                  name = category.name,
+                  icon = resolveCategoryIcon(category.icon),
+                  iconBackgroundColor = Color(category.color),
+                  iconContentColor = Color.White,
+                  isSelected = state.selectedCategory?.id == category.id,
+              ),
+          onClick = { component.onCategorySelected(category) },
+          modifier = Modifier.testTag("pocket-category-${category.id}"),
+      )
+    }
+  }
+}
+
+@Composable
+fun PocketLinkedCategoriesSection(
+    component: PocketSettingsComponent,
+    state: PocketSettingsState,
+    modifier: Modifier = Modifier,
+) {
+  Column(
+      modifier = modifier.fillMaxWidth(),
+      verticalArrangement = Arrangement.spacedBy(8.dp),
+  ) {
+    Text(
+        text = stringResource(Res.string.pocket_linked_categories_title),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.padding(start = 4.dp),
+    )
+    Text(
+        text = stringResource(Res.string.pocket_linked_categories_subtitle),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = 4.dp),
+    )
+    state.categories.forEach { category ->
+      val isLinked = category.id in state.linkedCategoryIds
+      CategoryOptionItem(
+          data =
+              CategoryOptionData(
+                  name = category.name,
+                  icon = resolveCategoryIcon(category.icon),
+                  iconBackgroundColor = Color(category.color),
+                  iconContentColor = Color.White,
+                  isSelected = isLinked,
+              ),
+          onClick = { component.onLinkedCategoryToggled(category) },
+          modifier = Modifier.testTag("pocket-linked-category-${category.id}"),
+          trailingContent =
+              if (isLinked) {
+                {
+                  Icon(
+                      imageVector = Icons.Default.CheckCircle,
+                      contentDescription = null,
+                      tint = MaterialTheme.colorScheme.primary,
+                      modifier = Modifier.size(22.dp),
+                  )
+                }
+              } else {
+                null
+              },
+      )
+    }
+  }
+}
+
+/** The quiet row at the bottom of the simple creation mode that gates manual setup. */
+@Composable
+fun PocketManualSetupRow(
+    component: PocketSettingsComponent,
+    modifier: Modifier = Modifier,
+) {
+  Surface(
+      onClick = component::onManualSetupClicked,
+      modifier = modifier.fillMaxWidth().testTag("manual-setup-row"),
+      shape = RoundedCornerShape(16.dp),
+      color = MaterialTheme.colorScheme.surfaceContainerLow,
+  ) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+      Icon(
+          imageVector = Icons.Default.Tune,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.secondary,
+          modifier = Modifier.size(20.dp),
+      )
+      Column(
+          modifier = Modifier.weight(1f),
+          verticalArrangement = Arrangement.spacedBy(2.dp),
+      ) {
+        Text(
+            text = stringResource(Res.string.pocket_manual_setup_title),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Text(
+            text = stringResource(Res.string.pocket_manual_setup_subtitle),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+      }
+      Icon(
+          imageVector = Icons.Default.ExpandMore,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.secondary,
+          modifier = Modifier.size(22.dp),
+      )
+    }
+  }
+}
+
+@Composable
+fun PocketManualConfirmDialog(
+    component: PocketSettingsComponent,
+    modifier: Modifier = Modifier,
+) {
+  AlertDialog(
+      onDismissRequest = component::onManualConfirmDismissed,
+      modifier = modifier.testTag("manual-setup-dialog"),
+      title = { Text(text = stringResource(Res.string.pocket_manual_dialog_title)) },
+      text = { Text(text = stringResource(Res.string.pocket_manual_dialog_text)) },
+      confirmButton = {
+        TextButton(onClick = component::onManualConfirmConfirmed) {
+          Text(text = stringResource(Res.string.pocket_manual_dialog_confirm))
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = component::onManualConfirmDismissed) {
+          Text(text = stringResource(Res.string.cancel_action))
+        }
+      },
+  )
 }
 
 @ComponentPreviews
