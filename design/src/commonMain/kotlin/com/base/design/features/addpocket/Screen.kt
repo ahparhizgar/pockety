@@ -35,10 +35,91 @@ import com.base.design.globalcomponents.defaultItemIcons
 import com.base.design.ui.ScreenPreviews
 
 /**
- * New-pocket creation with two modes:
- * - Category mode (default): pick one category and the pocket inherits its name, icon and color.
- * - Manual mode (tucked behind a quiet toggle): the full classic form, plus linking several
- *   categories to one pocket.
+ * Step 1 of new-pocket creation: pick zero or more categories for the pocket.
+ *
+ * The pick decides the next step: exactly one category leads to the simple setup (the pocket
+ * follows that category), while zero or several lead to the advanced setup.
+ */
+@Composable
+fun SelectPocketCategoriesScreen(
+    onBackClick: () -> Unit = {},
+    onContinueClick: () -> Unit = {},
+    initialSelectedIds: Set<String> = emptySet(),
+    modifier: Modifier = Modifier,
+) {
+  var selectedIds by remember { mutableStateOf(initialSelectedIds) }
+
+  Scaffold(
+      modifier = modifier.fillMaxSize(),
+      containerColor = MaterialTheme.colorScheme.surface,
+      topBar = { PocketyTopAppBar(title = "New Pocket", onBackClick = onBackClick) },
+      bottomBar = { PocketyBottomActionBar(text = "Continue", onClick = onContinueClick) },
+  ) { innerPadding ->
+    Box(
+        modifier = Modifier.fillMaxSize().padding(innerPadding),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+      Column(
+          modifier =
+              Modifier.fillMaxWidth()
+                  .widthIn(max = 640.dp)
+                  .verticalScroll(rememberScrollState())
+                  .padding(horizontal = 16.dp, vertical = 12.dp),
+          verticalArrangement = Arrangement.spacedBy(20.dp),
+      ) {
+        Text(
+            text = "Which categories belong to this pocket?",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Text(
+            text =
+                "Pick one category for a simple pocket that takes its name, icon and " +
+                    "color \u2014 or pick none or several for an advanced pocket you set " +
+                    "up yourself.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+          samplePocketCategories.forEach { category ->
+            LinkedCategoryRow(
+                category = category,
+                isLinked = category.id in selectedIds,
+                onClick = {
+                  selectedIds =
+                      if (category.id in selectedIds) selectedIds - category.id
+                      else selectedIds + category.id
+                },
+            )
+          }
+        }
+
+        Text(
+            text =
+                when (selectedIds.size) {
+                  0 -> "No category picked \u2014 you will set the pocket up manually."
+                  1 ->
+                      "Simple pocket \u2014 it follows " +
+                          "\u201C${samplePocketCategories.first { it.id in selectedIds }.name}\u201D."
+                  else -> "Advanced pocket with ${selectedIds.size} categories."
+                },
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+      }
+    }
+  }
+}
+
+/**
+ * Step 2 of new-pocket creation, in two modes decided by the step 1 pick:
+ * - Simple mode (exactly one category picked): the pocket inherits the category's name, icon and
+ *   color and keeps following it. The quiet manual-setup row still offers the advanced form.
+ * - Advanced mode (zero or several picked, or entered from simple mode through the confirmation
+ *   dialog): the full classic form, plus linking several categories to one pocket.
  */
 @Composable
 fun AddPocketScreen(
@@ -77,8 +158,8 @@ fun AddPocketScreen(
       topBar = {
         PocketyTopAppBar(
             title = "New Pocket",
-            // Before saving, Back in manual mode returns to the simple category setup
-            // instead of leaving the flow.
+            // In the real flow Back returns to the step 1 category pick; in this design
+            // mock, Back in manual mode first returns to the simple setup.
             onBackClick = { if (manual) manual = false else onBackClick() },
         )
       },
@@ -98,7 +179,7 @@ fun AddPocketScreen(
       ) {
         if (!manual) {
           Text(
-              text = "Start from a category \u2014 the pocket takes its name, icon and color.",
+              text = "This pocket follows its category \u2014 the name, icon and color come from it.",
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
           )
@@ -112,23 +193,13 @@ fun AddPocketScreen(
                 contentColor = selectedColor.onColor,
             )
             InheritedFromCategoryNote(categoryName = selectedCategory!!.name)
-          }
 
-          AddPocketSectionTitle(text = "Category")
-          Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            samplePocketCategories.forEach { category ->
-              AddPocketCategoryRow(
-                  category = category,
-                  isSelected = selectedCategory?.id == category.id,
-                  onClick = {
-                    selectedCategory = category
-                    pocketName = category.name
-                    selectedColor = category.color
-                    selectedIcon =
-                        defaultItemIcons.firstOrNull { it.icon == category.icon } ?: selectedIcon
-                  },
-              )
-            }
+            AddPocketSectionTitle(text = "Category")
+            AddPocketCategoryRow(
+                category = selectedCategory!!,
+                isSelected = true,
+                onClick = {},
+            )
           }
 
           MonthlyAllocationCard(
@@ -231,13 +302,25 @@ fun ManualSetupToggleShowcase(modifier: Modifier = Modifier) {
 
 @ScreenPreviews
 @Composable
-fun AddPocketScreenCategoryPreview() {
-  AddPocketScreen()
+fun SelectPocketCategoriesScreenPreview() {
+  SelectPocketCategoriesScreen()
 }
 
 @ScreenPreviews
 @Composable
-fun AddPocketScreenCategorySelectedPreview() {
+fun SelectPocketCategoriesScreenOnePreview() {
+  SelectPocketCategoriesScreen(initialSelectedIds = setOf("cafe"))
+}
+
+@ScreenPreviews
+@Composable
+fun SelectPocketCategoriesScreenManyPreview() {
+  SelectPocketCategoriesScreen(initialSelectedIds = setOf("cafe", "groceries"))
+}
+
+@ScreenPreviews
+@Composable
+fun AddPocketScreenSimplePreview() {
   AddPocketScreen(initialCategoryId = "cafe")
 }
 

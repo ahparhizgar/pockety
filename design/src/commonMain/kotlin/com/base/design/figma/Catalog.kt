@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.base.design.features.addcategory.AddCategoryScreen
 import com.base.design.features.addpocket.AddPocketScreen
 import com.base.design.features.addpocket.ManualSetupToggleShowcase
+import com.base.design.features.addpocket.SelectPocketCategoriesScreen
 import com.base.design.features.categorydetail.CategoryDetailScreen
 import com.base.design.features.categorylist.CategoryListScreen
 import com.base.design.features.categorylist.defaultCategoryList
@@ -111,27 +112,51 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                                   isNewPocket = true,
                               )
                             },
-                            FigmaScreenItem("08c", "New Pocket (Category)", "Pick a Category") {
-                              AddPocketScreen()
+                            FigmaScreenItem(
+                                "08c",
+                                "New Pocket (Select Categories)",
+                                "Step 1 \u00B7 None Picked",
+                            ) {
+                              SelectPocketCategoriesScreen()
                             },
                             FigmaScreenItem(
                                 "08d",
-                                "New Pocket (Category Selected)",
-                                "Inherits Identity",
+                                "New Pocket (Select Categories, One)",
+                                "Step 1 \u00B7 Simple Next",
+                            ) {
+                              SelectPocketCategoriesScreen(initialSelectedIds = setOf("cafe"))
+                            },
+                            FigmaScreenItem(
+                                "08e",
+                                "New Pocket (Select Categories, Many)",
+                                "Step 1 \u00B7 Advanced Next",
+                            ) {
+                              SelectPocketCategoriesScreen(
+                                  initialSelectedIds = setOf("cafe", "groceries"),
+                              )
+                            },
+                            FigmaScreenItem(
+                                "08f",
+                                "New Pocket (Simple)",
+                                "Step 2 \u00B7 Inherits Identity",
                             ) {
                               AddPocketScreen(initialCategoryId = "cafe")
                             },
-                            FigmaScreenItem("08e", "New Pocket (Manual)", "Multi-Category") {
+                            FigmaScreenItem(
+                                "08g",
+                                "New Pocket (Advanced)",
+                                "Step 2 \u00B7 Multi-Category",
+                            ) {
                               AddPocketScreen(
                                   manualExpanded = true,
                                   initialLinkedCategoryIds = setOf("cafe", "groceries"),
                               )
                             },
-                            FigmaScreenItem("08f", "New Pocket (Manual Toggle)", "Quiet Row") {
+                            FigmaScreenItem("08h", "New Pocket (Manual Toggle)", "Quiet Row") {
                               ManualSetupToggleShowcase()
                             },
                             FigmaScreenItem(
-                                "08g",
+                                "08i",
                                 "New Pocket (Manual Confirm)",
                                 "Enter Advanced",
                             ) {
