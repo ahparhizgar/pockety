@@ -45,7 +45,9 @@ class PocketSettingsE2eUiTest {
   }
 
   private fun seedCategory(koin: Koin, name: String, icon: String, color: Long): Long =
-      runBlocking { koin.get<CategoryRepository>().addCategory(name, icon, color) }
+      runBlocking {
+        koin.get<CategoryRepository>().addCategory(name, icon, color)
+      }
 
   @Test
   fun testCreatePocketWithKeyboardInputAndSave() = runComposeUiTest {
@@ -154,7 +156,10 @@ class PocketSettingsE2eUiTest {
 
     // Select Coral Red color swatch
     val coralRedHex = 0xFFE57373
-    onNode(hasTestTag("color-swatch-$coralRedHex")).waitForExistence().performScrollTo().performClick()
+    onNode(hasTestTag("color-swatch-$coralRedHex"))
+        .waitForExistence()
+        .performScrollTo()
+        .performClick()
 
     // Coral Red swatch is selected and has checkmark
     onNode(hasText("Coral Red")).assertExists()

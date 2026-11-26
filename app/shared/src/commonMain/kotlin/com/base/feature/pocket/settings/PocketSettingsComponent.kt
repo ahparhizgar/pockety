@@ -122,8 +122,7 @@ class DefaultPocketSettingsComponent(
                 selectedColor = pocket.color,
                 selectedIcon = pocket.icon,
                 selectedCategory = category,
-                linkedCategoryIds =
-                    linkedIds.ifEmpty { listOfNotNull(pocket.categoryId).toSet() },
+                linkedCategoryIds = linkedIds.ifEmpty { listOfNotNull(pocket.categoryId).toSet() },
                 monthlyTopUpAmount = pocket.monthlyTopUpAmount,
                 autoTopUpEnabled = pocket.autoTopUpEnabled,
             )

@@ -66,9 +66,9 @@ data class PocketTopUpEntity(
 )
 
 /**
- * All categories linked to a pocket. [PocketEntity.categoryId] stays as the primary link
- * (it drives the pocket card badge); this table holds every link, primary included, so a
- * pocket created in manual mode can follow several categories.
+ * All categories linked to a pocket. [PocketEntity.categoryId] stays as the primary link (it drives
+ * the pocket card badge); this table holds every link, primary included, so a pocket created in
+ * manual mode can follow several categories.
  */
 @Entity(
     tableName = "pocket_categories",
@@ -165,7 +165,8 @@ interface PocketDao {
   @Query("DELETE FROM pocket_categories WHERE pocketId = :pocketId")
   suspend fun deletePocketCategories(pocketId: Long)
 
-  @Query("SELECT * FROM pocket_categories") fun observeAllPocketCategories(): Flow<List<PocketCategoryEntity>>
+  @Query("SELECT * FROM pocket_categories")
+  fun observeAllPocketCategories(): Flow<List<PocketCategoryEntity>>
 
   @Query("SELECT categoryId FROM pocket_categories WHERE pocketId = :pocketId")
   suspend fun getPocketCategoryIds(pocketId: Long): List<Long>
@@ -458,7 +459,8 @@ class FakePocketRepository(
   }
 
   override fun observePockets(): Flow<List<PocketItemModel>> =
-      combine(pocketsFlow, expensesFlow, topUpsFlow, linksFlow) { pockets, expenses, topUps, links ->
+      combine(pocketsFlow, expensesFlow, topUpsFlow, linksFlow) { pockets, expenses, topUps, links
+        ->
         val linksByPocket = links.groupBy({ it.pocketId }, { it.categoryId })
         pockets.map { pocket ->
           val totalTopUp = topUps.filter { it.pocketId == pocket.id }.sumOf { it.amount }
