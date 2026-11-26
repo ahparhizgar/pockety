@@ -71,5 +71,5 @@
 
 ## 5. Verification
 
-- [ ] 5.1 CI green; screenshot diff reviewed and mobile shots sent.
+- [x] 5.1 CI green; screenshot diff reviewed and mobile shots sent.
 - [ ] 5.2 Specs synced and change archived after Amir's sign-off.
