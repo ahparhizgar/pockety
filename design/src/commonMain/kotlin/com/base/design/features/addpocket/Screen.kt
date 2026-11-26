@@ -86,6 +86,11 @@ fun AddPocketScreen(
                   .padding(horizontal = 16.dp, vertical = 12.dp),
           verticalArrangement = Arrangement.spacedBy(20.dp),
       ) {
+        ManualSetupToggle(
+            expanded = manual,
+            onToggle = { manual = !manual },
+        )
+
         if (!manual) {
           Text(
               text = "Start from a category \u2014 the pocket takes its name, icon and color.",
@@ -181,11 +186,6 @@ fun AddPocketScreen(
               onTuneClick = {},
           )
         }
-
-        ManualSetupToggle(
-            expanded = manual,
-            onToggle = { manual = !manual },
-        )
 
         Spacer(modifier = Modifier.height(16.dp))
       }
