@@ -256,9 +256,7 @@ class DefaultPocketSettingsComponent(
   }
 
   override fun onManualConfirmConfirmed() {
-    _state.update {
-      it.copy(manualMode = true, manualFromSimple = true, showManualConfirm = false)
-    }
+    _state.update { it.copy(manualMode = true, manualFromSimple = true, showManualConfirm = false) }
   }
 
   override fun onManualConfirmDismissed() {
@@ -548,9 +546,7 @@ class FakePocketSettingsComponent(
   }
 
   override fun onManualConfirmConfirmed() {
-    _state.update {
-      it.copy(manualMode = true, manualFromSimple = true, showManualConfirm = false)
-    }
+    _state.update { it.copy(manualMode = true, manualFromSimple = true, showManualConfirm = false) }
   }
 
   override fun onManualConfirmDismissed() {

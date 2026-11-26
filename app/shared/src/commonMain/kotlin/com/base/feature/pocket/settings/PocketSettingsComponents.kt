@@ -22,8 +22,8 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -68,10 +68,10 @@ import pockety.app.shared.generated.resources.pocket_linked_categories_title
 import pockety.app.shared.generated.resources.pocket_manual_dialog_confirm
 import pockety.app.shared.generated.resources.pocket_manual_dialog_text
 import pockety.app.shared.generated.resources.pocket_manual_dialog_title
-import pockety.app.shared.generated.resources.pocket_no_category
 import pockety.app.shared.generated.resources.pocket_manual_setup_subtitle
 import pockety.app.shared.generated.resources.pocket_manual_setup_title
 import pockety.app.shared.generated.resources.pocket_name_label
+import pockety.app.shared.generated.resources.pocket_no_category
 
 private const val ICONS_PER_ROW = 5
 
@@ -318,8 +318,8 @@ private fun PocketIconGrid(
 }
 
 /**
- * Step 1 of creation: the "No Category" escape hatch (goes straight to the advanced form),
- * a divider, then the multi-select category rows.
+ * Step 1 of creation: the "No Category" escape hatch (goes straight to the advanced form), a
+ * divider, then the multi-select category rows.
  */
 @Composable
 fun PocketCategoryPickList(
