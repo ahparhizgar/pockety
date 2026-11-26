@@ -142,13 +142,14 @@ class DefaultPocketSettingsComponent(
                   category != null &&
                   pocket.name == category.name &&
                   pocket.icon == category.icon
+          val simpleCategory = category?.takeIf { isSimple }
           _state.update {
             it.copy(
                 pocketId = pocket.id,
                 manualMode = !isSimple,
-                nameText = if (isSimple && category != null) category.name else pocket.name,
-                selectedColor = if (isSimple && category != null) category.color else pocket.color,
-                selectedIcon = if (isSimple && category != null) category.icon else pocket.icon,
+                nameText = simpleCategory?.name ?: pocket.name,
+                selectedColor = simpleCategory?.color ?: pocket.color,
+                selectedIcon = simpleCategory?.icon ?: pocket.icon,
                 selectedCategory = category,
                 linkedCategoryIds = linkedIds,
                 monthlyTopUpAmount = pocket.monthlyTopUpAmount,
