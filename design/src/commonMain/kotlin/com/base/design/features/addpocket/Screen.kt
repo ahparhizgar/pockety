@@ -137,22 +137,6 @@ fun AddPocketScreen(
               contentColor = selectedColor.onColor,
           )
 
-          AccentColorPicker(
-              colors = defaultItemColors,
-              selectedColor = selectedColor,
-              onColorSelected = { selectedColor = it },
-          )
-
-          IconPickerSection(
-              icons = defaultItemIcons,
-              selectedIcon = selectedIcon,
-              onIconSelected = { selectedIcon = it },
-              filters = defaultIconCategoryFilters,
-              selectedFilter = selectedIconFilter,
-              onFilterSelected = { selectedIconFilter = it },
-              accentColor = selectedColor.color,
-          )
-
           AddPocketSectionTitle(text = "Linked categories")
           Text(
               text = "Expenses in these categories count toward this pocket.",
@@ -172,6 +156,22 @@ fun AddPocketScreen(
               )
             }
           }
+
+          AccentColorPicker(
+              colors = defaultItemColors,
+              selectedColor = selectedColor,
+              onColorSelected = { selectedColor = it },
+          )
+
+          IconPickerSection(
+              icons = defaultItemIcons,
+              selectedIcon = selectedIcon,
+              onIconSelected = { selectedIcon = it },
+              filters = defaultIconCategoryFilters,
+              selectedFilter = selectedIconFilter,
+              onFilterSelected = { selectedIconFilter = it },
+              accentColor = selectedColor.color,
+          )
 
           MonthlyAllocationCard(
               allocatedAmount = allocatedAmount,
