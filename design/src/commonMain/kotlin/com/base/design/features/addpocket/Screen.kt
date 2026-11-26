@@ -179,7 +179,8 @@ fun AddPocketScreen(
       ) {
         if (!manual) {
           Text(
-              text = "This pocket follows its category \u2014 the name, icon and color come from it.",
+              text =
+                  "This pocket follows its category \u2014 the name, icon and color come from it.",
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
           )
