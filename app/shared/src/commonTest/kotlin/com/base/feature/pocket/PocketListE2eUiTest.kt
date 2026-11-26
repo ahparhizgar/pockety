@@ -61,7 +61,6 @@ class PocketListE2eUiTest {
     // Assert pocket budget card renders name, category, and formatted amount
     onNode(hasTestTag("pockets-screen")).waitForExistence().assertExists()
     onNode(hasText("Groceries & Household")).waitForExistence().assertExists()
-    onNode(hasText("Groceries")).assertExists()
     onNode(hasText("100,000 T")).assertExists()
 
     // Verify pocket budget card does not render top-up button

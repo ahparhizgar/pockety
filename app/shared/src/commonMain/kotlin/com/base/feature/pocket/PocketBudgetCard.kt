@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material3.Icon
@@ -123,53 +122,13 @@ private fun PocketCardHeader(pocket: PocketItemModel) {
 
 @Composable
 private fun PocketCardTitle(pocket: PocketItemModel, modifier: Modifier = Modifier) {
-  Column(
+  Text(
+      text = pocket.name,
+      style = MaterialTheme.typography.titleMedium,
+      fontWeight = FontWeight.SemiBold,
+      color = MaterialTheme.colorScheme.onSurface,
       modifier = modifier,
-      verticalArrangement = Arrangement.spacedBy(4.dp),
-  ) {
-    // The category label only exists when the pocket actually has a category.
-    if (pocket.categoryId != null) {
-      Surface(
-          shape = CircleShape,
-          color =
-              if (pocket.isOverBudget) {
-                MaterialTheme.colorScheme.surfaceContainerHighest
-              } else {
-                MaterialTheme.colorScheme.secondaryContainer
-              },
-          contentColor =
-              if (pocket.isOverBudget) {
-                MaterialTheme.colorScheme.secondary
-              } else {
-                MaterialTheme.colorScheme.onSecondaryContainer
-              },
-      ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
-        ) {
-          Icon(
-              imageVector = Icons.AutoMirrored.Filled.Label,
-              contentDescription = null,
-              modifier = Modifier.size(12.dp),
-          )
-          Text(
-              text = pocket.categoryTag,
-              style = MaterialTheme.typography.labelSmall,
-              fontWeight = FontWeight.SemiBold,
-          )
-        }
-      }
-    }
-
-    Text(
-        text = pocket.name,
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.SemiBold,
-        color = MaterialTheme.colorScheme.onSurface,
-    )
-  }
+  )
 }
 
 @Composable
