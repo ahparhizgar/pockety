@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.LabelOff
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -87,6 +89,36 @@ fun AddPocketCategoryRow(
           } else {
             null
           },
+  )
+}
+
+/**
+ * The "No Category" escape hatch at the top of the step 1 list: makes it obvious the user can
+ * skip categories entirely. Tapping it goes straight to the next step (the advanced setup)
+ * instead of selecting anything.
+ */
+@Composable
+fun NoCategoryRow(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+  CategoryOptionItem(
+      name = "No Category",
+      icon = Icons.AutoMirrored.Filled.LabelOff,
+      iconBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+      iconContentColor = MaterialTheme.colorScheme.outline,
+      isSelected = false,
+      badgeText = null,
+      onClick = onClick,
+      modifier = modifier,
+      trailingContent = {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.outline,
+            modifier = Modifier.size(22.dp),
+        )
+      },
   )
 }
 

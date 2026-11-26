@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -82,6 +83,9 @@ fun SelectPocketCategoriesScreen(
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+          // Skipping categories is a first-class choice: it goes straight to the next step.
+          NoCategoryRow(onClick = onContinueClick)
+          HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
           samplePocketCategories.forEach { category ->
             LinkedCategoryRow(
                 category = category,
