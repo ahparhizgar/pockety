@@ -46,6 +46,7 @@ fun AddPocketScreen(
     onSaveClick: () -> Unit = {},
     initialCategoryId: String? = null,
     manualExpanded: Boolean = false,
+    manualConfirmShown: Boolean = false,
     initialLinkedCategoryIds: Set<String> = emptySet(),
     currencySymbol: String = "T",
     modifier: Modifier = Modifier,
@@ -54,6 +55,7 @@ fun AddPocketScreen(
     mutableStateOf(samplePocketCategories.firstOrNull { it.id == initialCategoryId })
   }
   var manual by remember { mutableStateOf(manualExpanded) }
+  var showManualConfirm by remember { mutableStateOf(manualConfirmShown) }
   var pocketName by remember { mutableStateOf(selectedCategory?.name ?: "") }
   var selectedIcon by remember {
     mutableStateOf(
@@ -183,14 +185,26 @@ fun AddPocketScreen(
           )
         }
 
-        ManualSetupToggle(
-            expanded = manual,
-            onToggle = { manual = !manual },
-        )
+        if (!manual) {
+          ManualSetupToggle(
+              expanded = false,
+              onToggle = { showManualConfirm = true },
+          )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
       }
     }
+  }
+
+  if (showManualConfirm) {
+    ManualSetupConfirmDialog(
+        onConfirm = {
+          showManualConfirm = false
+          manual = true
+        },
+        onDismiss = { showManualConfirm = false },
+    )
   }
 }
 
@@ -202,11 +216,8 @@ fun ManualSetupToggleShowcase(modifier: Modifier = Modifier) {
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-      AddPocketSectionTitle(text = "Collapsed (at the bottom of the screen)")
+      AddPocketSectionTitle(text = "The row at the bottom of the category screen")
       ManualSetupToggle(expanded = false, onToggle = {})
-      Spacer(modifier = Modifier.height(12.dp))
-      AddPocketSectionTitle(text = "Expanded")
-      ManualSetupToggle(expanded = true, onToggle = {})
     }
   }
 }

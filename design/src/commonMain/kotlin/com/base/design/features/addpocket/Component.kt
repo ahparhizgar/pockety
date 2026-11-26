@@ -12,10 +12,12 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -155,6 +157,31 @@ fun ManualSetupToggle(
       )
     }
   }
+}
+
+/**
+ * Confirmation shown when the user taps the manual-setup row: entering manual mode is a
+ * deliberate step, after which the whole screen switches to the manual form.
+ */
+@Composable
+fun ManualSetupConfirmDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+  AlertDialog(
+      onDismissRequest = onDismiss,
+      modifier = modifier,
+      title = { Text("Switch to manual setup?") },
+      text = {
+        Text(
+            "The pocket keeps its current name, icon and color, but they stop following " +
+                "the category. You can also link several categories to this pocket."
+        )
+      },
+      confirmButton = { TextButton(onClick = onConfirm) { Text("Switch") } },
+      dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+  )
 }
 
 /** Small note shown under the identity header when the pocket inherits from a category. */
