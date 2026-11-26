@@ -54,6 +54,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.db.FakePocketItemModelFactory
 import com.base.db.PocketItemModel
 import com.base.feature.category.add.resolveCategoryIcon
+import com.base.feature.pocket.PocketShapeBadge
 import com.base.ui.ComponentPreviews
 import com.base.ui.ScreenPreviews
 import com.base.ui.colorSchemeExtended
@@ -383,23 +384,14 @@ private fun PocketOptionBadge(
     contentColor: Color,
     modifier: Modifier = Modifier,
 ) {
-  Surface(
-      modifier = modifier.size(44.dp),
-      shape = RoundedCornerShape(14.dp),
+  PocketShapeBadge(
+      icon = icon,
       color = backgroundColor,
-  ) {
-    Box(
-        modifier = Modifier.size(44.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-      Icon(
-          imageVector = icon,
-          contentDescription = null,
-          tint = contentColor,
-          modifier = Modifier.size(22.dp),
-      )
-    }
-  }
+      contentDescription = null,
+      modifier = modifier,
+      badgeSize = 44.dp,
+      iconSize = 20.dp,
+  )
 }
 
 @Composable

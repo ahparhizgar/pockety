@@ -171,22 +171,11 @@ private fun PocketCardTitle(pocket: PocketItemModel, modifier: Modifier = Modifi
 
 @Composable
 private fun PocketCardIconBadge(pocket: PocketItemModel) {
-  val icon = resolveCategoryIcon(pocket.icon)
-
-  Surface(
-      modifier = Modifier.size(40.dp),
-      shape = CircleShape,
+  PocketShapeBadge(
+      icon = resolveCategoryIcon(pocket.icon),
       color = Color(pocket.color),
-  ) {
-    Box(contentAlignment = Alignment.Center) {
-      Icon(
-          imageVector = icon,
-          contentDescription = pocket.name,
-          tint = Color.White,
-          modifier = Modifier.size(20.dp),
-      )
-    }
-  }
+      contentDescription = pocket.name,
+  )
 }
 
 @Composable

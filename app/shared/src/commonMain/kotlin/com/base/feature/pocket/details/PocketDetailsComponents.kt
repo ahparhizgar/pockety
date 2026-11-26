@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.base.feature.category.add.resolveCategoryIcon
+import com.base.feature.pocket.PocketShapeBadge
 import com.base.ui.ComponentPreviews
 import com.base.ui.money.currencySymbol
 import com.base.ui.money.moneyAmount
@@ -58,20 +59,13 @@ fun PocketDetailsHeaderSection(
       modifier = modifier.fillMaxWidth().padding(vertical = 8.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    Surface(
-        modifier = Modifier.size(64.dp),
-        shape = CircleShape,
+    PocketShapeBadge(
+        icon = resolveCategoryIcon(icon),
         color = Color(color),
-    ) {
-      Box(contentAlignment = Alignment.Center) {
-        Icon(
-            imageVector = resolveCategoryIcon(icon),
-            contentDescription = name,
-            tint = Color.White,
-            modifier = Modifier.size(32.dp),
-        )
-      }
-    }
+        contentDescription = name,
+        badgeSize = 64.dp,
+        iconSize = 30.dp,
+    )
 
     Spacer(modifier = Modifier.height(12.dp))
 
