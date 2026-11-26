@@ -86,11 +86,6 @@ fun AddPocketScreen(
                   .padding(horizontal = 16.dp, vertical = 12.dp),
           verticalArrangement = Arrangement.spacedBy(20.dp),
       ) {
-        ManualSetupToggle(
-            expanded = manual,
-            onToggle = { manual = !manual },
-        )
-
         if (!manual) {
           Text(
               text = "Start from a category \u2014 the pocket takes its name, icon and color.",
@@ -187,9 +182,32 @@ fun AddPocketScreen(
           )
         }
 
+        ManualSetupToggle(
+            expanded = manual,
+            onToggle = { manual = !manual },
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
       }
     }
+  }
+}
+
+/** Close-up of the quiet manual-setup row in both states, for design review. */
+@Composable
+fun ManualSetupToggleShowcase(modifier: Modifier = Modifier) {
+  Column(
+      modifier =
+          modifier
+              .fillMaxSize()
+              .padding(horizontal = 16.dp, vertical = 24.dp),
+      verticalArrangement = Arrangement.spacedBy(12.dp),
+  ) {
+    AddPocketSectionTitle(text = "Collapsed (at the bottom of the screen)")
+    ManualSetupToggle(expanded = false, onToggle = {})
+    Spacer(modifier = Modifier.height(12.dp))
+    AddPocketSectionTitle(text = "Expanded")
+    ManualSetupToggle(expanded = true, onToggle = {})
   }
 }
 

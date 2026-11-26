@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.base.design.features.addcategory.AddCategoryScreen
 import com.base.design.features.addpocket.AddPocketScreen
+import com.base.design.features.addpocket.ManualSetupToggleShowcase
 import com.base.design.features.categorydetail.CategoryDetailScreen
 import com.base.design.features.categorylist.CategoryListScreen
 import com.base.design.features.categorylist.defaultCategoryList
@@ -125,6 +126,9 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                                   manualExpanded = true,
                                   initialLinkedCategoryIds = setOf("cafe", "groceries"),
                               )
+                            },
+                            FigmaScreenItem("08f", "New Pocket (Manual Toggle)", "Quiet Row") {
+                              ManualSetupToggleShowcase()
                             },
                             FigmaScreenItem("06", "App Settings", "Preferences") {
                               SettingsScreen()
