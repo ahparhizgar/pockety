@@ -165,36 +165,40 @@ private fun SimpleCreationContent(
     component: PocketSettingsComponent,
     state: PocketSettingsState,
 ) {
-  Text(
-      text = stringResource(Res.string.pocket_create_intro),
-      style = MaterialTheme.typography.bodyMedium,
-      color = MaterialTheme.colorScheme.onSurfaceVariant,
-  )
 
-  val selectedCategory = state.selectedCategory
-  if (selectedCategory != null || state.nameError != null) {
-    PocketIdentitySection(component = component, state = state)
-    if (selectedCategory != null) {
-      Text(
-          text = stringResource(Res.string.pocket_inherited_note, selectedCategory.name),
-          style = MaterialTheme.typography.bodySmall,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-          modifier = Modifier.padding(start = 4.dp),
-      )
+  Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+    Text(
+        text = stringResource(Res.string.pocket_create_intro),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+
+    val selectedCategory = state.selectedCategory
+    if (selectedCategory != null || state.nameError != null) {
+      PocketIdentitySection(component = component, state = state)
+      if (selectedCategory != null) {
+        Text(
+            text = stringResource(Res.string.pocket_inherited_note, selectedCategory.name),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 4.dp),
+        )
+      }
     }
+
+    Text(
+        text = stringResource(Res.string.category_label),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.padding(start = 4.dp),
+    )
+    PocketCategoryPickerList(component = component, state = state)
+
+    PocketMonthlyAllocationCard(component = component, state = state)
+
+    PocketManualSetupRow(component = component)
   }
 
-  Text(
-      text = stringResource(Res.string.category_label),
-      style = MaterialTheme.typography.titleMedium,
-      color = MaterialTheme.colorScheme.onSurface,
-      modifier = Modifier.padding(start = 4.dp),
-  )
-  PocketCategoryPickerList(component = component, state = state)
-
-  PocketMonthlyAllocationCard(component = component, state = state)
-
-  PocketManualSetupRow(component = component)
 }
 
 /** The classic form plus multi-category linking, reached through the confirm dialog. */
@@ -203,15 +207,19 @@ private fun ManualCreationContent(
     component: PocketSettingsComponent,
     state: PocketSettingsState,
 ) {
-  PocketIdentitySection(component = component, state = state)
 
-  PocketLinkedCategoriesSection(component = component, state = state)
+  Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+    PocketIdentitySection(component = component, state = state)
 
-  PocketAccentColorPicker(component = component, state = state)
+    PocketLinkedCategoriesSection(component = component, state = state)
 
-  PocketIconPickerSection(component = component, state = state)
+    PocketAccentColorPicker(component = component, state = state)
 
-  PocketMonthlyAllocationCard(component = component, state = state)
+    PocketIconPickerSection(component = component, state = state)
+
+    PocketMonthlyAllocationCard(component = component, state = state)
+  }
+
 }
 
 @Composable
@@ -219,23 +227,27 @@ private fun EditPocketContent(
     component: PocketSettingsComponent,
     state: PocketSettingsState,
 ) {
-  PocketIdentitySection(component = component, state = state)
 
-  PocketAccentColorPicker(component = component, state = state)
+  Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+    PocketIdentitySection(component = component, state = state)
 
-  PocketIconPickerSection(component = component, state = state)
+    PocketAccentColorPicker(component = component, state = state)
 
-  if (state.linkedCategoryIds.size > 1) {
-    PocketLinkedCategoriesSection(component = component, state = state)
-  } else {
-    PocketAssociatedCategoryCard(component = component, state = state)
+    PocketIconPickerSection(component = component, state = state)
+
+    if (state.linkedCategoryIds.size > 1) {
+      PocketLinkedCategoriesSection(component = component, state = state)
+    } else {
+      PocketAssociatedCategoryCard(component = component, state = state)
+    }
+
+    PocketMonthlyAllocationCard(component = component, state = state)
+
+    PocketDangerZoneCard(
+        onDeletePocketClick = { component.onDeleteClicked() },
+    )
   }
 
-  PocketMonthlyAllocationCard(component = component, state = state)
-
-  PocketDangerZoneCard(
-      onDeletePocketClick = { component.onDeleteClicked() },
-  )
 }
 
 @ScreenPreviews
