@@ -231,8 +231,7 @@ class PocketSettingsTest : BehaviorSpec() {
 
         beforeEach {
           val cafeId = categoryRepository.addCategory("Cafe & Dining", "coffee", 0xFFE57373)
-          val groceriesId =
-              categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF4A7C59)
+          val groceriesId = categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF4A7C59)
           cafe =
               FakeCategoryFactory.create(
                   id = cafeId,
