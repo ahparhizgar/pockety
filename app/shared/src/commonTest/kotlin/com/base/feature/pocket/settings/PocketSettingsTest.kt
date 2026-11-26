@@ -1,6 +1,7 @@
 package com.base.feature.pocket.settings
 
 import com.base.component.TestCContext
+import com.base.db.CategoryRepository
 import com.base.db.FakeCategoryFactory
 import com.base.db.PocketRepository
 import com.base.testValue
@@ -224,22 +225,29 @@ class PocketSettingsTest : BehaviorSpec() {
       }
 
       When("user confirms manual setup, customizes the pocket and links two categories") {
-        val cafe =
-            FakeCategoryFactory.create(
-                id = 10,
-                name = "Cafe & Dining",
-                icon = "coffee",
-                color = 0xFFE57373,
-            )
-        val groceries =
-            FakeCategoryFactory.create(
-                id = 11,
-                name = "Groceries",
-                icon = "shopping_cart",
-                color = 0xFF4A7C59,
-            )
+        val categoryRepository by testValue { koin.get<CategoryRepository>() }
+        var cafe by testValue { FakeCategoryFactory.create() }
+        var groceries by testValue { FakeCategoryFactory.create() }
 
         beforeEach {
+          val cafeId = categoryRepository.addCategory("Cafe & Dining", "coffee", 0xFFE57373)
+          val groceriesId =
+              categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF4A7C59)
+          cafe =
+              FakeCategoryFactory.create(
+                  id = cafeId,
+                  name = "Cafe & Dining",
+                  icon = "coffee",
+                  color = 0xFFE57373,
+              )
+          groceries =
+              FakeCategoryFactory.create(
+                  id = groceriesId,
+                  name = "Groceries",
+                  icon = "shopping_cart",
+                  color = 0xFF4A7C59,
+              )
+          testCoroutineScheduler.advanceUntilIdle()
           component.onCategorySelected(cafe)
           component.onManualSetupClicked()
           component.onManualConfirmConfirmed()
@@ -250,6 +258,7 @@ class PocketSettingsTest : BehaviorSpec() {
         }
 
         Then("manual mode is on and the identity no longer follows the category") {
+          component.state.value.manualMode shouldBe true
           val pockets = pocketRepository.observePockets().first()
           pockets shouldHaveSize 1
           pockets[0].name shouldBe "Travel"
@@ -258,9 +267,9 @@ class PocketSettingsTest : BehaviorSpec() {
         Then("the saved pocket links both categories with the first as primary") {
           val pockets = pocketRepository.observePockets().first()
           val saved = pockets[0]
-          saved.categoryIds shouldBe listOf(10L, 11L)
-          saved.categoryId shouldBe 10L
-          pocketRepository.getPocketCategoryIds(saved.id) shouldBe listOf(10L, 11L)
+          saved.categoryIds shouldBe listOf(cafe.id, groceries.id)
+          saved.categoryId shouldBe cafe.id
+          pocketRepository.getPocketCategoryIds(saved.id) shouldBe listOf(cafe.id, groceries.id)
         }
       }
 
