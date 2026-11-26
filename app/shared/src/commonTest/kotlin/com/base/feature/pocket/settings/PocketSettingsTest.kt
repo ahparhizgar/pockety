@@ -533,10 +533,12 @@ class PocketSettingsTest : BehaviorSpec() {
       }
 
       fun editComponent(pocketId: Long): PocketSettingsComponent =
-          koin.get<PocketSettingsComponentFactory>().create(
-              cContext = TestCContext(),
-              pocketId = pocketId,
-          )
+          koin
+              .get<PocketSettingsComponentFactory>()
+              .create(
+                  cContext = TestCContext(),
+                  pocketId = pocketId,
+              )
 
       When("the pocket name and icon exactly match its only category") {
         Then("it opens in the simple setup with the identity following the category") {
