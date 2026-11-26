@@ -116,9 +116,7 @@ class DefaultPocketDetailsComponent(
                 PocketTransactionUiModel(
                     id = "topup-${topUp.id}",
                     title =
-                        topUp.description
-                            ?.takeIf { it.isNotBlank() }
-                            ?.let { UiString(it) }
+                        topUp.description?.takeIf { it.isNotBlank() }?.let { UiString(it) }
                             ?: UiString(Res.string.pocket_details_top_up_button),
                     icon = "arrow_downward_alt",
                     timestamp = formatInstant(topUp.createdAt, calendarType),
