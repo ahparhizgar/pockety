@@ -20,20 +20,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /** Pocket silhouette matching the app icon: flat top, straight sides, semicircular bottom. */
-val PocketShape =
-    GenericShape { size, _ ->
-      val radius = size.width / 2f
-      moveTo(0f, 0f)
-      lineTo(size.width, 0f)
-      lineTo(size.width, size.height - radius)
-      arcTo(
-          rect = Rect(0f, size.height - 2 * radius, size.width, size.height),
-          startAngleDegrees = 0f,
-          sweepAngleDegrees = 180f,
-          forceMoveTo = false,
-      )
-      close()
-    }
+val PocketShape = GenericShape { size, _ ->
+  val radius = size.width / 2f
+  moveTo(0f, 0f)
+  lineTo(size.width, 0f)
+  lineTo(size.width, size.height - radius)
+  arcTo(
+      rect = Rect(0f, size.height - 2 * radius, size.width, size.height),
+      startAngleDegrees = 0f,
+      sweepAngleDegrees = 180f,
+      forceMoveTo = false,
+  )
+  close()
+}
 
 /**
  * A pocket-shaped badge filled with the pocket's color, carrying the pocket's icon and the app
@@ -69,7 +68,8 @@ fun PocketShapeBadge(
           imageVector = icon,
           contentDescription = contentDescription,
           tint = Color.White,
-          modifier = Modifier.align(Alignment.Center).padding(top = badgeSize * 0.1f).size(iconSize),
+          modifier =
+              Modifier.align(Alignment.Center).padding(top = badgeSize * 0.1f).size(iconSize),
       )
     }
   }
