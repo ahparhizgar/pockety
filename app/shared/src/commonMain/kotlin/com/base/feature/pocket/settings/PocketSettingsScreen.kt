@@ -50,6 +50,7 @@ fun PocketSettingsScreen(
     component: PocketSettingsComponent,
     modifier: Modifier = Modifier,
 ) {
+  val state by component.state.subscribeAsState()
   Scaffold(
       modifier = modifier.fillMaxSize().testTag("pocket-settings-screen").imePadding(),
       containerColor = MaterialTheme.colorScheme.surface,
@@ -68,6 +69,10 @@ fun PocketSettingsScreen(
     ) {
       PocketSettingsContent(component = component)
     }
+  }
+
+  if (state.showManualConfirm) {
+    PocketManualConfirmDialog(component = component)
   }
 }
 
@@ -135,28 +140,22 @@ private fun PocketSettingsContent(
     modifier: Modifier = Modifier,
 ) {
   val state by component.state.subscribeAsState()
-  Box {
-    Column(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .widthIn(max = 640.dp)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-      when {
-        state.pocketId == null && !state.manualMode -> SimpleCreationContent(component, state)
-        state.pocketId == null -> ManualCreationContent(component, state)
-        else -> EditPocketContent(component, state)
-      }
-
-      Spacer(modifier = Modifier.height(16.dp))
+  Column(
+      modifier =
+          modifier
+              .fillMaxWidth()
+              .widthIn(max = 640.dp)
+              .verticalScroll(rememberScrollState())
+              .padding(horizontal = 16.dp, vertical = 12.dp),
+      verticalArrangement = Arrangement.spacedBy(20.dp),
+  ) {
+    when {
+      state.pocketId == null && !state.manualMode -> SimpleCreationContent(component, state)
+      state.pocketId == null -> ManualCreationContent(component, state)
+      else -> EditPocketContent(component, state)
     }
 
-    if (state.showManualConfirm) {
-      PocketManualConfirmDialog(component = component)
-    }
+    Spacer(modifier = Modifier.height(16.dp))
   }
 }
 
