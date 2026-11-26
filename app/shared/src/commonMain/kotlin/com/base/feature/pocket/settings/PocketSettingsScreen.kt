@@ -40,8 +40,14 @@ import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.apply_action
 import pockety.app.shared.generated.resources.category_label
+import pockety.app.shared.generated.resources.continue_action
 import pockety.app.shared.generated.resources.pocket_create_intro
 import pockety.app.shared.generated.resources.pocket_inherited_note
+import pockety.app.shared.generated.resources.pocket_pick_advanced_hint
+import pockety.app.shared.generated.resources.pocket_pick_categories_helper
+import pockety.app.shared.generated.resources.pocket_pick_categories_title
+import pockety.app.shared.generated.resources.pocket_pick_none_hint
+import pockety.app.shared.generated.resources.pocket_pick_simple_hint
 import pockety.app.shared.generated.resources.pocket_settings_title
 import pockety.app.shared.generated.resources.save_action
 
@@ -83,6 +89,7 @@ private fun PocketSettingsBottomBar(
 ) {
   val state by component.state.subscribeAsState()
   val isNewPocket = state.pocketId == null
+  val isPickStep = isNewPocket && state.phase == PocketCreationPhase.CategoryPick
 
   Surface(
       color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
@@ -93,12 +100,14 @@ private fun PocketSettingsBottomBar(
         contentAlignment = Alignment.Center,
     ) {
       Button(
-          onClick = { component.onSaveClicked() },
+          onClick = {
+            if (isPickStep) component.onContinueClicked() else component.onSaveClicked()
+          },
           modifier =
               Modifier.fillMaxWidth()
                   .widthIn(max = 640.dp)
                   .height(56.dp)
-                  .testTag("save-pocket-btn"),
+                  .testTag(if (isPickStep) "continue-btn" else "save-pocket-btn"),
           shape = CircleShape,
           colors =
               ButtonDefaults.buttonColors(
@@ -121,10 +130,10 @@ private fun PocketSettingsBottomBar(
           Spacer(modifier = Modifier.width(8.dp))
           Text(
               text =
-                  if (isNewPocket) {
-                    stringResource(Res.string.save_action)
-                  } else {
-                    stringResource(Res.string.apply_action)
+                  when {
+                    isPickStep -> stringResource(Res.string.continue_action)
+                    isNewPocket -> stringResource(Res.string.save_action)
+                    else -> stringResource(Res.string.apply_action)
                   },
               style = MaterialTheme.typography.labelLarge,
           )
@@ -150,12 +159,56 @@ private fun PocketSettingsContent(
       verticalArrangement = Arrangement.spacedBy(20.dp),
   ) {
     when {
+      state.pocketId == null && state.phase == PocketCreationPhase.CategoryPick ->
+          CategoryPickContent(component, state)
       state.pocketId == null && !state.manualMode -> SimpleCreationContent(component, state)
       state.pocketId == null -> ManualCreationContent(component, state)
       else -> EditPocketContent(component, state)
     }
 
     Spacer(modifier = Modifier.height(16.dp))
+  }
+}
+
+/** Step 1 of creation: pick zero or more categories; the pick decides the form that follows. */
+@Composable
+private fun CategoryPickContent(
+    component: PocketSettingsComponent,
+    state: PocketSettingsState,
+) {
+  Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+    Text(
+        text = stringResource(Res.string.pocket_pick_categories_title),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
+
+    Text(
+        text = stringResource(Res.string.pocket_pick_categories_helper),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+
+    PocketCategoryPickList(component = component, state = state)
+
+    val pickedCount = state.pickedCategoryIds.size
+    Text(
+        text =
+            when {
+              pickedCount == 0 -> stringResource(Res.string.pocket_pick_none_hint)
+              pickedCount == 1 ->
+                  stringResource(
+                      Res.string.pocket_pick_simple_hint,
+                      state.categories
+                          .firstOrNull { it.id == state.pickedCategoryIds.first() }
+                          ?.name
+                          .orEmpty(),
+                  )
+              else -> stringResource(Res.string.pocket_pick_advanced_hint, pickedCount)
+            },
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
   }
 }
 
@@ -186,13 +239,15 @@ private fun SimpleCreationContent(
       }
     }
 
-    Text(
-        text = stringResource(Res.string.category_label),
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.padding(start = 4.dp),
-    )
-    PocketCategoryPickerList(component = component, state = state)
+    if (selectedCategory != null) {
+      Text(
+          text = stringResource(Res.string.category_label),
+          style = MaterialTheme.typography.titleMedium,
+          color = MaterialTheme.colorScheme.onSurface,
+          modifier = Modifier.padding(start = 4.dp),
+      )
+      PocketSelectedCategoryRow(state = state)
+    }
 
     PocketMonthlyAllocationCard(component = component, state = state)
 
@@ -297,6 +352,22 @@ private fun PocketSettingsScreenSimpleSelectedPreview() {
                   nameText = categories.first().name,
                   selectedIcon = categories.first().icon,
                   selectedColor = categories.first().color,
+              )
+      )
+  )
+}
+
+@ScreenPreviews
+@Composable
+private fun PocketSettingsScreenPickPreview() {
+  val categories = FakeCategoryFactory.createList()
+  PocketSettingsScreen(
+      FakePocketSettingsComponent(
+          initialState =
+              FakePocketSettingsStateFactory.create(
+                  phase = PocketCreationPhase.CategoryPick,
+                  categories = categories,
+                  pickedCategoryIds = setOf(categories.first().id),
               )
       )
   )

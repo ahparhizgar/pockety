@@ -73,3 +73,13 @@
 
 - [x] 5.1 CI green; screenshot diff reviewed and mobile shots sent.
 - [ ] 5.2 Specs synced and change archived after Amir's sign-off.
+
+## 6. Wizard revision (Amir, 2026-11-26, after testing the first build)
+
+- [x] 6.1 Design reworked in :design: step 1 picks zero or more categories (with a
+  "No Category" row + divider that proceeds immediately); exactly one pick leads to the
+  simple form, zero or several lead to the advanced form; manual-setup entry stays in
+  simple mode. Approved by Amir.
+- [x] 6.2 App implementation: PocketCreationPhase in PocketSettingsComponent (CategoryPick
+  -> Form), picks carry into links, Back returns to the pick step (or to simple when
+  manual was entered from it), simple form shows the single followed category read-only.

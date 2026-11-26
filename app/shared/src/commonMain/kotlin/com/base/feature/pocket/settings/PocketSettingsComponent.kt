@@ -16,8 +16,17 @@ import kotlinx.coroutines.launch
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.error_empty_pocket_name
 
+/** Creation starts by picking categories; the pick decides which form follows. */
+enum class PocketCreationPhase {
+  CategoryPick,
+  Form,
+}
+
 data class PocketSettingsState(
     val pocketId: Long? = null,
+    val phase: PocketCreationPhase =
+        if (pocketId == null) PocketCreationPhase.CategoryPick else PocketCreationPhase.Form,
+    val pickedCategoryIds: Set<Long> = emptySet(),
     val nameText: String = "",
     val nameError: UiString? = null,
     val selectedColor: Long = 0xFF316342,
@@ -25,6 +34,7 @@ data class PocketSettingsState(
     val selectedCategory: CategoryEntity? = null,
     val categories: List<CategoryEntity> = emptyList(),
     val manualMode: Boolean = false,
+    val manualFromSimple: Boolean = false,
     val showManualConfirm: Boolean = false,
     val linkedCategoryIds: Set<Long> = emptySet(),
     val balanceAmount: Long = 0,
@@ -49,6 +59,12 @@ interface PocketSettingsComponent {
   fun onCategoryChanged(categoryId: Long?)
 
   fun onCategoryCleared()
+
+  fun onPickedCategoryToggled(category: CategoryEntity)
+
+  fun onNoCategoryClicked()
+
+  fun onContinueClicked()
 
   fun onManualSetupClicked()
 
@@ -182,12 +198,67 @@ class DefaultPocketSettingsComponent(
     _state.update { it.copy(selectedCategory = null, linkedCategoryIds = emptySet()) }
   }
 
+  override fun onPickedCategoryToggled(category: CategoryEntity) {
+    _state.update { state ->
+      state.copy(
+          pickedCategoryIds =
+              if (category.id in state.pickedCategoryIds) {
+                state.pickedCategoryIds - category.id
+              } else {
+                state.pickedCategoryIds + category.id
+              },
+      )
+    }
+  }
+
+  override fun onNoCategoryClicked() {
+    _state.update { it.copy(pickedCategoryIds = emptySet()) }
+    enterForm()
+  }
+
+  override fun onContinueClicked() {
+    enterForm()
+  }
+
+  /**
+   * Leaves the pick step: exactly one picked category means the simple form with the identity
+   * inherited from it; zero or several mean the advanced form with the picks as its links.
+   */
+  private fun enterForm() {
+    val currentState = _state.value
+    val picked = currentState.pickedCategoryIds
+    if (picked.size == 1) {
+      _state.update {
+        it.copy(
+            phase = PocketCreationPhase.Form,
+            manualMode = false,
+            manualFromSimple = false,
+        )
+      }
+      val category = currentState.categories.firstOrNull { it.id == picked.first() }
+      if (category != null) {
+        onCategorySelected(category)
+      }
+    } else {
+      _state.update {
+        it.copy(
+            phase = PocketCreationPhase.Form,
+            manualMode = true,
+            manualFromSimple = false,
+            linkedCategoryIds = picked,
+        )
+      }
+    }
+  }
+
   override fun onManualSetupClicked() {
     _state.update { it.copy(showManualConfirm = true) }
   }
 
   override fun onManualConfirmConfirmed() {
-    _state.update { it.copy(manualMode = true, showManualConfirm = false) }
+    _state.update {
+      it.copy(manualMode = true, manualFromSimple = true, showManualConfirm = false)
+    }
   }
 
   override fun onManualConfirmDismissed() {
@@ -283,22 +354,35 @@ class DefaultPocketSettingsComponent(
 
   override fun onBackClicked() {
     val currentState = _state.value
-    if (pocketId == null && currentState.manualMode) {
-      // Before saving, Back leaves manual mode and returns to the simple
-      // setup: the category stays selected and the identity follows it
-      // again, dropping any manual tweaks and extra links.
-      _state.update { state ->
-        val category = state.selectedCategory
-        state.copy(
-            manualMode = false,
-            nameText = category?.name ?: state.nameText,
-            selectedIcon = category?.icon ?: state.selectedIcon,
-            selectedColor = category?.color ?: state.selectedColor,
-            linkedCategoryIds = listOfNotNull(category?.id).toSet(),
-        )
+    when {
+      pocketId != null -> onCancelled()
+      currentState.phase == PocketCreationPhase.CategoryPick -> onCancelled()
+      currentState.manualMode && currentState.manualFromSimple -> {
+        // Before saving, Back leaves a manual mode that was entered from the
+        // simple setup and returns to it: the category stays selected and
+        // the identity follows it again, dropping manual tweaks and links.
+        _state.update { state ->
+          val category = state.selectedCategory
+          state.copy(
+              manualMode = false,
+              manualFromSimple = false,
+              nameText = category?.name ?: state.nameText,
+              selectedIcon = category?.icon ?: state.selectedIcon,
+              selectedColor = category?.color ?: state.selectedColor,
+              linkedCategoryIds = listOfNotNull(category?.id).toSet(),
+          )
+        }
       }
-    } else {
-      onCancelled()
+      else -> {
+        // Back from the form returns to the pick step, keeping the current
+        // links as the pick.
+        _state.update {
+          it.copy(
+              phase = PocketCreationPhase.CategoryPick,
+              pickedCategoryIds = it.linkedCategoryIds,
+          )
+        }
+      }
     }
   }
 }
@@ -331,6 +415,8 @@ object FakePocketSettingsStateFactory {
   @Suppress("LongParameterList")
   fun create(
       pocketId: Long? = null,
+      phase: PocketCreationPhase = PocketCreationPhase.Form,
+      pickedCategoryIds: Set<Long> = emptySet(),
       nameText: String = "",
       nameError: UiString? = null,
       selectedColor: Long = 0xFF316342,
@@ -338,6 +424,7 @@ object FakePocketSettingsStateFactory {
       selectedCategory: CategoryEntity? = null,
       categories: List<CategoryEntity> = emptyList(),
       manualMode: Boolean = false,
+      manualFromSimple: Boolean = false,
       showManualConfirm: Boolean = false,
       linkedCategoryIds: Set<Long> = listOfNotNull(selectedCategory?.id).toSet(),
       balanceAmount: Long = 0,
@@ -348,6 +435,8 @@ object FakePocketSettingsStateFactory {
   ): PocketSettingsState =
       PocketSettingsState(
           pocketId = pocketId,
+          phase = phase,
+          pickedCategoryIds = pickedCategoryIds,
           nameText = nameText,
           nameError = nameError,
           selectedColor = selectedColor,
@@ -355,6 +444,7 @@ object FakePocketSettingsStateFactory {
           selectedCategory = selectedCategory,
           categories = categories,
           manualMode = manualMode,
+          manualFromSimple = manualFromSimple,
           showManualConfirm = showManualConfirm,
           linkedCategoryIds = linkedCategoryIds,
           balanceAmount = balanceAmount,
@@ -404,12 +494,63 @@ class FakePocketSettingsComponent(
     _state.update { it.copy(selectedCategory = null, linkedCategoryIds = emptySet()) }
   }
 
+  override fun onPickedCategoryToggled(category: CategoryEntity) {
+    _state.update { state ->
+      state.copy(
+          pickedCategoryIds =
+              if (category.id in state.pickedCategoryIds) {
+                state.pickedCategoryIds - category.id
+              } else {
+                state.pickedCategoryIds + category.id
+              },
+      )
+    }
+  }
+
+  override fun onNoCategoryClicked() {
+    _state.update { it.copy(pickedCategoryIds = emptySet()) }
+    enterForm()
+  }
+
+  override fun onContinueClicked() {
+    enterForm()
+  }
+
+  private fun enterForm() {
+    val currentState = _state.value
+    val picked = currentState.pickedCategoryIds
+    if (picked.size == 1) {
+      _state.update {
+        it.copy(
+            phase = PocketCreationPhase.Form,
+            manualMode = false,
+            manualFromSimple = false,
+        )
+      }
+      val category = currentState.categories.firstOrNull { it.id == picked.first() }
+      if (category != null) {
+        onCategorySelected(category)
+      }
+    } else {
+      _state.update {
+        it.copy(
+            phase = PocketCreationPhase.Form,
+            manualMode = true,
+            manualFromSimple = false,
+            linkedCategoryIds = picked,
+        )
+      }
+    }
+  }
+
   override fun onManualSetupClicked() {
     _state.update { it.copy(showManualConfirm = true) }
   }
 
   override fun onManualConfirmConfirmed() {
-    _state.update { it.copy(manualMode = true, showManualConfirm = false) }
+    _state.update {
+      it.copy(manualMode = true, manualFromSimple = true, showManualConfirm = false)
+    }
   }
 
   override fun onManualConfirmDismissed() {
@@ -449,17 +590,25 @@ class FakePocketSettingsComponent(
 
   override fun onBackClicked() {
     _state.update { state ->
-      if (state.pocketId == null && state.manualMode) {
-        val category = state.selectedCategory
-        state.copy(
-            manualMode = false,
-            nameText = category?.name ?: state.nameText,
-            selectedIcon = category?.icon ?: state.selectedIcon,
-            selectedColor = category?.color ?: state.selectedColor,
-            linkedCategoryIds = listOfNotNull(category?.id).toSet(),
-        )
-      } else {
-        state
+      when {
+        state.pocketId != null -> state
+        state.phase == PocketCreationPhase.CategoryPick -> state
+        state.manualMode && state.manualFromSimple -> {
+          val category = state.selectedCategory
+          state.copy(
+              manualMode = false,
+              manualFromSimple = false,
+              nameText = category?.name ?: state.nameText,
+              selectedIcon = category?.icon ?: state.selectedIcon,
+              selectedColor = category?.color ?: state.selectedColor,
+              linkedCategoryIds = listOfNotNull(category?.id).toSet(),
+          )
+        }
+        else ->
+            state.copy(
+                phase = PocketCreationPhase.CategoryPick,
+                pickedCategoryIds = state.linkedCategoryIds,
+            )
       }
     }
   }

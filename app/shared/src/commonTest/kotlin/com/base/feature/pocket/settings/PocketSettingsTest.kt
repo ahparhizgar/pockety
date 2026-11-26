@@ -272,6 +272,92 @@ class PocketSettingsTest : BehaviorSpec() {
         }
       }
 
+      When("user picks categories on the pick step and continues") {
+        val categoryRepository by testValue { koin.get<CategoryRepository>() }
+        var cafe by testValue { FakeCategoryFactory.create() }
+        var groceries by testValue { FakeCategoryFactory.create() }
+
+        beforeEach {
+          val cafeId = categoryRepository.addCategory("Cafe & Dining", "coffee", 0xFFE57373)
+          val groceriesId =
+              categoryRepository.addCategory("Groceries", "shopping_cart", 0xFF4A7C59)
+          cafe =
+              FakeCategoryFactory.create(
+                  id = cafeId,
+                  name = "Cafe & Dining",
+                  icon = "coffee",
+                  color = 0xFFE57373,
+              )
+          groceries =
+              FakeCategoryFactory.create(
+                  id = groceriesId,
+                  name = "Groceries",
+                  icon = "shopping_cart",
+                  color = 0xFF4A7C59,
+              )
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the flow starts on the pick step") {
+          component.state.value.phase shouldBe PocketCreationPhase.CategoryPick
+        }
+
+        And("user picks exactly one category and continues") {
+          beforeEach {
+            component.onPickedCategoryToggled(cafe)
+            component.onContinueClicked()
+          }
+
+          Then("the simple form opens with the identity inherited from the category") {
+            val state = component.state.value
+            state.phase shouldBe PocketCreationPhase.Form
+            state.manualMode shouldBe false
+            state.nameText shouldBe "Cafe & Dining"
+            state.selectedIcon shouldBe "coffee"
+            state.selectedColor shouldBe 0xFFE57373
+            state.linkedCategoryIds shouldBe setOf(cafe.id)
+          }
+        }
+
+        And("user picks two categories and continues") {
+          beforeEach {
+            component.onPickedCategoryToggled(cafe)
+            component.onPickedCategoryToggled(groceries)
+            component.onContinueClicked()
+          }
+
+          Then("the advanced form opens with both categories linked") {
+            val state = component.state.value
+            state.phase shouldBe PocketCreationPhase.Form
+            state.manualMode shouldBe true
+            state.manualFromSimple shouldBe false
+            state.linkedCategoryIds shouldBe setOf(cafe.id, groceries.id)
+          }
+
+          And("user goes back") {
+            beforeEach { component.onBackClicked() }
+
+            Then("the pick step returns with the picks kept and nothing cancelled") {
+              val state = component.state.value
+              state.phase shouldBe PocketCreationPhase.CategoryPick
+              state.pickedCategoryIds shouldBe setOf(cafe.id, groceries.id)
+              cancelledCallback.shouldNotBeCalled()
+            }
+          }
+        }
+
+        And("user taps the no category option") {
+          beforeEach { component.onNoCategoryClicked() }
+
+          Then("the advanced form opens with no categories linked") {
+            val state = component.state.value
+            state.phase shouldBe PocketCreationPhase.Form
+            state.manualMode shouldBe true
+            state.linkedCategoryIds shouldBe emptySet()
+          }
+        }
+      }
+
       When("user goes back from manual setup before saving") {
         val cafe =
             FakeCategoryFactory.create(

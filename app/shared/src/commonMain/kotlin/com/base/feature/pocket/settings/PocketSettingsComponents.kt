@@ -15,11 +15,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.LabelOff
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -65,6 +68,7 @@ import pockety.app.shared.generated.resources.pocket_linked_categories_title
 import pockety.app.shared.generated.resources.pocket_manual_dialog_confirm
 import pockety.app.shared.generated.resources.pocket_manual_dialog_text
 import pockety.app.shared.generated.resources.pocket_manual_dialog_title
+import pockety.app.shared.generated.resources.pocket_no_category
 import pockety.app.shared.generated.resources.pocket_manual_setup_subtitle
 import pockety.app.shared.generated.resources.pocket_manual_setup_title
 import pockety.app.shared.generated.resources.pocket_name_label
@@ -313,8 +317,12 @@ private fun PocketIconGrid(
   }
 }
 
+/**
+ * Step 1 of creation: the "No Category" escape hatch (goes straight to the advanced form),
+ * a divider, then the multi-select category rows.
+ */
 @Composable
-fun PocketCategoryPickerList(
+fun PocketCategoryPickList(
     component: PocketSettingsComponent,
     state: PocketSettingsState,
     modifier: Modifier = Modifier,
@@ -323,7 +331,29 @@ fun PocketCategoryPickerList(
       modifier = modifier.fillMaxWidth(),
       verticalArrangement = Arrangement.spacedBy(8.dp),
   ) {
+    CategoryOptionItem(
+        data =
+            CategoryOptionData(
+                name = stringResource(Res.string.pocket_no_category),
+                icon = Icons.AutoMirrored.Filled.LabelOff,
+                iconBackgroundColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                iconContentColor = MaterialTheme.colorScheme.outline,
+                isSelected = false,
+            ),
+        onClick = component::onNoCategoryClicked,
+        modifier = Modifier.testTag("no-category-row"),
+        trailingContent = {
+          Icon(
+              imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+              contentDescription = null,
+              tint = MaterialTheme.colorScheme.outline,
+              modifier = Modifier.size(22.dp),
+          )
+        },
+    )
+    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
     state.categories.forEach { category ->
+      val isPicked = category.id in state.pickedCategoryIds
       CategoryOptionItem(
           data =
               CategoryOptionData(
@@ -331,13 +361,47 @@ fun PocketCategoryPickerList(
                   icon = resolveCategoryIcon(category.icon),
                   iconBackgroundColor = Color(category.color),
                   iconContentColor = Color.White,
-                  isSelected = state.selectedCategory?.id == category.id,
+                  isSelected = isPicked,
               ),
-          onClick = { component.onCategorySelected(category) },
-          modifier = Modifier.testTag("pocket-category-${category.id}"),
+          onClick = { component.onPickedCategoryToggled(category) },
+          modifier = Modifier.testTag("pocket-pick-category-${category.id}"),
+          trailingContent =
+              if (isPicked) {
+                {
+                  Icon(
+                      imageVector = Icons.Default.CheckCircle,
+                      contentDescription = null,
+                      tint = MaterialTheme.colorScheme.primary,
+                      modifier = Modifier.size(22.dp),
+                  )
+                }
+              } else {
+                null
+              },
       )
     }
   }
+}
+
+/** The single category a simple-mode pocket follows, shown read-only in the form. */
+@Composable
+fun PocketSelectedCategoryRow(
+    state: PocketSettingsState,
+    modifier: Modifier = Modifier,
+) {
+  val category = state.selectedCategory ?: return
+  CategoryOptionItem(
+      data =
+          CategoryOptionData(
+              name = category.name,
+              icon = resolveCategoryIcon(category.icon),
+              iconBackgroundColor = Color(category.color),
+              iconContentColor = Color.White,
+              isSelected = true,
+          ),
+      onClick = {},
+      modifier = modifier,
+  )
 }
 
 @Composable
