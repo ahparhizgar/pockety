@@ -354,7 +354,6 @@ class DefaultPocketSettingsComponent(
     val currentState = _state.value
     when {
       pocketId != null -> onCancelled()
-      currentState.phase == PocketCreationPhase.CategoryPick -> onCancelled()
       currentState.manualMode && currentState.manualFromSimple -> {
         // Before saving, Back leaves a manual mode that was entered from the
         // simple setup and returns to it: the category stays selected and
@@ -371,6 +370,7 @@ class DefaultPocketSettingsComponent(
           )
         }
       }
+      currentState.phase == PocketCreationPhase.CategoryPick -> onCancelled()
       else -> {
         // Back from the form returns to the pick step, keeping the current
         // links as the pick.
@@ -588,7 +588,6 @@ class FakePocketSettingsComponent(
     _state.update { state ->
       when {
         state.pocketId != null -> state
-        state.phase == PocketCreationPhase.CategoryPick -> state
         state.manualMode && state.manualFromSimple -> {
           val category = state.selectedCategory
           state.copy(
@@ -600,6 +599,7 @@ class FakePocketSettingsComponent(
               linkedCategoryIds = listOfNotNull(category?.id).toSet(),
           )
         }
+        state.phase == PocketCreationPhase.CategoryPick -> state
         else ->
             state.copy(
                 phase = PocketCreationPhase.CategoryPick,
