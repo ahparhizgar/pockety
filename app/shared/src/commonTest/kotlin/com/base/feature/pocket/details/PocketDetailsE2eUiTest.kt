@@ -1,6 +1,7 @@
 package com.base.feature.pocket.details
 
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.performClick
@@ -60,7 +61,8 @@ class PocketDetailsE2eUiTest {
     // Combined activity feed contains expense and top-up
     onNode(hasText("Sam Cafe")).assertExists()
     onNode(hasText("5,000 T")).assertExists()
-    onNode(hasText("Top-up")).assertExists()
+    // The top-up row's fallback title and the Top-up action button share the label.
+    onAllNodes(hasText("Top-up")).assertCountEquals(2)
     onNode(hasText("+85,000 T")).assertExists()
 
     // Tap action Top-up button

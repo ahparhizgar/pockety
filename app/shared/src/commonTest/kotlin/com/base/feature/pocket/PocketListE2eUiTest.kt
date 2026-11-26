@@ -45,6 +45,7 @@ class PocketListE2eUiTest {
           categoryTag = "Groceries",
           budgetAmount = 1_000_000L,
           icon = "shopping_bag",
+          categoryIds = listOf(1L),
       )
     }
 
