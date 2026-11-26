@@ -154,7 +154,6 @@ private fun PocketSelectorHeader(
   }
 }
 
-@Composable
 @Suppress("LongParameterList")
 @Composable
 private fun PocketCardContent(
