@@ -198,7 +198,6 @@ private fun SimpleCreationContent(
 
     PocketManualSetupRow(component = component)
   }
-
 }
 
 /** The classic form plus multi-category linking, reached through the confirm dialog. */
@@ -219,7 +218,6 @@ private fun ManualCreationContent(
 
     PocketMonthlyAllocationCard(component = component, state = state)
   }
-
 }
 
 @Composable
@@ -247,7 +245,6 @@ private fun EditPocketContent(
         onDeletePocketClick = { component.onDeleteClicked() },
     )
   }
-
 }
 
 @ScreenPreviews
