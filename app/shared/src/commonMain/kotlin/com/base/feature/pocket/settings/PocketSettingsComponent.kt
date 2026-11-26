@@ -311,7 +311,7 @@ class DefaultPocketSettingsComponent(
               .ifEmpty { currentState.linkedCategoryIds.toList() }
       val primaryCategory =
           currentState.categories.firstOrNull { it.id == orderedLinks.firstOrNull() }
-      val categoryTag = primaryCategory?.name ?: currentState.selectedCategory?.name ?: ""
+      val categoryTag = (primaryCategory?.name ?: currentState.selectedCategory?.name).orEmpty()
       val existingId = currentState.pocketId
       if (existingId != null) {
         pocketRepository.updatePocket(
