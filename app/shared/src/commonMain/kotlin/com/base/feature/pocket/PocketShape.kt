@@ -1,13 +1,8 @@
 package com.base.feature.pocket
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.GenericShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -19,12 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-private const val SLIT_TOP_FRACTION = 0.18f
-private const val SLIT_WIDTH_FRACTION = 0.36f
-private const val SLIT_HEIGHT_FRACTION = 0.07f
-private const val SLIT_ALPHA = 0.55f
 private const val ICON_SIZE_FRACTION = 0.5f
-private const val ICON_TOP_FRACTION = 0.1f
 
 /** Pocket silhouette matching the app icon: flat top, straight sides, semicircular bottom. */
 val PocketShape = GenericShape { size, _ ->
@@ -60,26 +50,12 @@ fun PocketShapeBadge(
       shape = PocketShape,
       color = color,
   ) {
-    Box {
-      Box(
-          modifier =
-              Modifier.align(Alignment.TopCenter)
-                  .padding(top = badgeSize * SLIT_TOP_FRACTION)
-                  .width(badgeSize * SLIT_WIDTH_FRACTION)
-                  .height(badgeSize * SLIT_HEIGHT_FRACTION)
-                  .background(
-                      color = iconTint.copy(alpha = SLIT_ALPHA),
-                      shape = RoundedCornerShape(percent = 50),
-                  ),
-      )
+    Box(contentAlignment = Alignment.Center) {
       Icon(
           imageVector = icon,
           contentDescription = contentDescription,
           tint = iconTint,
-          modifier =
-              Modifier.align(Alignment.Center)
-                  .padding(top = badgeSize * ICON_TOP_FRACTION)
-                  .size(badgeSize * ICON_SIZE_FRACTION),
+          modifier = Modifier.size(badgeSize * ICON_SIZE_FRACTION),
       )
     }
   }
