@@ -23,6 +23,7 @@ import com.base.design.features.inbox.InboxScreen
 import com.base.design.features.monthdetail.MonthDetailScreen
 import com.base.design.features.pocketdetail.PocketDetailScreen
 import com.base.design.features.pockets.PocketsScreen
+import com.base.design.features.addpocket.AddPocketScreen
 import com.base.design.features.pocketsettings.PocketSettingsScreen
 import com.base.design.features.privacypolicy.PrivacyPolicyScreen
 import com.base.design.features.prototype.PrototypeAppScreen
@@ -107,6 +108,22 @@ val figmaPageSections: Map<FigmaDesignPage, List<FigmaDesignSection>> =
                                   initialPocketName = "",
                                   initialCurrentBalance = "0",
                                   isNewPocket = true,
+                              )
+                            },
+                            FigmaScreenItem("08c", "New Pocket (Category)", "Pick a Category") {
+                              AddPocketScreen()
+                            },
+                            FigmaScreenItem(
+                                "08d",
+                                "New Pocket (Category Selected)",
+                                "Inherits Identity",
+                            ) {
+                              AddPocketScreen(initialCategoryId = "cafe")
+                            },
+                            FigmaScreenItem("08e", "New Pocket (Manual)", "Multi-Category") {
+                              AddPocketScreen(
+                                  manualExpanded = true,
+                                  initialLinkedCategoryIds = setOf("cafe", "groceries"),
                               )
                             },
                             FigmaScreenItem("06", "App Settings", "Preferences") {
