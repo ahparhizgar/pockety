@@ -41,8 +41,7 @@ private fun pocketCategory(id: String, name: String, iconId: String, colorIndex:
         id = id,
         name = name,
         icon =
-            defaultItemIcons.firstOrNull { it.id == iconId }?.icon
-                ?: defaultItemIcons.first().icon,
+            defaultItemIcons.firstOrNull { it.id == iconId }?.icon ?: defaultItemIcons.first().icon,
         color = defaultItemColors[colorIndex % defaultItemColors.size],
     )
 
@@ -106,8 +105,8 @@ fun LinkedCategoryRow(
 }
 
 /**
- * The tucked-away entry to manual setup: quiet by design so the category-first flow stays
- * simple, but discoverable for users who want a custom pocket.
+ * The tucked-away entry to manual setup: quiet by design so the category-first flow stays simple,
+ * but discoverable for users who want a custom pocket.
  */
 @Composable
 fun ManualSetupToggle(
@@ -165,7 +164,8 @@ fun InheritedFromCategoryNote(
     modifier: Modifier = Modifier,
 ) {
   Text(
-      text = "Name, icon and color come from \u201C$categoryName\u201D \u2014 you can still tweak them.",
+      text =
+          "Name, icon and color come from \u201C$categoryName\u201D \u2014 you can still tweak them.",
       style = MaterialTheme.typography.bodySmall,
       color = MaterialTheme.colorScheme.onSurfaceVariant,
       modifier = modifier,

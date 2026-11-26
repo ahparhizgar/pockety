@@ -35,10 +35,9 @@ import com.base.design.ui.ScreenPreviews
 
 /**
  * New-pocket creation with two modes:
- * - Category mode (default): pick one category and the pocket inherits its name, icon and
- *   color.
- * - Manual mode (tucked behind a quiet toggle): the full classic form, plus linking
- *   several categories to one pocket.
+ * - Category mode (default): pick one category and the pocket inherits its name, icon and color.
+ * - Manual mode (tucked behind a quiet toggle): the full classic form, plus linking several
+ *   categories to one pocket.
  */
 @Composable
 fun AddPocketScreen(
@@ -57,9 +56,7 @@ fun AddPocketScreen(
   var pocketName by remember { mutableStateOf(selectedCategory?.name ?: "") }
   var selectedIcon by remember {
     mutableStateOf(
-        selectedCategory?.let { cat ->
-          defaultItemIcons.firstOrNull { it.icon == cat.icon }
-        }
+        selectedCategory?.let { cat -> defaultItemIcons.firstOrNull { it.icon == cat.icon } }
             ?: defaultItemIcons.first()
     )
   }
@@ -118,8 +115,7 @@ fun AddPocketScreen(
                     pocketName = category.name
                     selectedColor = category.color
                     selectedIcon =
-                        defaultItemIcons.firstOrNull { it.icon == category.icon }
-                            ?: selectedIcon
+                        defaultItemIcons.firstOrNull { it.icon == category.icon } ?: selectedIcon
                   },
               )
             }

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.base.design.features.addcategory.AddCategoryScreen
+import com.base.design.features.addpocket.AddPocketScreen
 import com.base.design.features.categorydetail.CategoryDetailScreen
 import com.base.design.features.categorylist.CategoryListScreen
 import com.base.design.features.categorylist.defaultCategoryList
@@ -23,7 +24,6 @@ import com.base.design.features.inbox.InboxScreen
 import com.base.design.features.monthdetail.MonthDetailScreen
 import com.base.design.features.pocketdetail.PocketDetailScreen
 import com.base.design.features.pockets.PocketsScreen
-import com.base.design.features.addpocket.AddPocketScreen
 import com.base.design.features.pocketsettings.PocketSettingsScreen
 import com.base.design.features.privacypolicy.PrivacyPolicyScreen
 import com.base.design.features.prototype.PrototypeAppScreen
