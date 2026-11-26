@@ -29,20 +29,19 @@ private const val ARC_START_ANGLE = 0f
 private const val ARC_SWEEP_ANGLE = 180f
 
 /** Pocket silhouette matching the app icon: flat top, straight sides, semicircular bottom. */
-val PocketShape =
-    GenericShape { size, _ ->
-      val radius = size.width / 2f
-      moveTo(0f, 0f)
-      lineTo(size.width, 0f)
-      lineTo(size.width, size.height - radius)
-      arcTo(
-          rect = Rect(0f, size.height - 2 * radius, size.width, size.height),
-          startAngleDegrees = 0f,
-          sweepAngleDegrees = 180f,
-          forceMoveTo = false,
-      )
-      close()
-    }
+val PocketShape = GenericShape { size, _ ->
+  val radius = size.width / 2f
+  moveTo(0f, 0f)
+  lineTo(size.width, 0f)
+  lineTo(size.width, size.height - radius)
+  arcTo(
+      rect = Rect(0f, size.height - 2 * radius, size.width, size.height),
+      startAngleDegrees = 0f,
+      sweepAngleDegrees = 180f,
+      forceMoveTo = false,
+  )
+  close()
+}
 
 /** The full pocket outline as a path, for canvas drawing. */
 private fun pocketOutlinePath(size: Size): Path {
@@ -91,8 +90,8 @@ private fun stitchStroke(size: Size): Stroke =
 
 /**
  * A pocket-shaped badge filled with the pocket's color, carrying the pocket's icon and a dashed
- * stitch along its sides and bottom, so a card reads as a pocket at a glance. A null [icon]
- * renders an empty pocket.
+ * stitch along its sides and bottom, so a card reads as a pocket at a glance. A null [icon] renders
+ * an empty pocket.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -130,8 +129,8 @@ fun PocketShapeBadge(
 }
 
 /**
- * The pocket as a standalone glyph for icon slots (tabs, headers): a filled pocket in [tint]
- * with its stitch knocked out in [stitchColor].
+ * The pocket as a standalone glyph for icon slots (tabs, headers): a filled pocket in [tint] with
+ * its stitch knocked out in [stitchColor].
  */
 @Composable
 fun PocketGlyphIcon(

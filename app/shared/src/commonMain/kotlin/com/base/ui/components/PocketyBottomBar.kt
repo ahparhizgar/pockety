@@ -15,7 +15,6 @@ import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
-import com.base.feature.pocket.PocketGlyphIcon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -28,6 +27,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.base.feature.pocket.PocketGlyphIcon
 import com.base.ui.ComponentPreviews
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
