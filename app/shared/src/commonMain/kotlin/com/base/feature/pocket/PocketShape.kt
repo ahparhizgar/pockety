@@ -19,6 +19,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+private const val SLIT_TOP_FRACTION = 0.18f
+private const val SLIT_WIDTH_FRACTION = 0.36f
+private const val SLIT_HEIGHT_FRACTION = 0.07f
+private const val SLIT_ALPHA = 0.55f
+private const val ICON_SIZE_FRACTION = 0.5f
+private const val ICON_TOP_FRACTION = 0.1f
+
 /** Pocket silhouette matching the app icon: flat top, straight sides, semicircular bottom. */
 val PocketShape = GenericShape { size, _ ->
   val radius = size.width / 2f
@@ -38,6 +45,7 @@ val PocketShape = GenericShape { size, _ ->
  * A pocket-shaped badge filled with the pocket's color, carrying the pocket's icon and the app
  * icon's top slit detail, so a card reads as a pocket at a glance.
  */
+@Suppress("LongParameterList")
 @Composable
 fun PocketShapeBadge(
     icon: ImageVector,
@@ -45,7 +53,7 @@ fun PocketShapeBadge(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     badgeSize: Dp = 40.dp,
-    iconSize: Dp = 20.dp,
+    iconTint: Color = Color.White,
 ) {
   Surface(
       modifier = modifier.size(badgeSize),
@@ -56,20 +64,22 @@ fun PocketShapeBadge(
       Box(
           modifier =
               Modifier.align(Alignment.TopCenter)
-                  .padding(top = badgeSize * 0.18f)
-                  .width(badgeSize * 0.36f)
-                  .height(badgeSize * 0.07f)
+                  .padding(top = badgeSize * SLIT_TOP_FRACTION)
+                  .width(badgeSize * SLIT_WIDTH_FRACTION)
+                  .height(badgeSize * SLIT_HEIGHT_FRACTION)
                   .background(
-                      color = Color.White.copy(alpha = 0.55f),
+                      color = iconTint.copy(alpha = SLIT_ALPHA),
                       shape = RoundedCornerShape(percent = 50),
                   ),
       )
       Icon(
           imageVector = icon,
           contentDescription = contentDescription,
-          tint = Color.White,
+          tint = iconTint,
           modifier =
-              Modifier.align(Alignment.Center).padding(top = badgeSize * 0.1f).size(iconSize),
+              Modifier.align(Alignment.Center)
+                  .padding(top = badgeSize * ICON_TOP_FRACTION)
+                  .size(badgeSize * ICON_SIZE_FRACTION),
       )
     }
   }

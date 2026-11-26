@@ -390,7 +390,7 @@ private fun PocketOptionBadge(
       contentDescription = null,
       modifier = modifier,
       badgeSize = 44.dp,
-      iconSize = 20.dp,
+      iconTint = contentColor,
   )
 }
 

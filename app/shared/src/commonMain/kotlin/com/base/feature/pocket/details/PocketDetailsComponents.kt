@@ -64,7 +64,6 @@ fun PocketDetailsHeaderSection(
         color = Color(color),
         contentDescription = name,
         badgeSize = 64.dp,
-        iconSize = 30.dp,
     )
 
     Spacer(modifier = Modifier.height(12.dp))
