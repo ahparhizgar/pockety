@@ -7,6 +7,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.base.RootScreen
 import com.base.component.TestCContext
+import com.base.db.CategoryRepository
 import com.base.db.PocketRepository
 import com.base.util.injectUiRoot
 import com.base.util.uiKoin
@@ -40,12 +41,14 @@ class PocketListE2eUiTest {
     val pocketRepository = koin.get<PocketRepository>()
 
     runBlocking {
+      val categoryId =
+          koin.get<CategoryRepository>().addCategory("Groceries", "shopping_bag", 0xFF316342)
       pocketRepository.addPocket(
           name = "Groceries & Household",
           categoryTag = "Groceries",
           budgetAmount = 1_000_000L,
           icon = "shopping_bag",
-          categoryIds = listOf(1L),
+          categoryIds = listOf(categoryId),
       )
     }
 
