@@ -176,7 +176,8 @@ fun ManualSetupConfirmDialog(
       text = {
         Text(
             "The pocket keeps its current name, icon and color, but they stop following " +
-                "the category. You can also link several categories to this pocket."
+                "the category. You can also link several categories to this pocket. " +
+                "You can go back to the simple setup anytime before saving."
         )
       },
       confirmButton = { TextButton(onClick = onConfirm) { Text("Switch") } },

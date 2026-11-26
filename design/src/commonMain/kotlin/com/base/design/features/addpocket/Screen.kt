@@ -74,7 +74,14 @@ fun AddPocketScreen(
   Scaffold(
       modifier = modifier.fillMaxSize(),
       containerColor = MaterialTheme.colorScheme.surface,
-      topBar = { PocketyTopAppBar(title = "New Pocket", onBackClick = onBackClick) },
+      topBar = {
+        PocketyTopAppBar(
+            title = "New Pocket",
+            // Before saving, Back in manual mode returns to the simple category setup
+            // instead of leaving the flow.
+            onBackClick = { if (manual) manual = false else onBackClick() },
+        )
+      },
       bottomBar = { PocketyBottomActionBar(text = "Save", onClick = onSaveClick) },
   ) { innerPadding ->
     Box(
