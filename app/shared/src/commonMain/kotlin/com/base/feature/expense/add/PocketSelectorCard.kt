@@ -21,12 +21,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.base.db.PocketItemModel
 import com.base.feature.category.add.resolveCategoryIcon
+import com.base.feature.pocket.PocketGlyphIcon
+import com.base.feature.pocket.PocketShapeBadge
 import com.base.ui.ComponentPreviews
 import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
@@ -52,6 +55,7 @@ internal fun PocketSelectorSection(
 
   PocketSelectorCard(
       pocketName = selectedPocket?.name,
+      pocketColor = selectedPocket?.color,
       onPocketClick = component::onSelectPocketClicked,
       onClearPocketClick = component::onPocketCleared,
       modifier = modifier,
@@ -69,6 +73,7 @@ fun PocketSelectorCard(
     modifier: Modifier = Modifier,
     pocketBalance: String = "",
     pocketIcon: ImageVector = Icons.Default.AccountBalanceWallet,
+    pocketColor: Long? = null,
 ) {
   val hasPocket = !pocketName.isNullOrBlank()
 
@@ -98,6 +103,7 @@ fun PocketSelectorCard(
         ) {
           PocketCardContent(
               pocketName = pocketName,
+              pocketColor = pocketColor,
               hasPocket = hasPocket,
               pocketBalance = pocketBalance,
               pocketIcon = pocketIcon,
@@ -136,11 +142,10 @@ private fun PocketSelectorHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-      Icon(
-          imageVector = Icons.Default.AccountBalanceWallet,
-          contentDescription = null,
+      PocketGlyphIcon(
           tint = MaterialTheme.colorScheme.tertiary,
-          modifier = Modifier.size(20.dp),
+          stitchColor = MaterialTheme.colorScheme.surfaceContainerLow,
+          glyphSize = 20.dp,
       )
       Text(
           text = stringResource(Res.string.pocket_label),
@@ -158,36 +163,30 @@ private fun PocketCardContent(
     pocketBalance: String,
     pocketIcon: ImageVector,
     modifier: Modifier = Modifier,
+    pocketColor: Long? = null,
 ) {
   Row(
       modifier = modifier,
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(12.dp),
   ) {
-    Surface(
-        shape = CircleShape,
+    PocketShapeBadge(
+        icon = if (hasPocket) pocketIcon else null,
         color =
-            if (hasPocket) {
-              MaterialTheme.colorScheme.secondaryContainer
-            } else {
-              MaterialTheme.colorScheme.surfaceContainerHigh
+            when {
+              hasPocket && pocketColor != null -> Color(pocketColor)
+              hasPocket -> MaterialTheme.colorScheme.secondaryContainer
+              else -> MaterialTheme.colorScheme.surfaceContainerHigh
             },
-        contentColor =
-            if (hasPocket) {
-              MaterialTheme.colorScheme.onSecondaryContainer
-            } else {
-              MaterialTheme.colorScheme.onSurfaceVariant
+        contentDescription = pocketName,
+        badgeSize = 48.dp,
+        iconTint =
+            when {
+              hasPocket && pocketColor != null -> Color.White
+              hasPocket -> MaterialTheme.colorScheme.onSecondaryContainer
+              else -> MaterialTheme.colorScheme.onSurfaceVariant
             },
-        modifier = Modifier.size(48.dp),
-    ) {
-      Box(contentAlignment = Alignment.Center) {
-        Icon(
-            imageVector = if (hasPocket) pocketIcon else Icons.Default.AccountBalanceWallet,
-            contentDescription = pocketName,
-            modifier = Modifier.size(24.dp),
-        )
-      }
-    }
+    )
     Column(modifier = Modifier.weight(1f)) {
       Text(
           text =

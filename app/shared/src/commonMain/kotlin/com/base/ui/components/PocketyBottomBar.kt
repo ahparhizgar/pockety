@@ -14,6 +14,8 @@ import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import com.base.feature.pocket.PocketGlyphIcon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -81,11 +83,24 @@ private fun RowScope.PocketyBottomBarItem(
           ),
       icon = {
         Box {
-          Icon(
-              imageVector = tab.icon,
-              contentDescription = label,
-              modifier = Modifier.size(24.dp),
-          )
+          if (tab == PocketyTab.Pockets) {
+            PocketGlyphIcon(
+                tint = LocalContentColor.current,
+                stitchColor =
+                    if (selected) {
+                      MaterialTheme.colorScheme.secondaryContainer
+                    } else {
+                      MaterialTheme.colorScheme.surface
+                    },
+                modifier = Modifier.size(24.dp),
+            )
+          } else {
+            Icon(
+                imageVector = tab.icon,
+                contentDescription = label,
+                modifier = Modifier.size(24.dp),
+            )
+          }
           if (tab == PocketyTab.Inbox && inboxBadgeCount > 0) {
             InboxBadge(count = inboxBadgeCount)
           }
