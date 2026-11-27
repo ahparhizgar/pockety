@@ -73,7 +73,7 @@ val samplePocketLedgerItems: List<PocketLedgerItem> =
             title = "Sam Cafe Vanak",
             date = "Today, 10:15 AM",
             note = "Meeting with Ali",
-            amount = "-85,000 T",
+            amount = "85,000 T",
             icon = Icons.Default.Coffee,
         ),
         PocketLedgerItem.Expense(
@@ -81,7 +81,7 @@ val samplePocketLedgerItems: List<PocketLedgerItem> =
             title = "Lamiz Coffee Jordan",
             date = "Yesterday, 4:30 PM",
             note = "Iced Latte & Cookie",
-            amount = "-120,000 T",
+            amount = "120,000 T",
             icon = Icons.Default.LocalCafe,
         ),
         PocketLedgerItem.TopUp(
@@ -97,7 +97,7 @@ val samplePocketLedgerItems: List<PocketLedgerItem> =
             title = "Reza Bakery & Espresso",
             date = "22 Oct, 11:20 AM",
             note = "Morning Americano",
-            amount = "-65,000 T",
+            amount = "65,000 T",
             icon = Icons.Default.BakeryDining,
         ),
         PocketLedgerItem.Expense(
@@ -105,7 +105,7 @@ val samplePocketLedgerItems: List<PocketLedgerItem> =
             title = "Cafe Kariz Garden",
             date = "20 Oct, 6:00 PM",
             note = "Herbal tea & cheesecake",
-            amount = "-95,000 T",
+            amount = "95,000 T",
             icon = Icons.Default.LocalCafe,
         ),
         PocketLedgerItem.Expense(
@@ -113,7 +113,7 @@ val samplePocketLedgerItems: List<PocketLedgerItem> =
             title = "Bread & Salt Bakery",
             date = "18 Oct, 08:10 AM",
             note = "Sourdough & filter roast",
-            amount = "-45,000 T",
+            amount = "45,000 T",
             icon = Icons.Default.BakeryDining,
         ),
     )
@@ -536,7 +536,7 @@ private fun PocketTransactionRowPreview() {
       title = "Sam Cafe Vanak",
       date = "Today, 10:15 AM",
       note = "Meeting with Ali",
-      amount = "-85,000 T",
+      amount = "85,000 T",
       onDeleteClick = {},
   )
 }
