@@ -15,6 +15,28 @@ object SmsExpenseParser {
       "(?:برداشت|خرید|پرداخت|انتقال(?:\\s*وجه)?|کارت\\s*به\\s*کارت|کسر(?:\\s*از)?|بدهکار|پرید|\\b(?:withdrawal|purchase|transfer|paid|debited?|pos)\\b)"
   private val expenseRegex = Regex(EXPENSE, RegexOption.IGNORE_CASE)
   private val feeRegex = Regex("کارمزد|\\bfee\\b", RegexOption.IGNORE_CASE)
+  private val nonDebitTemplates =
+      listOf(
+              """شناسه\s+تا[یئ]ید\s+برداشت\s+از\s+حساب""",
+              """درخواست\s+خرید\s+واحدهای\s+صندوق[^\r\n]*ثبت\s+شد""",
+              """هزینه\s+پیامک[\s\S]*?برداشت[\s\u00ad]+می[\s\u00ad]*شود""",
+              """کد\s+رهگیری\s+تجویز[\s\S]*?(?:توسط\s+سازمان\s+بیمه|سهم\s+سازمان)""",
+              """موجودی\s+کیف\s+پول\s+شما[^\r\n]*افزایش\s+یافت""",
+              """بابت\s+سود\s+طرح\s+حامی[\s\S]*?به\s+قدرت\s+خرید\s+شما\s+اضافه\s+شد""",
+              """کارگزاری\s+مفید\s+برداشت\s+مبلغ[^\r\n]*\s+از\s+حساب\s+حامی\s+مانده""",
+              """بابت\s+خرید\s+از\s+کیف\s+پول\s+اوانو\s+کسر\s+گردید""",
+              """سرویس\s+اعتبار\s+اضطراری[\s\S]*?فعال\s*سازی\s+با\s+شماره\s*گیری""",
+              """بازگشت\s+امتیاز[\s\S]*?شماره\s*گیری""",
+              """(?:فعال\s*سازی\s+سرویس\s+تعرفه\s+آزاد\s+همراهی|بسته\s+مکالمه\s+همراهی)[\s\S]*?\*[\d*]+#""",
+              """شارژ\s+همراهی\s+مخصوص\s+شما[\s\S]*?کد\s+دستوری""",
+              """(?:شارژ\s+انجام\s+شد\.\s*)?اعتبار\s*شما\s*\d[\d,]*\s*ریال\.?\s+(?:اینترنت\s+همراهی|خرید\s+به\s+صرفه\s+از)""",
+              """گزینه\s+مورد\s+نظر\s+را\s+ارسال\s+کنید[\s\S]*?هزینه\s+این\s+پیامک""",
+              """\*خرید\s+از\s+داروکده\*\s+شماره\s+پیگیری""",
+              """بلیط[^\r\n]*صادر\s+شد\.\s+شناسه\s+خرید:\s*\d+\s+safar724\.com""",
+              """(?:خرید\s+از\s+طاقچه\s*\|\s*دانلود\s+کتاب|خرید\s+خرید\s+کتاب[^\r\n]*\(طاقچه\))[\s\S]*?شناسه:""",
+              """خرید\s+شما\s+با\s+موفقیت\s+انجام\s+شد\.\s+کد\s+سفارش:[\s\S]*?پورتال\s+ایرانسل""",
+          )
+          .map(::Regex)
   private val nonExpenseRegex =
       Regex(
           """(?:^|\s)رمز|کد\s*(?:تایید|تأیید|فعال\s*سازی)|گذرواژه|\botp\b|password|verification\s+code|واریز|بستانکار|برگشت|عودت|استرداد|deposit|credited|received|refund|revers|ناموفق|موفق\s*نبود|انجام\s*نشد|عدم\s*موجودی|موجودی\s*کافی|لغو|failed|declined|unsuccessful|یادآوری|سررسید|لطفا|پرداخت\s*کنید|جایزه|reminder|please\s+pay""",
@@ -37,7 +59,7 @@ object SmsExpenseParser {
   private val currencyAfter = Regex("^\\s*($CURRENCY)(?![a-z])", RegexOption.IGNORE_CASE)
   private val amountLabel =
       Regex(
-          "(?:$EXPENSE|کارمزد|fee|مبلغ|amount)(?:\\s*(?:وجه|به|مبلغ|از|حساب|by))*\\s*[:：]?\\s*(?:$CURRENCY)?\\s*$",
+          "(?:$EXPENSE|کارمزد|fee|مبلغ|amount)(?:\\s*(?:وجه|به|مبلغ|از|حساب|by))*\\s*(?:\\(\\s*($CURRENCY)\\s*\\))?\\s*[:：]?\\s*(?:$CURRENCY)?\\s*$",
           RegexOption.IGNORE_CASE,
       )
   private val metadataLabel =
@@ -75,18 +97,18 @@ object SmsExpenseParser {
 
   fun parse(text: String): ParsedSmsExpense? {
     val normalized = normalize(text)
-    if (
-        normalized.isBlank() ||
-            nonExpenseRegex.containsMatchIn(normalized) ||
-            promotionalRegex.containsMatchIn(normalized)
-    ) {
-      return null
-    }
+    if (normalized.isBlank() || isNonExpense(normalized)) return null
+
     val hasOutgoing =
         expenseRegex.containsMatchIn(normalized) || feeRegex.containsMatchIn(normalized)
     val candidate = candidates(normalized, hasOutgoing).maxByOrNull { it.priority }
     return candidate?.let { ParsedSmsExpense(it.amount) }
   }
+
+  private fun isNonExpense(text: String): Boolean =
+      nonExpenseRegex.containsMatchIn(text) ||
+          promotionalRegex.containsMatchIn(text) ||
+          nonDebitTemplates.any { it.containsMatchIn(text) }
 
   private fun candidates(text: String, hasOutgoing: Boolean): Sequence<AmountCandidate> =
       numberRegex.findAll(text).mapNotNull { match ->
@@ -94,7 +116,10 @@ object SmsExpenseParser {
         val after = text.substring(match.range.last + 1)
         val label = amountLabel.find(before)
         if (isMetadata(before, label)) return@mapNotNull null
-        val currency = currencyAfter.find(after)?.value ?: currencyBefore.find(before)?.value
+        val currency =
+            currencyAfter.find(after)?.value
+                ?: currencyBefore.find(before)?.value
+                ?: label?.groups?.get(1)?.value
         val signs = listOf(match.groupValues[1], match.groupValues[3])
         if ("+" in signs) return@mapNotNull null
         // Unlabelled minuses need banking context, unlike arbitrary negative numbers.
