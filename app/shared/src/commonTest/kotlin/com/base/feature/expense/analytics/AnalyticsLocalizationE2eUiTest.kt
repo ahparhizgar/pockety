@@ -65,7 +65,7 @@ class AnalyticsLocalizationE2eUiTest {
 
     onNode(hasText("تحلیل")).waitForExistence().assertExists()
     onNode(hasText("جریان نقدی ماهانه")).assertExists()
-    onNode(hasText("0 تومان", substring = true)).assertExists()
+    onNode(hasText("۰ تومان", substring = true)).assertExists()
     onNode(hasText("این ماه هنوز خرجی ثبت نکردی")).assertExists()
     onNode(hasContentDescription("ماه قبل")).assertExists()
     onNode(hasContentDescription("ماه بعد")).assertExists()
