@@ -16,6 +16,7 @@ import com.arkivanov.essenty.backhandler.BackHandler
 import com.base.component.CContext
 import com.base.component.WindowSizeHolder
 import com.base.component.componentScope
+import com.base.db.CategoryRepository
 import com.base.db.PocketRepository
 import com.base.feature.category.management.CategoryManagementFlowComponentFactory
 import com.base.feature.expense.AddExpenseFlowComponentFactory
@@ -92,6 +93,16 @@ class DefaultRootComponent(
     scope.launch {
       componentProvider.provide(UserSettingsRepository::class).currencyType.collect {
         _currency.value = it
+      }
+    }
+
+    scope.launch {
+      val settings = componentProvider.provide(UserSettingsRepository::class)
+      if (!settings.defaultCategoriesSeeded.first()) {
+        componentProvider
+            .provide(CategoryRepository::class)
+            .ensureDefaultCategories(isPersian = _appLanguage.value == AppLanguage.PERSIAN)
+        settings.setDefaultCategoriesSeeded()
       }
     }
 

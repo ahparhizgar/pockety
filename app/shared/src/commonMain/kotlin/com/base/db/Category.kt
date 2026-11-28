@@ -36,6 +36,8 @@ interface CategoryDao {
 
   @Query("SELECT COALESCE(MAX(sortOrder), -1) FROM categories") suspend fun maxSortOrder(): Int
 
+  @Query("SELECT COUNT(*) FROM categories") suspend fun countCategories(): Int
+
   @Query("UPDATE categories SET sortOrder = :sortOrder WHERE id = :id")
   suspend fun updateSortOrder(id: Long, sortOrder: Int)
 
@@ -61,6 +63,12 @@ interface CategoryRepository {
 
   suspend fun addCategory(name: String, icon: String, color: Long): Long
 
+  /**
+   * Inserts the built-in default categories in their fixed order when the user
+   * has no categories yet. Returns true when the defaults were inserted.
+   */
+  suspend fun ensureDefaultCategories(isPersian: Boolean): Boolean
+
   suspend fun deleteCategory(id: Long)
 
   suspend fun reorderCategories(orderedIds: List<Long>)
@@ -81,6 +89,22 @@ class DefaultCategoryRepository(
             sortOrder = categoryDao.maxSortOrder() + 1,
         )
     return categoryDao.insertCategory(category)
+  }
+
+  override suspend fun ensureDefaultCategories(isPersian: Boolean): Boolean {
+    if (categoryDao.countCategories() > 0) return false
+    defaultCategories.forEachIndexed { index, category ->
+      categoryDao.insertCategory(
+          CategoryEntity(
+              name = if (isPersian) category.nameFa else category.nameEn,
+              icon = category.icon,
+              color = category.color,
+              createdAt = Clock.System.now(),
+              sortOrder = index,
+          )
+      )
+    }
+    return true
   }
 
   override suspend fun reorderCategories(orderedIds: List<Long>) {
@@ -114,6 +138,24 @@ class FakeCategoryRepository(
         )
     categoriesFlow.update { it + newCategory }
     return id
+  }
+
+  override suspend fun ensureDefaultCategories(isPersian: Boolean): Boolean {
+    if (categoriesFlow.value.isNotEmpty()) return false
+    val seeded =
+        defaultCategories.mapIndexed { index, category ->
+          CategoryEntity(
+              id = nextId + index,
+              name = if (isPersian) category.nameFa else category.nameEn,
+              icon = category.icon,
+              color = category.color,
+              createdAt = Clock.System.now(),
+              sortOrder = index,
+          )
+        }
+    nextId += seeded.size
+    categoriesFlow.update { it + seeded }
+    return true
   }
 
   override suspend fun reorderCategories(orderedIds: List<Long>) {

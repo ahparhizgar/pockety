@@ -21,6 +21,7 @@ interface UserSettingsRepository {
   val currencyType: Flow<CurrencyType>
   val endOfDayReminderEnabled: Flow<Boolean>
   val appLanguage: Flow<AppLanguage>
+  val defaultCategoriesSeeded: Flow<Boolean>
 
   suspend fun setCalendarType(type: CalendarType)
 
@@ -29,6 +30,8 @@ interface UserSettingsRepository {
   suspend fun setEndOfDayReminderEnabled(enabled: Boolean)
 
   suspend fun setAppLanguage(language: AppLanguage)
+
+  suspend fun setDefaultCategoriesSeeded()
 }
 
 class DataStoreUserSettingsRepository(
@@ -38,6 +41,7 @@ class DataStoreUserSettingsRepository(
   private val currencyTypeKey = stringPreferencesKey("currency_type")
   private val endOfDayReminderKey = booleanPreferencesKey("end_of_day_reminder")
   private val appLanguageKey = stringPreferencesKey("app_language")
+  private val defaultCategoriesSeededKey = booleanPreferencesKey("default_categories_seeded")
 
   override val calendarType: Flow<CalendarType> =
       dataStore.data.map { preferences ->
@@ -76,6 +80,13 @@ class DataStoreUserSettingsRepository(
   override suspend fun setAppLanguage(language: AppLanguage) {
     dataStore.edit { preferences -> preferences[appLanguageKey] = language.code }
   }
+
+  override val defaultCategoriesSeeded: Flow<Boolean> =
+      dataStore.data.map { preferences -> preferences[defaultCategoriesSeededKey] ?: false }
+
+  override suspend fun setDefaultCategoriesSeeded() {
+    dataStore.edit { preferences -> preferences[defaultCategoriesSeededKey] = true }
+  }
 }
 
 class FakeUserSettingsRepository(
@@ -83,6 +94,7 @@ class FakeUserSettingsRepository(
     initialCurrencyType: CurrencyType = CurrencyType.TOMANS,
     initialEndOfDayReminderEnabled: Boolean = true,
     initialAppLanguage: AppLanguage = AppLanguage.ENGLISH,
+    initialDefaultCategoriesSeeded: Boolean = false,
 ) : UserSettingsRepository {
   private val _calendarType = MutableStateFlow(initialCalendarType)
   override val calendarType: Flow<CalendarType> = _calendarType
@@ -95,6 +107,9 @@ class FakeUserSettingsRepository(
 
   private val _appLanguage = MutableStateFlow(initialAppLanguage)
   override val appLanguage: Flow<AppLanguage> = _appLanguage
+
+  private val _defaultCategoriesSeeded = MutableStateFlow(initialDefaultCategoriesSeeded)
+  override val defaultCategoriesSeeded: Flow<Boolean> = _defaultCategoriesSeeded
 
   override suspend fun setCalendarType(type: CalendarType) {
     _calendarType.value = type
@@ -110,5 +125,9 @@ class FakeUserSettingsRepository(
 
   override suspend fun setAppLanguage(language: AppLanguage) {
     _appLanguage.value = language
+  }
+
+  override suspend fun setDefaultCategoriesSeeded() {
+    _defaultCategoriesSeeded.value = true
   }
 }

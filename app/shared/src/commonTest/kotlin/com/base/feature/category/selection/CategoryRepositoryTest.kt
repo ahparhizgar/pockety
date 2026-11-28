@@ -176,6 +176,82 @@ class CategoryRepositoryTest : BehaviorSpec() {
           names shouldBe listOf("Bills", "Groceries")
         }
       }
+
+      When("default categories are ensured in Persian on an empty repository") {
+        var seeded: Boolean by testValue { false }
+
+        beforeEach {
+          seeded = categoryRepository.ensureDefaultCategories(isPersian = true)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the defaults are seeded in their fixed order") {
+          seeded shouldBe true
+          val categories = categoryRepository.observeCategories().first()
+          categories shouldHaveSize 14
+          categories.map { it.name } shouldBe
+              listOf(
+                  "مواد غذایی",
+                  "حمل‌ونقل",
+                  "رستوران و کافه",
+                  "لوازم خانه",
+                  "بهداشت و زیبایی",
+                  "قبوض و ارتباطات",
+                  "تفریح و سرگرمی",
+                  "سلامت و درمان",
+                  "پوشاک",
+                  "مسکن",
+                  "آموزش",
+                  "هدیه و کمک",
+                  "سفر",
+                  "بیمه",
+              )
+          categories.map { it.sortOrder } shouldBe (0..13).toList()
+          categories.first().icon shouldBe "local_grocery_store"
+          categories.last().icon shouldBe "account_balance"
+        }
+      }
+
+      When("default categories are ensured twice") {
+        var secondSeeded: Boolean by testValue { true }
+
+        beforeEach {
+          categoryRepository.ensureDefaultCategories(isPersian = true)
+          secondSeeded = categoryRepository.ensureDefaultCategories(isPersian = true)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the second call inserts nothing") {
+          secondSeeded shouldBe false
+          categoryRepository.observeCategories().first() shouldHaveSize 14
+        }
+      }
+
+      When("default categories are ensured in English on an empty repository") {
+        beforeEach {
+          categoryRepository.ensureDefaultCategories(isPersian = false)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("the translated names are seeded") {
+          val names = categoryRepository.observeCategories().first().map { it.name }
+          names shouldHaveSize 14
+          names.first() shouldBe "Groceries"
+          names.last() shouldBe "Insurance"
+        }
+      }
+
+      When("default categories are ensured with an existing category") {
+        beforeEach {
+          categoryRepository.addCategory("Dining", "restaurant", 0xFFE57373)
+          testCoroutineScheduler.advanceUntilIdle()
+        }
+
+        Then("nothing is seeded") {
+          categoryRepository.ensureDefaultCategories(isPersian = true) shouldBe false
+          categoryRepository.observeCategories().first() shouldHaveSize 1
+        }
+      }
     }
   }
 }
