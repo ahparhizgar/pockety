@@ -10,11 +10,13 @@ import kotlinx.coroutines.withContext
 class AndroidSmsInboxReader(
     private val context: Context,
     private val ioDispatcher: CoroutineDispatcher,
+    private val configStore: SmsRemoteConfigStore,
 ) : SmsInboxReader {
   override suspend fun latestExpense(): SmsInboxResult =
       withContext(ioDispatcher) {
         if (!AndroidPermissionController.checkIsSmsPermissionGranted(context))
             return@withContext SmsInboxResult.Unavailable
+        val rules = configStore.currentRules()
         context.contentResolver
             .query(
                 Telephony.Sms.Inbox.CONTENT_URI,
@@ -49,7 +51,7 @@ class AndroidSmsInboxReader(
                   )
                 }
               }
-              return@withContext SmsInboxResult.Available(latestBankExpense(messages))
+              return@withContext SmsInboxResult.Available(latestBankExpense(messages, rules))
             }
         SmsInboxResult.Unavailable
       }

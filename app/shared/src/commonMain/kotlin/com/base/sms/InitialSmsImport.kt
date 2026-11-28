@@ -23,10 +23,13 @@ sealed interface SmsInboxResult {
 
 data class ReceivedSms(val sender: String, val body: String, val receivedAt: Instant)
 
-fun latestBankExpense(messagesNewestFirst: Sequence<ReceivedSms>): BankSms? =
+fun latestBankExpense(
+    messagesNewestFirst: Sequence<ReceivedSms>,
+    rules: SmsRemoteRules = SmsRemoteRules(),
+): BankSms? =
     messagesNewestFirst
         .mapNotNull { sms ->
-          SmsExpenseParser.parse(sms.body)?.let {
+          SmsExpenseParser.parse(sms.body, rules)?.let {
             BankSms(sms.sender, sms.body, it.amount, sms.receivedAt)
           }
         }

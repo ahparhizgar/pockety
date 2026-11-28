@@ -95,9 +95,21 @@ object SmsExpenseParser {
         }
       }
 
-  fun parse(text: String): ParsedSmsExpense? {
+  fun parse(text: String, rules: SmsRemoteRules = SmsRemoteRules()): ParsedSmsExpense? {
     val normalized = normalize(text)
-    if (normalized.isBlank() || isNonExpense(normalized)) return null
+    if (normalized.isBlank()) return null
+
+    // Remote rules override the local logic: an exclude match vetoes the
+    // message outright, and an include match only needs an extractable
+    // amount, skipping the local non-expense and outgoing-word gates.
+    if (rules.isExcluded(normalized)) return null
+    if (rules.isIncluded(normalized)) {
+      return candidates(normalized, hasOutgoing = true)
+          .maxByOrNull { it.priority }
+          ?.let { ParsedSmsExpense(it.amount) }
+    }
+
+    if (isNonExpense(normalized)) return null
 
     val hasOutgoing =
         expenseRegex.containsMatchIn(normalized) || feeRegex.containsMatchIn(normalized)

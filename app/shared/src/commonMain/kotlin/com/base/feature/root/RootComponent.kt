@@ -32,6 +32,7 @@ import com.base.feature.settings.UserSettingsRepository
 import com.base.feature.sms.inbox.InboxComponentFactory
 import com.base.navigation.NavigationAction
 import com.base.navigation.NavigationActionBus
+import com.base.sms.SmsRemoteConfigStore
 import com.base.usermessage.MessageHolder
 import kotlin.reflect.KClass
 import kotlin.time.Clock
@@ -104,6 +105,10 @@ class DefaultRootComponent(
             .ensureDefaultCategories(isPersian = _appLanguage.value == AppLanguage.PERSIAN)
         settings.setDefaultCategoriesSeeded()
       }
+    }
+
+    scope.launch {
+      componentProvider.provide(SmsRemoteConfigStore::class).refreshIfDue(Clock.System.now())
     }
 
     scope.launch {

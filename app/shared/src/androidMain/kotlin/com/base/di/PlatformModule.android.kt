@@ -21,7 +21,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 actual fun platformModule(): Module = module {
-  single { AndroidSmsInboxReader(androidContext(), get<CoroutineDispatcher>(named("io"))) }
+  single { AndroidSmsInboxReader(androidContext(), get<CoroutineDispatcher>(named("io")), get()) }
       .bind<SmsInboxReader>()
   single { AndroidAppDatabaseBuilderFactory(androidContext()) }.bind<AppDatabaseBuilderFactory>()
   single { AndroidPermissionController(androidContext()) }.bind<PermissionController>()

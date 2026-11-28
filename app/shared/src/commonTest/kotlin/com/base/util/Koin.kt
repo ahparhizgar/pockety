@@ -12,8 +12,10 @@ import com.base.feature.settings.LanguageSettingsHandler
 import com.base.feature.settings.UserSettingsRepository
 import com.base.feature.sms.FakeSmsImportHistory
 import com.base.feature.sms.FakeSmsInboxReader
+import com.base.sms.FakeSmsRemoteConfigStore
 import com.base.sms.SmsImportHistory
 import com.base.sms.SmsInboxReader
+import com.base.sms.SmsRemoteConfigStore
 import com.base.testValue
 import io.kotest.core.spec.Spec
 import kotlinx.coroutines.CoroutineDispatcher
@@ -59,6 +61,7 @@ fun integrationTestModule() = module {
   single { FakeTokenStorage() }.bind<TokenStorage>()
   // Tests model an existing user: default categories were already seeded, so
   // the root does not insert them and flows start from an empty collection.
+  single { FakeSmsRemoteConfigStore() }.bind<SmsRemoteConfigStore>()
   single { FakeUserSettingsRepository(initialDefaultCategoriesSeeded = true) }
       .bind<UserSettingsRepository>()
   single { FakeLanguageSettingsHandler() }.bind<LanguageSettingsHandler>()

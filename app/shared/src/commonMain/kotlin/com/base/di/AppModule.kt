@@ -20,6 +20,10 @@ import com.base.ktor.createHttpClient
 import com.base.navigation.DefaultNavigationActionBus
 import com.base.navigation.NavigationActionBus
 import com.base.sms.DataStoreSmsImportHistory
+import com.base.sms.DefaultSmsRemoteConfigStore
+import com.base.sms.KtorSmsRemoteConfigFetcher
+import com.base.sms.SmsRemoteConfigFetcher
+import com.base.sms.SmsRemoteConfigStore
 import com.base.sms.InitialSmsImport
 import com.base.sms.SmsImportHistory
 import kotlinx.coroutines.CoroutineDispatcher
@@ -40,6 +44,8 @@ fun othersModule() = module {
   singleOf(::createDataStore)
   singleOf(::InitialSmsImport)
   singleOf(::DataStoreSmsImportHistory).bind<SmsImportHistory>()
+  singleOf(::KtorSmsRemoteConfigFetcher).bind<SmsRemoteConfigFetcher>()
+  singleOf(::DefaultSmsRemoteConfigStore).bind<SmsRemoteConfigStore>()
   singleOf(::DataStoreTokenStorage).bind<TokenStorage>()
   singleOf(::DataStoreUserSettingsRepository).bind<UserSettingsRepository>()
   single { CoroutineScope(SupervisorJob() + get<CoroutineDispatcher>(named("default"))) }
