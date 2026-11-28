@@ -72,8 +72,8 @@ fun groupMoneyDigits(input: String): String {
 
 /**
  * Formats a plain amount text (digits with an optional '.' fraction, as produced by
- * [CurrencyType.amountText]) for display in [language], using the platform's locale
- * formatting: digit shapes, grouping and decimal separators follow the language.
+ * [CurrencyType.amountText]) for display in [language], using the platform's locale formatting:
+ * digit shapes, grouping and decimal separators follow the language.
  */
 expect fun formatAmountForDisplay(amountText: String, language: AppLanguage): String
 
