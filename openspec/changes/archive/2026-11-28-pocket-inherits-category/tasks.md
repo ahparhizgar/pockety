@@ -72,7 +72,7 @@
 ## 5. Verification
 
 - [x] 5.1 CI green; screenshot diff reviewed and mobile shots sent.
-- [ ] 5.2 Specs synced and change archived after Amir's sign-off.
+- [x] 5.2 Specs synced and change archived after Amir's sign-off (approved 2026-11-28).
 
 ## 6. Wizard revision (Amir, 2026-11-26, after testing the first build)
 
