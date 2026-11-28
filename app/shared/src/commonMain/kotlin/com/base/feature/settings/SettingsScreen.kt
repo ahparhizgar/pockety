@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.calendar.CalendarType
 import com.base.ui.ScreenPreviews
-import com.base.ui.money.localizedNumber
 import com.base.ui.components.PocketyTopAppBar
+import com.base.ui.money.localizedNumber
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.settings_categories_count_format

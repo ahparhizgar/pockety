@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.db.FakeCategoryFactory
 import com.base.ui.ScreenPreviews
-import com.base.ui.money.localizedNumber
 import com.base.ui.components.PocketyTopAppBar
+import com.base.ui.money.localizedNumber
 import com.base.usermessage.UiString
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
@@ -206,7 +206,8 @@ private fun CategoryPickContent(
                           ?.name
                           .orEmpty(),
                   )
-              else -> stringResource(Res.string.pocket_pick_advanced_hint, localizedNumber(pickedCount))
+              else ->
+                  stringResource(Res.string.pocket_pick_advanced_hint, localizedNumber(pickedCount))
             },
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,

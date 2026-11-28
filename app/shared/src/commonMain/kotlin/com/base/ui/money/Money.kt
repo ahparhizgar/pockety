@@ -78,9 +78,9 @@ fun groupMoneyDigits(input: String): String {
 expect fun formatAmountForDisplay(amountText: String, language: AppLanguage): String
 
 /**
- * Replaces the ASCII digits in [text] with the digits of [language]'s locale, leaving every
- * other character (separators, padding, punctuation) untouched. For values that must not gain
- * grouping separators, such as years and times.
+ * Replaces the ASCII digits in [text] with the digits of [language]'s locale, leaving every other
+ * character (separators, padding, punctuation) untouched. For values that must not gain grouping
+ * separators, such as years and times.
  */
 expect fun localizeDigits(text: String, language: AppLanguage): String
 
