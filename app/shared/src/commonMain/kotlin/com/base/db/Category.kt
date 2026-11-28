@@ -64,8 +64,8 @@ interface CategoryRepository {
   suspend fun addCategory(name: String, icon: String, color: Long): Long
 
   /**
-   * Inserts the built-in default categories in their fixed order when the user
-   * has no categories yet. Returns true when the defaults were inserted.
+   * Inserts the built-in default categories in their fixed order when the user has no categories
+   * yet. Returns true when the defaults were inserted.
    */
   suspend fun ensureDefaultCategories(isPersian: Boolean): Boolean
 
@@ -142,17 +142,16 @@ class FakeCategoryRepository(
 
   override suspend fun ensureDefaultCategories(isPersian: Boolean): Boolean {
     if (categoriesFlow.value.isNotEmpty()) return false
-    val seeded =
-        defaultCategories.mapIndexed { index, category ->
-          CategoryEntity(
-              id = nextId + index,
-              name = if (isPersian) category.nameFa else category.nameEn,
-              icon = category.icon,
-              color = category.color,
-              createdAt = Clock.System.now(),
-              sortOrder = index,
-          )
-        }
+    val seeded = defaultCategories.mapIndexed { index, category ->
+      CategoryEntity(
+          id = nextId + index,
+          name = if (isPersian) category.nameFa else category.nameEn,
+          icon = category.icon,
+          color = category.color,
+          createdAt = Clock.System.now(),
+          sortOrder = index,
+      )
+    }
     nextId += seeded.size
     categoriesFlow.update { it + seeded }
     return true

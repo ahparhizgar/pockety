@@ -1,9 +1,9 @@
 package com.base.db
 
 /**
- * A category every fresh install starts with. The stored name follows the app
- * language at seed time; the icon is an id from the category icon set and the
- * color a value from the shared category palette.
+ * A category every fresh install starts with. The stored name follows the app language at seed
+ * time; the icon is an id from the category icon set and the color a value from the shared category
+ * palette.
  */
 data class DefaultCategory(
     val nameFa: String,
