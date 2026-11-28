@@ -15,7 +15,9 @@ import com.base.db.CategoryEntity
 import com.base.db.CategoryRepository
 import com.base.db.ExpenseEntity
 import com.base.db.ExpenseRepository
+import com.base.feature.settings.AppLanguage
 import com.base.feature.settings.UserSettingsRepository
+import com.base.ui.money.localizeDigits
 import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -103,6 +105,7 @@ class DefaultAnalyticsComponent(
   private val scope = componentScope()
 
   private var calendarType: CalendarType = CalendarType.GREGORIAN
+  private var appLanguage: AppLanguage = AppLanguage.ENGLISH
   private var activeCalendar: Calendar = GregorianCalendar
 
   private val timeZone = TimeZone.currentSystemDefault()
@@ -122,7 +125,9 @@ class DefaultAnalyticsComponent(
             expenseRepository.observeExpenses(),
             categoryRepository.observeCategories(),
             userSettingsRepository.calendarType,
-        ) { expenses, categories, type ->
+            userSettingsRepository.appLanguage,
+        ) { expenses, categories, type, language ->
+          appLanguage = language
           rawExpenses = expenses
           rawCategories = categories
           if (calendarType != type) {
@@ -287,7 +292,7 @@ class DefaultAnalyticsComponent(
         categoryName = category?.name,
         categoryIcon = category?.icon,
         categoryColor = category?.color,
-        formattedTime = "$hour:$minute",
+        formattedTime = localizeDigits("$hour:$minute", appLanguage),
         createdAt = expense.createdAt,
     )
   }

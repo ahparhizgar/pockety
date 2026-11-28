@@ -105,12 +105,12 @@ class AnalyticsLocalizationE2eUiTest {
       }
     }
 
-    onNode(hasText("اکتبر 2026")).waitForExistence().assertExists()
+    onNode(hasText("اکتبر ۲۰۲۶")).waitForExistence().assertExists()
     onNode(hasText("امروز", substring = true)).assertExists()
     onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("دیروز", substring = true))
     onNode(hasText("دیروز", substring = true)).assertExists()
-    onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("22 اکتبر 2026"))
-    onNode(hasText("22 اکتبر 2026")).assertExists()
+    onNode(hasTestTag("analytics-list")).performScrollToNode(hasText("۲۲ اکتبر ۲۰۲۶"))
+    onNode(hasText("۲۲ اکتبر ۲۰۲۶")).assertExists()
     onNode(hasTestTag("analytics-list")).performScrollToNode(hasTestTag("expense-item-42"))
     onNode(hasTestTag("expense-amount"), useUnmergedTree = true)
         .assertTextContains("تومان", substring = true)
@@ -146,8 +146,8 @@ class AnalyticsLocalizationE2eUiTest {
       }
     }
 
-    onNode(hasText("مهر 1405")).waitForExistence().assertExists()
-    onNode(hasText("امروز، 24 مهر")).assertExists()
+    onNode(hasText("مهر ۱۴۰۵")).waitForExistence().assertExists()
+    onNode(hasText("امروز، ۲۴ مهر")).assertExists()
   }
 
   @Test

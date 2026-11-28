@@ -42,6 +42,7 @@ import com.base.feature.category.add.resolveCategoryIcon
 import com.base.feature.settings.AppLanguage
 import com.base.ui.money.currencySymbol
 import com.base.ui.money.moneyAmount
+import com.base.ui.money.localizedNumber
 import com.base.ui.money.moneyLabel
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
@@ -449,7 +450,7 @@ private fun HomeMonthOverMonthBadge(state: HomeState, percent: Int) {
                   } else {
                     Res.string.home_more_format
                   },
-                  percent,
+                  localizedNumber(percent),
               ),
           style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
       )

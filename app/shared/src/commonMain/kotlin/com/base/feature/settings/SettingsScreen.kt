@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.calendar.CalendarType
 import com.base.ui.ScreenPreviews
+import com.base.ui.money.localizedNumber
 import com.base.ui.components.PocketyTopAppBar
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
@@ -130,7 +131,7 @@ private fun SettingsOrganizeSection(
                   countBadgeText =
                       stringResource(
                           Res.string.settings_categories_count_format,
-                          state.categoriesCount,
+                          localizedNumber(state.categoriesCount),
                       ),
               ),
           onClick = component::onCategoriesClicked,

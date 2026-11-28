@@ -11,7 +11,9 @@ import com.base.calendar.getMonthName
 import com.base.component.CContext
 import com.base.component.componentScope
 import com.base.db.PocketRepository
+import com.base.feature.settings.AppLanguage
 import com.base.feature.settings.UserSettingsRepository
+import com.base.ui.money.localizeDigits
 import com.base.usermessage.UiString
 import kotlin.time.Instant
 import kotlinx.coroutines.Job
@@ -109,7 +111,8 @@ class DefaultPocketDetailsComponent(
               pocketRepository.observePocketTopUps(pocketId),
               pocketRepository.observePocketExpenses(pocketId),
               userSettingsRepository.calendarType,
-          ) { pockets, topUps, expenses, calendarType ->
+              userSettingsRepository.appLanguage,
+          ) { pockets, topUps, expenses, calendarType, language ->
             val pocket = pockets.firstOrNull { it.id == pocketId }
             if (pocket != null) {
               val topUpItems = topUps.map { topUp ->
@@ -119,7 +122,7 @@ class DefaultPocketDetailsComponent(
                         topUp.description?.takeIf { it.isNotBlank() }?.let { UiString(it) }
                             ?: UiString(Res.string.pocket_details_top_up_button),
                     icon = "arrow_downward_alt",
-                    timestamp = formatInstant(topUp.createdAt, calendarType),
+                    timestamp = formatInstant(topUp.createdAt, calendarType, language),
                     note = "",
                     amount = topUp.amount,
                     isTopUp = true,
@@ -136,7 +139,7 @@ class DefaultPocketDetailsComponent(
                           UiString(expense.description)
                         },
                     icon = "shopping_bag",
-                    timestamp = formatInstant(expense.createdAt, calendarType),
+                    timestamp = formatInstant(expense.createdAt, calendarType, language),
                     note = "",
                     amount = expense.amount,
                     isTopUp = false,
@@ -231,6 +234,7 @@ class DefaultPocketDetailsComponent(
 private fun formatInstant(
     instant: Instant,
     calendarType: CalendarType = CalendarType.GREGORIAN,
+    language: AppLanguage = AppLanguage.ENGLISH,
 ): String {
   val timeZone = TimeZone.currentSystemDefault()
   val calendar =
@@ -244,7 +248,7 @@ private fun formatInstant(
   val minute = local.minute.toString().padStart(2, '0')
   val monthName = getMonthName(date.month, calendarType)
   val monthShort = monthName.take(3)
-  return "${date.day} $monthShort, $hour:$minute"
+  return localizeDigits("${date.day} $monthShort, $hour:$minute", language)
 }
 
 class DefaultPocketDetailsComponentFactory(

@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.base.db.FakeCategoryFactory
 import com.base.ui.ScreenPreviews
+import com.base.ui.money.localizedNumber
 import com.base.ui.components.PocketyTopAppBar
 import com.base.usermessage.UiString
 import org.jetbrains.compose.resources.stringResource
@@ -205,7 +206,7 @@ private fun CategoryPickContent(
                           ?.name
                           .orEmpty(),
                   )
-              else -> stringResource(Res.string.pocket_pick_advanced_hint, pickedCount)
+              else -> stringResource(Res.string.pocket_pick_advanced_hint, localizedNumber(pickedCount))
             },
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,

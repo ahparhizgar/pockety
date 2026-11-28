@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.base.ui.ComponentPreviews
+import com.base.ui.money.localizedNumber
 import org.jetbrains.compose.resources.stringResource
 import pockety.app.shared.generated.resources.Res
 import pockety.app.shared.generated.resources.inbox_candidates_desc
@@ -61,7 +62,7 @@ private fun SmartExtractionHeaderBadge(remainingCount: Int) {
       horizontalArrangement = Arrangement.SpaceBetween,
   ) {
     Text(
-        text = stringResource(Res.string.inbox_remaining_count, remainingCount),
+        text = stringResource(Res.string.inbox_remaining_count, localizedNumber(remainingCount)),
         style = MaterialTheme.typography.labelSmall,
         color = MaterialTheme.colorScheme.outline,
     )
@@ -72,13 +73,13 @@ private fun SmartExtractionHeaderBadge(remainingCount: Int) {
 private fun SmartExtractionHeaderText(remainingCount: Int) {
   Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
     Text(
-        text = stringResource(Res.string.inbox_candidates_pending, remainingCount),
+        text = stringResource(Res.string.inbox_candidates_pending, localizedNumber(remainingCount)),
         style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.SemiBold,
         color = MaterialTheme.colorScheme.onSurface,
     )
     Text(
-        text = stringResource(Res.string.inbox_candidates_desc, remainingCount),
+        text = stringResource(Res.string.inbox_candidates_desc, localizedNumber(remainingCount)),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         lineHeight = 18.sp,

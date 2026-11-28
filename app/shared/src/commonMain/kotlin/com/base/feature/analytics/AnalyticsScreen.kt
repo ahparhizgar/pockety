@@ -54,6 +54,9 @@ import com.base.feature.settings.AppLanguage
 import com.base.ui.ComponentPreviews
 import com.base.ui.ScreenPreviews
 import com.base.ui.components.PocketyTopAppBar
+import com.base.ui.money.localizeDigits
+import com.base.ui.money.localizedNumber
+import com.base.ui.money.localizedPercent
 import com.base.ui.money.moneyLabel
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -464,7 +467,7 @@ private fun TrendPill(state: AnalyticsState) {
                   if (LocalAppLanguage.current == AppLanguage.PERSIAN)
                       Res.string.analytics_trend_vs_fa
                   else Res.string.analytics_trend_vs,
-                  percent,
+                  localizedNumber(percent),
                   analyticsMonthName(
                       adjacentMonth(state.selectedMonth, -1),
                       state.calendarType,
@@ -492,7 +495,7 @@ private fun analyticsMonthLabel(state: AnalyticsState): String {
   return stringResource(
       if (isPersian) Res.string.analytics_month_year_fa else Res.string.analytics_month_year,
       month,
-      state.selectedYear,
+      localizeDigits(state.selectedYear.toString(), LocalAppLanguage.current),
   )
 }
 
@@ -641,7 +644,7 @@ private fun SpendingDonutChart(
           letterSpacing = 0.5.sp,
       )
       Text(
-          text = "${top.percentage}%",
+          text = localizedPercent(top.percentage),
           style = MaterialTheme.typography.headlineSmall,
           fontWeight = FontWeight.Bold,
           color = MaterialTheme.colorScheme.onSurface,
@@ -740,7 +743,7 @@ private fun CategoryAllocationRow(
               else MaterialTheme.colorScheme.surfaceContainerHigh,
       ) {
         Text(
-            text = "${item.percentage}%",
+            text = localizedPercent(item.percentage),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
             color =
@@ -794,7 +797,7 @@ private fun ExpensesLedgerHeader(
                     if (LocalAppLanguage.current == AppLanguage.PERSIAN)
                         Res.string.analytics_items_count_fa
                     else Res.string.analytics_items_count,
-                    totalItemsCount,
+                    localizedNumber(totalItemsCount),
                 ),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
@@ -821,23 +824,23 @@ private fun DateGroupHeader(
         AnalyticsRelativeDate.TODAY ->
             stringResource(
                 if (isPersian) Res.string.analytics_today_fa else Res.string.analytics_today,
-                date.day,
+                localizedNumber(date.day),
                 month,
             )
         AnalyticsRelativeDate.YESTERDAY ->
             stringResource(
                 if (isPersian) Res.string.analytics_yesterday_fa
                 else Res.string.analytics_yesterday,
-                date.day,
+                localizedNumber(date.day),
                 month,
             )
         AnalyticsRelativeDate.OTHER ->
             stringResource(
                 if (isPersian) Res.string.analytics_other_date_fa
                 else Res.string.analytics_other_date,
-                date.day,
+                localizedNumber(date.day),
                 month,
-                date.year,
+                localizeDigits(date.year.toString(), LocalAppLanguage.current),
             )
       }
   Row(

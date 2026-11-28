@@ -5,6 +5,7 @@ import com.base.feature.settings.CurrencyType
 import com.base.ui.money.amountText
 import com.base.ui.money.formatAmountForDisplay
 import com.base.ui.money.groupMoneyDigits
+import com.base.ui.money.localizeDigits
 import com.base.ui.money.parseRials
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,6 +46,16 @@ class MoneyTest {
     assertEquals("۱٫۲۳۴۵", formatAmountForDisplay("1.2345", AppLanguage.PERSIAN))
     assertEquals("1.2345", formatAmountForDisplay("1.2345", AppLanguage.ENGLISH))
     assertEquals("۰", formatAmountForDisplay("0", AppLanguage.PERSIAN))
+  }
+
+  @Test
+  fun digitLocalizationKeepsSeparatorsPaddingAndNonDigits() {
+    // Years must not gain a grouping separator.
+    assertEquals("۱۴۰۴", localizeDigits("1404", AppLanguage.PERSIAN))
+    // Zero padding and the colon of a time stay untouched.
+    assertEquals("۱۴:۰۵", localizeDigits("14:05", AppLanguage.PERSIAN))
+    assertEquals("۲۸ Nov, ۰۹:۳۰", localizeDigits("28 Nov, 09:30", AppLanguage.PERSIAN))
+    assertEquals("14:05", localizeDigits("14:05", AppLanguage.ENGLISH))
   }
 
   @Test

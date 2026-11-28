@@ -77,6 +77,28 @@ fun groupMoneyDigits(input: String): String {
  */
 expect fun formatAmountForDisplay(amountText: String, language: AppLanguage): String
 
+/**
+ * Replaces the ASCII digits in [text] with the digits of [language]'s locale, leaving every
+ * other character (separators, padding, punctuation) untouched. For values that must not gain
+ * grouping separators, such as years and times.
+ */
+expect fun localizeDigits(text: String, language: AppLanguage): String
+
+/** A count or quantity for display: locale digits with grouping, e.g. «۱٬۲۳۴ مورد». */
+@Composable
+fun localizedNumber(value: Long): String =
+    formatAmountForDisplay(value.toString(), LocalAppLanguage.current)
+
+@Composable fun localizedNumber(value: Int): String = localizedNumber(value.toLong())
+
+/** A whole percentage for display: locale digits followed by the language's % sign. */
+@Composable
+fun localizedPercent(value: Int): String {
+  val language = LocalAppLanguage.current
+  val digits = formatAmountForDisplay(value.toString(), language)
+  return if (language == AppLanguage.PERSIAN) "$digits٪" else "$digits%"
+}
+
 @Composable
 fun moneyAmount(rials: Long): String =
     formatAmountForDisplay(LocalCurrency.current.amountText(rials), LocalAppLanguage.current)
