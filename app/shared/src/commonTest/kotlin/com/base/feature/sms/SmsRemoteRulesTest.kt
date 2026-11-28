@@ -28,9 +28,7 @@ class SmsRemoteRulesTest : BehaviorSpec() {
 
       When("include and exclude patterns both match") {
         val rules =
-            SmsRemoteRules(
-                SmsRemoteConfig(include = listOf("برداشت"), exclude = listOf("کوروش"))
-            )
+            SmsRemoteRules(SmsRemoteConfig(include = listOf("برداشت"), exclude = listOf("کوروش")))
 
         Then("the exclude veto wins") { SmsExpenseParser.parse(debitSms, rules) shouldBe null }
       }

@@ -42,8 +42,8 @@ interface SmsRemoteConfigStore {
   suspend fun currentRules(): SmsRemoteRules
 
   /**
-   * Fetches a fresh config when the previous attempt is at least a day old.
-   * Failures are silent by design: the cached config (if any) keeps applying.
+   * Fetches a fresh config when the previous attempt is at least a day old. Failures are silent by
+   * design: the cached config (if any) keeps applying.
    */
   suspend fun refreshIfDue(now: Instant)
 }
@@ -78,8 +78,9 @@ class DefaultSmsRemoteConfigStore(
 
   private fun decode(text: String): SmsRemoteConfig = decodeOrNull(text) ?: SmsRemoteConfig()
 
-  private fun decodeOrNull(text: String): SmsRemoteConfig? =
-      runCatching { json.decodeFromString<SmsRemoteConfig>(text) }.getOrNull()
+  private fun decodeOrNull(text: String): SmsRemoteConfig? = runCatching {
+    json.decodeFromString<SmsRemoteConfig>(text)
+  }.getOrNull()
 
   private companion object {
     val REFRESH_INTERVAL_MS = 1.days.inWholeMilliseconds
