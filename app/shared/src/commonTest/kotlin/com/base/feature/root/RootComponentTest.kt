@@ -34,9 +34,7 @@ class RootComponentTest : BehaviorSpec() {
 
       When("the saved language is Persian") {
         Then("the root starts in Persian immediately, without waiting for the settings flow") {
-          runBlocking {
-            koin.get<UserSettingsRepository>().setAppLanguage(AppLanguage.PERSIAN)
-          }
+          runBlocking { koin.get<UserSettingsRepository>().setAppLanguage(AppLanguage.PERSIAN) }
           val root = koin.get<RootComponentFactory>().create(context)
           root.appLanguage.value shouldBe AppLanguage.PERSIAN
         }
