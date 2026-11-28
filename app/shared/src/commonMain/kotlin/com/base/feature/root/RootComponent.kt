@@ -34,7 +34,9 @@ import com.base.navigation.NavigationActionBus
 import com.base.usermessage.MessageHolder
 import kotlin.reflect.KClass
 import kotlin.time.Clock
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.scope.Scope
@@ -58,15 +60,17 @@ class DefaultRootComponent(
     cContext: CContext,
     private val componentProvider: ComponentProvider,
     private val navigationActionBus: NavigationActionBus,
+    initialLanguage: AppLanguage = AppLanguage.ENGLISH,
+    initialCurrency: CurrencyType = CurrencyType.TOMANS,
 ) : RootComponent, CContext by cContext {
   val scope = componentScope()
 
   private val rootNavigation = StackNavigation<RootFlowDestination>()
   override val backHandler: BackHandler = cContext.backHandler
   override val messageHolder: MessageHolder = MessageHolder()
-  private val _currency = MutableValue(CurrencyType.TOMANS)
+  private val _currency = MutableValue(initialCurrency)
   override val currency: Value<CurrencyType> = _currency
-  private val _appLanguage = MutableValue(AppLanguage.ENGLISH)
+  private val _appLanguage = MutableValue(initialLanguage)
   override val appLanguage: Value<AppLanguage> = _appLanguage
 
   override fun onBack() {
@@ -246,12 +250,22 @@ class DefaultRootComponentFactory(
     private val componentProvider: ComponentProvider,
     private val navigationActionBus: NavigationActionBus,
 ) : RootComponentFactory {
-  override fun create(context: CContext): RootComponent =
-      DefaultRootComponent(
-          cContext = context,
-          componentProvider = componentProvider,
-          navigationActionBus = navigationActionBus,
-      )
+  override fun create(context: CContext): RootComponent {
+    val settings = componentProvider.provide(UserSettingsRepository::class)
+    // Seed the persisted language and currency before the first frame: the
+    // DataStore flows emit asynchronously, so starting from the defaults
+    // would flash English/LTR (and the default currency) on cold start
+    // before the saved values arrive.
+    val (initialLanguage, initialCurrency) =
+        runBlocking { settings.appLanguage.first() to settings.currencyType.first() }
+    return DefaultRootComponent(
+        cContext = context,
+        componentProvider = componentProvider,
+        navigationActionBus = navigationActionBus,
+        initialLanguage = initialLanguage,
+        initialCurrency = initialCurrency,
+    )
+  }
 }
 
 class FakeRootComponent(
