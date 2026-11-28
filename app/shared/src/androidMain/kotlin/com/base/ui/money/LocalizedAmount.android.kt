@@ -5,10 +5,12 @@ import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Locale
 
+// The formatter's fraction cap: high enough to never round a display amount
+// (kilo-toman amounts carry 4 fraction digits) while BigDecimal stays exact.
+private const val MAX_FRACTION_DIGITS = 340
+
 actual fun formatAmountForDisplay(amountText: String, language: AppLanguage): String {
   val format = NumberFormat.getNumberInstance(Locale.forLanguageTag(language.code))
-  // BigDecimal keeps every digit exact; the raised cap stops the formatter
-  // from rounding the 4 fraction digits of kilo-toman amounts.
-  format.maximumFractionDigits = 340
+  format.maximumFractionDigits = MAX_FRACTION_DIGITS
   return format.format(BigDecimal(amountText))
 }
