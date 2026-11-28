@@ -70,8 +70,16 @@ fun groupMoneyDigits(input: String): String {
       (if (parts.size == 2) ".${parts[1]}" else "")
 }
 
+/**
+ * Formats a plain amount text (digits with an optional '.' fraction, as produced by
+ * [CurrencyType.amountText]) for display in [language], using the platform's locale
+ * formatting: digit shapes, grouping and decimal separators follow the language.
+ */
+expect fun formatAmountForDisplay(amountText: String, language: AppLanguage): String
+
 @Composable
-fun moneyAmount(rials: Long): String = groupMoneyDigits(LocalCurrency.current.amountText(rials))
+fun moneyAmount(rials: Long): String =
+    formatAmountForDisplay(LocalCurrency.current.amountText(rials), LocalAppLanguage.current)
 
 @Composable
 fun currencySymbol(): String =

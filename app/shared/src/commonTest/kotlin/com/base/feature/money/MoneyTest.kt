@@ -1,7 +1,9 @@
 package com.base.feature.money
 
+import com.base.feature.settings.AppLanguage
 import com.base.feature.settings.CurrencyType
 import com.base.ui.money.amountText
+import com.base.ui.money.formatAmountForDisplay
 import com.base.ui.money.groupMoneyDigits
 import com.base.ui.money.parseRials
 import kotlin.test.Test
@@ -32,6 +34,17 @@ class MoneyTest {
     assertNull(CurrencyType.RIALS.parseRials("-1"))
     assertNull(CurrencyType.RIALS.parseRials("1.2.3"))
     assertNull(CurrencyType.RIALS.parseRials(""))
+  }
+
+  @Test
+  fun displayFormattingLocalizesDigitsAndSeparators() {
+    assertEquals("1,234,567.5", formatAmountForDisplay("1234567.5", AppLanguage.ENGLISH))
+    assertEquals("۱٬۲۳۴٬۵۶۷٫۵", formatAmountForDisplay("1234567.5", AppLanguage.PERSIAN))
+    assertEquals("۸۵٬۰۰۰", formatAmountForDisplay("85000", AppLanguage.PERSIAN))
+    // Kilo-toman amounts carry 4 fraction digits; none may be rounded away.
+    assertEquals("۱٫۲۳۴۵", formatAmountForDisplay("1.2345", AppLanguage.PERSIAN))
+    assertEquals("1.2345", formatAmountForDisplay("1.2345", AppLanguage.ENGLISH))
+    assertEquals("۰", formatAmountForDisplay("0", AppLanguage.PERSIAN))
   }
 
   @Test
