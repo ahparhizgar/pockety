@@ -57,7 +57,10 @@ fun integrationTestModule() = module {
     )
   }
   single { FakeTokenStorage() }.bind<TokenStorage>()
-  single { FakeUserSettingsRepository() }.bind<UserSettingsRepository>()
+  // Tests model an existing user: default categories were already seeded, so
+  // the root does not insert them and flows start from an empty collection.
+  single { FakeUserSettingsRepository(initialDefaultCategoriesSeeded = true) }
+      .bind<UserSettingsRepository>()
   single { FakeLanguageSettingsHandler() }.bind<LanguageSettingsHandler>()
 
   // Everything is overridden to Main. Main should be set to StandardTestDispatcher.
